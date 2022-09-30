@@ -9,7 +9,11 @@ from fastapi import HTTPException
 from app.core.constants import DATA_FOLDER
 from app.core.string_util import fuzzy_match, get_codepoint_string
 from app.data.blocks import get_unicode_block_containing_character
-from app.data.categories import get_unicode_character_category
+from app.data.categories import (
+    get_character_bidirectional_category,
+    get_character_general_category,
+    get_combining_class_category,
+)
 from app.data.planes import get_unicode_plane_containing_codepoint
 from app.schemas import UnicodeCharacterInternal
 
@@ -47,11 +51,15 @@ def get_character_details(uni_char: str) -> UnicodeCharacterInternal:
         codepoint=get_codepoint_string(codepoint),
         block=get_unicode_block_containing_character(uni_char).block,
         plane=get_unicode_plane_containing_codepoint(uni_char).abbreviation,
-        category=get_unicode_character_category(unicodedata.category(uni_char)),
-        bidirectional_class=unicodedata.bidirectional(uni_char),
-        combining_class=unicodedata.combining(uni_char),
+        category_value=unicodedata.category(uni_char),
+        category=get_character_general_category(unicodedata.category(uni_char)),
+        bidirectional_class_value=unicodedata.bidirectional(uni_char),
+        bidirectional_class=get_character_bidirectional_category(unicodedata.bidirectional(uni_char)),
+        combining_class_value=unicodedata.combining(uni_char),
+        combining_class=get_combining_class_category(unicodedata.combining(uni_char)),
         is_mirrored=unicodedata.mirrored(uni_char),
         html_entities=get_html_entities(uni_char),
+        encoded=get_encoded_value(uni_char),
         utf_8=get_utf8_value(uni_char),
         utf_16=get_utf16_value(uni_char),
         utf_32=get_utf32_value(uni_char),
@@ -66,7 +74,21 @@ def get_html_entities(uni_char: str) -> List[str]:
         )
     codepoint = ord(uni_char)
     cp_hex = hex(codepoint)[2:].upper()
-    return [f"&#{codepoint};", f"&#x{cp_hex};"]
+    html_entities = [f"&#{codepoint};", f"&#x{cp_hex};"]
+    named_entity = html_entity_map.get(codepoint)
+    if named_entity:
+        html_entities.append(f"&{named_entity}")
+    return html_entities
+
+
+def get_encoded_value(uni_char: str) -> str:
+    if len(uni_char) != 1:
+        raise HTTPException(
+            status_code=int(HTTPStatus.BAD_REQUEST),
+            detail="This operation is only valid for strings containing a single character",
+        )
+    hex_bytes = [hex(x)[2:].upper() for x in uni_char.encode()]
+    return "".join([f"%{byte}" for byte in hex_bytes])
 
 
 def get_utf8_value(uni_char: str) -> str:
