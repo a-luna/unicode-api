@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Query
 from app.core.constants import HEX_REGEX
 from app.data.blocks import get_unicode_block_containing_character
 from app.data.characters import fuzzy_character_search, get_character_details
-from app.schemas import UnicodeCharacter, CharToBlockMap, FuzzySearchResult
+from app.schemas import CharToBlockMap, FuzzySearchResult, UnicodeCharacter
 
 router = APIRouter()
 
