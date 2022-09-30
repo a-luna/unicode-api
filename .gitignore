@@ -20,7 +20,6 @@ html_storage
 coverage_html
 custom_scripts
 release2pypi.sh
-app/data/json
 vig.db
 
 # Byte-compiled / optimized / DLL files

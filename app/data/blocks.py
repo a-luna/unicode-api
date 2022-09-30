@@ -10,7 +10,7 @@ from app.schemas.block import UnicodeBlockInternal
 
 
 def get_unicode_blocks() -> List[UnicodeBlockInternal]:
-    blocks_json_file = DATA_FOLDER.joinpath("blocks.json")
+    blocks_json_file = DATA_FOLDER.joinpath("json/blocks.json")
     blocks_json = json.loads(blocks_json_file.read_text())
     return [update_block_values(block_dict, i) for (i, block_dict) in enumerate(blocks_json, start=1)]
 

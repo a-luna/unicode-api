@@ -15,7 +15,7 @@ from app.schemas import UnicodeCharacterInternal
 
 
 def build_unicode_char_map() -> Dict[int, UnicodeCharacterInternal]:
-    char_json_file = DATA_FOLDER.joinpath("characters.json")
+    char_json_file = DATA_FOLDER.joinpath("json/characters.json")
     char_data = json.loads(char_json_file.read_text())
     return {int(d["codepoint"]): d["name"] for d in char_data}
 
