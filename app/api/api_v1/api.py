@@ -1,14 +1,14 @@
 from collections import defaultdict
 from http import HTTPStatus
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Query
-from app.core.constants import HEX_REGEX
 
+from fastapi import APIRouter, HTTPException, Query
+
+from app.core.constants import HEX_REGEX
 from app.data.blocks import get_unicode_block_containing_character
 from app.data.characters import get_character_details
 from app.schemas.character import UnicodeCharacter
 from app.schemas.responses import CharToBlockMap
-
 
 router = APIRouter()
 

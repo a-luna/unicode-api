@@ -1,5 +1,7 @@
 from http import HTTPStatus
+
 from fastapi import HTTPException
+
 from app.schemas.plane import UnicodePlane
 
 

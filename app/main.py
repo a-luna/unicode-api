@@ -11,7 +11,6 @@ from starlette.responses import RedirectResponse
 from app.api.api_v1.api import router
 from app.core.config import settings
 
-
 APP_FOLDER = Path(__file__).parent
 STATIC_FOLDER = APP_FOLDER.joinpath("static")
 

@@ -8,9 +8,9 @@ from fastapi import HTTPException
 
 from app.core.constants import DATA_FOLDER
 from app.core.string_util import get_codepoint_string
+from app.data.blocks import get_unicode_block_containing_character
 from app.data.categories import get_unicode_character_category
 from app.data.planes import get_unicode_plane_containing_codepoint
-from app.data.blocks import get_unicode_block_containing_character
 from app.schemas import UnicodeCharacterInternal
 
 
