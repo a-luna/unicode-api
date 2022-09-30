@@ -20,12 +20,13 @@ def update_block_values(block_dict: Dict[str, Union[int, str]], id: int) -> Unic
         "id": id,
         "block": block_dict["block"],
         "start_dec": block_dict["start"],
-        "start": get_codepoint_string(block_dict['start']),
+        "start": get_codepoint_string(block_dict["start"]),
         "finish_dec": block_dict["finish"],
-        "finish": get_codepoint_string(block_dict['finish']),
+        "finish": get_codepoint_string(block_dict["finish"]),
         "total_assigned": block_dict["total_assigned"],
     }
     return UnicodeBlockInternal(**block_dict)
+
 
 unicode_blocks = get_unicode_blocks()
 

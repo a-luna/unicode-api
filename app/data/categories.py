@@ -39,6 +39,7 @@ ALL_CATEGORIES = [
     {"abbreviation": "C", "category": "Other"},
 ]
 
+
 def get_unicode_character_category(abbrev: str) -> str:
     found = [cat for cat in ALL_CATEGORIES if cat["abbreviation"] == abbrev]
     return found[0]["category"] if found else ""

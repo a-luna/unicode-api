@@ -17,5 +17,7 @@ def get_unicode_plane_containing_codepoint(uni_char: str) -> UnicodePlane:
     if 131072 <= codepoint and codepoint <= 196607:
         return UnicodePlane(name="Supplementary Ideographic Plane", abbreviation="SIP", start=131072, finish=196607)
     if 917504 <= codepoint and codepoint <= 917999:
-        return UnicodePlane(name="Supplement­ary Special-purpose Plane", abbreviation="SSP", start=917504, finish=917999)
+        return UnicodePlane(
+            name="Supplement­ary Special-purpose Plane", abbreviation="SSP", start=917504, finish=917999
+        )
     return UnicodePlane(name="Invalid Codepoint", abbreviation="N/A", start=0, end=0)
