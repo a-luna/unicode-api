@@ -7,7 +7,7 @@ from typing import Dict, List
 from fastapi import HTTPException
 
 from app.core.constants import DATA_FOLDER
-from app.core.string_util import get_codepoint_string
+from app.core.string_util import fuzzy_match, get_codepoint_string
 from app.data.blocks import get_unicode_block_containing_character
 from app.data.categories import get_unicode_character_category
 from app.data.planes import get_unicode_plane_containing_codepoint
@@ -27,6 +27,10 @@ def build_html_entity_map():
 
 unicode_char_map = build_unicode_char_map()
 html_entity_map = build_html_entity_map()
+
+
+def fuzzy_character_search(query: str, score_cutoff=80):
+    return fuzzy_match(query, unicode_char_map, score_cutoff)
 
 
 def get_character_details(uni_char: str) -> UnicodeCharacterInternal:
