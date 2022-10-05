@@ -1,18 +1,24 @@
 from app.schemas.camel_model import CamelModel
+from app.schemas.character import UnicodeCharacterMinimal
 
 
-class UnicodeBlockInternal(CamelModel):
+class UnicodeBlockBlase(CamelModel):
+    block: str
+    start: str
+    finish: str
+    total_assigned: int
+
+
+class UnicodeBlock(UnicodeBlockBlase):
+    pass
+
+
+class UnicodeBlockInternal(UnicodeBlockBlase):
     id: int
-    block: str
     start_dec: int
-    start: str
     finish_dec: int
-    finish: str
-    total_assigned: int
 
 
-class UnicodeBlock(CamelModel):
-    block: str
-    start: str
-    finish: str
-    total_assigned: int
+class CharToBlockMap(CamelModel):
+    block: UnicodeBlock
+    characters_in_block: list[UnicodeCharacterMinimal]

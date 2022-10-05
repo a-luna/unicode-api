@@ -17,17 +17,22 @@ STATIC_FOLDER = APP_FOLDER.joinpath("static")
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.API_VERSION,
+    contact={
+        "name": "Aaron Luna",
+        "url": "https://github.com/a-luna/unicode-api",
+        "email": "contact@aaronluna.dev",
+    },
     openapi_url=f"{settings.API_VERSION}/openapi.json",
-    docs_url=f"{settings.API_VERSION}/docs" if settings.ENV == "DEV" else None,
-    redoc_url=None,
+    docs_url=None,
+    redoc_url=None
+    
+    # docs_url=f"{settings.API_VERSION}/docs",
 )
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3508",
-        "http://10.0.1.52:3508",
-        "http://localhost:3000",
-        "http://10.0.1.52:3000",
+        "http://localhost:3500",
+        "http://10.0.1.52:3500",
         "https://base64-demo.netlify.app",
     ],
     allow_credentials=True,
@@ -47,18 +52,20 @@ def startup():
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False)
-async def swagger_ui_html():
+async def custom_swagger_ui_html():
     return get_swagger_ui_html(
         title=f"{settings.PROJECT_NAME} - Swagger UI",
         openapi_url=app.openapi_url,
+        swagger_ui_parameters={"docExpansion": "list", "syntaxHighlight.theme": "arta", "tryItOutEnabled": "true"},
+        swagger_js_url="/static/swagger-ui-bundle.js",
+        swagger_css_url="/static/swagger-ui.css",
         swagger_favicon_url="/static/favicon.ico",
     )
 
 
 @app.get("/", include_in_schema=False)
 def get_api_root():
-    api_docs_url = app.url_path_for("swagger_ui_html")
-    return RedirectResponse(url=api_docs_url, status_code=int(HTTPStatus.PERMANENT_REDIRECT))
+    return RedirectResponse(url=app.url_path_for("swagger_ui_html"), status_code=int(HTTPStatus.PERMANENT_REDIRECT))
 
 
 app.include_router(router, prefix=settings.API_VERSION)

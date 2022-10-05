@@ -1,68 +1,68 @@
 GENERAL_CATEGORIES = [
-    {"abbreviation": "Lu", "category": "Uppercase Letter"},
-    {"abbreviation": "Ll", "category": "Lowercase Letter"},
-    {"abbreviation": "Lt", "category": "Titlecase Letter"},
-    {"abbreviation": "LC", "category": "Cased Letter"},
-    {"abbreviation": "Lm", "category": "Modifier Letter"},
-    {"abbreviation": "Lo", "category": "Other Letter"},
-    {"abbreviation": "L", "category": "Letter"},
-    {"abbreviation": "Mn", "category": "Nonspacing Mark"},
-    {"abbreviation": "Mc", "category": "Spacing Mark"},
-    {"abbreviation": "Me", "category": "Enclosing Mark"},
-    {"abbreviation": "M", "category": "Mark"},
-    {"abbreviation": "Nd", "category": "Decimal Number"},
-    {"abbreviation": "Nl", "category": "Letter Number"},
-    {"abbreviation": "No", "category": "Other Number"},
-    {"abbreviation": "N", "category": "Number"},
-    {"abbreviation": "Pc", "category": "Connector Punctuation"},
-    {"abbreviation": "Pd", "category": "Dash Punctuation"},
-    {"abbreviation": "Ps", "category": "Open Punctuation"},
-    {"abbreviation": "Pe", "category": "Close Punctuation"},
-    {"abbreviation": "Pi", "category": "Initial Punctuation"},
-    {"abbreviation": "Pf", "category": "Final Punctuation"},
-    {"abbreviation": "Po", "category": "Other Punctuation"},
-    {"abbreviation": "P", "category": "Punctuation"},
-    {"abbreviation": "Sm", "category": "Math Symbol"},
-    {"abbreviation": "Sc", "category": "Currency Symbol"},
-    {"abbreviation": "Sk", "category": "Modifier Symbol"},
-    {"abbreviation": "So", "category": "Other Symbol"},
-    {"abbreviation": "S", "category": "Symbol"},
-    {"abbreviation": "Zs", "category": "Space Separator"},
-    {"abbreviation": "Zl", "category": "Line Separator"},
-    {"abbreviation": "Zp", "category": "Paragraph Separator"},
-    {"abbreviation": "Z", "category": "Separator"},
-    {"abbreviation": "Cc", "category": "Control"},
-    {"abbreviation": "Cf", "category": "Format"},
-    {"abbreviation": "Cs", "category": "Surrogate"},
-    {"abbreviation": "Co", "category": "Private Use"},
-    {"abbreviation": "Cn", "category": "Unassigned"},
-    {"abbreviation": "C", "category": "Other"},
+    {"value": "Lu", "category": "Uppercase Letter"},
+    {"value": "Ll", "category": "Lowercase Letter"},
+    {"value": "Lt", "category": "Titlecase Letter"},
+    {"value": "LC", "category": "Cased Letter"},
+    {"value": "Lm", "category": "Modifier Letter"},
+    {"value": "Lo", "category": "Other Letter"},
+    {"value": "L", "category": "Letter"},
+    {"value": "Mn", "category": "Nonspacing Mark"},
+    {"value": "Mc", "category": "Spacing Mark"},
+    {"value": "Me", "category": "Enclosing Mark"},
+    {"value": "M", "category": "Mark"},
+    {"value": "Nd", "category": "Decimal Number"},
+    {"value": "Nl", "category": "Letter Number"},
+    {"value": "No", "category": "Other Number"},
+    {"value": "N", "category": "Number"},
+    {"value": "Pc", "category": "Connector Punctuation"},
+    {"value": "Pd", "category": "Dash Punctuation"},
+    {"value": "Ps", "category": "Open Punctuation"},
+    {"value": "Pe", "category": "Close Punctuation"},
+    {"value": "Pi", "category": "Initial Punctuation"},
+    {"value": "Pf", "category": "Final Punctuation"},
+    {"value": "Po", "category": "Other Punctuation"},
+    {"value": "P", "category": "Punctuation"},
+    {"value": "Sm", "category": "Math Symbol"},
+    {"value": "Sc", "category": "Currency Symbol"},
+    {"value": "Sk", "category": "Modifier Symbol"},
+    {"value": "So", "category": "Other Symbol"},
+    {"value": "S", "category": "Symbol"},
+    {"value": "Zs", "category": "Space Separator"},
+    {"value": "Zl", "category": "Line Separator"},
+    {"value": "Zp", "category": "Paragraph Separator"},
+    {"value": "Z", "category": "Separator"},
+    {"value": "Cc", "category": "Control"},
+    {"value": "Cf", "category": "Format"},
+    {"value": "Cs", "category": "Surrogate"},
+    {"value": "Co", "category": "Private Use"},
+    {"value": "Cn", "category": "Unassigned"},
+    {"value": "C", "category": "Other"},
 ]
 
 BIDIRECTIONAL_CATEGORIES = [
-    {"abbreviation": "L", "category": "Left To Right"},
-    {"abbreviation": "R", "category": "Right To Left"},
-    {"abbreviation": "AL", "category": "Arabic Letter"},
-    {"abbreviation": "EN", "category": "European Number"},
-    {"abbreviation": "ES", "category": "European Separator"},
-    {"abbreviation": "ET", "category": "European Terminator"},
-    {"abbreviation": "AN", "category": "Arabic Number"},
-    {"abbreviation": "CS", "category": "Common Separator"},
-    {"abbreviation": "NSM", "category": "Nonspacing Mark"},
-    {"abbreviation": "BN", "category": "Boundary Neutral"},
-    {"abbreviation": "B", "category": "Paragraph Separator"},
-    {"abbreviation": "S", "category": "Segment Separator"},
-    {"abbreviation": "WS", "category": "White Space"},
-    {"abbreviation": "ON", "category": "Other Neutral"},
-    {"abbreviation": "LRE", "category": "Left To Right Embedding"},
-    {"abbreviation": "LRO", "category": "Left To Right Override"},
-    {"abbreviation": "RLE", "category": "Right To Left Embedding"},
-    {"abbreviation": "RLO", "category": "Right To Left Override"},
-    {"abbreviation": "PDF", "category": "Pop Directional Format"},
-    {"abbreviation": "LRI", "category": "Left To Right Isolate"},
-    {"abbreviation": "RLI", "category": "Right To Left Isolate"},
-    {"abbreviation": "FSI", "category": "First Strong Isolate"},
-    {"abbreviation": "PDI", "category": "Pop Directional Isolate"},
+    {"value": "L", "category": "Left To Right"},
+    {"value": "R", "category": "Right To Left"},
+    {"value": "AL", "category": "Arabic Letter"},
+    {"value": "EN", "category": "European Number"},
+    {"value": "ES", "category": "European Separator"},
+    {"value": "ET", "category": "European Terminator"},
+    {"value": "AN", "category": "Arabic Number"},
+    {"value": "CS", "category": "Common Separator"},
+    {"value": "NSM", "category": "Nonspacing Mark"},
+    {"value": "BN", "category": "Boundary Neutral"},
+    {"value": "B", "category": "Paragraph Separator"},
+    {"value": "S", "category": "Segment Separator"},
+    {"value": "WS", "category": "White Space"},
+    {"value": "ON", "category": "Other Neutral"},
+    {"value": "LRE", "category": "Left To Right Embedding"},
+    {"value": "LRO", "category": "Left To Right Override"},
+    {"value": "RLE", "category": "Right To Left Embedding"},
+    {"value": "RLO", "category": "Right To Left Override"},
+    {"value": "PDF", "category": "Pop Directional Format"},
+    {"value": "LRI", "category": "Left To Right Isolate"},
+    {"value": "RLI", "category": "Right To Left Isolate"},
+    {"value": "FSI", "category": "First Strong Isolate"},
+    {"value": "PDI", "category": "Pop Directional Isolate"},
 ]
 
 COMBINING_CLASS_CATEGORIES = [
@@ -94,16 +94,22 @@ COMBINING_CLASS_CATEGORIES = [
 ]
 
 
-def get_character_general_category(abbrev: str) -> str:
-    found = [cat for cat in GENERAL_CATEGORIES if cat["abbreviation"] == abbrev]
-    return found[0]["category"] if found else ""
+def get_category(categories: list[dict[str, int | str]], value: str) -> str:
+    found = [cat for cat in categories if cat["value"] == value]
+    if not found:
+        return ""
+    category = found[0]["category"]
+    value = found[0]["value"]
+    return f"{category} ({value})"
 
 
-def get_character_bidirectional_category(abbrev: str) -> str:
-    found = [cat for cat in BIDIRECTIONAL_CATEGORIES if cat["abbreviation"] == abbrev]
-    return found[0]["category"] if found else ""
+def get_character_general_category(value: str) -> str:
+    return get_category(GENERAL_CATEGORIES, value)
+
+
+def get_character_bidirectional_category(value: str) -> str:
+    return get_category(BIDIRECTIONAL_CATEGORIES, value)
 
 
 def get_combining_class_category(value: int) -> str:
-    found = [cat for cat in COMBINING_CLASS_CATEGORIES if cat["value"] == value]
-    return found[0]["category"] if found else ""
+    return get_category(COMBINING_CLASS_CATEGORIES, value)

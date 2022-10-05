@@ -1,50 +1,34 @@
-from typing import List
-
 from app.schemas.camel_model import CamelModel
 
 
-class UnicodeCharacterInternal(CamelModel):
+class UnicodeCharacterBase(CamelModel):
     character: str
     name: str
-    codepoint_dec: int
-    codepoint: str
+    code_point: str
+
+
+class UnicodeCharacterMinimal(UnicodeCharacterBase):
+    pass
+
+
+class UnicodeCharacter(UnicodeCharacterMinimal):
     block: str
     plane: str
-    category_value: str
     category: str
-    bidirectional_class_value: str
     bidirectional_class: str
-    combining_class_value: int
     combining_class: str
     is_mirrored: bool
-    html_entities: List[str]
+    html_entities: list[str]
     encoded: str
     utf_8: str
     utf_16: str
     utf_32: str
+    hex_bytes: list[str]
+    dec_bytes: list[int]
 
 
-class UnicodeCharacter(CamelModel):
-    character: str
-    name: str
-    codepoint: str
-    block: str
-    plane: str
+class UnicodeCharacterInternal(UnicodeCharacter):
+    code_point_dec: int
     category_value: str
-    category: str
     bidirectional_class_value: str
-    bidirectional_class: str
     combining_class_value: int
-    combining_class: str
-    is_mirrored: bool
-    html_entities: List[str]
-    encoded: str
-    utf_8: str
-    utf_16: str
-    utf_32: str
-
-
-class UnicodeCharacterMinimal(CamelModel):
-    character: str
-    name: str
-    codepoint: str
