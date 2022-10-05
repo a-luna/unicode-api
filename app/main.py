@@ -52,7 +52,7 @@ def startup():
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False)
-async def custom_swagger_ui_html():
+async def swagger_ui_html():
     return get_swagger_ui_html(
         title=f"{settings.PROJECT_NAME} - Swagger UI",
         openapi_url=app.openapi_url,
