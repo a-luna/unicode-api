@@ -59,7 +59,7 @@ async def swagger_ui_html():
         swagger_ui_parameters={"docExpansion": "list", "syntaxHighlight.theme": "arta", "tryItOutEnabled": "true"},
         swagger_js_url="/static/swagger-ui-bundle.js",
         swagger_css_url="/static/swagger-ui.css",
-        swagger_favicon_url="/static/favicon.ico",
+        swagger_favicon_url="/static/favicon.png",
     )
 
 
