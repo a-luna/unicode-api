@@ -2,7 +2,7 @@ import re
 from pathlib import Path
 
 # REGEXES
-CODE_POINT_REGEX = re.compile(r"(0x|U\+)?(?P<code_point>[A-Fa-f0-9]{4,6})")
+CODE_POINT_REGEX = re.compile(r"(?:U\+(?P<code_point_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<code_point>[A-Fa-f0-9]{2,6}))")
 
 # STRINGS
 DEFAULT_REDIS_URL = "redis://127.0.0.1:6379"
