@@ -20,11 +20,11 @@ class UnicodeCharacter(UnicodeCharacterMinimal):
     is_mirrored: bool
     html_entities: list[str]
     encoded: str
-    utf_8: str
-    utf_16: str
-    utf_32: str
-    hex_bytes: list[str]
-    dec_bytes: list[int]
+    utf8_hex_bytes: list[str]
+    utf8_dec_bytes: list[int]
+    utf8: str
+    utf16: str
+    utf32: str
 
 
 class UnicodeCharacterInternal(UnicodeCharacter):

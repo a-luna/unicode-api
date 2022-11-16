@@ -19,7 +19,7 @@ def search_unicode_characters_by_name(
             "will return character names similar to the search term."
         )
     ),
-    minimum_score: int
+    min_score: int
     | None = Query(  # noqa: B008
         default=80,
         ge=0,
@@ -31,8 +31,8 @@ def search_unicode_characters_by_name(
         ),
     ),
 ):
-    results = fuzzy_character_search(name, minimum_score)
-    return SearchResults(query=name, total_results=len(results), results=results)
+    return fuzzy_character_search(name, min_score)
+    
 
 
 @router.get("/char/{char}", response_model=list[UnicodeCharacter])

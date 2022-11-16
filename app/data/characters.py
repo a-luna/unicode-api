@@ -1,5 +1,6 @@
 import json
 import unicodedata
+from collections import OrderedDict, defaultdict
 from html.entities import html5
 from http import HTTPStatus
 
@@ -7,7 +8,7 @@ from fastapi import HTTPException
 from rapidfuzz import process
 
 from app.core.constants import DATA_FOLDER
-from app.core.string_util import get_code_point_string
+from app.core.util import get_code_point_string, group_and_sort_list
 from app.data.blocks import (
     CJK_COMPATIBILITY_BLOCKS,
     CJK_UNIFIED_BLOCKS,
@@ -20,7 +21,13 @@ from app.data.categories import (
     get_combining_class_category,
 )
 from app.data.planes import get_unicode_plane_containing_code_point
-from app.schemas import FuzzySearchResult, UnicodeCharacterInternal
+from app.schemas import (
+    FuzzySearchResult,
+    ResultsForScore,
+    SearchResults,
+    UnicodeCharacterInternal,
+    UnicodeCharacterMinimal,
+)
 
 
 def build_unicode_char_map() -> dict[int, UnicodeCharacterInternal]:
@@ -38,21 +45,49 @@ unicode_char_map = build_unicode_char_map()
 html_entity_map = build_html_entity_map()
 
 
-def fuzzy_character_search(query: str, score_cutoff=80):
+def fuzzy_character_search(query: str, score_cutoff: int = 80) -> SearchResults:
     results = [
-        FuzzySearchResult(character=chr(result), score=score, details=get_character_details(chr(result)))
-        for (_, score, result) in process.extract(query, unicode_char_map)
+        FuzzySearchResult(
+            character=chr(result), score=score, details=get_character_details(chr(result), min_details=True)
+        )
+        for (_, score, result) in process.extract(query, unicode_char_map, limit=len(unicode_char_map))
+        if score >= score_cutoff
     ]
-    return [match for match in results if match.score >= score_cutoff] if results else []
+    if results:
+        return generate_search_results(query, results)
+    return SearchResults(query=query, total_results=0, results=[])
 
 
-def get_character_details(uni_char: str) -> UnicodeCharacterInternal:
+def generate_search_results(query: str, results: list[FuzzySearchResult]) -> SearchResults:
+    results_grouped = group_and_sort_list(results, "score", "character", sort_groups_desc=True)
+    search_results = [
+        ResultsForScore(
+            score=score,
+            total_results=len(results_with_score),
+            results=([result.details for result in results_with_score]),
+        )
+        for (score, results_with_score) in results_grouped.items()
+    ]
+    return SearchResults(
+        query=query,
+        total_results=len(results),
+        results_by_score=search_results,
+    )
+
+
+def get_character_details(uni_char: str, min_details: bool = False) -> UnicodeCharacterInternal:
     if len(uni_char) != 1:
         raise HTTPException(
             status_code=int(HTTPStatus.BAD_REQUEST),
             detail="This operation is only valid for strings containing a single character",
         )
     block_name = get_unicode_block_containing_character(uni_char).block
+    if min_details:
+        return UnicodeCharacterMinimal(
+            character=uni_char,
+            name=get_unicode_char_name(ord(uni_char), block_name),
+            code_point=get_code_point_string(ord(uni_char)),
+        )
     return UnicodeCharacterInternal(
         character=uni_char,
         name=get_unicode_char_name(ord(uni_char), block_name),
@@ -69,11 +104,11 @@ def get_character_details(uni_char: str) -> UnicodeCharacterInternal:
         is_mirrored=unicodedata.mirrored(uni_char),
         html_entities=get_html_entities(ord(uni_char)) if block_name != "Undefined Codepoint" else [],
         encoded=get_encoded_value(uni_char) if block_name != "Undefined Codepoint" else "",
-        utf_8=get_utf8_value(uni_char) if block_name != "Undefined Codepoint" else "",
-        utf_16=get_utf16_value(uni_char) if block_name != "Undefined Codepoint" else "",
-        utf_32=get_utf32_value(uni_char) if block_name != "Undefined Codepoint" else "",
-        dec_bytes=get_utf8_dec_bytes(uni_char) if block_name != "Undefined Codepoint" else "",
-        hex_bytes=get_utf8_hex_bytes(uni_char) if block_name != "Undefined Codepoint" else "",
+        utf8_dec_bytes=get_utf8_dec_bytes(uni_char) if block_name != "Undefined Codepoint" else "",
+        utf8_hex_bytes=get_utf8_hex_bytes(uni_char) if block_name != "Undefined Codepoint" else "",
+        utf8=get_utf8_value(uni_char) if block_name != "Undefined Codepoint" else "",
+        utf16=get_utf16_value(uni_char) if block_name != "Undefined Codepoint" else "",
+        utf32=get_utf32_value(uni_char) if block_name != "Undefined Codepoint" else "",
     )
 
 
