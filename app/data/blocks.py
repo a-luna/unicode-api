@@ -4,7 +4,7 @@ from http import HTTPStatus
 from fastapi import HTTPException
 
 from app.core.constants import DATA_FOLDER
-from app.core.string_util import get_code_point_string
+from app.core.util import get_code_point_string
 from app.schemas.block import UnicodeBlockInternal
 
 CJK_UNIFIED_BLOCKS = [
