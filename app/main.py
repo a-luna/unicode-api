@@ -11,8 +11,10 @@ from starlette.responses import RedirectResponse
 
 from app.api.api_v1.api import router
 from app.api.api_v1.dependencies import get_unicode
-from app.core.config import JSON_FOLDER, settings
-from app.data.scripts.update_all_data import update_all_data
+from app.core.config import settings
+
+from app.data.scripts.init_prod_data import init_prod_data
+
 
 APP_FOLDER = Path(__file__).parent
 STATIC_FOLDER = APP_FOLDER.joinpath("static")
@@ -116,12 +118,8 @@ def init_redis():
 
 @app.on_event("startup")
 def init_unicode_db():
-    if os.environ.get("ENV") != "PROD":
-        return
-    unicode_json_files = list(JSON_FOLDER.glob("*.json"))
-    if unicode_json_files:
-        [file.unlink() for file in unicode_json_files]
-    update_all_data("15.0.0")
+    if os.environ.get("ENV") == "PROD":
+        init_prod_data()
 
 
 @app.on_event("startup")

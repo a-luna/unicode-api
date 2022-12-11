@@ -3,8 +3,6 @@ from pathlib import Path
 
 from pydantic import AnyHttpUrl, BaseSettings, RedisDsn
 
-from app.data.scripts.init_prod_data import init_prod_data
-
 # URLS
 DEFAULT_REDIS_URL = "redis://127.0.0.1:6379"
 S3_BUCKET_URL = "s3://unicode-api"
@@ -25,8 +23,6 @@ DOTENV_FILE = ROOT_FOLDER.joinpath(".env")
 
 
 class Settings(BaseSettings):
-    if os.environ.get("ENV") == "PROD":
-        init_prod_data()
 
     ENV: str = os.environ.get("ENV")
     PROJECT_NAME: str | None = "Unicode API"
