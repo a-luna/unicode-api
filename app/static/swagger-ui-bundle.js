@@ -67748,7 +67748,7 @@
                   return D.a.createElement(
                     "section",
                     {
-                      className: d ? "models is-open" : "models",
+                      className: d ? "schemas models" : "schemas models",
                       ref: this.onLoadModels,
                     },
                     D.a.createElement(

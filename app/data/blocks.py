@@ -1,57 +1,63 @@
-import json
-from http import HTTPStatus
-
-from fastapi import HTTPException
-
-from app.core.constants import DATA_FOLDER
-from app.core.util import get_code_point_string
-from app.schemas.block import UnicodeBlockInternal
-
-CJK_UNIFIED_BLOCKS = [
-    "CJK Unified Ideographs",
-    "CJK Unified Ideographs Extension A",
-    "CJK Unified Ideographs Extension B",
-    "CJK Unified Ideographs Extension C",
-    "CJK Unified Ideographs Extension D",
-    "CJK Unified Ideographs Extension E",
-    "CJK Unified Ideographs Extension F",
-    "CJK Unified Ideographs Extension G",
-]
-CJK_COMPATIBILITY_BLOCKS = ["CJK Compatibility Ideographs", "CJK Compatibility Ideographs Supplement"]
-TANGUT_BLOCKS = ["Tangut", "Tangut Supplement"]
-NULL_BLOCK = UnicodeBlockInternal(
-    id=0, block="Undefined Codepoint", start_dec=0, start=0, finish_dec=0, finish=0, total_assigned=0
-)
+# unicode_chars = list(get_unicode_characters())
+# unicode_blocks = list(get_unicode_blocks())
+# block_name_map = {id: block.name for (id, block) in unicode_blocks.items()}
+# name_lookup_map = {block.name: id for (id, block) in unicode_blocks.items()}
 
 
-def get_unicode_blocks() -> list[UnicodeBlockInternal]:
-    blocks_json_file = DATA_FOLDER.joinpath("json/blocks.json")
-    blocks_json = json.loads(blocks_json_file.read_text())
-    return [update_block_values(block_dict, i) for (i, block_dict) in enumerate(blocks_json, start=1)]
+# def fuzzy_block_search(query: str, score_cutoff: int = 80) -> SearchResults[UnicodeBlockInternal]:
+#     results = [
+#         FuzzySearchResult[UnicodeBlockInternal](
+#             value=unicode_blocks.get(result).start_dec, score=score, result=unicode_blocks.get(result)
+#         )
+#         for (_, score, result) in process.extract(query, block_name_map, limit=len(block_name_map))
+#         if score >= score_cutoff
+#     ]
+#     print(f"query: {query}, score_cutoff: {score_cutoff}, results: {results}")
+#     if results:
+#         return generate_search_results(query, results)
+#     return SearchResults[UnicodeBlockInternal](query=query, total_results=0, results_by_score=[])
 
 
-def update_block_values(block_dict: dict[str, int | str], id: int) -> UnicodeBlockInternal:
-    block_dict = {
-        "id": id,
-        "block": block_dict["block"],
-        "start_dec": block_dict["start"],
-        "start": get_code_point_string(block_dict["start"]),
-        "finish_dec": block_dict["finish"],
-        "finish": get_code_point_string(block_dict["finish"]),
-        "total_assigned": block_dict["total_assigned"],
-    }
-    return UnicodeBlockInternal(**block_dict)
+# def generate_search_results(
+#     query: str, results: list[FuzzySearchResult[UnicodeBlockInternal]]
+# ) -> SearchResults[UnicodeBlockInternal]:
+#     results_grouped = group_and_sort_list(results, "score", "value", sort_groups_desc=True)
+#     results_by_score = [
+#         ResultsForScore[UnicodeBlockInternal](
+#             score=score,
+#             total_results=len(results_with_score),
+#             results=[res.result for res in results_with_score],
+#         )
+#         for (score, results_with_score) in results_grouped.items()
+#     ]
+#     return SearchResults[UnicodeBlockInternal](
+#         query=query,
+#         total_results=len(results),
+#         results_by_score=results_by_score,
+#     )
 
 
-unicode_blocks = get_unicode_blocks()
+# def get_unicode_block_containing_character(uni_char: str) -> UnicodeBlockInternal:
+#     if len(uni_char) != 1:
+#         raise HTTPException(
+#             status_code=int(HTTPStatus.BAD_REQUEST),
+#             detail="This operation is only valid for strings containing a single character",
+#         )
+#     codepoint = ord(uni_char)
+#     found = [
+#         block for block in unicode_blocks.values() if block.start_dec <= codepoint and codepoint <= block.finish_dec
+#     ]
+#     return found[0] if found else NULL_BLOCK
 
 
-def get_unicode_block_containing_character(uni_char: str) -> UnicodeBlockInternal:
-    if len(uni_char) != 1:
-        raise HTTPException(
-            status_code=int(HTTPStatus.BAD_REQUEST),
-            detail="This operation is only valid for strings containing a single character",
-        )
-    code_point = ord(uni_char)
-    found = [block for block in unicode_blocks if block.start_dec <= code_point and code_point <= block.finish_dec]
-    return found[0] if found else NULL_BLOCK
+# def find_all_characters_in_block(block: UnicodeBlockInternal) -> list[UnicodeCharacterInternal]:
+#     return [
+#         unicode_chars.get(codepoint)
+#         for codepoint in range(block.start_dec, block.finish_dec)
+#         if char_exists_in_database(codepoint)
+#     ]
+
+
+# def char_exists_in_database(codepoint: int) -> bool:
+#     block_name = get_unicode_block_containing_character(chr(codepoint)).name
+#     return True if block_name in VIRTUAL_CHAR_BLOCKS else codepoint in unicode_chars

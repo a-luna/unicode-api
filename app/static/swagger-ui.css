@@ -1,8 +1,394 @@
-.swagger-ui {
+/* BEGIN: MY CUSTOMIZATIONS */
+
+html {
+  background-color: var(--page-bg-color);
+}
+
+body {
+  display: flex;
+  margin: 0;
+  width: 100%;
+}
+
+#swagger-ui {
+  width: 100%;
+}
+
+:root {
+  --page-bg-color: hsl(0, 0%, 100%);
+  --header-bg-color: hsla(0, 0%, 0%, 0.07);
+  --header-hover-bg-color: hsla(0, 0%, 0%, 0.09);
+  --base-text-color: hsl(224, 16%, 27%);
+  --darker-text-color: hsl(224, 16%, 10%);
+  --link-color: hsl(212, 73%, 59%);
+  --link-hover-color: hsl(212, 72%, 44%);
+  --code-color: hsl(272, 99%, 53%);
+
+  --details-header-bg-color: var(--header-bg-color);
+  --details-header-hover-bg-color: var(--header-hover-bg-color);
+  --details-header-text-color: var(--base-text-color);
+
+  --params-details-header-bg-color: hsla(210, 99%, 20%, 0.7);
+  --params-details-header-hover-bg-color: hsla(210, 99%, 20%, 0.8);
+  --params-details-header-text-color: hsl(0, 0%, 100%);
+  --params-dl-border-color: hsla(210, 99%, 20%, 0.7);
+  --params-dl-bg-color: hsla(210, 99%, 20%, 0.2);
+  --params-details-footer-bg-color: hsla(210, 99%, 20%, 0.2);
+
+  --dl-bg-color: hsla(0, 0%, 0%, 0.03);
+  --dl-border-color: hsl(0, 0%, 85%);
+
+  --dt-text-color: var(--darker-text-color);
+  --dd-text-color: var(--base-text-color);
+
+  --schemas-bg-color: hsl(0, 0%, 100%);
+  --schemas-header-color: hsl(0, 0%, 38%);
+  --schemas-text-color: var(--base-text-color);
+  --model-bg-color: var(--header-bg-color);
+  --model-hover-bg-color: rgba(0, 0, 0, 0.07);
+  --model-name-color: hsl(0, 0%, 31%);
+
+  --get-color-dark: hsl(210, 99%, 69%);
+  --get-color-darker: hsl(210, 99%, 50%);
+  --get-color-light: hsla(210, 99%, 69%, 0.1);
+  --get-method-name-color: hsl(0, 0%, 100%);
+  --get-section-header-bg-color: hsla(0, 0%, 100%, 0.8);
+
+  --params-outer-border-color: var(--get-color-darker);
+  --params-inner-border-color: var(--get-color-darker);
+
+  --params-name-color: var(--darker-text-color);
+  --params-name-font-size: 14px;
+  --params-name-font-weight: 600;
+
+  --params-type-color: var(--code-color);
+
+  --params-loc-reqs-color: var(--get-color-darker);
+  --params-loc-reqs-font-weight: 500;
+
+  --input-text-bg-color: hsl(0, 0%, 100%);
+  --input-text-fg-color: hsl(0, 0%, 0%);
+  --input-text-border-color: hsl(226, 9%, 28%);
+  --input-text-padding: 4px 5px;
+  --input-box-margin: 0 0 5px 0;
+
+  --input-text-invalid-bg-color: hsl(0, 90%, 96%);
+  --input-text-invalid-fg-color: hsl(0, 0%, 0%);
+  --input-text-invalid-border-color: hsl(0, 94%, 61%);
+
+  --api-version-badge-bg-color: hsl(220, 9%, 53%);
+  --api-version-badge-text-color: hsl(0, 0%, 100%);
+
+  --oas-version-badge-bg-color: hsl(77, 96%, 38%);
+  --oas-version-badge-text-color: hsl(0, 0%, 100%);
+
+  --required-color: hsl(0, 100%, 69%);
+  --cancel-color: hsl(0, 100%, 69%);
+
+  --execute-button-bg-color: hsl(212, 73%, 59%);
+  --execute-button-text-color: hsl(0, 0%, 100%);
+
+  --clear-button-bg-color: transparent;
+  --clear-button-text-color: var(--base-text-color);
+  --clear-button-border-color: hsl(0, 0%, 50%);
+
+  --controls-media-type-color: hsl(120, 100%, 25%);
+
+  --super-script-table-color: var(--base-text-color);
+
+  --select-box-border-color: hsl(226, 9%, 28%);
+  --select-box-margin: 0 0 5px 0;
+
   /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
+  min-width: 685px;
+  max-width: 800px;
+  margin: 0 auto;
 }
+
+.swagger-ui .renderedMarkdown p > i > strong > span {
+  font-style: normal;
+  text-decoration: underline;;
+  font-weight: 500;
+}
+
+.swagger-ui .renderedMarkdown p {
+  margin: 0 0 15px 0 !important;
+}
+
+.swagger-ui details {
+  margin: 1rem 0;
+}
+
+.swagger-ui details,
+.swagger-ui menu {
+  display: block;
+}
+
+.swagger-ui summary {
+  cursor: pointer;
+  color: var(--details-header-text-color);
+  background-color: var(--details-header-bg-color);
+  border: 1px solid var(--dl-border-color);
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  padding: 0.5rem;
+  line-height: 1;
+  list-style: none;
+}
+
+.swagger-ui [open] summary {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top: 1px solid var(--dl-border-color);
+  border-left: 1px solid var(--dl-border-color);
+  border-right: 1px solid var(--dl-border-color);
+  border-bottom: none;
+}
+
+.description summary > div {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 0 0 0.25rem;
+  padding: 0.25rem 1rem 0.25rem 0;
+}
+
+.description summary > div > div {
+  height: 16px;
+  transition: transform 0.3s ease-in;
+}
+
+.description [open] summary > div > div {
+  transform: rotate(90deg);
+}
+
+.description details summary > div > div > svg {
+  height: 100%;
+}
+
+.swagger-ui summary:hover {
+  background-color: var(--details-header-hover-bg-color);
+}
+
+.parameters details summary {
+  color: var(--params-details-header-text-color);
+  background-color: var(--params-details-header-bg-color);
+  border-top: 1px solid var(--params-dl-border-color) !important;
+  border-bottom: 1px solid var(--params-dl-border-color) !important;
+  border-left: 1px solid var(--params-dl-border-color) !important;
+  border-right: 1px solid var(--params-dl-border-color) !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  gap: 0.15rem;
+  list-style: none;
+}
+
+.parameters [open] summary {
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top: 1px solid var(--params-dl-border-color) !important;
+  border-left: 1px solid var(--params-dl-border-color) !important;
+  border-right: 1px solid var(--params-dl-border-color) !important;
+  border-bottom: 0.5px solid var(--params-dl-border-color) !important;
+}
+
+.parameters details summary > div {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 0 0 0.25rem;
+  padding: 0.25rem 1rem 0.25rem 0;
+}
+
+.parameters details summary > div > div {
+  height: 14px;
+  transition: transform 0.3s ease-in;
+}
+
+.parameters [open] summary > div > div {
+  transform: rotate(90deg);
+}
+
+.parameters details summary > div > div > svg {
+  height: 100%;
+}
+
+.parameters details summary:hover {
+  background-color: var(--params-details-header-hover-bg-color);
+}
+
+.parameters dl  {
+  background-color: var(--params-dl-bg-color) !important;
+  border-radius: 0 !important;
+}
+
+.parameters dt {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  font-size: 1rem;
+  white-space: pre;
+  border-top: 0.5px solid var(--params-dl-border-color) !important;
+  border-bottom: 0.5px solid var(--params-dl-border-color) !important;
+  border-right: 1px solid var(--params-dl-border-color) !important;
+  border-left: 1px solid var(--params-dl-border-color) !important;
+}
+
+.parameters dd {
+  border-top: 0.5px solid var(--params-dl-border-color) !important;
+  border-bottom: 0.5px solid var(--params-dl-border-color) !important;
+  border-right: 1px solid var(--params-dl-border-color) !important;
+  padding: 0.5rem;
+}
+
+.parameters dt,
+.parameters dd {
+  height: 100%;
+}
+
+.swagger-ui .renderedMarkdown details > div:last-of-type {
+  font-size: 16px;
+  display: grid;
+  grid-template-columns: 15px 1fr;
+  grid-template-rows: auto auto auto;
+  row-gap: 0.5rem;;
+  background-color: var(--params-details-footer-bg-color);
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border-top: 0.5px solid var(--params-dl-border-color);
+  border-bottom: 1px solid var(--params-dl-border-color);
+  border-right: 1px solid var(--params-dl-border-color);
+  border-left: 1px solid var(--params-dl-border-color);
+  padding: 0.75rem 0.75rem 0.5rem 0.25rem;
+}
+
+.swagger-ui .renderedMarkdown details > div:last-of-type p {
+  font-size: 0.75rem;
+  font-style: italic;
+  line-height: 1.4;
+  padding: 0;
+  margin: 0 !important;
+}
+
+.parameters details sup {
+  color: var(--super-script-table-color);
+}
+
+.parameters details summary sup {
+  top: -0.5rem;
+  right: 0;
+  color: var(--params-details-header-text-color);
+  font-size: 0.65rem;
+}
+
+.parameters details dt span {
+margin: 0 auto;
+}
+
+.parameters details dt sup {
+  right: 0.1rem;
+  top: 0.1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.parameters details > div:last-of-type sup {
+  font-size: 0.675rem;
+  font-weight: 700;
+  font-style: normal;
+  right: -0.45rem;
+  top: 0.15rem;
+}
+
+.swagger-ui canvas {
+  display: inline-block;
+}
+
+.swagger-ui template {
+  display: none;
+}
+
+.swagger-ui [hidden] {
+  display: none;
+}
+
+.swagger-ui dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  font-size: 0.8rem;
+  background-color: var(--dl-bg-color);
+  border-radius: 4px;
+  margin: 0;
+}
+
+.swagger-ui dt {
+  place-self: stretch;
+  text-align: right;
+  color: var(--dt-text-color);
+  border-top: 0.5px solid var(--dl-border-color);
+  border-bottom: 0.5px solid var(--dl-border-color);
+  border-right: 1px solid var(--dl-border-color);;
+  border-left: 1px solid var(--dl-border-color);
+  padding: 0.5rem;
+}
+
+.swagger-ui dd {
+  place-self: center;
+  color: var(--dd-text-color);
+  border-top: 0.5px solid var(--dl-border-color);
+  border-bottom: 0.5px solid var(--dl-border-color);
+  border-right: 1px solid var(--dl-border-color);
+  padding: 0.5rem;
+  margin: 0;
+  width: 100%;;
+}
+
+.swagger-ui ol {
+  font-size: 0.85rem;
+  padding: 0 0 0 25px;
+  line-height: 1.4;
+}
+
+.swagger-ui ol li {
+  margin: 0 0 2px 0;
+}
+
+.swagger-ui ol li:last-of-type {
+  margin: 0;
+}
+
+.swagger-ui .parameters tr[data-param-name] {
+  border-bottom: 1px dotted var(--params-inner-border-color);
+}
+
+.swagger-ui .parameters tr[data-param-name]:last-of-type {
+  border-bottom: none;
+}
+
+.swagger-ui .description {
+  line-height: 1.6;
+}
+
+.swagger-ui .description code span {
+  font-variant: small-caps;;
+}
+
+/* END: MY CUSTOMIZATIONS */
+
 .swagger-ui html {
   line-height: 1.15;
   -ms-text-size-adjust: 100%;
@@ -121,6 +507,7 @@
 .swagger-ui button,
 .swagger-ui html [type="button"] {
   -webkit-appearance: button;
+  appearance: button;
 }
 .swagger-ui [type="button"]::-moz-focus-inner,
 .swagger-ui [type="reset"]::-moz-focus-inner,
@@ -164,32 +551,59 @@
 }
 .swagger-ui [type="search"] {
   -webkit-appearance: textfield;
+  appearance: textfield;
   outline-offset: -2px;
 }
 .swagger-ui [type="search"]::-webkit-search-cancel-button,
 .swagger-ui [type="search"]::-webkit-search-decoration {
   -webkit-appearance: none;
+  appearance: none;
 }
 .swagger-ui ::-webkit-file-upload-button {
   -webkit-appearance: button;
+  appearance: button;
   font: inherit;
 }
-.swagger-ui details,
-.swagger-ui menu {
-  display: block;
+
+::-webkit-input-placeholder {
+  /* WebKit browsers */
+   color: transparent;
 }
-.swagger-ui summary {
-  display: list-item;
+:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+   color: transparent;
 }
-.swagger-ui canvas {
-  display: inline-block;
+::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+   color: transparent;
 }
-.swagger-ui template {
-  display: none;
+:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+   color: transparent;
 }
-.swagger-ui [hidden] {
-  display: none;
+input::placeholder {
+   color: transparent;
 }
+textarea::-webkit-input-placeholder {
+  /* WebKit browsers */
+   color: transparent;
+}
+textarea:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+   color: transparent;
+}
+textarea::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+   color: transparent;
+}
+textarea:-ms-input-placeholder {
+  /* Internet Explorer 10+ */
+   color: transparent;
+}
+textarea::placeholder {
+   color: transparent;
+}
+
 .swagger-ui .debug * {
   outline: 1px solid gold;
 }
@@ -2428,7 +2842,7 @@
 }
 .swagger-ui .code,
 .swagger-ui code {
-  font-family: Consolas, monaco, monospace;
+  font-family: 'DroidSansMono Nerd Font Mono', 'Roboto Mono', menlo, monospace;
 }
 .swagger-ui .courier {
   font-family: Courier Next, courier, monospace;
@@ -2631,6 +3045,7 @@
 .swagger-ui .input-reset {
   -webkit-appearance: none;
   -moz-appearance: none;
+  appearance: none;
 }
 .swagger-ui .button-reset::-moz-focus-inner,
 .swagger-ui .input-reset::-moz-focus-inner {
@@ -7146,7 +7561,7 @@
   font-size: 24px;
   margin: 0 0 5px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .opblock-tag.no-desc span {
   flex: 1;
@@ -7160,14 +7575,14 @@
   flex: 1;
   padding: 0 10px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .parameter__type {
   font-size: 12px;
   padding: 5px 0;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--params-type-color);
 }
 .swagger-ui .parameter-controls {
   margin-top: 0.75em;
@@ -7252,7 +7667,7 @@
   align-items: center;
   padding: 8px 20px;
   min-height: 50px;
-  background: hsla(0, 0%, 100%, 0.8);
+  background: var(--get-section-header-bg-color);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 .swagger-ui .opblock .opblock-section-header > label {
@@ -7262,7 +7677,7 @@
   align-items: center;
   margin: 0 0 0 auto;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .opblock .opblock-section-header > label > span {
   padding: 0 10px 0 0;
@@ -7272,7 +7687,7 @@
   flex: 1;
   margin: 0;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .opblock .opblock-summary-method {
   font-size: 14px;
@@ -7296,7 +7711,7 @@
   padding: 0 10px;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 @media (max-width: 768px) {
   .swagger-ui .opblock .opblock-summary-operation-id,
@@ -7320,7 +7735,7 @@
   flex: 1 1 auto;
   word-break: break-word;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .opblock .opblock-summary {
   display: flex;
@@ -7380,17 +7795,18 @@
   background: #f93e3e;
 }
 .swagger-ui .opblock.opblock-get {
-  border-color: #61affe;
-  background: rgba(97, 175, 254, 0.1);
+  border-color: var(--get-color-dark);
+  background: var(--get-color-light);
 }
 .swagger-ui .opblock.opblock-get .opblock-summary-method {
-  background: #61affe;
+  color: var(--get-method-name-color);
+  background: var(--get-color-dark);
 }
 .swagger-ui .opblock.opblock-get .opblock-summary {
-  border-color: #61affe;
+  border-color: var(--get-color-dark);
 }
 .swagger-ui .opblock.opblock-get .tab-header .tab-item.active h4 span:after {
-  background: #61affe;
+  background: var(--get-color-dark);
 }
 .swagger-ui .opblock.opblock-patch {
   border-color: #50e3c2;
@@ -7489,7 +7905,7 @@
   padding: 0;
   cursor: pointer;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .tab li:first-of-type {
   position: relative;
@@ -7515,7 +7931,7 @@
   margin: 0 0 5px;
   padding: 15px 20px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .opblock-description-wrapper h4,
 .swagger-ui .opblock-external-docs-wrapper h4,
@@ -7523,7 +7939,7 @@
   font-size: 12px;
   margin: 0 0 5px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .opblock-description-wrapper p,
 .swagger-ui .opblock-external-docs-wrapper p,
@@ -7531,7 +7947,7 @@
   font-size: 14px;
   margin: 0;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .opblock-external-docs-wrapper h4 {
   padding-left: 0;
@@ -7565,7 +7981,7 @@
   font-size: 12px;
   margin: 10px 0 5px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .responses-inner .curl {
   white-space: normal;
@@ -7573,7 +7989,7 @@
 .swagger-ui .response-col_status {
   font-size: 14px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .response-col_status .response-undocumented {
   font-size: 11px;
@@ -7586,7 +8002,7 @@
   max-width: 40em;
   font-size: 14px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .response-col_links .response-undocumented {
   font-size: 11px;
@@ -7636,6 +8052,7 @@
 .swagger-ui .highlight-code > .microlight code {
   white-space: pre-wrap !important;
   word-break: break-all;
+  line-height: 1.5;;
 }
 .swagger-ui .curl-command {
   position: relative;
@@ -7673,7 +8090,7 @@
   flex-direction: column;
   margin: -20px 15px 0 0;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .scheme-container .schemes > label select {
   min-width: 130px;
@@ -7701,7 +8118,7 @@
   transform: translate(-50%, -50%);
   text-transform: uppercase;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .loading-container .loading:before {
   position: absolute;
@@ -7739,10 +8156,10 @@
   margin-right: 1em;
 }
 .swagger-ui .response-control-media-type--accept-controller select {
-  border-color: green;
+  border-color: var(--controls-media-type-color);
 }
 .swagger-ui .response-control-media-type__accept-message {
-  color: green;
+  color: var(--controls-media-type-color);
   font-size: 0.7em;
 }
 .swagger-ui .response-control-examples__title,
@@ -7783,7 +8200,7 @@
 }
 .swagger-ui section h3 {
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui a.nostyle {
   display: inline;
@@ -7843,7 +8260,7 @@
   background: transparent;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .btn.btn-sm {
   font-size: 12px;
@@ -7857,10 +8274,10 @@
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 .swagger-ui .btn.cancel {
-  border-color: #ff6060;
+  border-color: var(--cancel-color);
   background-color: transparent;
   font-family: sans-serif;
-  color: #ff6060;
+  color: var(--cancel-color);
 }
 .swagger-ui .btn.authorize {
   line-height: 1;
@@ -7877,9 +8294,14 @@
   fill: #49cc90;
 }
 .swagger-ui .btn.execute {
-  background-color: #4990e2;
-  color: #fff;
-  border-color: #4990e2;
+  background: var(--execute-button-bg-color);
+  color: var(--execute-button-text-color);
+  border-color: var(--execute-button-bg-color);
+}
+.swagger-ui .btn-clear {
+  background: var(--clear-button-bg-color);
+  color: var(--clear-button-text-color);
+  border: 2px solid var(--clear-button-border-color);
 }
 .swagger-ui .btn-group {
   display: flex;
@@ -7966,7 +8388,7 @@
   font-size: 14px;
   font-weight: 700;
   padding: 5px 40px 5px 10px;
-  border: 2px solid #41444e;
+  border: 2px solid var(--select-box-border-color);
   border-radius: 4px;
   background: #f7f7f7
     url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13.418 7.859a.695.695 0 01.978 0 .68.68 0 010 .969l-3.908 3.83a.697.697 0 01-.979 0l-3.908-3.83a.68.68 0 010-.969.695.695 0 01.978 0L10 11l3.418-3.141z"/></svg>')
@@ -7974,7 +8396,7 @@
   background-size: 20px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -7992,6 +8414,7 @@
 }
 .swagger-ui .opblock-body select {
   min-width: 230px;
+  margin: var(--select-box-margin);
 }
 @media (max-width: 768px) {
   .swagger-ui .opblock-body select {
@@ -8003,7 +8426,7 @@
   font-weight: 700;
   margin: 0 0 5px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 @media (max-width: 768px) {
   .swagger-ui input[type="email"],
@@ -8021,11 +8444,12 @@
 .swagger-ui input[type="text"],
 .swagger-ui textarea {
   min-width: 100px;
-  margin: 5px 0;
-  padding: 8px 10px;
-  border: 1px solid #d9d9d9;
+  margin: var(--input-box-margin);
+  padding: var(--input-text-padding);
+  border: 1px solid var(--input-text-border-color);
   border-radius: 4px;
-  background: #fff;
+  color: var(--input-text-fg-color);
+  background: var(--input-text-bg-color);
 }
 .swagger-ui input[type="email"].invalid,
 .swagger-ui input[type="file"].invalid,
@@ -8035,8 +8459,9 @@
 .swagger-ui textarea.invalid {
   -webkit-animation: shake 0.4s 1;
   animation: shake 0.4s 1;
-  border-color: #f93e3e;
-  background: #feebeb;
+  border-color: var(--input-text-invalid-border-color);
+  color: var(--input-text-invalid-fg-color);
+  background: var(--input-text-invalid-bg-color);
 }
 .swagger-ui input[disabled],
 .swagger-ui select[disabled],
@@ -8101,10 +8526,10 @@
   background: hsla(0, 0%, 100%, 0.8);
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui textarea:focus {
-  border: 2px solid #61affe;
+  border: 2px solid var(--get-color-dark);
 }
 .swagger-ui textarea.curl {
   font-size: 12px;
@@ -8132,7 +8557,7 @@
   margin: 0 !important;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .checkbox input[type="checkbox"] {
   display: none;
@@ -8199,14 +8624,14 @@
   margin: 0 0 5px;
   color: #41444e;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .dialog-ux .modal-ux-content h4 {
   font-size: 18px;
   font-weight: 600;
   margin: 15px 0 0;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .dialog-ux .modal-ux-header {
   display: flex;
@@ -8229,14 +8654,14 @@
   padding: 0 20px;
   flex: 1;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .model {
   font-size: 12px;
   font-weight: 300;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .model .deprecated span,
 .swagger-ui .model .deprecated td {
@@ -8329,6 +8754,8 @@
   vertical-align: top;
 }
 .swagger-ui section.models {
+  color: var(--schemas-header-color);
+  background-color: var(--schemas-bg-color);
   margin: 30px 0;
   border: 1px solid rgba(59, 65, 81, 0.3);
   border-radius: 4px;
@@ -8352,7 +8779,7 @@
   cursor: pointer;
   transition: all 0.2s;
   font-family: sans-serif;
-  color: #606060;
+  color: var(--model-name-color);;
 }
 .swagger-ui section.models h4 svg {
   transition: all 0.4s;
@@ -8378,10 +8805,7 @@
   position: relative;
   transition: all 0.5s;
   border-radius: 4px;
-  background: rgba(0, 0, 0, 0.05);
-}
-.swagger-ui section.models .model-container:hover {
-  background: rgba(0, 0, 0, 0.07);
+  background: var(--model-bg-color);
 }
 .swagger-ui section.models .model-container:first-of-type {
   margin: 20px;
@@ -8414,7 +8838,7 @@
 .swagger-ui .model-title {
   font-size: 16px;
   font-family: sans-serif;
-  color: #505050;
+  color: var(--schemas-text-color);
 }
 .swagger-ui .model-title img {
   margin-left: 1em;
@@ -8448,7 +8872,7 @@
   font-size: 12px;
   margin: -20px 15px 0 0;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .servers > label select {
   min-width: 130px;
@@ -8509,19 +8933,27 @@
   vertical-align: middle;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui table.headers .header-example {
   color: #999;
   font-style: italic;
 }
 .swagger-ui table tbody tr td {
-  padding: 10px 0 0;
+  padding: 15px 0;
+  vertical-align: top;
+}
+.swagger-ui table tbody tr:last-of-type td {
+  padding: 15px 0 0 0;
   vertical-align: top;
 }
 .swagger-ui table tbody tr td:first-of-type {
   min-width: 6em;
-  padding: 10px 0;
+  padding: 15px 15px 15px 0;;
+}
+.swagger-ui table tbody tr:last-of-type td:first-of-type {
+  min-width: 6em;
+  padding: 15px 15px 0 0;;
 }
 .swagger-ui table thead tr td,
 .swagger-ui table thead tr th {
@@ -8529,9 +8961,9 @@
   font-weight: 700;
   padding: 12px 0;
   text-align: left;
-  border-bottom: 1px solid rgba(59, 65, 81, 0.2);
+  border-bottom: 1px solid var(--params-outer-border-color);
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .parameters-col_description {
   width: 99%;
@@ -8545,17 +8977,17 @@
   border-width: 1px;
 }
 .swagger-ui .parameter__name {
-  font-size: 16px;
-  font-weight: 400;
+  font-size: var(--params-name-font-size);
+  font-weight: var(--params-name-font-weight);
   margin-right: 0.75em;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--params-name-color);
 }
 .swagger-ui .parameter__name.required {
-  font-weight: 700;
+  font-weight: var(--params-name-font-weight);
 }
 .swagger-ui .parameter__name.required span {
-  color: red;
+  color: var(--required-color);
 }
 .swagger-ui .parameter__name.required:after {
   font-size: 10px;
@@ -8563,15 +8995,15 @@
   top: -6px;
   padding: 5px;
   content: "required";
-  color: rgba(255, 0, 0, 0.6);
+  color: var(--required-color);
 }
 .swagger-ui .parameter__extension,
 .swagger-ui .parameter__in {
   font-size: 12px;
   font-style: italic;
   font-family: monospace;
-  font-weight: 600;
-  color: grey;
+  font-weight: var(--params-loc-reqs-font-weight);
+  color: var(--params-loc-reqs-color);
 }
 .swagger-ui .parameter__deprecated {
   font-size: 12px;
@@ -8593,7 +9025,7 @@
   opacity: 0.7;
 }
 .swagger-ui .table-container {
-  padding: 20px;
+  padding: 10px 20px;
 }
 .swagger-ui .response-col_description {
   width: 99%;
@@ -8674,7 +9106,7 @@
   color: #fff;
 }
 .swagger-ui .info {
-  margin: 50px 0;
+  margin: 2rem 0;
 }
 .swagger-ui .info.failed-config {
   max-width: 880px;
@@ -8695,8 +9127,8 @@
 .swagger-ui .info p,
 .swagger-ui .info table {
   font-size: 14px;
-  font-family: sans-serif;
-  color: #3b4151;
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+  color: var(--base-text-color);
 }
 .swagger-ui .info h1,
 .swagger-ui .info h2,
@@ -8704,16 +9136,16 @@
 .swagger-ui .info h4,
 .swagger-ui .info h5 {
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .info a {
-  font-size: 14px;
+  font-size: inherit;
   transition: all 0.4s;
   font-family: sans-serif;
-  color: #4990e2;
+  color: var(--link-color);
 }
 .swagger-ui .info a:hover {
-  color: #1f69c0;
+  color: var(--link-hover-color);
 }
 .swagger-ui .info > div {
   margin: 0 0 5px;
@@ -8724,13 +9156,13 @@
   margin: 0;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .info .title {
   font-size: 36px;
   margin: 0;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .info .title small {
   font-size: 10px;
@@ -8741,16 +9173,22 @@
   padding: 2px 4px;
   vertical-align: super;
   border-radius: 57px;
-  background: #7d8492;
+  background: var(--api-version-badge-bg-color);
 }
 .swagger-ui .info .title small.version-stamp {
-  background-color: #89bf04;
+  background-color: var(--oas-version-badge-bg-color);
+}
+.swagger-ui .info .title small.version-stamp pre {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  color: var(--oas-version-badge-text-color);
 }
 .swagger-ui .info .title small pre {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  color: #fff;
+  color: var(--api-version-badge-text-color);
 }
 .swagger-ui .auth-btn-wrapper {
   display: flex;
@@ -8799,7 +9237,7 @@
   margin: 1em;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .auth-container .errors b {
   text-transform: capitalize;
@@ -8808,7 +9246,7 @@
 .swagger-ui .scopes h2 {
   font-size: 14px;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .scopes h2 a {
   font-size: 12px;
@@ -8837,7 +9275,7 @@
   margin: 0;
   font-family: monospace;
   font-weight: 600;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 .swagger-ui .errors-wrapper .errors small {
   color: #606060;
@@ -8861,7 +9299,7 @@
   margin: 0;
   flex: 1;
   font-family: sans-serif;
-  color: #3b4151;
+  color: var(--base-text-color);
 }
 @-webkit-keyframes scaleUp {
   0% {
@@ -8890,9 +9328,12 @@
 .swagger-ui .markdown pre,
 .swagger-ui .renderedMarkdown p,
 .swagger-ui .renderedMarkdown pre {
+  font-size: 0.9rem;
+  line-height: 1.5;
   margin: 1em auto;
   word-break: break-all;
   word-break: break-word;
+  margin: 0;
 }
 .swagger-ui .markdown pre,
 .swagger-ui .renderedMarkdown pre {
@@ -8904,13 +9345,8 @@
 }
 .swagger-ui .markdown code,
 .swagger-ui .renderedMarkdown code {
-  font-size: 14px;
-  padding: 5px 7px;
-  border-radius: 4px;
-  background: rgba(0, 0, 0, 0.05);
   font-family: monospace;
-  font-weight: 600;
-  color: #9012fe;
+  color: var(--code-color);
 }
 .swagger-ui .markdown pre > code,
 .swagger-ui .renderedMarkdown pre > code {

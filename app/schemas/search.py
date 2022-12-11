@@ -1,20 +1,11 @@
-from app.schemas.camel_model import CamelModel
-from app.schemas.character import UnicodeCharacterMinimal
+from typing import Generic, TypeVar
+
+from app.schemas.camel_model import GenericCamelModel
+
+T = TypeVar("T")
 
 
-class FuzzySearchResult(CamelModel):
-    character: str
-    score: int
-    details: UnicodeCharacterMinimal
-
-
-class ResultsForScore(CamelModel):
-    score: int
-    total_results: int
-    results: list[UnicodeCharacterMinimal]
-
-
-class SearchResults(CamelModel):
+class SearchResults(GenericCamelModel, Generic[T]):
     query: str
     total_results: int
-    results_by_score: list[ResultsForScore]
+    results: list[T]

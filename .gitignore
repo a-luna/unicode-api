@@ -6,7 +6,6 @@
 tmp
 venv
 pfx
-app/data/**/*.zip
 *.rdb
 *.db
 *.DS_Store
@@ -15,12 +14,7 @@ app/data/**/*.zip
 node_modules
 .mypy_cache
 backup
-json_storage
-html_storage
 coverage_html
-custom_scripts
-release2pypi.sh
-vig.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -78,3 +72,6 @@ coverage.xml
 
 # Sphinx documentation
 docs/_build/
+
+# Unicode data files
+*.json
