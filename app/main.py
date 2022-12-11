@@ -13,8 +13,6 @@ from app.api.api_v1.api import router
 from app.api.api_v1.dependencies import get_unicode
 from app.core.config import settings
 
-from app.data.scripts.init_prod_data import init_prod_data
-
 
 APP_FOLDER = Path(__file__).parent
 STATIC_FOLDER = APP_FOLDER.joinpath("static")
@@ -117,19 +115,13 @@ def init_redis():
 
 
 @app.on_event("startup")
-def init_unicode_db():
-    if os.environ.get("ENV") == "PROD":
-        init_prod_data()
-
-
-@app.on_event("startup")
 def init_unicode_obj():
     if os.environ.get("ENV") != "PROD":
         return
-    _ = get_unicode()
-    _.characters
-    _.blocks
-    _.planes
+    unicode = get_unicode()
+    unicode.characters
+    unicode.blocks
+    unicode.planes
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False)

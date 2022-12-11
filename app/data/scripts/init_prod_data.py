@@ -40,3 +40,7 @@ def extract_unicode_json_files(unicode_json_zip: Path) -> Result[list[Path]]:
                 error += f"\tFile #{i}: {file.name}"
             return Result.Fail(error)
         return Result.Ok(extracted_json_files)
+
+
+if __name__ == "__main__":
+    init_prod_data()
