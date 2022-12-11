@@ -114,14 +114,14 @@ def init_redis():
     )
 
 
-@app.on_event("startup")
-def init_unicode_obj():
-    if os.environ.get("ENV") != "PROD":
-        return
-    unicode = get_unicode()
-    unicode.characters
-    unicode.blocks
-    unicode.planes
+# @app.on_event("startup")
+# def init_unicode_obj():
+#     if os.environ.get("ENV") != "PROD":
+#         return
+#     unicode = get_unicode()
+#     unicode.characters
+#     unicode.blocks
+#     unicode.planes
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False)
