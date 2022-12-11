@@ -2,13 +2,7 @@ import json
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from app.core.config import (
-    BLOCKS_JSON,
-    CHARACTERS_JSON,
-    JSON_FOLDER,
-    PLANES_JSON,
-    S3_BUCKET_URL,
-)
+from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, JSON_FOLDER, PLANES_JSON, S3_BUCKET_URL
 from app.core.result import Result
 from app.core.util import run_command
 from app.data.scripts.get_unicode_db import get_xml_unicode_database

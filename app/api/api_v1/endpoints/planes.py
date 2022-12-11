@@ -18,6 +18,10 @@ def list_all_unicode_planes(unicode: Unicode = Depends(get_unicode)):
     }
 
 
-@router.get("/{number}", response_model=UnicodePlane, response_model_exclude_unset=True,)
+@router.get(
+    "/{number}",
+    response_model=UnicodePlane,
+    response_model_exclude_unset=True,
+)
 def get_unicode_plane_details(number: int = Path(ge=0, le=16), unicode: Unicode = Depends(get_unicode)):
     return unicode.get_plane_details(number)

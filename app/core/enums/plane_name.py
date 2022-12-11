@@ -6,9 +6,7 @@ from fastapi_utils.enums import StrEnum
 from app.core.config import PLANES_JSON
 from app.schemas import UnicodePlaneInternal
 
-unicode_planes = [
-    UnicodePlaneInternal(**plane) for plane in json.loads(PLANES_JSON.read_text())
-]
+unicode_planes = [UnicodePlaneInternal(**plane) for plane in json.loads(PLANES_JSON.read_text())]
 plane_name_map = {plane.name: plane for plane in unicode_planes}
 
 

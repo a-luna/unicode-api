@@ -32,9 +32,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str | None = "Unicode API"
     API_VERSION: str = "/v1"
     REDIS_URL: RedisDsn = (
-        DEFAULT_REDIS_URL
-        if os.environ.get("ENV") == "DEV"
-        else os.environ.get("REDIS_URL", DEFAULT_REDIS_URL)
+        DEFAULT_REDIS_URL if os.environ.get("ENV") == "DEV" else os.environ.get("REDIS_URL", DEFAULT_REDIS_URL)
     )
     SERVER_NAME: str | None = "unicode-api.aaronluna.dev"
     SERVER_HOST: AnyHttpUrl | None = "https://unicode-api.aaronluna.dev"

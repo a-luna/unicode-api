@@ -1,17 +1,10 @@
 import re
 from html.entities import html5
 
-from app.schemas import (
-    UnicodeBlockInternal,
-    UnicodeCharacter,
-    UnicodeCharacterResult,
-    UnicodePlaneInternal,
-)
+from app.schemas import UnicodeBlockInternal, UnicodeCharacter, UnicodeCharacterResult, UnicodePlaneInternal
 
 # REGEX
-CODEPOINT_REGEX = re.compile(
-    r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))"
-)
+CODEPOINT_REGEX = re.compile(r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))")
 
 # MAGIC NUMBERS
 MAX_CODEPOINT = 1114111
@@ -43,9 +36,7 @@ NULL_BLOCK = UnicodeBlockInternal(
     total_defined=0,
 )
 
-NULL_CHARACTER_RESULT = UnicodeCharacterResult(
-    character="", name="", codepoint="", link=""
-)
+NULL_CHARACTER_RESULT = UnicodeCharacterResult(character="", name="", codepoint="", link="")
 NULL_CHARACTER = UnicodeCharacter(
     name="",
     character="",
@@ -132,11 +123,7 @@ NULL_CHARACTER = UnicodeCharacter(
 HTML_ENTITY_MAP = {
     cp: entity
     for (cp, entity) in sorted(
-        [
-            (ord(uni_char), entity)
-            for (entity, uni_char) in html5.items()
-            if len(uni_char) == 1
-        ],
+        [(ord(uni_char), entity) for (entity, uni_char) in html5.items() if len(uni_char) == 1],
         key=lambda x: x[0],
     )
 }
@@ -162,9 +149,7 @@ CJK_UNIFIED_BLOCKS = [
     "CJK Unified Ideographs Extension H",
 ]
 
-VIRTUAL_CHAR_BLOCKS = (
-    CJK_COMPATIBILITY_BLOCKS + TANGUT_BLOCKS + VAR_SELECTOR_BLOCKS + CJK_UNIFIED_BLOCKS
-)
+VIRTUAL_CHAR_BLOCKS = CJK_COMPATIBILITY_BLOCKS + TANGUT_BLOCKS + VAR_SELECTOR_BLOCKS + CJK_UNIFIED_BLOCKS
 
 # CHARACTER PROPERTY GROUPS
 BASIC_PROPERTIES = [

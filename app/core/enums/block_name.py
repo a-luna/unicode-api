@@ -219,7 +219,7 @@ class UnicodeBlockName(StrEnum):
     HANIFI_ROHINGYA = auto()
     RUMI_NUMERAL_SYMBOLS = auto()
     YEZIDI = auto()
-    ARABIC_EXTENDED_C = auto()    
+    ARABIC_EXTENDED_C = auto()
     OLD_SOGDIAN = auto()
     SOGDIAN = auto()
     OLD_UYGHUR = auto()
@@ -393,10 +393,7 @@ class UnicodeBlockName(StrEnum):
 
     @property
     def block_id(self) -> int:
-        unicode_blocks = [
-            UnicodeBlockInternal(**block)
-            for block in json.loads(BLOCKS_JSON.read_text())
-        ]
+        unicode_blocks = [UnicodeBlockInternal(**block) for block in json.loads(BLOCKS_JSON.read_text())]
         name_lookup_map = {block.name: block.id for block in unicode_blocks}
         return name_lookup_map.get(str(self), 0)
 

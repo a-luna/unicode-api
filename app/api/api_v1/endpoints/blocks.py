@@ -3,11 +3,11 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.api_v1.dependencies import (
-    ListParametersDecimal,
     BlockSearchParameters,
+    get_unicode,
+    ListParametersDecimal,
     UnicodeBlockPathParamResolver,
     UnicodePlaneResolver,
-    get_unicode,
 )
 from app.core.config import settings
 from app.core.util import paginate_search_results
@@ -74,6 +74,10 @@ def search_unicode_blocks_by_name(
     return params | paginated
 
 
-@router.get("/{block}", response_model=UnicodeBlock, response_model_exclude_unset=True,)
+@router.get(
+    "/{block}",
+    response_model=UnicodeBlock,
+    response_model_exclude_unset=True,
+)
 def get_unicode_block_details(block: UnicodeBlockPathParamResolver = Depends()):
     return block.block

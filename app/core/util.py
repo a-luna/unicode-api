@@ -21,9 +21,7 @@ def download_file(url: str, local_folder: Path):
     r = requests.head(url)
     remote_file_size = int(r.headers.get("content-length", 0))
     if not remote_file_size:
-        return Result.Fail(
-            f'Request for "{file_name}" did not return a response containing the file size.'
-        )
+        return Result.Fail(f'Request for "{file_name}" did not return a response containing the file size.')
     local_file_size = 0
     resume_header = None
     fopen_mode = "wb"

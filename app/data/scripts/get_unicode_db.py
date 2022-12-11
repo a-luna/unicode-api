@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from zipfile import ZipFile, is_zipfile
+from zipfile import is_zipfile, ZipFile
 
 from app.core.result import Result
 from app.core.util import download_file

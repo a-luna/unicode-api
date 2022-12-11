@@ -3,22 +3,17 @@ from http import HTTPStatus
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.api.api_v1.dependencies import (
-    ListParameters,
     CharacterSearchParameters,
-    UnicodeBlockQueryParamResolver,
     get_min_details_query_param,
     get_string_path_param,
     get_unicode,
+    ListParameters,
+    UnicodeBlockQueryParamResolver,
 )
 from app.core.config import settings
 from app.core.util import get_codepoint_string, paginate_search_results
 from app.data.unicode import Unicode
-from app.schemas import (
-    PaginatedList,
-    PaginatedSearchResults,
-    UnicodeCharacter,
-    UnicodeCharacterResult,
-)
+from app.schemas import PaginatedList, PaginatedSearchResults, UnicodeCharacter, UnicodeCharacterResult
 
 router = APIRouter()
 
@@ -89,7 +84,11 @@ def search_unicode_characters_by_name(
     return params | paginated
 
 
-@router.get("/{string}", response_model=list[UnicodeCharacter], response_model_exclude_unset=True,)
+@router.get(
+    "/{string}",
+    response_model=list[UnicodeCharacter],
+    response_model_exclude_unset=True,
+)
 def get_unicode_character_details(
     string: str = Depends(get_string_path_param),
     unicode: Unicode = Depends(get_unicode),

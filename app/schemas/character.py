@@ -100,13 +100,7 @@ class UnicodeCharacter(UnicodeCharacterBase):
     extended_pictographic: bool | None
 
     def __str__(self):
-        return (
-            "UnicodeCharacter<"
-            f"character={self.character}, "
-            f"name={self.name}, "
-            f"codepoint={self.codepoint}"
-            ">"
-        )
+        return f"UnicodeCharacter<character={self.character}, name={self.name}, codepoint={self.codepoint}>"
 
 
 class UnicodeCharacterInternal(UnicodeCharacter):
