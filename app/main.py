@@ -10,7 +10,6 @@ from fastapi_redis_cache import FastApiRedisCache
 from starlette.responses import RedirectResponse
 
 from app.api.api_v1.api import router
-from app.api.api_v1.dependencies import get_unicode
 from app.core.config import settings
 
 
@@ -114,27 +113,25 @@ def init_redis():
     )
 
 
-# @app.on_event("startup")
-# def init_unicode_obj():
-#     if os.environ.get("ENV") != "PROD":
-#         return
-#     unicode = get_unicode()
-#     unicode.characters
-#     unicode.blocks
-#     unicode.planes
+@app.on_event("startup")
+def init_unicode_obj():
+    if os.environ.get("ENV") != "PROD":
+        return
+    # setup sqlmodel engine here and create tables
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False)
 async def swagger_ui_html():
     return get_swagger_ui_html(
         title=f"{settings.PROJECT_NAME} - Swagger UI",
-        openapi_url=app.openapi_url,
+        openapi_url=app.openapi_url or "/openapi.json",
         swagger_ui_parameters={
             "docExpansion": "list",
-            "defaultModelsExpandDepth": 0,
+            "defaultModelsExpandDepth": -1,
             "syntaxHighlight.theme": "arta",
             "tryItOutEnabled": "true",
             "displayRequestDuration": "true",
+            "requestSnippetsEnabled": "true",
         },
         swagger_js_url="/static/swagger-ui-bundle.js",
         swagger_css_url="/static/swagger-ui.css",

@@ -4,9 +4,10 @@ from enum import auto
 from fastapi_utils.enums import StrEnum
 
 from app.core.config import PLANES_JSON
-from app.schemas import UnicodePlaneInternal
+from app.data.constants import NULL_PLANE
+import app.core.db as db
 
-unicode_planes = [UnicodePlaneInternal(**plane) for plane in json.loads(PLANES_JSON.read_text())]
+unicode_planes = [db.UnicodePlane(**plane) for plane in json.loads(PLANES_JSON.read_text())]
 plane_name_map = {plane.name: plane for plane in unicode_planes}
 
 
@@ -21,7 +22,7 @@ class UnicodePlaneName(StrEnum):
     SUPPLEMENTARY_PRIVATE_USE_AREA_B = auto()
 
     def __str__(self) -> str:
-        plane = plane_name_map.get(self.print_name)
+        plane = plane_name_map.get(self.print_name, NULL_PLANE)
         return plane.abbreviation
 
     def __repr__(self):
@@ -42,11 +43,11 @@ class UnicodePlaneName(StrEnum):
             "SUPPLEMENTARY_PRIVATE_USE_AREA_A": "Supplementary Private Use Area-A",
             "SUPPLEMENTARY_PRIVATE_USE_AREA_B": "Supplementary Private Use Area-B",
         }
-        return print_names.get(self.name)
+        return print_names.get(self.name, "")
 
     @property
     def number(self) -> int:
-        plane = plane_name_map.get(self.print_name)
+        plane = plane_name_map.get(self.print_name, NULL_PLANE)
         return plane.number
 
     @classmethod

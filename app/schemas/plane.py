@@ -1,7 +1,8 @@
+from sqlmodel import Field, Relationship
 from app.schemas.camel_model import CamelModel
 
 
-class UnicodePlane(CamelModel):
+class UnicodePlaneResponse(CamelModel):
     number: int
     name: str
     abbreviation: str
@@ -10,25 +11,22 @@ class UnicodePlane(CamelModel):
     total_allocated: int
     total_defined: int
 
-    def __str__(self):
-        return self.name
 
-    def __repr__(self):
-        return (
-            "UnicodePlane<"
-            f"number={self.number}, "
-            f'name="{self.name}", '
-            f'abbreviation="{self.abbreviation}", '
-            f'start="{self.start}", '
-            f'finish="{self.finish}", '
-            f"total_allocated={self.total_allocated}, "
-            f"total_defined={self.total_defined}"
-            ">"
-        )
+class UnicodePlane(UnicodePlaneResponse, table=True):
 
+    __tablename__ = "plane"  # type: ignore
 
-class UnicodePlaneInternal(UnicodePlane):
+    id: int | None = Field(default=None, primary_key=True)
     start_dec: int
     finish_dec: int
     start_block_id: int
     finish_block_id: int
+
+    blocks: list["UnicodeBlock"] = Relationship(back_populates="plane")  # type: ignore
+    characters: list["UnicodeCharacter"] = Relationship(back_populates="plane")  # type: ignore
+
+    @classmethod
+    def responsify(cls, plane) -> "UnicodePlaneResponse":
+        plane.start = f"U+{plane.start}"
+        plane.finish = f"U+{plane.finish}"
+        return plane

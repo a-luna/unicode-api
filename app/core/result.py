@@ -8,7 +8,7 @@ T = TypeVar("T")
 class Result(Generic[T]):
     """Represent the outcome of an operation."""
 
-    def __init__(self, success: bool, value: T, error: str) -> None:
+    def __init__(self, success: bool, value: T | None, error: str | None) -> None:
         self.success = success
         self.error = error
         self.value = value
@@ -57,5 +57,5 @@ class Result(Generic[T]):
         return (
             Result.Ok([result.value or None for result in results])
             if all(result.success for result in results)
-            else Result.Fail([result.error if result.failure else None for result in results])
+            else Result.Fail("\n".join([s for s in [result.error or "" if result.failure else "" for result in results] if s]))
         )

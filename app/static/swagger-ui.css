@@ -107,6 +107,10 @@ body {
   margin: 0 auto;
 }
 
+[data-param-name="show"] select[multiple] {
+  height: 333px;
+}
+
 .swagger-ui .renderedMarkdown p > i > strong > span {
   font-style: normal;
   text-decoration: underline;;

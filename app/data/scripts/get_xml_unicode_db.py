@@ -3,17 +3,19 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from zipfile import is_zipfile, ZipFile
 
+from app.core.config import DATA_FOLDER
 from app.core.result import Result
 from app.core.util import download_file
 
 UNICODE_ORG_ROOT = "https://www.unicode.org/Public"
 UCDXML_FOLDER = "ucdxml"
 ALL_CHARS_ZIP = "ucd.all.flat.zip"
+UCDXML_FILE_NAME = "ucd.all.flat.xml"
 
 
 def get_xml_unicode_database(version: str) -> Result[Path]:
     if os.environ.get("ENV") != "PROD":
-        return Result.Ok(Path("/Users/aaronluna/Downloads/ucd.all.flat.xml"))
+        return Result.Ok(DATA_FOLDER.joinpath("xml").joinpath(UCDXML_FILE_NAME))
     return download_xml_unicode_database(version)
 
 
@@ -23,11 +25,13 @@ def download_xml_unicode_database(version: str) -> Result[Path]:
         if download_result.failure:
             return download_result
         xml_zip = download_result.value
-        extract_result = extract_unicode_xml_from_zip(xml_zip, tmpdir)
-        if extract_result.failure:
-            return extract_result
-        xml_file = extract_result.value
-    return Result.Ok(xml_file)
+        if xml_zip:
+            extract_result = extract_unicode_xml_from_zip(xml_zip, tmpdir)
+            if extract_result.failure:
+                return extract_result
+            xml_file = extract_result.value
+            return Result.Ok(xml_file)
+    return Result.Fail("Download attempt failed, please check internet connection.")
 
 
 def get_local_xml_unicode_database() -> Result[Path]:
@@ -36,14 +40,15 @@ def get_local_xml_unicode_database() -> Result[Path]:
 
 def download_unicode_xml_zip(version: str, local_folder: str) -> Result:
     url = get_all_chars_zip_url(version)
-    local_folder = Path(local_folder)
-    result = download_file(url, local_folder)
+    result = download_file(url, Path(local_folder))
     if result.failure:
         return result
     xml_zip = result.value
-    if not is_zipfile(xml_zip):
-        return Result.Fail("Unicode XML Data file is not a valid .zip file!")
-    return Result.Ok(xml_zip)
+    if xml_zip:
+        if not is_zipfile(xml_zip):
+            return Result.Fail("Unicode XML Data file is not a valid .zip file!")
+        return Result.Ok(xml_zip)
+    return Result.Fail("Zip file is possibly corrupt, the format cannot be recognized.")
 
 
 def get_all_chars_zip_url(version: str) -> str:

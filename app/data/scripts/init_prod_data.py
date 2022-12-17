@@ -16,11 +16,12 @@ def init_prod_data():
         return result
     unicode_json_zip = result.value
 
-    result = extract_unicode_json_files(unicode_json_zip)
-    if result.failure:
-        return result
-    unicode_json_zip.unlink()
-    return Result.Ok()
+    if unicode_json_zip:
+        result = extract_unicode_json_files(unicode_json_zip)
+        if result.failure:
+            return result
+        unicode_json_zip.unlink()
+        return Result.Ok()
 
 
 def download_unicode_json_zip() -> Result[Path]:

@@ -1,12 +1,13 @@
-from functools import lru_cache
 from http import HTTPStatus
 
 from fastapi import Depends, HTTPException, Path, Query
+from sqlmodel import Session
 
+import app.core.db as db
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
 from app.core.util import get_codepoint_string
 from app.data.constants import CODEPOINT_REGEX, MAX_CODEPOINT
-from app.data.unicode import Unicode
+from app.models.enums import CharPropertyGroup
 
 LIMIT_DESCRIPTION = """
 <p><i><strong><span>this value is optional (default: <strong>limit=10</strong>)</span></strong></i></p>
@@ -22,8 +23,6 @@ MIN_DETAILS_DESCRIPTION = """
 CODEPOINT_HEX_DESCRIPTION = """
 <p>The <strong>codepoint</strong> value must be expressed as a hexadecimal value within range <code>0000...10FFFF</code>, optionally prefixed by <strong>U+</strong> or <strong>0x</strong>.</p>
 """
-
-CODEPOINT_DEC_DESCRIPTION = "Decimal (Base-10) value within range **0...1,114,111**"
 
 BLOCK_ID_DESCRIPTION = "The <strong>id</strong> value is an integer value within range <strong>1...327</strong>"
 
@@ -76,11 +75,6 @@ UNICODE_CHAR_EXAMPLES = {
     "Emoji": {"summary": "Unencoded Emoji", "value": "🏃🏿‍♀️"},
 }
 
-BLOCK_CHAR_STRING_DESCRPITION = (
-    "Arbirary string value. Response will be formatted as a list of Unicode blocks, each block detailing the "
-    "list of characters from the string value which belong to that block."
-)
-
 BLOCK_NAME_DESCRIPTION = """
 <p>The unique name assigned to each block of Unicode characters. In order to be used as a string enum value, a series of operations are performed on the block name:</p>
 <ol>
@@ -113,17 +107,19 @@ SEARCH_BLOCK_NAME_DESCRIPTION = """
 
 MIN_SCORE_DESCRIPTION = """
 <p><i><strong><span>this value is optional (default: <strong>min_score=80</strong>)</span></strong></i></p>
-<p>A score between 0 and 100 (with 100 being a perfect match) is calculated for each search result. Raising this setting will result in fewer, higher-quality search results, while lowering it will ensure more, lower-quality results are returned.</p>
+<p>A score between 0 and 100 (with 100 being a perfect match) is calculated for each search result. If your search isn't returning anything, try lowering the value of <strong>min_score</strong>.</p>
 """
 
 PER_PAGE_DESCRIPTION = """
 <p><i><strong><span>this value is optional (default: <strong>per_page=10</strong>)</span></strong></i></p>
-<p>Each response includes a <strong>hasMore</strong> property. If the request generated more search results than the number specified in the <strong>per_page</strong> parameter, the <strong>hasMore</strong> property will be <code>True</code>. When the response includes the last search result, <strong>hasMore</strong> will be <code>False</code>.</p>
+<p>The number of search results to include in each response, must be an integer in the range <strong>1...100</strong>.</p>
 """
 
 PAGE_NUMBER_DESCRIPTION = """
 <p><i><strong><span>this value is optional (default: <strong>page=1</strong>)</span></strong></i></p>
-<p>Used to request a specific page of search results. <i><strong>Do not include this parameter with your first search request.</strong></i> If the <strong>hasMore</strong> property of the response is <code>True</code>, the response will contain a <strong>nextPage</strong> property. You can access the next set of search results by sending a request with <strong>page</strong> equal to <strong>nextPage</strong>.</p>
+<p>Used to request a specific page of search results. <i><strong>Do not include this parameter with your first search request.</strong></i></p>
+<p>Each response includes a <strong>hasMore</strong> property. If your query generated more search results than the number specified in the <strong>per_page</strong> parameter, the <strong>hasMore</strong> property will be <code>True</code>. When the total number of search results is less than or equal to <strong>per_page</strong> <strong><i>OR</i></strong> the requested page includes the last search result, <strong>hasMore</strong> will be <code>False</code>.</p>
+<p>If <strong>hasMore</strong>=<code>True</code>, the response will contain a <strong>nextPage</strong> property. You can access the next set of search results by sending a subsequent request with <strong>page</strong> equal to <strong>nextPage</strong>.</p>
 """
 
 
@@ -172,54 +168,21 @@ STARTING_AFTER_BLOCK_ID_DESCRIPTION = customize_starting_after_param_description
 )
 
 
-@lru_cache
-def get_unicode():
-    unicode = Unicode()
-    return unicode
-
-
-def get_decimal_number_from_hex_codepoint(codepoint: str | None) -> int:
-    if codepoint:
-        match = CODEPOINT_REGEX.match(codepoint)
-        if not match:
-            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=CODEPOINT_INVALID_ERROR)
-        groups = match.groupdict()
-        codepoint_dec = int(groups.get("codepoint_prefix") or groups.get("codepoint"), 16)
-        if codepoint_dec > MAX_CODEPOINT:
-            raise HTTPException(
-                status_code=int(HTTPStatus.BAD_REQUEST),
-                detail=(
-                    f"Codepoint {get_codepoint_string(codepoint_dec)} is not within the range of unicode "
-                    "characters (U+0000 to U+10FFFF)."
-                ),
-            )
-        return codepoint_dec
-
-
-def get_char_from_hex_codepoint(codepoint: str | None) -> str:
-    return chr(get_decimal_number_from_hex_codepoint(codepoint))
-
-
-def get_char_from_hex_codepoint_path_param(
-    codepoint: str = Path(description=CODEPOINT_HEX_DESCRIPTION, examples=CODEPOINT_EXAMPLES)
-):
-    return get_char_from_hex_codepoint(codepoint)
-
-
-def get_char_from_hex_codepoint_query_param(
-    codepoint_hex: str | None = Query(default=None, description=CODEPOINT_HEX_DESCRIPTION, examples=CODEPOINT_EXAMPLES)
-):
-    return get_char_from_hex_codepoint(codepoint_hex)
-
-
-def get_char_from_decimal_codepoint_query_param(
-    codepoint_dec: int | None = Query(default=None, ge=0, le=MAX_CODEPOINT, description=CODEPOINT_DEC_DESCRIPTION)
-):
-    return chr(codepoint_dec)
-
-
-def get_block_name_query_param(bname: str | None = Query(default=None, description=SEARCH_BLOCK_NAME_DESCRIPTION)):
-    return bname
+def get_decimal_number_from_hex_codepoint(codepoint: str) -> int:
+    match = CODEPOINT_REGEX.match(codepoint)
+    if not match:
+        raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=CODEPOINT_INVALID_ERROR)
+    groups = match.groupdict()
+    codepoint_dec = int(groups.get("codepoint_prefix", "0") or groups.get("codepoint", "0"), 16)
+    if codepoint_dec > MAX_CODEPOINT:
+        raise HTTPException(
+            status_code=int(HTTPStatus.BAD_REQUEST),
+            detail=(
+                f"Codepoint {get_codepoint_string(codepoint_dec)} is not within the range of unicode "
+                "characters (U+0000 to U+10FFFF)."
+            ),
+        )
+    return codepoint_dec
 
 
 def get_string_path_param(
@@ -233,34 +196,12 @@ def get_string_path_param(
     return string
 
 
-def get_block_name_enum_path_param(
-    name: UnicodeBlockName = Path(description=BLOCK_NAME_DESCRIPTION),
-):
-    return name
-
-
-def get_unicode_block_query_params(
-    char_from_cp_dec: str | None = Depends(get_char_from_decimal_codepoint_query_param),
-    char_from_cp_hex: str | None = Depends(get_char_from_hex_codepoint_query_param),
-    s: str | None = Query(default=None, description=BLOCK_CHAR_STRING_DESCRPITION),
-):
-    char_list: str = ""
-    if char_from_cp_dec:
-        char_list += chr(char_from_cp_dec)
-    if char_from_cp_hex:
-        char_list += char_from_cp_hex
-    if s:
-        char_list += s
-    if not char_list:
-        raise HTTPException(
-            status_code=int(HTTPStatus.BAD_REQUEST),
-            detail="Request did not include any character data",
-        )
-    return char_list
-
-
 def get_min_details_query_param(min_details: bool = Query(default=None, description=MIN_DETAILS_DESCRIPTION)):
     return min_details if min_details is not None else True
+
+
+def get_char_property_groups_query_param(show_props: list[CharPropertyGroup] | None = Query(default=None)):
+    return show_props if show_props else [CharPropertyGroup.BASIC]
 
 
 class CharacterSearchParameters:
@@ -338,8 +279,8 @@ class ListParameters:
                 ),
             )
         self.limit: int = limit or 10
-        self.ending_before: int = get_decimal_number_from_hex_codepoint(ending_before)
-        self.starting_after: int = get_decimal_number_from_hex_codepoint(starting_after)
+        self.ending_before: int | None = get_decimal_number_from_hex_codepoint(ending_before) if ending_before else None
+        self.starting_after: int | None = get_decimal_number_from_hex_codepoint(starting_after) if starting_after else None
 
     def __str__(self):
         return (
@@ -370,8 +311,8 @@ class ListParametersDecimal:
                 ),
             )
         self.limit: int = limit or 10
-        self.ending_before: int = ending_before
-        self.starting_after: int = starting_after
+        self.ending_before: int | None = ending_before
+        self.starting_after: int | None = starting_after
 
     def __str__(self):
         return (
@@ -390,9 +331,12 @@ class UnicodeBlockQueryParamResolver:
     def __init__(
         self,
         block: UnicodeBlockName | None = Query(default=None, description=CHAR_SEARCH_BLOCK_NAME_DESCRIPTION),
-        unicode: Unicode = Depends(get_unicode),
+        session: Session = Depends(db.get_session),
     ):
-        self.block = unicode.block_map.get(block.block_id) if block else unicode.all_characters_block
+        if not block:
+            self.block: db.UnicodeBlock = get_all_characters_block(session)
+        else:
+            self.block: db.UnicodeBlock = session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
         self.name = self.block.name
         self.start = self.block.start
         self.start_dec = self.block.start_dec
@@ -416,9 +360,14 @@ class UnicodeBlockPathParamResolver:
     def __init__(
         self,
         block: UnicodeBlockName | None = Path(default=None, description=BLOCK_NAME_DESCRIPTION),
-        unicode: Unicode = Depends(get_unicode),
+        session: Session = Depends(db.get_session),
     ):
-        self.block = unicode.block_map.get(block.block_id) if block else unicode.all_characters_block
+        if not block:
+            self.block: db.UnicodeBlock = get_all_characters_block(session)
+            self.plane_abbrev = self.block.plane.abbreviation
+        else:
+            self.block: db.UnicodeBlock = session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
+            self.plane_abbrev = "ALL"
         self.name = self.block.name
         self.start = self.block.start
         self.start_dec = self.block.start_dec
@@ -442,9 +391,12 @@ class UnicodePlaneResolver:
     def __init__(
         self,
         plane: UnicodePlaneName | None = Query(default=None, description=PLANE_NAME_DESCRIPTION),
-        unicode: Unicode = Depends(get_unicode),
+        session: Session = Depends(db.get_session),
     ):
-        self.plane = unicode.plane_name_map.get(plane.print_name) if plane else unicode.all_characters_plane
+        if not plane:
+            self.plane: db.UnicodePlane = get_all_characters_plane(session)
+        else:
+            self.plane: db.UnicodePlane = session.query(db.UnicodePlane).filter(db.UnicodePlane.number == plane.number).one()
         self.start_block_id = self.plane.start_block_id
         self.finish_block_id = self.plane.finish_block_id
 
@@ -459,3 +411,33 @@ class UnicodePlaneResolver:
 
     def __repr__(self):
         return str(self)
+
+
+def get_all_characters_block(session: Session) -> db.UnicodeBlock:
+    return db.UnicodeBlock(
+        id=0,
+        name="All Unicode Characters",
+        plane_id=0,
+        start_dec=0,
+        start="U+0000",
+        finish_dec=1114111,
+        finish="U+10FFFF",
+        total_allocated=1114112,
+        total_defined=sum(len(block.characters) for block in session.query(db.UnicodeBlock).all()),
+    )
+
+
+def get_all_characters_plane(session: Session) -> db.UnicodePlane:
+    return db.UnicodePlane(
+        number=-1,
+        name="All Unicode Characters",
+        abbreviation="ALL",
+        start="U+0000",
+        start_dec=0,
+        finish="U+10FFFF",
+        finish_dec=1114111,
+        start_block_id=1,
+        finish_block_id=327,
+        total_allocated=1114112,
+        total_defined=sum(len(plane.characters) for plane in session.query(db.UnicodePlane).all()),
+    )

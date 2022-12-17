@@ -1,16 +1,50 @@
+from sqlmodel import Field, Relationship
 from app.schemas.camel_model import CamelModel
-from app.schemas.character import UnicodeCharacterResult
 
 
 class UnicodeBlockBase(CamelModel):
-    id: int
-    name: str
+    name: str = Field(index=True)
+    start: str
+    finish: str
+    total_allocated: int
+    total_defined: int
+
+    plane_id: int = Field(foreign_key="plane.id")
+
+
+class UnicodeBlockResponse(CamelModel):
+    id: int | None
+    name: str = Field(index=True)
     plane: str
     start: str
     finish: str
+    start_dec: int | None
+    finish_dec: int | None
+    total_allocated: int | None
+    total_defined: int | None
 
 
-class UnicodeBlockResult(UnicodeBlockBase):
+class UnicodeBlock(UnicodeBlockBase, table=True):
+
+    __tablename__ = "block"  # type: ignore
+
+    id: int | None = Field(default=None, primary_key=True)
+    start_dec: int
+    finish_dec: int
+
+    plane: "UnicodePlane" = Relationship(back_populates="blocks")  # type: ignore
+    characters: list["UnicodeCharacter"] = Relationship(back_populates="block")  # type: ignore
+
+    @classmethod
+    def responsify(cls, block) -> "UnicodeBlockResponse":
+        block_dict = block.dict(by_alias=True)
+        block_dict["plane"] = block.plane.abbreviation
+        block_dict["start"] = f"U+{block.start}"
+        block_dict["finish"] = f"U+{block.finish}"
+        return UnicodeBlockResponse(**block_dict)
+
+
+class UnicodeBlockResult(UnicodeBlockResponse):
     score: float | None
     link: str
 
@@ -23,45 +57,3 @@ class UnicodeBlockResult(UnicodeBlockBase):
             f"finish={self.finish}"
             ">"
         )
-
-
-class UnicodeBlock(UnicodeBlockBase):
-    total_allocated: int
-    total_defined: int
-
-    def __str__(self):
-        return self.name
-
-    def __repr__(self):
-        return (
-            "UnicodeBlock<"
-            f'name="{self.name}", '
-            f'plane="{self.plane}", '
-            f'start="{self.start}", '
-            f'finish="{self.finish}", '
-            f"total_allocated={self.total_allocated}, "
-            f"total_defined={self.total_defined}"
-            ">"
-        )
-
-
-class UnicodeBlockInternal(UnicodeBlock):
-    start_dec: int
-    finish_dec: int
-
-    def __str__(self):
-        return (
-            "UnicodeBlockInternal<"
-            f"score={self.score}, "
-            f"name={self.name}, "
-            f"start={self.start}, "
-            f"finish={self.finish}, "
-            f"start_dec={self.start_dec}, "
-            f"finish_dec={self.finish_dec}"
-            ">"
-        )
-
-
-class CharToBlockMap(CamelModel):
-    block: UnicodeBlock
-    characters_in_block: list[UnicodeCharacterResult]

@@ -5,11 +5,16 @@ from enum import auto
 from fastapi_utils.enums import StrEnum
 
 from app.core.config import BLOCKS_JSON
-from app.schemas import UnicodeBlockInternal
+from app.data.constants import NULL_BLOCK
+import app.core.db as db
+
+unicode_blocks = [db.UnicodeBlock(**block) for block in json.loads(BLOCKS_JSON.read_text())]
+block_name_map = {block.name: block for block in unicode_blocks}
 
 
 class UnicodeBlockName(StrEnum):
 
+    NONE = auto()
     BASIC_LATIN = auto()
     LATIN_1_SUPPLEMENT = auto()
     LATIN_EXTENDED_A = auto()
@@ -338,7 +343,7 @@ class UnicodeBlockName(StrEnum):
     SUPPLEMENTARY_PRIVATE_USE_AREA_A = auto()
     SUPPLEMENTARY_PRIVATE_USE_AREA_B = auto()
 
-    def __str__(self):
+    def __str__(self) -> str:
         special_cases = {
             "LATIN_1_SUPPLEMENT": "Latin-1 Supplement",
             "LATIN_EXTENDED_A": "Latin Extended-A",
@@ -379,7 +384,7 @@ class UnicodeBlockName(StrEnum):
             "CYRILLIC_EXTENDED_D": "Cyrillic Extended-D",
         }
         if self.name in special_cases:
-            return special_cases.get(self.name)
+            return special_cases[self.name]
         name = (
             self.name.replace("_", " ")
             .title()
@@ -393,12 +398,12 @@ class UnicodeBlockName(StrEnum):
 
     @property
     def block_id(self) -> int:
-        unicode_blocks = [UnicodeBlockInternal(**block) for block in json.loads(BLOCKS_JSON.read_text())]
-        name_lookup_map = {block.name: block.id for block in unicode_blocks}
-        return name_lookup_map.get(str(self), 0)
+        block = block_name_map.get(str(self), NULL_BLOCK)
+        return block.id if block.id else 0
 
     @classmethod
     def from_block_id(cls, block_id):
         for enum_item in cls:
             if block_id == enum_item.block_id:
                 return enum_item
+        return cls.NONE
