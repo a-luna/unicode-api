@@ -74,5 +74,5 @@ coverage.xml
 docs/_build/
 
 # Unicode data files
-*.json
+characters.json
 ucd.all.flat.xml
