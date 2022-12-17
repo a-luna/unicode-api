@@ -75,3 +75,4 @@ docs/_build/
 
 # Unicode data files
 *.json
+ucd.all.flat.xml

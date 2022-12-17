@@ -33,6 +33,7 @@ def update_all_data(version: str):
             if populate_db_result.failure:
                 return populate_db_result
             if os.environ.get("ENV") == "PROD":
+                xml_file.unlink()
                 delete_unicode_json_files()
             else:
                 zip_file = backup_sqlite_db()
