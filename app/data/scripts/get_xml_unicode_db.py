@@ -11,11 +11,13 @@ UNICODE_ORG_ROOT = "https://www.unicode.org/Public"
 UCDXML_FOLDER = "ucdxml"
 ALL_CHARS_ZIP = "ucd.all.flat.zip"
 UCDXML_FILE_NAME = "ucd.all.flat.xml"
+UCDXML_FOLDER_PATH = DATA_FOLDER.joinpath("xml")
+UCDXML_FILE_PATH = UCDXML_FOLDER_PATH.joinpath(UCDXML_FILE_NAME)
 
 
 def get_xml_unicode_database(version: str) -> Result[Path]:
     if os.environ.get("ENV") != "PROD":
-        return Result.Ok(DATA_FOLDER.joinpath("xml").joinpath(UCDXML_FILE_NAME))
+        return Result.Ok(UCDXML_FILE_PATH)
     return download_xml_unicode_database(version)
 
 
@@ -26,7 +28,7 @@ def download_xml_unicode_database(version: str) -> Result[Path]:
             return download_result
         xml_zip = download_result.value
         if xml_zip:
-            extract_result = extract_unicode_xml_from_zip(xml_zip, tmpdir)
+            extract_result = extract_unicode_xml_from_zip(xml_zip, str(UCDXML_FOLDER_PATH))
             if extract_result.failure:
                 return extract_result
             xml_file = extract_result.value
