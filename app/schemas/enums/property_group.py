@@ -30,6 +30,12 @@ class CharPropertyGroup(StrEnum):
     def display_name(self) -> str:
         return str(self)
 
+    @property
+    def index_name(self) -> str:
+        if "_" in self.name:
+            return "".join([s[0] for s in self.name.split("_") if s != "AND"]).lower()
+        return self.name.lower()
+
     @classmethod
     def get_group_weights(cls):
         return {group.name: i for i, group in enumerate(cls, start=1)}

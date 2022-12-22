@@ -1,5 +1,6 @@
 from sqlmodel import Field, Relationship
-from app.schemas.camel_model import CamelModel
+
+from app.schemas.models.camel_model import CamelModel
 
 
 class UnicodePlaneResponse(CamelModel):
@@ -24,6 +25,7 @@ class UnicodePlane(UnicodePlaneResponse, table=True):
 
     blocks: list["UnicodeBlock"] = Relationship(back_populates="plane")  # type: ignore
     characters: list["UnicodeCharacter"] = Relationship(back_populates="plane")  # type: ignore
+    characters_no_name: list["UnicodeCharacterNoName"] = Relationship(back_populates="plane")  # type: ignore
 
     @classmethod
     def responsify(cls, plane) -> "UnicodePlaneResponse":

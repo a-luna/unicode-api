@@ -1,6 +1,6 @@
 from typing import Generic, TypeVar
 
-from app.schemas.camel_model import GenericCamelModel
+from app.schemas.models.camel_model import GenericCamelModel
 
 T = TypeVar("T")
 
