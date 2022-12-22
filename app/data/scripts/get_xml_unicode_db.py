@@ -1,6 +1,7 @@
-import os
 from pathlib import Path
 from zipfile import is_zipfile, ZipFile
+
+import snoop
 
 from app.core.config import DATA_FOLDER
 from app.core.result import Result
@@ -15,30 +16,33 @@ UCDXML_FILE_PATH = UCDXML_FOLDER_PATH.joinpath(UCDXML_FILE_NAME)
 
 
 def get_xml_unicode_database(version: str) -> Result[Path]:
-    if os.environ.get("ENV") != "PROD":
-        return Result.Ok(UCDXML_FILE_PATH)
+    # if os.environ.get("ENV") != "PROD":
+    #     return Result.Ok(UCDXML_FILE_PATH)
     return download_xml_unicode_database(version)
 
 
+@snoop
 def download_xml_unicode_database(version: str) -> Result[Path]:
     download_result = download_unicode_xml_zip(version, str(UCDXML_FOLDER_PATH))
     if download_result.failure:
         return download_result
     xml_zip = download_result.value
-    if xml_zip:
-        extract_result = extract_unicode_xml_from_zip(xml_zip, str(UCDXML_FOLDER_PATH))
-        if extract_result.failure:
-            return extract_result
-        xml_file = extract_result.value
-        xml_zip.unlink()
-        return Result.Ok(xml_file)
-    return Result.Fail("Download attempt failed, please check internet connection.")
+    if not xml_zip or not xml_zip.exists():
+        return Result.Fail("Download attempt failed, please check internet connection.")
+    xml_file = None
+    extract_result = extract_unicode_xml_from_zip(xml_zip, str(UCDXML_FOLDER_PATH))
+    if extract_result.failure:
+        return extract_result
+    xml_file = extract_result.value
+    xml_zip.unlink()
+    return Result.Ok(xml_file)
 
 
 def get_local_xml_unicode_database() -> Result[Path]:
     return Result.Ok(Path("/Users/aaronluna/Downloads/ucd.all.flat.xml"))
 
 
+@snoop
 def download_unicode_xml_zip(version: str, local_folder: str) -> Result:
     url = get_all_chars_zip_url(version)
     result = download_file(url, Path(local_folder))
@@ -52,11 +56,14 @@ def download_unicode_xml_zip(version: str, local_folder: str) -> Result:
     return Result.Fail("Zip file is possibly corrupt, the format cannot be recognized.")
 
 
+@snoop
 def get_all_chars_zip_url(version: str) -> str:
     return f"{UNICODE_ORG_ROOT}/{version}/{UCDXML_FOLDER}/{ALL_CHARS_ZIP}"
 
 
+@snoop
 def extract_unicode_xml_from_zip(xml_zip: Path, local_folder: str) -> Result:
+    xml_file = None
     with ZipFile(xml_zip, mode="r") as zip:
         zip.extractall(path=local_folder)
         extracted_xml_files = list(Path(local_folder).glob("*.xml"))
@@ -68,4 +75,4 @@ def extract_unicode_xml_from_zip(xml_zip: Path, local_folder: str) -> Result:
                 error += f"\tFile #{i}: {file.name}"
             return Result.Fail(error)
         xml_file = extracted_xml_files[0]
-        return Result.Ok(xml_file)
+    return Result.Ok(xml_file)

@@ -131,6 +131,13 @@ async def swagger_ui_html():
             "tryItOutEnabled": "true",
             "displayRequestDuration": "true",
             "requestSnippetsEnabled": "true",
+            "requestSnippets": {
+                "generators": {
+                    "curl_bash": {"title": "cURL (bash)", "syntax": "bash"},
+                },
+                "defaultExpanded": False,
+                "languages": None,
+            },
         },
         swagger_js_url="/static/swagger-ui-bundle.js",
         swagger_css_url="/static/swagger-ui.css",

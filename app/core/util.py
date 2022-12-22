@@ -18,6 +18,7 @@ def get_codepoint_string(codepoint: int) -> str:
 
 
 def download_file(url: str, local_folder: Path):
+    local_folder.mkdir(parents=True, exist_ok=True)
     file_name = Path(urlsplit(url).path).name
     local_file_path = local_folder.joinpath(file_name)
     r = requests.head(url)

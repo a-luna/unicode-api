@@ -347,17 +347,15 @@ class UnicodeBlockQueryParamResolver:
                 session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
             )
         self.name = self.block.name
-        self.start = self.block.start
-        self.start_dec = self.block.start_dec
-        self.finish = self.block.finish
-        self.finish_dec = self.block.finish_dec
+        self.start = self.block.start_dec
+        self.finish = self.block.finish_dec
 
     def __str__(self):
         return (
             "UnicodeBlockQueryParamResolver<"
             f'block="{self.block.name}", '
-            f'start="{self.start}", '
-            f'finish="{self.finish}"'
+            f'start="{self.block.start}", '
+            f'finish="{self.block.finish}"'
             ">"
         )
 
@@ -381,17 +379,15 @@ class UnicodeBlockPathParamResolver:
             )
             self.plane_abbrev = "ALL"
         self.name = self.block.name
-        self.start = self.block.start
-        self.start_dec = self.block.start_dec
-        self.finish = self.block.finish
-        self.finish_dec = self.block.finish_dec
+        self.start = self.block.start_dec
+        self.finish = self.block.finish_dec
 
     def __str__(self):
         return (
             "UnicodeBlockQueryParamResolver<"
             f'block="{self.block.name}", '
-            f'start="{self.start}", '
-            f'finish="{self.finish}"'
+            f'start="{self.block.start}", '
+            f'finish="{self.block.finish}"'
             ">"
         )
 

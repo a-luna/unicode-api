@@ -1,11 +1,11 @@
 from typing import Any
 
-import app.schemas as schemas
+import app.core.db as db
 from app.core.result import Result
 
 
 def paginate_search_results(
-    results: list[schemas.UnicodeCharacterResponse] | list[schemas.UnicodeBlockResult],
+    results: list[db.UnicodeCharacterResponse] | list[db.UnicodeBlockResult],
     per_page: int,
     page_number: int,
 ) -> Result[dict[str, Any]]:
@@ -16,10 +16,12 @@ def paginate_search_results(
     has_more = page_number < total_pages
     page_start = per_page * (page_number - 1)
     page_end = min(len(results), page_start + per_page)
-    paginated = {}
-    paginated["total_results"] = len(results)
-    paginated["has_more"] = has_more
+    paginated = {
+        "total_results": len(results),
+        "has_more": has_more,
+        "current_page": page_number,
+        "results": results[page_start:page_end],
+    }
     if has_more:
         paginated["next_page"] = page_number + 1
-    paginated["results"] = results[page_start:page_end]
     return Result.Ok(paginated)

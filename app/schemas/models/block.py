@@ -47,13 +47,3 @@ class UnicodeBlock(UnicodeBlockBase, table=True):
 class UnicodeBlockResult(UnicodeBlockResponse):
     score: float | None
     link: str
-
-    def __str__(self):
-        return (
-            "UnicodeBlockResult<"
-            f"score={self.score}, "
-            f"name={self.name}, "
-            f"start={self.start}, "
-            f"finish={self.finish}"
-            ">"
-        )

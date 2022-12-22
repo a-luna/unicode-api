@@ -38,26 +38,11 @@ def list_all_unicode_characters(
     db_ctx: tuple[Session, Engine] = Depends(db.get_session),
 ):
     _, engine = db_ctx
-    first_codepoint = block.start_dec
-    last_codepoint = block.finish_dec
-    start = first_codepoint
-    if list_params.starting_after:
-        start = list_params.starting_after + 1
-    elif list_params.ending_before:
-        start = list_params.ending_before - list_params.limit
-    stop = min(last_codepoint + 1, start + list_params.limit)
-    if start < first_codepoint or start > last_codepoint:
-        raise HTTPException(
-            status_code=int(HTTPStatus.BAD_REQUEST),
-            detail=(
-                f"The starting codepoint value {get_codepoint_string(start)} is outside the range of characters "
-                f"{get_codepoint_string(first_codepoint)}...{get_codepoint_string(last_codepoint)} ({block.name})"
-            ),
-        )
+    (start, stop) = get_char_list_endpoints(list_params, block)
     show_props = [CharPropertyGroup.BASIC] if min_details else [CharPropertyGroup.ALL]
     return {
         "url": f"{settings.API_VERSION}/characters",
-        "has_more": stop <= last_codepoint,
+        "has_more": stop <= block.finish,
         "data": [
             get_character_details(engine, codepoint, show_props)
             for codepoint in range(start, stop)
@@ -110,6 +95,24 @@ def get_unicode_character_details(
     prop_group_weights = CharPropertyGroup.get_group_weights()
     show_props_sorted = sorted(show_props, key=lambda x: prop_group_weights[x.name])
     return [get_character_details(engine, ord(char), show_props_sorted) for char in string]
+
+
+def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQueryParamResolver) -> tuple[int, int]:
+    start = block.start
+    if list_params.starting_after:
+        start = list_params.starting_after + 1
+    elif list_params.ending_before:
+        start = list_params.ending_before - list_params.limit
+    stop = min(block.finish + 1, start + list_params.limit)
+    if start < block.start or start > block.finish:
+        raise HTTPException(
+            status_code=int(HTTPStatus.BAD_REQUEST),
+            detail=(
+                f"The starting codepoint value {get_codepoint_string(start)} is outside the range of characters "
+                f"{get_codepoint_string(block.start)}...{get_codepoint_string(block.finish)} ({block.name})"
+            ),
+        )
+    return (start, stop)
 
 
 def search_characters_by_name(engine: Engine, query: str, score_cutoff: int = 80) -> list[db.UnicodeCharacterResponse]:

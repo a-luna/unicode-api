@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from xml.dom import minidom
 
+import snoop
+
 import app.core.db as db
 from app.core.config import PLANES_JSON
 from app.core.enums.block_name import UnicodeBlockName
@@ -14,13 +16,11 @@ YES_NO_MAP = {"Y": True, "N": False}
 CharDetailsDict = dict[str, bool | int | str]
 
 
+@snoop
 def parse_xml_unicode_database(
     xml_file: Path,
 ) -> Result[tuple[list[dict[str, int | str]], list[dict[str, int | str]], list[CharDetailsDict]]]:
     spinner = start_task("Parsing Unicode XML database...")
-    print("######### LOOOKY HERE ########\n")
-    print(xml_file)
-    print("\n######### LOOOKY HERE ########")
     unicode_xml = minidom.parse(str(xml_file))  # nosec
     spinner.text = "Parsing Unicode plane and block data from XML database file..."
     all_planes: list[dict[str, int | str]] = json.loads(PLANES_JSON.read_text())

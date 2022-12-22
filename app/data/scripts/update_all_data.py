@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
+import snoop
+
 from app.core.config import (
     BLOCKS_JSON,
     CHAR_NAME_MAP,
@@ -21,6 +23,7 @@ from app.data.scripts.populate_sqlite_db import populate_sqlite_database
 from app.data.scripts.util import finish_task, start_task
 
 
+@snoop
 def update_all_data(version: str):
     spinner = start_task(f"Downloading Unicode XML Database v{version} from unicode.org...")
     spinner.stop_and_persist()
@@ -31,8 +34,7 @@ def update_all_data(version: str):
     spinner.start()
     finish_task(spinner, True, f"Successfully downloaded Unicode XML Database v{version}!")
     xml_file = get_xml_result.value
-
-    if xml_file:
+    if xml_file and xml_file.exists():
         result = parse_xml_unicode_database(xml_file)
         if result.failure:
             return result

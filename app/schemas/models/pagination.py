@@ -15,7 +15,8 @@ class PaginatedList(GenericCamelModel, Generic[T]):
 class PaginatedSearchResults(GenericCamelModel, Generic[T]):
     url: str
     query: str
-    total_results: int
     has_more: bool
+    current_page: int
     next_page: int | None
+    total_results: int
     results: list[T]

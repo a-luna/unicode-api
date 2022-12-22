@@ -5,9 +5,9 @@ from sqlalchemy.sql import text
 from sqlmodel import create_engine, Session, SQLModel
 
 from app.core.config import DB_FILE, DB_URL
-from app.core.enums.block_name import UnicodeBlockName
-from app.schemas.enums.property_group import CharPropertyGroup
-from app.schemas.models.block import UnicodeBlock, UnicodeBlockBase, UnicodeBlockResponse, UnicodeBlockResult
+from app.core.enums import UnicodeBlockName
+from app.schemas.enums import CharPropertyGroup
+from app.schemas.models.block import UnicodeBlock, UnicodeBlockResponse, UnicodeBlockResult
 from app.schemas.models.camel_model import GenericCamelModel, GenericModel
 from app.schemas.models.character import (
     UnicodeCharacter,
@@ -18,7 +18,6 @@ from app.schemas.models.character import (
 )
 from app.schemas.models.pagination import PaginatedList, PaginatedSearchResults
 from app.schemas.models.plane import UnicodePlane, UnicodePlaneResponse
-from app.schemas.models.search import SearchResults
 from app.schemas.prop_groups import get_all_db_columns_in_group, update_character_properties
 
 CJK_UNIFIED_BLOCKS = [
