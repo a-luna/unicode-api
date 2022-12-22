@@ -3,7 +3,16 @@ import os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, DB_FILE, DB_FOLDER, JSON_FOLDER, PLANES_JSON, S3_BUCKET_URL
+from app.core.config import (
+    BLOCKS_JSON,
+    CHAR_NAME_MAP,
+    CHAR_NO_NAME_MAP,
+    CHARACTERS_JSON,
+    DB_FILE,
+    DB_FOLDER,
+    PLANES_JSON,
+    S3_BUCKET_URL,
+)
 from app.core.result import Result
 from app.core.util import run_command
 from app.data.scripts.get_xml_unicode_db import get_xml_unicode_database
@@ -37,7 +46,7 @@ def update_all_data(version: str):
             if os.environ.get("ENV") == "PROD":
                 if xml_file.exists():
                     xml_file.unlink()
-                delete_unicode_json_files()
+                delete_character_json_file()
             else:
                 zip_file = backup_sqlite_db()
                 result = upload_zip_file_to_s3(zip_file)
@@ -51,12 +60,14 @@ def update_unicode_json_files(all_planes, all_blocks, all_chars):
     BLOCKS_JSON.write_text(json.dumps(all_blocks, indent=4))
     CHARACTERS_JSON.write_text(json.dumps(all_chars, indent=4))
 
+    char_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["no_name"]}
+    CHAR_NAME_MAP.write_text(json.dumps(char_name_map, indent=4))
 
-def delete_unicode_json_files():
-    if PLANES_JSON.exists():
-        PLANES_JSON.unlink()
-    if BLOCKS_JSON.exists():
-        BLOCKS_JSON.unlink()
+    char_no_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if char["no_name"]}
+    CHAR_NO_NAME_MAP.write_text(json.dumps(char_no_name_map, indent=4))
+
+
+def delete_character_json_file():
     if CHARACTERS_JSON.exists():
         CHARACTERS_JSON.unlink()
 
@@ -79,4 +90,4 @@ def upload_zip_file_to_s3(zip_file: Path):
 
 
 if __name__ == "__main__":
-    update_all_data('15.0.0')
+    update_all_data("15.0.0")

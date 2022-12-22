@@ -1,10 +1,11 @@
 from typing import Any
-from app.core.result import Result
+
 import app.schemas as schemas
+from app.core.result import Result
 
 
 def paginate_search_results(
-    results: list[schemas.UnicodeCharacterResult] | list[schemas.UnicodeBlockResult],
+    results: list[schemas.UnicodeCharacterResponse] | list[schemas.UnicodeBlockResult],
     per_page: int,
     page_number: int,
 ) -> Result[dict[str, Any]]:

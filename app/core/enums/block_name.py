@@ -1,15 +1,9 @@
-import json
 import re
 from enum import auto
 
 from fastapi_utils.enums import StrEnum
 
-from app.core.config import BLOCKS_JSON
-from app.data.constants import NULL_BLOCK
-import app.core.db as db
-
-unicode_blocks = [db.UnicodeBlock(**block) for block in json.loads(BLOCKS_JSON.read_text())]
-block_name_map = {block.name: block for block in unicode_blocks}
+from app.data.cache import cached_data
 
 
 class UnicodeBlockName(StrEnum):
@@ -398,8 +392,8 @@ class UnicodeBlockName(StrEnum):
 
     @property
     def block_id(self) -> int:
-        block = block_name_map.get(str(self), NULL_BLOCK)
-        return block.id if block.id else 0
+        block = cached_data.block_name_map.get(str(self))
+        return int(block["id"]) if block else 0
 
     @classmethod
     def from_block_id(cls, block_id):

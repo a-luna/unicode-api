@@ -3,6 +3,35 @@ from random import randint
 
 from halo import Halo
 
+import app.core.db as db
+
+# NULL OBJECTS
+NULL_PLANE = db.UnicodePlane(
+    number=-1,
+    name="Invalid Codepoint",
+    abbreviation="N/A",
+    start="",
+    start_dec=0,
+    finish="",
+    finish_dec=0,
+    start_block_id=0,
+    finish_block_id=0,
+    total_allocated=0,
+    total_defined=0,
+)
+
+NULL_BLOCK = db.UnicodeBlock(
+    id=0,
+    name="",
+    plane_id=0,
+    start="",
+    start_dec=0,
+    finish="",
+    finish_dec=0,
+    total_allocated=0,
+    total_defined=0,
+)
+
 
 def start_task(message, clear_screen=False):
     if clear_screen:

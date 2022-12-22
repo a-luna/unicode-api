@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Path
+from sqlalchemy.engine import Engine
 from sqlmodel import Session
 
 import app.core.db as db
@@ -8,7 +9,8 @@ router = APIRouter()
 
 
 @router.get("", response_model=db.PaginatedList[db.UnicodePlaneResponse])
-def list_all_unicode_planes(session: Session = Depends(db.get_session)):
+def list_all_unicode_planes(db_ctx: tuple[Session, Engine] = Depends(db.get_session)):
+    session, _ = db_ctx
     planes = [db.UnicodePlane.responsify(plane) for plane in session.query(db.UnicodePlane).all()]
     return {
         "url": f"{settings.API_VERSION}/planes",
@@ -23,7 +25,10 @@ def list_all_unicode_planes(session: Session = Depends(db.get_session)):
     response_model=db.UnicodePlaneResponse,
     response_model_exclude_unset=True,
 )
-def get_unicode_plane_details(number: int = Path(ge=0, le=16), session: Session = Depends(db.get_session)):
+def get_unicode_plane_details(
+    number: int = Path(ge=0, le=16), db_ctx: tuple[Session, Engine] = Depends(db.get_session)
+):
+    session, _ = db_ctx
     plane = session.query(db.UnicodePlane).filter(db.UnicodePlane.number == number).first()
     return db.UnicodePlane.responsify(plane) if plane else get_undefined_plane(number)
 

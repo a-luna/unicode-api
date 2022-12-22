@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from tempfile import TemporaryDirectory
 from zipfile import is_zipfile, ZipFile
 
 from app.core.config import DATA_FOLDER
@@ -16,8 +15,8 @@ UCDXML_FILE_PATH = UCDXML_FOLDER_PATH.joinpath(UCDXML_FILE_NAME)
 
 
 def get_xml_unicode_database(version: str) -> Result[Path]:
-    # if os.environ.get("ENV") != "PROD":
-    #     return Result.Ok(UCDXML_FILE_PATH)
+    if os.environ.get("ENV") != "PROD":
+        return Result.Ok(UCDXML_FILE_PATH)
     return download_xml_unicode_database(version)
 
 

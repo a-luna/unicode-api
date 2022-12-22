@@ -3,6 +3,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 from rapidfuzz import process
+from sqlalchemy.engine import Engine
 from sqlmodel import Session
 
 import app.core.db as db
@@ -23,8 +24,9 @@ router = APIRouter()
 def list_all_unicode_blocks(
     list_params: ListParametersDecimal = Depends(),
     plane: UnicodePlaneResolver = Depends(),
-    session: Session = Depends(db.get_session),
+    db_ctx: tuple[Session, Engine] = Depends(db.get_session),
 ):
+    session, _ = db_ctx
     start_block_id = plane.start_block_id
     finish_block_id = plane.finish_block_id
     start = start_block_id
@@ -56,8 +58,9 @@ def list_all_unicode_blocks(
 )
 def search_unicode_blocks_by_name(
     search_params: BlockSearchParameters = Depends(),
-    session: Session = Depends(db.get_session),
+    db_ctx: tuple[Session, Engine] = Depends(db.get_session),
 ):
+    session, _ = db_ctx
     params = {
         "url": f"{settings.API_VERSION}/blocks/search",
         "query": search_params.name,
@@ -101,8 +104,6 @@ def search_blocks_by_name(session: Session, query: str, score_cutoff: int = 80) 
             plane=get_block_by_id(session, result).plane.abbreviation,
             start=f"U+{get_block_by_id(session, result).start}",
             finish=f"U+{get_block_by_id(session, result).finish}",
-            start_dec=get_block_by_id(session, result).start_dec,
-            finish_dec=get_block_by_id(session, result).finish_dec,
             total_allocated=get_block_by_id(session, result).total_allocated,
             total_defined=get_block_by_id(session, result).total_defined,
             score=float(f"{score:.1f}"),

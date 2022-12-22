@@ -1,14 +1,8 @@
-import json
 from enum import auto
 
 from fastapi_utils.enums import StrEnum
 
-from app.core.config import PLANES_JSON
-from app.data.constants import NULL_PLANE
-import app.core.db as db
-
-unicode_planes = [db.UnicodePlane(**plane) for plane in json.loads(PLANES_JSON.read_text())]
-plane_name_map = {plane.name: plane for plane in unicode_planes}
+from app.data.cache import cached_data
 
 
 class UnicodePlaneName(StrEnum):
@@ -22,8 +16,8 @@ class UnicodePlaneName(StrEnum):
     SUPPLEMENTARY_PRIVATE_USE_AREA_B = auto()
 
     def __str__(self) -> str:
-        plane = plane_name_map.get(self.print_name, NULL_PLANE)
-        return plane.abbreviation
+        plane = cached_data.plane_name_map.get(self.print_name)
+        return str(plane["abbreviation"]) if plane else ""
 
     def __repr__(self):
         return f'UnicodePlaneName<name="{self.print_name}">'
@@ -41,14 +35,14 @@ class UnicodePlaneName(StrEnum):
             "TERTIARY_IDEOGRAPHIC_PLANE": "Tertiary Ideographic Plane",
             "SUPPLEMENTARY_SPECIAL_PURPOSE_PLANE": "Supplementary Special-purpose Plane",
             "SUPPLEMENTARY_PRIVATE_USE_AREA_A": "Supplementary Private Use Area-A",
-            "SUPPLEMENTARY_PRIVATE_USE_AREA_B": "Supplementary Private Use Area-B",
+            "SUPPLEMENdTARY_PRIVATE_USE_AREA_B": "Supplementary Private Use Area-B",
         }
         return print_names.get(self.name, "")
 
     @property
     def number(self) -> int:
-        plane = plane_name_map.get(self.print_name, NULL_PLANE)
-        return plane.number
+        plane = cached_data.plane_name_map.get(self.print_name)
+        return int(plane["number"]) if plane else -1
 
     @classmethod
     def from_abbreviation(cls, abbrev):

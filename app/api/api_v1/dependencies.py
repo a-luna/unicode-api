@@ -1,13 +1,17 @@
+import re
 from http import HTTPStatus
 
 from fastapi import Depends, HTTPException, Path, Query
+from sqlalchemy.engine import Engine
 from sqlmodel import Session
 
 import app.core.db as db
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
 from app.core.util import get_codepoint_string
-from app.data.constants import CODEPOINT_REGEX, MAX_CODEPOINT
-from app.models.enums import CharPropertyGroup
+from app.schemas.enums import CharPropertyGroup
+
+CODEPOINT_REGEX = re.compile(r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))")
+MAX_CODEPOINT = 1114111
 
 LIMIT_DESCRIPTION = """
 <p><i><strong><span>this value is optional (default: <strong>limit=10</strong>)</span></strong></i></p>
@@ -280,7 +284,9 @@ class ListParameters:
             )
         self.limit: int = limit or 10
         self.ending_before: int | None = get_decimal_number_from_hex_codepoint(ending_before) if ending_before else None
-        self.starting_after: int | None = get_decimal_number_from_hex_codepoint(starting_after) if starting_after else None
+        self.starting_after: int | None = (
+            get_decimal_number_from_hex_codepoint(starting_after) if starting_after else None
+        )
 
     def __str__(self):
         return (
@@ -331,12 +337,15 @@ class UnicodeBlockQueryParamResolver:
     def __init__(
         self,
         block: UnicodeBlockName | None = Query(default=None, description=CHAR_SEARCH_BLOCK_NAME_DESCRIPTION),
-        session: Session = Depends(db.get_session),
+        db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
+        session, _ = db_ctx
         if not block:
             self.block: db.UnicodeBlock = get_all_characters_block(session)
         else:
-            self.block: db.UnicodeBlock = session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
+            self.block: db.UnicodeBlock = (
+                session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
+            )
         self.name = self.block.name
         self.start = self.block.start
         self.start_dec = self.block.start_dec
@@ -360,13 +369,16 @@ class UnicodeBlockPathParamResolver:
     def __init__(
         self,
         block: UnicodeBlockName | None = Path(default=None, description=BLOCK_NAME_DESCRIPTION),
-        session: Session = Depends(db.get_session),
+        db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
+        session, _ = db_ctx
         if not block:
             self.block: db.UnicodeBlock = get_all_characters_block(session)
             self.plane_abbrev = self.block.plane.abbreviation
         else:
-            self.block: db.UnicodeBlock = session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
+            self.block: db.UnicodeBlock = (
+                session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
+            )
             self.plane_abbrev = "ALL"
         self.name = self.block.name
         self.start = self.block.start
@@ -391,12 +403,15 @@ class UnicodePlaneResolver:
     def __init__(
         self,
         plane: UnicodePlaneName | None = Query(default=None, description=PLANE_NAME_DESCRIPTION),
-        session: Session = Depends(db.get_session),
+        db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
+        session, _ = db_ctx
         if not plane:
             self.plane: db.UnicodePlane = get_all_characters_plane(session)
         else:
-            self.plane: db.UnicodePlane = session.query(db.UnicodePlane).filter(db.UnicodePlane.number == plane.number).one()
+            self.plane: db.UnicodePlane = (
+                session.query(db.UnicodePlane).filter(db.UnicodePlane.number == plane.number).one()
+            )
         self.start_block_id = self.plane.start_block_id
         self.finish_block_id = self.plane.finish_block_id
 

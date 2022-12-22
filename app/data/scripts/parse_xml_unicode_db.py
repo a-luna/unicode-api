@@ -2,11 +2,12 @@ import json
 from pathlib import Path
 from xml.dom import minidom
 
+import app.core.db as db
 from app.core.config import PLANES_JSON
+from app.core.enums.block_name import UnicodeBlockName
 from app.core.result import Result
 from app.core.util import get_codepoint_string
-from app.data.constants import NULL_BLOCK, NULL_PLANE
-from app.data.scripts.util import finish_task, start_task, update_progress
+from app.data.scripts.util import finish_task, NULL_BLOCK, NULL_PLANE, start_task, update_progress
 
 YES_NO_MAP = {"Y": True, "N": False}
 
@@ -16,8 +17,9 @@ CharDetailsDict = dict[str, bool | int | str]
 def parse_xml_unicode_database(
     xml_file: Path,
 ) -> Result[tuple[list[dict[str, int | str]], list[dict[str, int | str]], list[CharDetailsDict]]]:
+    spinner = start_task("Parsing Unicode XML database...")
     unicode_xml = minidom.parse(str(xml_file))  # nosec
-    spinner = start_task("Parsing Unicode plane and block data from XML database file...")
+    spinner.text = "Parsing Unicode plane and block data from XML database file..."
     all_planes: list[dict[str, int | str]] = json.loads(PLANES_JSON.read_text())
     all_blocks: list[dict[str, int | str]] = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
     finish_task(spinner, True, "Successfully parsed Unicode plane and block data from XML database file!")
@@ -102,6 +104,7 @@ def parse_character_details(
         "codepoint_dec": codepoint_dec,
         "block_id": block["id"],
         "plane_number": plane["number"],
+        "no_name": UnicodeBlockName.from_block_id(block["id"]) in db.NO_NAME_BLOCKS,
         "age": char_node.getAttribute("age"),
         "general_category": char_node.getAttribute("gc"),
         "combining_class": int(char_node.getAttribute("ccc")),

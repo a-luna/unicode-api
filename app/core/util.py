@@ -5,7 +5,10 @@ from urllib.parse import urlsplit
 
 import requests
 
+from app.core.db import NO_NAME_BLOCKS
+from app.core.enums.block_name import UnicodeBlockName
 from app.core.result import Result
+from app.data.cache import cached_data
 
 CHUNK_SIZE = 1024
 
@@ -71,3 +74,16 @@ def run_command(command, cwd=None, shell=True, text=True):
         if e.stderr:
             error += f"\n\tError: {e.stderr}"
         return Result.Fail(error)
+
+
+def codepoint_is_assigned(codepoint: int) -> bool:
+    return codepoint in cached_data.char_name_map or get_unicode_block_containing_character(codepoint) in NO_NAME_BLOCKS
+
+
+def get_unicode_block_containing_character(codepoint: int) -> UnicodeBlockName:
+    found = [
+        block["id"]
+        for block in cached_data.blocks
+        if int(block["start_dec"]) <= codepoint and codepoint <= int(block["finish_dec"])
+    ]
+    return UnicodeBlockName.from_block_id(found[0]) if found else UnicodeBlockName.NONE

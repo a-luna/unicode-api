@@ -107,7 +107,7 @@ body {
   margin: 0 auto;
 }
 
-[data-param-name="show"] select[multiple] {
+[data-param-name="show_props"] select[multiple] {
   height: 333px;
 }
 

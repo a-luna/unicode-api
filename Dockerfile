@@ -5,5 +5,5 @@ COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 EXPOSE 80
 COPY ./app /code/app 
-RUN PYTHONPATH=/code/. python /code/./app/data/scripts/init_prod_data.py
+RUN PYTHONPATH=/code/. python /code/./app/data/scripts/update_all_data.py
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

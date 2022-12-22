@@ -3,21 +3,20 @@ import json
 from sqlmodel import Session
 
 import app.core.db as db
-from app.core.config import CHARACTERS_JSON, BLOCKS_JSON, PLANES_JSON
+from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, PLANES_JSON
 from app.core.result import Result
-from app.data.constants import NULL_BLOCK, NULL_PLANE
-from app.data.scripts.util import finish_task, start_task, update_progress
-from app.models.enums import (
-    GeneralCategory,
-    BidirectionalClass,
+from app.data.scripts.util import finish_task, NULL_BLOCK, NULL_PLANE, start_task, update_progress
+from app.schemas.enums import (
     BidirectionalBracketType,
+    BidirectionalClass,
     DecompositionType,
-    NumericType,
+    EastAsianWidthType,
+    GeneralCategory,
+    HangulSyllableType,
     JoiningClass,
     LineBreakType,
-    EastAsianWidthType,
+    NumericType,
     ScriptCode,
-    HangulSyllableType,
     VerticalOrientationType,
 )
 
@@ -25,7 +24,7 @@ from app.models.enums import (
 def populate_sqlite_database():
     db.create_db_and_tables()
     all_planes, all_blocks = parse_unicode_planes_and_blocks_from_json()
-    all_chars = parse_unicode_characterss_from_json()
+    all_chars = parse_unicode_characters_from_json()
     all_blocks = assign_unicode_plane_to_each_block(all_planes, all_blocks)
     all_chars = assign_unicode_block_and_plane_to_each_character(all_planes, all_blocks, all_chars)
 
@@ -53,12 +52,14 @@ def parse_unicode_blocks_from_json():
     return [db.UnicodeBlock(**block) for block in block_dicts]
 
 
-def parse_unicode_characterss_from_json():
+def parse_unicode_characters_from_json():
     spinner = start_task("Parsing unicode character data from JSON...")
     char_dicts = json.loads(CHARACTERS_JSON.read_text())
-    all_chars = [db.UnicodeCharacter(**update_char_dict_enum_values(char)) for char in char_dicts]
+    all_char_dicts = [update_char_dict_enum_values(char) for char in char_dicts]
+    all_named_chars = [db.UnicodeCharacter(**char_dict) for char_dict in all_char_dicts if not char_dict["no_name"]]
+    all_no_name_chars = [db.UnicodeCharacterNoName(**char_dict) for char_dict in all_char_dicts if char_dict["no_name"]]
     finish_task(spinner, True, "Successfullly parsed character data!")
-    return all_chars
+    return all_named_chars + all_no_name_chars
 
 
 def update_char_dict_enum_values(char_dict):
@@ -80,7 +81,9 @@ def assign_unicode_plane_to_each_block(all_planes, all_blocks):
     spinner = start_task("Assigning unicode plane to each block...")
     update_progress(spinner, "Assigning unicode planes to each block...", 0, len(all_blocks))
     for i, block in enumerate(all_blocks, start=1):
-        found = [plane for plane in all_planes if plane.start_block_id <= block.id and block.id <= plane.finish_block_id]
+        found = [
+            plane for plane in all_planes if plane.start_block_id <= block.id and block.id <= plane.finish_block_id
+        ]
         block.plane = found[0] if found else NULL_PLANE
         update_progress(spinner, "Assigning unicode planes to each block...", i, len(all_blocks))
     finish_task(spinner, True, "Successfully assigned a unicode plane to all blocks!")
@@ -91,11 +94,14 @@ def assign_unicode_block_and_plane_to_each_character(all_planes, all_blocks, all
     spinner = start_task("Assigning unicode block and plane to each character...")
     for i, char in enumerate(all_chars, start=1):
         found_block = [
-            block for block in all_blocks
+            block
+            for block in all_blocks
             if block.start_dec <= char.codepoint_dec and char.codepoint_dec <= block.finish_dec
         ]
         block = found_block[0] if found_block else NULL_BLOCK
-        found_plane = [plane for plane in all_planes if plane.start_block_id <= block.id and block.id <= plane.finish_block_id]
+        found_plane = [
+            plane for plane in all_planes if plane.start_block_id <= block.id and block.id <= plane.finish_block_id
+        ]
         plane = found_plane[0] if found_plane else NULL_PLANE
         char.block = block
         char.plane = plane

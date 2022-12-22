@@ -1,4 +1,3 @@
-import os
 from http import HTTPStatus
 from pathlib import Path
 
@@ -11,7 +10,7 @@ from starlette.responses import RedirectResponse
 
 from app.api.api_v1.api import router
 from app.core.config import settings
-
+from app.data.cache import cached_data
 
 APP_FOLDER = Path(__file__).parent
 STATIC_FOLDER = APP_FOLDER.joinpath("static")
@@ -115,9 +114,9 @@ def init_redis():
 
 @app.on_event("startup")
 def init_unicode_obj():
-    if os.environ.get("ENV") != "PROD":
-        return
-    # setup sqlmodel engine here and create tables
+    _ = cached_data.all_codepoints
+    _ = cached_data.blocks
+    _ = cached_data.planes
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False)
