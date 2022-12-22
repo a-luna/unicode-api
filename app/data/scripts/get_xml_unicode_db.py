@@ -1,7 +1,6 @@
+import os
 from pathlib import Path
 from zipfile import is_zipfile, ZipFile
-
-import snoop
 
 from app.core.config import DATA_FOLDER
 from app.core.result import Result
@@ -16,12 +15,11 @@ UCDXML_FILE_PATH = UCDXML_FOLDER_PATH.joinpath(UCDXML_FILE_NAME)
 
 
 def get_xml_unicode_database(version: str) -> Result[Path]:
-    # if os.environ.get("ENV") != "PROD":
-    #     return Result.Ok(UCDXML_FILE_PATH)
+    if os.environ.get("ENV") != "PROD":
+        return Result.Ok(UCDXML_FILE_PATH)
     return download_xml_unicode_database(version)
 
 
-@snoop
 def download_xml_unicode_database(version: str) -> Result[Path]:
     download_result = download_unicode_xml_zip(version, str(UCDXML_FOLDER_PATH))
     if download_result.failure:
@@ -42,7 +40,6 @@ def get_local_xml_unicode_database() -> Result[Path]:
     return Result.Ok(Path("/Users/aaronluna/Downloads/ucd.all.flat.xml"))
 
 
-@snoop
 def download_unicode_xml_zip(version: str, local_folder: str) -> Result:
     url = get_all_chars_zip_url(version)
     result = download_file(url, Path(local_folder))
@@ -56,12 +53,10 @@ def download_unicode_xml_zip(version: str, local_folder: str) -> Result:
     return Result.Fail("Zip file is possibly corrupt, the format cannot be recognized.")
 
 
-@snoop
 def get_all_chars_zip_url(version: str) -> str:
     return f"{UNICODE_ORG_ROOT}/{version}/{UCDXML_FOLDER}/{ALL_CHARS_ZIP}"
 
 
-@snoop
 def extract_unicode_xml_from_zip(xml_zip: Path, local_folder: str) -> Result:
     xml_file = None
     with ZipFile(xml_zip, mode="r") as zip:

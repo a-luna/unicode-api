@@ -3,8 +3,6 @@ import os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-import snoop
-
 from app.core.config import (
     BLOCKS_JSON,
     CHAR_NAME_MAP,
@@ -12,6 +10,7 @@ from app.core.config import (
     CHARACTERS_JSON,
     DB_FILE,
     DB_FOLDER,
+    JSON_FOLDER,
     PLANES_JSON,
     S3_BUCKET_URL,
 )
@@ -23,7 +22,6 @@ from app.data.scripts.populate_sqlite_db import populate_sqlite_database
 from app.data.scripts.util import finish_task, start_task
 
 
-@snoop
 def update_all_data(version: str):
     spinner = start_task(f"Downloading Unicode XML Database v{version} from unicode.org...")
     spinner.stop_and_persist()
@@ -54,6 +52,10 @@ def update_all_data(version: str):
                 result = upload_zip_file_to_s3(zip_file)
                 if result.failure:
                     return result
+                zip_file = backup_json_files()
+                result = upload_zip_file_to_s3(zip_file)
+                if result.failure:
+                    return result
             return Result.Ok()
 
 
@@ -80,6 +82,16 @@ def backup_sqlite_db():
     with ZipFile(zip_file, "w", ZIP_DEFLATED) as zip:
         zip.write(DB_FILE, f"{DB_FILE. name}")
     finish_task(spinner, True, "Successfully created compressed backup file of SQLite database!")
+    return zip_file
+
+
+def backup_json_files():
+    zip_file = JSON_FOLDER.joinpath("unicode_json.zip")
+    with ZipFile(zip_file, "w", ZIP_DEFLATED) as zip:
+        zip.write(PLANES_JSON, f"{PLANES_JSON. name}")
+        zip.write(BLOCKS_JSON, f"{BLOCKS_JSON.name}")
+        zip.write(CHAR_NAME_MAP, f"{CHAR_NAME_MAP.name}")
+        zip.write(CHAR_NO_NAME_MAP, f"{CHAR_NO_NAME_MAP.name}")
     return zip_file
 
 
