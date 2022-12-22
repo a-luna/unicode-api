@@ -18,6 +18,9 @@ def parse_xml_unicode_database(
     xml_file: Path,
 ) -> Result[tuple[list[dict[str, int | str]], list[dict[str, int | str]], list[CharDetailsDict]]]:
     spinner = start_task("Parsing Unicode XML database...")
+    print("######### LOOOKY HERE ########\n")
+    print(xml_file)
+    print("\n######### LOOOKY HERE ########")
     unicode_xml = minidom.parse(str(xml_file))  # nosec
     spinner.text = "Parsing Unicode plane and block data from XML database file..."
     all_planes: list[dict[str, int | str]] = json.loads(PLANES_JSON.read_text())
