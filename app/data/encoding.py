@@ -1,6 +1,5 @@
 from html.entities import html5
 
-
 HTML_ENTITY_MAP = {
     cp: entity
     for (cp, entity) in sorted(
