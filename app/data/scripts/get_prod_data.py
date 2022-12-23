@@ -12,41 +12,33 @@ JSON_FOLDER = DATA_FOLDER.joinpath("json")
 DB_FOLDER = DATA_FOLDER.joinpath("db")
 
 
-def init_prod_data():
-    DB_FOLDER.mkdir(parents=True, exist_ok=True)
-    result = download_unicode_db()
-    if result.failure:
-        return result
-    unicode_db_zip = result.value
-
-    JSON_FOLDER.mkdir(parents=True, exist_ok=True)
-    result = download_unicode_json()
-    if result.failure:
-        return result
-    unicode_json_zip = result.value
-
-    if unicode_db_zip and unicode_db_zip.exists():
-        result = extract_unicode_db(unicode_db_zip)
-        if result.failure:
-            return result
-        unicode_db_zip.unlink()
-
-    if unicode_json_zip and unicode_json_zip.exists():
-        result = extract_unicode_json(unicode_json_zip)
-        if result.failure:
-            return result
-        unicode_json_zip.unlink()
-
+def get_prod_data():
+    get_db_result = get_unicode_db()
+    if get_db_result.failure:
+        return get_db_result
+    get_json_result = get_unicode_json()
+    if get_json_result.failure:
+        return get_json_result
     return Result.Ok()
 
 
-def download_unicode_db() -> Result[Path]:
+def get_unicode_db() -> Result:
+    DB_FOLDER.mkdir(parents=True, exist_ok=True)
+    result = download_unicode_db_zip()
+    if result.failure:
+        return result
+    unicode_db_zip = result.value
+    if not unicode_db_zip or not unicode_db_zip.exists():
+        return Result.Fail(f"Failed to download {UNICODE_DB_ZIP_FILE}")
+    result = extract_unicode_db(unicode_db_zip)
+    if result.failure:
+        return result
+    unicode_db_zip.unlink()
+    return Result.Ok()
+
+
+def download_unicode_db_zip() -> Result[Path]:
     url = f"{S3_BUCKET_URL}/{UNICODE_DB_ZIP_FILE}"
-    return download_file(url, DB_FOLDER)
-
-
-def download_unicode_json() -> Result[Path]:
-    url = f"{S3_BUCKET_URL}/{UNICODE_JSON_ZIP_FILE}"
     return download_file(url, DB_FOLDER)
 
 
@@ -64,6 +56,26 @@ def extract_unicode_db(unicode_db_zip: Path) -> Result[list[Path]]:
         return Result.Ok(extracted_files)
 
 
+def get_unicode_json() -> Result:
+    JSON_FOLDER.mkdir(parents=True, exist_ok=True)
+    result = download_unicode_json_zip()
+    if result.failure:
+        return result
+    unicode_json_zip = result.value
+    if not unicode_json_zip or not unicode_json_zip.exists():
+        return Result.Fail(f"Failed to download {UNICODE_JSON_ZIP_FILE}")
+    result = extract_unicode_json(unicode_json_zip)
+    if result.failure:
+        return result
+    unicode_json_zip.unlink()
+    return Result.Ok()
+
+
+def download_unicode_json_zip() -> Result[Path]:
+    url = f"{S3_BUCKET_URL}/{UNICODE_JSON_ZIP_FILE}"
+    return download_file(url, JSON_FOLDER)
+
+
 def extract_unicode_json(unicode_json_zip: Path) -> Result[list[Path]]:
     with ZipFile(unicode_json_zip, mode="r") as zip:
         zip.extractall(path=str(JSON_FOLDER))
@@ -79,4 +91,4 @@ def extract_unicode_json(unicode_json_zip: Path) -> Result[list[Path]]:
 
 
 if __name__ == "__main__":
-    init_prod_data()
+    get_prod_data()

@@ -149,10 +149,10 @@ class UnicodeCharacterResponse(CamelModel):
     simple_case_folding: str | None
     other_uppercase: bool | None
     other_lowercase: bool | None
-    other_uppercase_mapping: str | None
-    other_lowercase_mapping: str | None
-    other_titlecase_mapping: str | None
-    other_case_folding: str | None
+    other_uppercase_mapping: list[str] | None
+    other_lowercase_mapping: list[str] | None
+    other_titlecase_mapping: list[str] | None
+    other_case_folding: list[str] | None
     script: str | None
     script_extension: list[str] | None
     hangul_syllable_type: str | None
@@ -192,9 +192,12 @@ class UnicodeCharacterResponse(CamelModel):
     utf32: str | None
     uri_encoded: str | None
     html_entities: list[str] | None
-    utf8_bytes: list[str] | None
-    utf16_bytes: list[str] | None
-    utf32_bytes: list[str] | None
+    utf8_hex_bytes: list[str] | None
+    utf16_hex_bytes: list[str] | None
+    utf32_hex_bytes: list[str] | None
+    utf8_dec_bytes: list[str] | None
+    utf16_dec_bytes: list[str] | None
+    utf32_dec_bytes: list[str] | None
 
 
 class UnicodeCharacter(UnicodeCharacterBase, table=True):

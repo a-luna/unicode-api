@@ -3,10 +3,13 @@ from app.data.cache import cached_data
 from app.data.encoding import (
     get_html_entities,
     get_uri_encoded_value,
+    get_utf8_dec_bytes,
     get_utf8_hex_bytes,
     get_utf8_value,
+    get_utf16_dec_bytes,
     get_utf16_hex_bytes,
     get_utf16_value,
+    get_utf32_dec_bytes,
     get_utf32_hex_bytes,
     get_utf32_value,
 )
@@ -131,7 +134,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "bmg",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["bidirectional_mirroring_glyph"]),
+            "response_value": lambda char: get_mapped_codepoint(char["bidirectional_mirroring_glyph"]),
         },  # bidirectional mirroring glyph, the codepoint of the character whose glyph is typically a mirrored image of the glyph for the current character
         {
             "name_in": "bidirectional_control",
@@ -154,7 +157,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "bpb",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["paired_bracket_property"]),
+            "response_value": lambda char: get_mapped_codepoint(char["paired_bracket_property"]),
         },  # bidirectional paired bracket property, see https://www.unicode.org/Public/15.0.0/ucd/BidiBrackets.txt
     ],
     CharPropertyGroup.DECOMPOSITION: [
@@ -172,7 +175,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "dm",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: get_decomposition_mapping(char["decomposition_mapping"]),
+            "response_value": lambda char: get_mapped_codepoint_list(char["decomposition_mapping"]),
         },
         {
             "name_in": "composition_exclusion",
@@ -278,7 +281,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "suc",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["simple_uppercase_mapping"]),
+            "response_value": lambda char: get_mapped_codepoint(char["simple_uppercase_mapping"]),
         },
         {
             "name_in": "simple_lowercase_mapping",
@@ -286,7 +289,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "slc",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["simple_lowercase_mapping"]),
+            "response_value": lambda char: get_mapped_codepoint(char["simple_lowercase_mapping"]),
         },
         {
             "name_in": "simple_titlecase_mapping",
@@ -294,7 +297,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "stc",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["simple_titlecase_mapping"]),
+            "response_value": lambda char: get_mapped_codepoint(char["simple_titlecase_mapping"]),
         },
         {
             "name_in": "simple_case_folding",
@@ -302,7 +305,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "scf",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["simple_case_folding"]),
+            "response_value": lambda char: get_mapped_codepoint(char["simple_case_folding"]),
         },
         {
             "name_in": "other_uppercase",
@@ -324,7 +327,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "uc",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["other_uppercase_mapping"]),
+            "response_value": lambda char: get_mapped_codepoint_list(char["other_uppercase_mapping"]),
         },
         {
             "name_in": "other_lowercase_mapping",
@@ -332,7 +335,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "lc",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["other_lowercase_mapping"]),
+            "response_value": lambda char: get_mapped_codepoint_list(char["other_lowercase_mapping"]),
         },
         {
             "name_in": "other_titlecase_mapping",
@@ -340,7 +343,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "tc",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["other_titlecase_mapping"]),
+            "response_value": lambda char: get_mapped_codepoint_list(char["other_titlecase_mapping"]),
         },
         {
             "name_in": "other_case_folding",
@@ -348,7 +351,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "cf",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: display_mapped_codepoint(char["other_case_folding"]),
+            "response_value": lambda char: get_mapped_codepoint_list(char["other_case_folding"]),
         },
     ],
     CharPropertyGroup.SCRIPT: [
@@ -647,42 +650,66 @@ CHARACTER_PROPERTY_GROUPS = {
     ],
     CharPropertyGroup.ENCODED_BYTES: [
         {
-            "name_in": "utf8_bytes",
-            "name_out": "utf8_bytes",
+            "name_in": "utf8_hex_bytes",
+            "name_out": "utf8_hex_bytes",
             "char_property": "",
             "db_column": False,
             "responsify": True,
             "response_value": lambda char: get_utf8_hex_bytes(chr(char["codepoint_dec"])),
         },
         {
-            "name_in": "utf16_bytes",
-            "name_out": "utf16_bytes",
+            "name_in": "utf16_hex_bytes",
+            "name_out": "utf16_hex_bytes",
             "char_property": "",
             "db_column": False,
             "responsify": True,
             "response_value": lambda char: get_utf16_hex_bytes(chr(char["codepoint_dec"])),
         },
         {
-            "name_in": "utf32_bytes",
-            "name_out": "utf32_bytes",
+            "name_in": "utf32_hex_bytes",
+            "name_out": "utf32_hex_bytes",
             "char_property": "",
             "db_column": False,
             "responsify": True,
             "response_value": lambda char: get_utf32_hex_bytes(chr(char["codepoint_dec"])),
         },
+        {
+            "name_in": "utf8_dec_bytes",
+            "name_out": "utf8_dec_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf8_dec_bytes(chr(char["codepoint_dec"])),
+        },
+        {
+            "name_in": "utf16_dec_bytes",
+            "name_out": "utf16_dec_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf16_dec_bytes(chr(char["codepoint_dec"])),
+        },
+        {
+            "name_in": "utf32_dec_bytes",
+            "name_out": "utf32_dec_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf32_dec_bytes(chr(char["codepoint_dec"])),
+        },
     ],
 }
 
 
-def display_mapped_codepoint(codepoint_hex: str) -> str:
+def get_mapped_codepoint(codepoint_hex: str) -> str:
     return f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})" if codepoint_hex else ""
 
 
-def get_decomposition_mapping(value: str) -> list[str]:
+def get_mapped_codepoint_list(value: str) -> list[str]:
     return (
-        [display_mapped_codepoint(codepoint_hex) for codepoint_hex in value.split(" ")]
+        [get_mapped_codepoint(codepoint_hex) for codepoint_hex in value.split(" ")]
         if " " in value
-        else [display_mapped_codepoint(value)]
+        else [get_mapped_codepoint(value)]
     )
 
 
