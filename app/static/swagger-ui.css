@@ -130,6 +130,10 @@ body {
   display: block;
 }
 
+.swagger-ui details summary::-webkit-details-marker {
+  display:none;
+}
+
 .swagger-ui summary {
   cursor: pointer;
   color: var(--details-header-text-color);
