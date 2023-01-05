@@ -3,10 +3,9 @@ from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.staticfiles import StaticFiles
 from fastapi_redis_cache import FastApiRedisCache
-from starlette.responses import RedirectResponse
+from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
 from app.core.config import settings
@@ -119,30 +118,10 @@ def init_unicode_obj():
     _ = cached_data.planes
 
 
-@app.get(f"{settings.API_VERSION}/docs", include_in_schema=False)
+@app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
 async def swagger_ui_html():
-    return get_swagger_ui_html(
-        title=f"{settings.PROJECT_NAME} - Swagger UI",
-        openapi_url=app.openapi_url or "/openapi.json",
-        swagger_ui_parameters={
-            "docExpansion": "list",
-            "defaultModelsExpandDepth": -1,
-            "syntaxHighlight.theme": "arta",
-            "tryItOutEnabled": "true",
-            "displayRequestDuration": "true",
-            "requestSnippetsEnabled": "true",
-            "requestSnippets": {
-                "generators": {
-                    "curl_bash": {"title": "cURL (bash)", "syntax": "bash"},
-                },
-                "defaultExpanded": False,
-                "languages": None,
-            },
-        },
-        swagger_js_url="/static/swagger-ui-bundle.js",
-        swagger_css_url="/static/swagger-ui.css",
-        swagger_favicon_url="/static/favicon.png",
-    )
+    swagger_html = STATIC_FOLDER.joinpath("index.html")
+    return FileResponse(str(swagger_html))
 
 
 @app.get("/", include_in_schema=False)

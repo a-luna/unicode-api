@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link type="text/css" rel="stylesheet" href="/static/swagger-ui.css" />
+    <link rel="shortcut icon" href="/static/favicon.png" />
+    <script async defer data-website-id="be7afe60-557b-4d2b-a504-ee2dc4583cb4" src="https://aluna-umami.netlify.app/umami.js"></script>
+    <title>Unicode API - Swagger UI</title>
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="/static/swagger-ui-bundle.js"></script>
+    <script>
+      const ui = SwaggerUIBundle({
+        url: "/v1/openapi.json",
+        dom_id: "#swagger-ui",
+        layout: "BaseLayout",
+        deepLinking: true,
+        showExtensions: true,
+        showCommonExtensions: true,
+        docExpansion: "list",
+        defaultModelsExpandDepth: -1,
+        "syntaxHighlight.theme": "arta",
+        tryItOutEnabled: "true",
+        displayRequestDuration: "true",
+        requestSnippetsEnabled: "true",
+        requestSnippets: {
+          generators: { curl_bash: { title: "cURL (bash)", syntax: "bash" } },
+          defaultExpanded: false,
+          languages: null,
+        },
+
+        presets: [
+          SwaggerUIBundle.presets.apis,
+          SwaggerUIBundle.SwaggerUIStandalonePreset,
+        ],
+      });
+    </script>
+  </body>
+</html>
