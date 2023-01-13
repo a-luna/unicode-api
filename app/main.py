@@ -56,7 +56,7 @@ def init_unicode_obj():
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
-async def custom_swagger_ui_html():
+async def swagger_ui_html():
     return get_swagger_ui_html(
         openapi_url=app.openapi_url or "/openapi.json",
         title=f"{settings.PROJECT_NAME} - Swagger UI",
