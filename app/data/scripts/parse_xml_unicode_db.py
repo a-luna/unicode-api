@@ -2,9 +2,7 @@ import json
 from pathlib import Path
 from xml.dom import minidom
 
-import app.db.engine as db
 from app.core.config import PLANES_JSON
-from app.core.enums.block_name import UnicodeBlockName
 from app.core.result import Result
 from app.core.util import get_codepoint_string
 from app.data.scripts.util import finish_task, NULL_BLOCK, NULL_PLANE, start_task, update_progress

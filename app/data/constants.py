@@ -1,10 +1,37 @@
+MAX_CODEPOINT = 1114111
+
 CJK_UNIFIED_BLOCKS = [121, 119, 316, 317, 318, 319, 320, 322, 323]
 CJK_COMPATIBILITY_BLOCKS = [154, 321]
 TANGUT_BLOCKS = [266, 269]
 SINGLE_NO_NAME_BLOCKS = [150, 151, 152, 153, 326, 327]
-
 SURROGATE_BLOCK_IDS = [150, 151, 152]
 PRIVATE_USE_BLOCK_IDS = [153, 326, 327]
+
+NULL_BLOCK = {
+    "id": 0,
+    "name": "",
+    "plane_id": 0,
+    "start": "",
+    "start_dec": 0,
+    "finish": "",
+    "finish_dec": 0,
+    "total_allocated": 0,
+    "total_defined": 0,
+}
+
+NULL_PLANE = {
+    "number": -1,
+    "name": "Invalid Codepoint",
+    "abbreviation": "N/A",
+    "start": "",
+    "start_dec": 0,
+    "finish": "",
+    "finish_dec": 0,
+    "start_block_id": 0,
+    "finish_block_id": 0,
+    "total_allocated": 0,
+    "total_defined": 0,
+}
 NON_CHARACTER_CODEPOINTS = [
     "FDD0",
     "FDD1",

@@ -50,9 +50,17 @@ def init_redis():
 
 @app.on_event("startup")
 def init_unicode_obj():
-    _ = cached_data.all_codepoints
+    _ = cached_data.char_unique_name_map
+    _ = cached_data.char_unique_name_search_choices
+    _ = cached_data.char_generic_name_map
+    _ = cached_data.char_generic_name_search_choices
     _ = cached_data.blocks
+    _ = cached_data.block_id_map
+    _ = cached_data.block_name_map
+    _ = cached_data.block_name_search_choices
     _ = cached_data.planes
+    _ = cached_data.plane_number_map
+    _ = cached_data.plane_name_map
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
