@@ -8,6 +8,7 @@ from app.schemas.enums.general_category import GeneralCategory
 from app.schemas.enums.hangul_syllable_type import HangulSyllableType
 from app.schemas.enums.joining_class import JoiningClass
 from app.schemas.enums.line_break_type import LineBreakType
+from app.schemas.enums.nameless_character import NamelessCharacterType
 from app.schemas.enums.numeric_type import NumericType
 from app.schemas.enums.property_group import CharPropertyGroup
 from app.schemas.enums.script_code import ScriptCode

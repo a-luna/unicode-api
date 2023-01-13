@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Path
 from sqlalchemy.engine import Engine
 from sqlmodel import Session
 
-import app.core.db as db
+import app.db.engine as db
 from app.core.config import settings
 
 router = APIRouter()

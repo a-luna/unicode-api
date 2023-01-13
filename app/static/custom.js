@@ -2,12 +2,11 @@
 function svgToBase64Image(svgElement) {
   var div = document.createElement("div");
   div.appendChild(svgElement.cloneNode(true));
-  var b64 = window.btoa(div.innerHTML);
-  return "data:image/svg+xml;base64," + b64;
+  return "data:image/svg+xml;base64," + window.btoa(div.innerHTML);
 }
-var svgs = document.querySelectorAll("body > svg");
-var urls = [];
-for (var i = 0; i < svgs.length; i++)
-  urls.push('url("' + svgToBase64Image(svgs[i]) + '")');
-var url = urls.join(",");
-document.querySelector('html').style.background = url;
+
+var svgUrls = Array.from(document.querySelectorAll("body > svg"))
+  .map((svg) => 'url("' + svgToBase64Image(svg) + '")')
+  .join(",");
+
+document.querySelector("html").style.background = svgUrls;

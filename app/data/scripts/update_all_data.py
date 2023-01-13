@@ -15,11 +15,14 @@ from app.core.config import (
     S3_BUCKET_URL,
 )
 from app.core.result import Result
-from app.core.util import run_command
-from app.data.scripts.get_xml_unicode_db import get_xml_unicode_database
-from app.data.scripts.parse_xml_unicode_db import parse_xml_unicode_database
-from app.data.scripts.populate_sqlite_db import populate_sqlite_database
-from app.data.scripts.util import finish_task, start_task
+from app.data.scripts import (
+    finish_task,
+    get_xml_unicode_database,
+    parse_xml_unicode_database,
+    populate_sqlite_database,
+    run_command,
+    start_task,
+)
 
 
 def update_all_data(version: str):

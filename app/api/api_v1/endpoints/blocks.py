@@ -6,7 +6,7 @@ from rapidfuzz import process
 from sqlalchemy.engine import Engine
 from sqlmodel import Session
 
-import app.core.db as db
+import app.db.engine as db
 from app.api.api_v1.dependencies import (
     BlockSearchParameters,
     ListParametersDecimal,
@@ -15,7 +15,6 @@ from app.api.api_v1.dependencies import (
 )
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.config import settings
-from app.core.enums.block_name import UnicodeBlockName
 
 router = APIRouter()
 
@@ -82,12 +81,12 @@ def search_unicode_blocks_by_name(
 
 
 @router.get(
-    "/{block}",
+    "/{name}",
     response_model=db.UnicodeBlockResponse,
     response_model_exclude_unset=True,
 )
-def get_unicode_block_details(block: UnicodeBlockPathParamResolver = Depends()):
-    return db.UnicodeBlock.responsify(block.block)
+def get_unicode_block_details(name: UnicodeBlockPathParamResolver = Depends()):
+    return db.UnicodeBlock.responsify(name.block)
 
 
 @lru_cache
@@ -107,7 +106,6 @@ def search_blocks_by_name(session: Session, query: str, score_cutoff: int = 80) 
             total_allocated=get_block_by_id(session, result).total_allocated,
             total_defined=get_block_by_id(session, result).total_defined,
             score=float(f"{score:.1f}"),
-            link=f"{settings.API_VERSION}/blocks/{UnicodeBlockName.from_block_id(result).name}",
         )
         for (_, score, result) in process.extract(query.lower(), block_name_map, limit=len(block_name_map))
         if score >= float(score_cutoff)

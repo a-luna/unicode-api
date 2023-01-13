@@ -46,4 +46,3 @@ class UnicodeBlock(UnicodeBlockBase, table=True):
 
 class UnicodeBlockResult(UnicodeBlockResponse):
     score: float | None
-    link: str

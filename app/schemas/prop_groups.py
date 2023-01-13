@@ -1,4 +1,5 @@
-from app.core.config import settings
+from typing import Any
+
 from app.data.cache import cached_data
 from app.data.encoding import (
     get_html_entities,
@@ -30,19 +31,21 @@ from app.schemas.enums import (
 )
 
 CHARACTER_PROPERTY_GROUPS = {
-    CharPropertyGroup.BASIC: [
+    CharPropertyGroup.Minimum: [
         {
             "name_in": "character",
             "name_out": "character",
             "char_property": "",
             "db_column": False,
             "responsify": True,
-            "response_value": lambda char: chr(char["codepoint_dec"]),
+            "response_value": lambda char: chr(char["codepoint_dec"])
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
         },
         {
-            "name_in": "codepoint_dec",
-            "name_out": "codepoint_dec",
-            "char_property": "",
+            "name_in": "name",
+            "name_out": "name",
+            "char_property": "na",
             "db_column": True,
             "responsify": False,
         },
@@ -55,12 +58,24 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: f'U+{char["codepoint_dec"]:04X}',
         },
         {
-            "name_in": "name",
-            "name_out": "name",
-            "char_property": "na",
+            "name_in": "uri_encoded",
+            "name_out": "uri_encoded",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_uri_encoded_value(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+        {
+            "name_in": "codepoint_dec",
+            "name_out": "codepoint_dec",
+            "char_property": "",
             "db_column": True,
             "responsify": False,
         },
+    ],
+    CharPropertyGroup.Basic: [
         {
             "name_in": "block_id",
             "name_out": "block",
@@ -94,16 +109,6 @@ CHARACTER_PROPERTY_GROUPS = {
             # "response_value": lambda char: char.general_category.display_name,
         },  # general category, see https://www.unicode.org/reports/tr44/#General_Category_Values
         {
-            "name_in": "link",
-            "name_out": "link",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: f'{settings.API_VERSION}/characters/{get_uri_encoded_value(chr(char["codepoint_dec"]))}',
-        },
-    ],
-    CharPropertyGroup.COMBINING: [
-        {
             "name_in": "combining_class",
             "name_out": "combining_class",
             "char_property": "ccc",
@@ -111,8 +116,112 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: CombiningClassCategory(char["combining_class"]).display_name,
         },  # combining class, see https://www.unicode.org/reports/tr44/#Canonical_Combining_Class_Values. Specifies, with a numeric code, how a diacritic mark is positioned with respect to the base character. This is used in the Canonical Ordering Algorithm and in normalization. The order of the numbers is significant, but not the absolute values.
+        {
+            "name_in": "html_entities",
+            "name_out": "html_entities",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_html_entities(char["codepoint_dec"]),
+        },
     ],
-    CharPropertyGroup.BIDIRECTIONALITY: [
+    CharPropertyGroup.UTF8: [
+        {
+            "name_in": "utf8",
+            "name_out": "utf8",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf8_value(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+        {
+            "name_in": "utf8_hex_bytes",
+            "name_out": "utf8_hex_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf8_hex_bytes(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+        {
+            "name_in": "utf8_dec_bytes",
+            "name_out": "utf8_dec_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf8_dec_bytes(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+    ],
+    CharPropertyGroup.UTF16: [
+        {
+            "name_in": "utf16",
+            "name_out": "utf16",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf16_value(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+        {
+            "name_in": "utf16_hex_bytes",
+            "name_out": "utf16_hex_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf16_hex_bytes(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+        {
+            "name_in": "utf16_dec_bytes",
+            "name_out": "utf16_dec_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf16_dec_bytes(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+    ],
+    CharPropertyGroup.UTF32: [
+        {
+            "name_in": "utf32",
+            "name_out": "utf32",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf32_value(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+        {
+            "name_in": "utf32_hex_bytes",
+            "name_out": "utf32_hex_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf32_hex_bytes(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+        {
+            "name_in": "utf32_dec_bytes",
+            "name_out": "utf32_dec_bytes",
+            "char_property": "",
+            "db_column": False,
+            "responsify": True,
+            "response_value": lambda char: get_utf32_dec_bytes(chr(char["codepoint_dec"]))
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+            else "",
+        },
+    ],
+    CharPropertyGroup.Bidirectionality: [
         {
             "name_in": "bidirectional_class",
             "name_out": "bidirectional_class",
@@ -160,7 +269,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_mapped_codepoint(char["paired_bracket_property"]),
         },  # bidirectional paired bracket property, see https://www.unicode.org/Public/15.0.0/ucd/BidiBrackets.txt
     ],
-    CharPropertyGroup.DECOMPOSITION: [
+    CharPropertyGroup.Decomposition: [
         {
             "name_in": "decomposition_type",
             "name_out": "decomposition_type",
@@ -192,7 +301,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": False,
         },
     ],
-    CharPropertyGroup.NUMERIC: [
+    CharPropertyGroup.Numeric: [
         {
             "name_in": "numeric_type",
             "name_out": "numeric_type",
@@ -216,7 +325,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": False,
         },
     ],
-    CharPropertyGroup.JOINING: [
+    CharPropertyGroup.Joining: [
         {
             "name_in": "joining_class",
             "name_out": "joining_class",
@@ -240,7 +349,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": False,
         },
     ],
-    CharPropertyGroup.LINEBREAK: [
+    CharPropertyGroup.Linebreak: [
         {
             "name_in": "line_break",
             "name_out": "line_break",
@@ -250,7 +359,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: LineBreakType(char["line_break"]).display_name,
         },
     ],
-    CharPropertyGroup.EAST_ASIAN_WIDTH: [
+    CharPropertyGroup.East_Asian_Width: [
         {
             "name_in": "east_asian_width",
             "name_out": "east_asian_width",
@@ -260,7 +369,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: EastAsianWidthType(char["east_asian_width"]).display_name,
         },
     ],
-    CharPropertyGroup.CASE: [
+    CharPropertyGroup.Case: [
         {
             "name_in": "uppercase",
             "name_out": "uppercase",
@@ -354,7 +463,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_mapped_codepoint_list(char["other_case_folding"]),
         },
     ],
-    CharPropertyGroup.SCRIPT: [
+    CharPropertyGroup.Script: [
         {
             "name_in": "script",
             "name_out": "script",
@@ -372,7 +481,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_script_extension(char["script_extension"]),
         },
     ],
-    CharPropertyGroup.HANGUL: [
+    CharPropertyGroup.Hangul: [
         {
             "name_in": "hangul_syllable_type",
             "name_out": "hangul_syllable_type",
@@ -389,7 +498,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": False,
         },
     ],
-    CharPropertyGroup.INDIC: [
+    CharPropertyGroup.Indic: [
         {
             "name_in": "indic_syllabic_category",
             "name_out": "indic_syllabic_category",
@@ -412,7 +521,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": False,
         },
     ],
-    CharPropertyGroup.FUNCTION_AND_GRAPHIC: [
+    CharPropertyGroup.Function_and_Graphic: [
         {
             "name_in": "dash",
             "name_out": "dash",
@@ -562,7 +671,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": False,
         },
     ],
-    CharPropertyGroup.EMOJI: [
+    CharPropertyGroup.Emoji: [
         {
             "name_in": "emoji",
             "name_out": "emoji",
@@ -606,103 +715,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": False,
         },
     ],
-    CharPropertyGroup.ENCODED_STRINGS: [
-        {
-            "name_in": "utf8",
-            "name_out": "utf8",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf8_value(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "utf16",
-            "name_out": "utf16",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf16_value(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "utf32",
-            "name_out": "utf32",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf32_value(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "uri_encoded",
-            "name_out": "uri_encoded",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_uri_encoded_value(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "html_entities",
-            "name_out": "html_entities",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_html_entities(char["codepoint_dec"]),
-        },
-    ],
-    CharPropertyGroup.ENCODED_BYTES: [
-        {
-            "name_in": "utf8_hex_bytes",
-            "name_out": "utf8_hex_bytes",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf8_hex_bytes(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "utf16_hex_bytes",
-            "name_out": "utf16_hex_bytes",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf16_hex_bytes(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "utf32_hex_bytes",
-            "name_out": "utf32_hex_bytes",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf32_hex_bytes(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "utf8_dec_bytes",
-            "name_out": "utf8_dec_bytes",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf8_dec_bytes(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "utf16_dec_bytes",
-            "name_out": "utf16_dec_bytes",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf16_dec_bytes(chr(char["codepoint_dec"])),
-        },
-        {
-            "name_in": "utf32_dec_bytes",
-            "name_out": "utf32_dec_bytes",
-            "char_property": "",
-            "db_column": False,
-            "responsify": True,
-            "response_value": lambda char: get_utf32_dec_bytes(chr(char["codepoint_dec"])),
-        },
-    ],
 }
-
-
-def get_mapped_codepoint(codepoint_hex: str) -> str:
-    return f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})" if codepoint_hex else ""
 
 
 def get_mapped_codepoint_list(value: str) -> list[str]:
@@ -713,6 +726,10 @@ def get_mapped_codepoint_list(value: str) -> list[str]:
     )
 
 
+def get_mapped_codepoint(codepoint_hex: str) -> str:
+    return f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})" if codepoint_hex else ""
+
+
 def get_script_extension(value: str) -> list[str]:
     return [ScriptCode.from_code(script).display_name for script in value.split(" ")]
 
@@ -721,7 +738,7 @@ def get_all_db_columns_in_group(prop_group: CharPropertyGroup) -> list[str]:
     return [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
 
 
-def update_character_properties(char_dict: dict[str, bool | int | str], prop_group: CharPropertyGroup):
+def update_character_properties(char_dict: dict[str, Any | bool | int | str | None], prop_group: CharPropertyGroup):
     updated_dict = {}
     all_prop_names = [prop_map["name_in"] for prop_map in CHARACTER_PROPERTY_GROUPS[prop_group]]
     for prop_name in all_prop_names:

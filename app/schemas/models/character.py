@@ -116,13 +116,23 @@ class UnicodeCharacterResponse(CamelModel):
     character: str | None
     name: str | None
     codepoint: str | None
+    uri_encoded: str | None
     block: str | None
     plane: str | None
     age: str | None
     general_category: str | None
-    score: float | None
-    link: str | None
     combining_class: str | None
+    html_entities: list[str] | None
+    score: float | None
+    utf8: str | None
+    utf8_hex_bytes: list[str] | None
+    utf8_dec_bytes: list[str] | None
+    utf16: str | None
+    utf16_hex_bytes: list[str] | None
+    utf16_dec_bytes: list[str] | None
+    utf32: str | None
+    utf32_hex_bytes: list[str] | None
+    utf32_dec_bytes: list[str] | None
     bidirectional_class: str | None
     bidirectional_is_mirrored: bool | None
     bidirectional_mirroring_glyph: str | None
@@ -187,17 +197,6 @@ class UnicodeCharacterResponse(CamelModel):
     emoji_modifier_base: bool | None
     emoji_component: bool | None
     extended_pictographic: bool | None
-    utf8: str | None
-    utf16: str | None
-    utf32: str | None
-    uri_encoded: str | None
-    html_entities: list[str] | None
-    utf8_hex_bytes: list[str] | None
-    utf16_hex_bytes: list[str] | None
-    utf32_hex_bytes: list[str] | None
-    utf8_dec_bytes: list[str] | None
-    utf16_dec_bytes: list[str] | None
-    utf32_dec_bytes: list[str] | None
 
 
 class UnicodeCharacter(UnicodeCharacterBase, table=True):
@@ -220,5 +219,5 @@ class UnicodeCharacterResult(CamelModel):
     character: str
     name: str
     codepoint: str
+    uri_encoded: str
     score: float
-    link: str

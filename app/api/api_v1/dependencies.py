@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, Path, Query
 from sqlalchemy.engine import Engine
 from sqlmodel import Session
 
-import app.core.db as db
+import app.db.engine as db
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
 from app.core.util import get_codepoint_string
 from app.schemas.enums import CharPropertyGroup
@@ -15,7 +15,7 @@ MAX_CODEPOINT = 1114111
 
 LIMIT_DESCRIPTION = """
 <p><i><strong><span>this value is optional (default: <strong>limit=10</strong>)</span></strong></i></p>
-<p>A limit on the number of objects to be returned. <strong>limit</strong> is an integer value within range <strong>1...100</strong>.</p>
+<p>A limit on the number of objects to be returned.</p>
 """
 
 MIN_DETAILS_DESCRIPTION = """
@@ -128,47 +128,45 @@ PAGE_NUMBER_DESCRIPTION = """
 
 
 def customize_ending_before_param_description(
-    id_field: str, example_value: str, field_type_description: str | None, hide_examples: bool
+    data_type: str, key_field: str, example_value: str, field_type_description: str, hide_examples: bool
 ) -> str:
     description = f"""
 <p><i><strong><span>this value is optional</span></strong></i></p>
-<p>The <strong>ending_before</strong> parameter acts as a cursor to navigate between paginated responses.</p>
-<p>The value of this parameter is an object ID. <strong>{id_field}</strong> is the property that acts as an object ID for this endpoint.</p>
-<p>For example, if you previosly requested 10 items beyond the first page of results, and the first search result of the current page has <strong>{id_field}=<i>{example_value}</i></strong>, you can retrieve the previous set of results by sending <strong>ending_before=<i>{example_value}</i></strong> in a subsequent request.</p>
+<p>The <strong>ending_before</strong> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <strong>{key_field}</strong> property.</i></u></p>
+<p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <strong>{key_field}=<code><i>{example_value}</i></code></strong>, you can retrieve the previous set of results by sending <strong>ending_before=<code><i>{example_value}</i></code></strong> in a subsequent request.</p>
+<p>{field_type_description}</p>
 """
-    if field_type_description:
-        description += f"<p>{field_type_description}</p>"
     if not hide_examples:
         description += "<p>Each of these different formats are shown below (these are also valid for the <strong>ending_before</strong> parameter):</p>"
     return description
 
 
 def customize_starting_after_param_description(
-    id_field: str, example_value: str, field_type_description: str | None, hide_examples: bool
+    data_type: str, key_field: str, example_value: str, field_type_description: str, hide_examples: bool
 ) -> str:
     description = f"""
 <p><i><strong><span>this value is optional</span></strong></i></p>
-<p>The <strong>starting_after</strong> parameter acts as a cursor to navigate between paginated responses.</p>
-<p>The value of this parameter is an object ID. <strong>{id_field}</strong> is the property that acts as an object ID for this endpoint.</p>
-<p>For example, if you request 10 items and the response contains <strong>hasMore=<i>true</i></strong>, there are more search results beyond the first 10. If the 10th search result has <strong>{id_field}=<i>{example_value}</i></strong>, you can retrieve the next set of results by sending <strong>starting_after=<i>{example_value}</i></strong> in a subsequent request.</p>
+<p>The <strong>starting_after</strong> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <strong>{key_field}</strong> property.</i></u></p>
+<p>For example, if you request 10 items and the response contains <strong>hasMore=<i>true</i></strong>, there are more search results beyond the first 10. If the 10th search result has <strong>{key_field}=<code><i>{example_value}</i></code></strong>, you can retrieve the next set of results by sending <strong>starting_after=<code><i>{example_value}</i></code></strong> in a subsequent request.</p>
+<p>{field_type_description}</p>
 """
-    if field_type_description:
-        description += f"<p>{field_type_description}</p>"
     if not hide_examples:
         description += "<p>Each of these different formats are shown below (these are also valid for the <strong>ending_before</strong> parameter):</p>"
     return description
 
 
 ENDING_BEFORE_CODEPOINT_DESCRIPTION = customize_ending_before_param_description(
-    "codepoint", "U+0431", CODEPOINT_HEX_DESCRIPTION, True
+    "characters", "codepoint", "U+0431", CODEPOINT_HEX_DESCRIPTION, True
 )
 STARTING_AFTER_CODEPOINT_DESCRIPTION = customize_starting_after_param_description(
-    "codepoint", "U+0409", CODEPOINT_HEX_DESCRIPTION, False
+    "characters", "codepoint", "U+0409", CODEPOINT_HEX_DESCRIPTION, False
 )
 
-ENDING_BEFORE_BLOCK_ID_DESCRIPTION = customize_ending_before_param_description("id", "10", BLOCK_ID_DESCRIPTION, True)
+ENDING_BEFORE_BLOCK_ID_DESCRIPTION = customize_ending_before_param_description(
+    "blocks", "id", "10", BLOCK_ID_DESCRIPTION, True
+)
 STARTING_AFTER_BLOCK_ID_DESCRIPTION = customize_starting_after_param_description(
-    "id", "140", BLOCK_ID_DESCRIPTION, True
+    "blocks", "id", "140", BLOCK_ID_DESCRIPTION, True
 )
 
 
@@ -200,19 +198,11 @@ def get_string_path_param(
     return string
 
 
-def get_min_details_query_param(min_details: bool = Query(default=None, description=MIN_DETAILS_DESCRIPTION)):
-    return min_details if min_details is not None else True
-
-
-def get_char_property_groups_query_param(show_props: list[CharPropertyGroup] | None = Query(default=None)):
-    return show_props if show_props else [CharPropertyGroup.BASIC]
-
-
 class CharacterSearchParameters:
     def __init__(
         self,
         name: str = Query(description=SEARCH_CHAR_NAME_DESCRIPTION),
-        min_score: int | None = Query(default=None, ge=0, le=100, description=MIN_SCORE_DESCRIPTION),
+        min_score: int | None = Query(default=None, ge=70, le=100, description=MIN_SCORE_DESCRIPTION),
         per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
         page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
     ):
@@ -340,7 +330,7 @@ class UnicodeBlockQueryParamResolver:
         db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
         session, _ = db_ctx
-        if not block:
+        if not block or block == UnicodeBlockName.NONE:
             self.block: db.UnicodeBlock = get_all_characters_block(session)
         else:
             self.block: db.UnicodeBlock = (
@@ -366,18 +356,18 @@ class UnicodeBlockQueryParamResolver:
 class UnicodeBlockPathParamResolver:
     def __init__(
         self,
-        block: UnicodeBlockName | None = Path(default=None, description=BLOCK_NAME_DESCRIPTION),
+        name: UnicodeBlockName | None = Path(default=None, description=BLOCK_NAME_DESCRIPTION),
         db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
         session, _ = db_ctx
-        if not block:
+        if not name:
             self.block: db.UnicodeBlock = get_all_characters_block(session)
-            self.plane_abbrev = self.block.plane.abbreviation
+            self.plane_abbrev = "ALL"
         else:
             self.block: db.UnicodeBlock = (
-                session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
+                session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == name.block_id).one()
             )
-            self.plane_abbrev = "ALL"
+            self.plane_abbrev = self.block.plane.abbreviation
         self.name = self.block.name
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec

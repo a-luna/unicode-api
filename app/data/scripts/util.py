@@ -1,9 +1,11 @@
 import subprocess
+import sys
 from random import randint
 
 from halo import Halo
 
-import app.core.db as db
+import app.db.engine as db
+from app.core.result import Result
 
 # NULL OBJECTS
 NULL_PLANE = db.UnicodePlane(
@@ -52,3 +54,24 @@ def finish_task(spinner, success, message):
         spinner.succeed(message)
     else:
         spinner.fail(f"Errror! {message}")
+
+
+def run_command(command, cwd=None, shell=True, text=True):
+    try:
+        subprocess.check_call(
+            command,
+            stdout=sys.stdout,
+            stderr=subprocess.STDOUT,
+            cwd=cwd,
+            shell=shell,
+            text=text,
+        )
+        return Result.Ok()
+    except subprocess.CalledProcessError as e:
+        error = (
+            f"An error occurred while executing the command below:\n"
+            f"\tCommand: {e.cmd} (return code = {e.returncode})"
+        )
+        if e.stderr:
+            error += f"\n\tError: {e.stderr}"
+        return Result.Fail(error)

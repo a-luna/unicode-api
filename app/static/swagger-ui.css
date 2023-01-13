@@ -1,9 +1,5 @@
 /* BEGIN: MY CUSTOMIZATIONS */
 
-html {
-  background-color: var(--page-bg-color);
-}
-
 body {
   display: flex;
   margin: 0;
@@ -15,18 +11,35 @@ body {
 }
 
 :root {
-  --page-bg-color: hsl(0, 0%, 100%);
-  --header-bg-color: hsla(0, 0%, 0%, 0.07);
-  --header-hover-bg-color: hsla(0, 0%, 0%, 0.09);
-  --base-text-color: hsl(224, 16%, 27%);
+  --svg-bg: #a0b0c0;
+  --svg-fg1: #bcc7d2;
+  --svg-fg2: #a6b5c4;
+  --page-bg-color: hsl(0, 0%, 95%);
+  --page-header-bg-color: var(--page-bg-color);
+  --api-description-bg-color: var(--page-bg-color);
+  --header-bg-color: hsla(0, 0%, 80%);
+  --header-hover-bg-color: hsla(0, 0%, 80%);
+  --base-text-color: hsl(224, 16%, 20%);
   --darker-text-color: hsl(224, 16%, 10%);
-  --link-color: hsl(212, 73%, 59%);
-  --link-hover-color: hsl(212, 72%, 44%);
-  --code-color: hsl(272, 99%, 53%);
+  --link-color: hsl(25, 100%, 40%);
+  --link-hover-color: hsl(212, 72%, 35%);
+  --code-color: hsl(240, 100%, 60%);
 
-  --details-header-bg-color: var(--header-bg-color);
-  --details-header-hover-bg-color: var(--header-hover-bg-color);
+  --details-header-bg-color: hsl(0, 0%, 85%);
+  --details-header-hover-bg-color: hsl(0, 0%, 80%);
   --details-header-text-color: var(--base-text-color);
+
+  --dl-bg-color: hsla(0, 0%, 90%);
+  --dl-border-color: hsl(0, 0%, 30%);
+  --dt-text-color: var(--darker-text-color);
+  --dd-text-color: var(--base-text-color);
+
+  --inner-details-header-bg-color: hsl(210, 30%, 85%);
+  --inner-details-header-hover-bg-color: hsl(210, 30%, 80%);
+  --inner-details-header-text-color: var(--base-text-color);
+
+  --inner-dl-bg-color: hsl(210, 30%, 95%);
+  --inner-dl-border-color: hsl(0, 0%, 10%);
 
   --params-details-header-bg-color: hsla(210, 99%, 20%, 0.7);
   --params-details-header-hover-bg-color: hsla(210, 99%, 20%, 0.8);
@@ -35,12 +48,6 @@ body {
   --params-dl-bg-color: hsla(210, 99%, 20%, 0.2);
   --params-details-footer-bg-color: hsla(210, 99%, 20%, 0.2);
 
-  --dl-bg-color: hsla(0, 0%, 0%, 0.03);
-  --dl-border-color: hsl(0, 0%, 85%);
-
-  --dt-text-color: var(--darker-text-color);
-  --dd-text-color: var(--base-text-color);
-
   --schemas-bg-color: hsl(0, 0%, 100%);
   --schemas-header-color: hsl(0, 0%, 38%);
   --schemas-text-color: var(--base-text-color);
@@ -48,11 +55,13 @@ body {
   --model-hover-bg-color: rgba(0, 0, 0, 0.07);
   --model-name-color: hsl(0, 0%, 31%);
 
-  --get-color-dark: hsl(210, 99%, 69%);
-  --get-color-darker: hsl(210, 99%, 50%);
-  --get-color-light: hsla(210, 99%, 69%, 0.1);
+  --get-color-dark: hsl(210, 99%, 59%);
+  --get-color-darker: hsl(210, 99%, 40%);
+  --get-color-light: hsla(210, 99%, 70%, 0.1);
   --get-method-name-color: hsl(0, 0%, 100%);
-  --get-section-header-bg-color: hsla(0, 0%, 100%, 0.8);
+  --get-section-header-bg-color: var(--get-color-light);
+  --opblock-bg-color: var(--get-color-light);
+  --opblock-section-header-bg-color: hsl(0, 0%, 90%);
 
   --params-outer-border-color: var(--get-color-darker);
   --params-inner-border-color: var(--get-color-darker);
@@ -99,6 +108,9 @@ body {
   --select-box-border-color: hsl(226, 9%, 28%);
   --select-box-margin: 0 0 5px 0;
 
+  --bg-gradient-1: #bdff2e;
+  --bg-gradient-2: #2f2e2e;
+
   /*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
   font-family: sans-serif;
   color: var(--base-text-color);
@@ -107,8 +119,17 @@ body {
   margin: 0 auto;
 }
 
+body > svg {
+  display: none;;
+}
+
 [data-param-name="show_props"] select[multiple] {
   height: 333px;
+}
+
+.swagger-ui {
+  border-left: 1px solid var(--darker-text-color);
+  border-right: 1px solid var(--darker-text-color);
 }
 
 .swagger-ui .renderedMarkdown p > i > strong > span {
@@ -121,8 +142,41 @@ body {
   margin: 0 0 15px 0 !important;
 }
 
+.swagger-ui .renderedMarkdown > details:nth-of-type(4),
+.swagger-ui .renderedMarkdown > details:nth-of-type(5),
+.swagger-ui .renderedMarkdown > details:nth-of-type(6) {
+  margin: 1rem 0 1rem 1.5rem;
+}
+
 .swagger-ui details {
   margin: 1rem 0;
+}
+
+.swagger-ui details ul {
+  margin: 0;
+  padding: 1rem 0 1rem 3rem;
+  border: 1px solid var(--dl-border-color);
+  background-color: var(--dl-bg-color);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.swagger-ui details ul ul {
+  border: none;
+  margin: 0;
+  padding: 0 0 0 1.5rem;
+}
+
+.swagger-ui details > div {
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--dl-border-color);
+  background-color: var(--dl-bg-color);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
 }
 
 .swagger-ui details,
@@ -148,7 +202,8 @@ body {
   list-style: none;
 }
 
-.swagger-ui [open] summary {
+.swagger-ui [open] > summary {
+  background-color: var(--details-header-hover-bg-color);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom-left-radius: 0;
@@ -156,7 +211,7 @@ body {
   border-top: 1px solid var(--dl-border-color);
   border-left: 1px solid var(--dl-border-color);
   border-right: 1px solid var(--dl-border-color);
-  border-bottom: none;
+  border-bottom: none !important;
 }
 
 .description summary > div {
@@ -174,7 +229,7 @@ body {
   transition: transform 0.3s ease-in;
 }
 
-.description [open] summary > div > div {
+.description [open] > summary > div > div {
   transform: rotate(90deg);
 }
 
@@ -182,8 +237,66 @@ body {
   height: 100%;
 }
 
-.swagger-ui summary:hover {
+.description summary:hover {
   background-color: var(--details-header-hover-bg-color);
+}
+
+.swagger-ui details details summary {
+  color: var(--inner-details-header-text-color);
+  background-color: var(--inner-details-header-bg-color);
+  border-top: 1px solid var(--inner-dl-border-color) !important;
+  border-bottom: 1px solid var(--inner-dl-border-color) !important;
+  border-left: 1px solid var(--inner-dl-border-color) !important;
+  border-right: 1px solid var(--inner-dl-border-color) !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  gap: 0.15rem;
+  list-style: none;
+}
+
+.swagger-ui details details summary:hover,
+.swagger-ui details [open] > summary {
+  background-color: var(--inner-details-header-hover-bg-color);
+}
+
+.swagger-ui details details:first-of-type dt {
+  color: var(--get-color-dark);
+  text-align: left;
+}
+
+.swagger-ui details details dt {
+  border-top: 0.5px solid var(--inner-dl-border-color) !important;
+  border-bottom: 0.5px solid var(--inner-dl-border-color) !important;
+  border-right: 1px solid var(--inner-dl-border-color) !important;
+  border-left: 1px solid var(--inner-dl-border-color) !important;
+}
+
+.swagger-ui details details dd {
+  border-top: 0.5px solid var(--inner-dl-border-color) !important;
+  border-bottom: 0.5px solid var(--inner-dl-border-color) !important;
+  border-right: 1px solid var(--inner-dl-border-color) !important;
+}
+
+.swagger-ui details details dt:first-of-type,
+.swagger-ui details details dd:first-of-type {
+  border-top: 1px solid var(--inner-dl-border-color) !important;
+}
+
+.swagger-ui details details dt:last-of-type,
+.swagger-ui details details dd:last-of-type {
+  border-bottom: 1px solid var(--inner-dl-border-color) !important;
+}
+
+.swagger-ui details details:first-of-type dt,
+.swagger-ui details details:first-of-type dd {
+  height: 38.5px;
+}
+
+.swagger-ui details details dt,
+.swagger-ui details details dd {
+  background-color: var(--inner-dl-bg-color);
 }
 
 .parameters details summary {
@@ -201,7 +314,9 @@ body {
   list-style: none;
 }
 
-.parameters [open] summary {
+.parameters [open] > summary {
+  color: var(--params-details-header-text-color);
+  background-color: var(--params-details-header-hover-bg-color);
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-bottom-left-radius: 0;
@@ -227,7 +342,7 @@ body {
   transition: transform 0.3s ease-in;
 }
 
-.parameters [open] summary > div > div {
+.parameters [open] > summary > div > div {
   transform: rotate(90deg);
 }
 
@@ -268,7 +383,7 @@ body {
   height: 100%;
 }
 
-.swagger-ui .renderedMarkdown details > div:last-of-type {
+.swagger-ui .parameters details > div:last-of-type {
   font-size: 16px;
   display: grid;
   grid-template-columns: 15px 1fr;
@@ -284,7 +399,7 @@ body {
   padding: 0.75rem 0.75rem 0.5rem 0.25rem;
 }
 
-.swagger-ui .renderedMarkdown details > div:last-of-type p {
+.swagger-ui .parameters details > div:last-of-type p {
   font-size: 0.75rem;
   font-style: italic;
   line-height: 1.4;
@@ -322,6 +437,14 @@ margin: 0 auto;
   top: 0.15rem;
 }
 
+.parameters details dt:last-of-type {
+  border-bottom-left-radius: 0;
+}
+
+.parameters details dd:last-of-type {
+  border-bottom-right-radius: 0;
+}
+
 .swagger-ui canvas {
   display: inline-block;
 }
@@ -352,6 +475,24 @@ margin: 0 auto;
   border-right: 1px solid var(--dl-border-color);;
   border-left: 1px solid var(--dl-border-color);
   padding: 0.5rem;
+}
+
+.swagger-ui dt:first-of-type,
+.swagger-ui dd:first-of-type {
+  border-top: 1px solid var(--dl-border-color);
+}
+
+.swagger-ui dt:last-of-type,
+.swagger-ui dd:last-of-type {
+  border-bottom: 1px solid var(--dl-border-color);
+}
+
+.swagger-ui dt:last-of-type {
+  border-bottom-left-radius: 4px;;
+}
+
+.swagger-ui dd:last-of-type {
+  border-bottom-right-radius: 4px;;
 }
 
 .swagger-ui dd {
@@ -389,10 +530,28 @@ margin: 0 auto;
 
 .swagger-ui .description {
   line-height: 1.6;
+  padding-top: 0.5rem;
 }
 
 .swagger-ui .description code span {
   font-variant: small-caps;;
+}
+
+.swagger-ui .parameters-container {
+  background-color: var(--opblock-bg-color);
+}
+
+.swagger-ui .info h3,
+.swagger-ui .info h4 {
+  margin: 1rem 0 0.5rem 0;
+}
+
+.swagger-ui .info h3 {
+  font-size: 1.2rem;
+}
+
+.swagger-ui .info h4 {
+  font-size: 1.1rem;
 }
 
 /* END: MY CUSTOMIZATIONS */
@@ -7544,12 +7703,22 @@ textarea::placeholder {
   width: 100%;
   max-width: 1460px;
   margin: 0 auto;
-  padding: 0 20px;
   box-sizing: border-box;
+}
+.swagger-ui .wrapper:nth-of-type(3) {
+  padding-top: 0.5rem;
+}
+.swagger-ui .wrapper:nth-of-type(3),
+.swagger-ui .wrapper:nth-of-type(4) {
+  padding-right: 1.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  background-color: var(--page-bg-color);
 }
 .swagger-ui .opblock-tag-section {
   display: flex;
   flex-direction: column;
+  margin: 0 0 1rem 0;
 }
 .swagger-ui .try-out.btn-group {
   padding: 0;
@@ -7560,7 +7729,6 @@ textarea::placeholder {
   padding: 10px 20px 10px 10px;
   cursor: pointer;
   transition: all 0.2s;
-  border-bottom: 1px solid rgba(59, 65, 81, 0.3);
 }
 .swagger-ui .opblock-tag:hover {
   background: rgba(0, 0, 0, 0.02);
@@ -7658,6 +7826,7 @@ textarea::placeholder {
   position: relative;
 }
 .swagger-ui .opblock .tab-header .tab-item.active h4 span:after {
+  display: none;;
   position: absolute;
   bottom: -15px;
   left: 50%;
@@ -7667,16 +7836,18 @@ textarea::placeholder {
   transform: translateX(-50%);
   background: grey;
 }
-.swagger-ui .opblock.is-open .opblock-summary {
+/* .swagger-ui .opblock.is-open .opblock-summary {
   border-bottom: 1px solid #000;
-}
+} */
 .swagger-ui .opblock .opblock-section-header {
   display: flex;
   align-items: center;
   padding: 8px 20px;
   min-height: 50px;
-  background: var(--get-section-header-bg-color);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  background-color: var(--opblock-section-header-bg-color);
+  border-top: 1px solid var(--get-color-dark);
+  border-bottom: 1px solid var(--get-color-dark);
 }
 .swagger-ui .opblock .opblock-section-header > label {
   font-size: 12px;
@@ -7750,6 +7921,7 @@ textarea::placeholder {
   align-items: center;
   padding: 5px;
   cursor: pointer;
+  background: var(--get-color-light);
 }
 .swagger-ui .opblock .opblock-summary .view-line-link {
   position: relative;
@@ -7804,7 +7976,6 @@ textarea::placeholder {
 }
 .swagger-ui .opblock.opblock-get {
   border-color: var(--get-color-dark);
-  background: var(--get-color-light);
 }
 .swagger-ui .opblock.opblock-get .opblock-summary-method {
   color: var(--get-method-name-color);
@@ -7963,6 +8134,7 @@ textarea::placeholder {
 .swagger-ui .execute-wrapper {
   padding: 20px;
   text-align: right;
+  background-color: var(--opblock-bg-color);
 }
 .swagger-ui .execute-wrapper .btn {
   width: 100%;
@@ -7983,6 +8155,7 @@ textarea::placeholder {
 }
 .swagger-ui .responses-inner {
   padding: 20px;
+  background-color: var(--opblock-bg-color);
 }
 .swagger-ui .responses-inner h4,
 .swagger-ui .responses-inner h5 {
@@ -8314,6 +8487,7 @@ textarea::placeholder {
 .swagger-ui .btn-group {
   display: flex;
   padding: 30px;
+  background-color: var(--opblock-bg-color);
 }
 .swagger-ui .btn-group .btn {
   flex: 1;
@@ -9114,7 +9288,13 @@ textarea::placeholder {
   color: #fff;
 }
 .swagger-ui .info {
-  margin: 2rem 0;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--darker-text-color);
+  background-color: var(--api-description-bg-color);
+}
+.swagger-ui .info > div {
+  background-color: var(--api-description-bg-color);
 }
 .swagger-ui .info.failed-config {
   max-width: 880px;
@@ -9123,7 +9303,9 @@ textarea::placeholder {
   text-align: center;
 }
 .swagger-ui .info hgroup.main {
-  margin: 0 0 20px;
+  margin: 0;
+  padding: 1rem 1.5rem ;
+  background-color: var(--page-header-bg-color);
 }
 .swagger-ui .info hgroup.main a {
   font-size: 12px;
@@ -9156,7 +9338,9 @@ textarea::placeholder {
   color: var(--link-hover-color);
 }
 .swagger-ui .info > div {
-  margin: 0 0 5px;
+  padding-right: 1.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1.5rem;
 }
 .swagger-ui .info .base-url {
   font-size: 12px;
@@ -9355,6 +9539,7 @@ textarea::placeholder {
 .swagger-ui .renderedMarkdown code {
   font-family: monospace;
   color: var(--code-color);
+  font-weight: 700;
 }
 .swagger-ui .markdown pre > code,
 .swagger-ui .renderedMarkdown pre > code {

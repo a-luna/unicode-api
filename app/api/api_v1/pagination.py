@@ -1,6 +1,6 @@
 from typing import Any
 
-import app.core.db as db
+import app.db.engine as db
 from app.core.result import Result
 
 

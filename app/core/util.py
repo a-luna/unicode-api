@@ -1,14 +1,9 @@
-import subprocess
-import sys
 from pathlib import Path
 from urllib.parse import urlsplit
 
 import requests
 
-from app.core.db import NO_NAME_BLOCKS
-from app.core.enums.block_name import UnicodeBlockName
 from app.core.result import Result
-from app.data.cache import cached_data
 
 CHUNK_SIZE = 1024
 
@@ -54,37 +49,3 @@ def download_file(url: str, local_folder: Path):
         f"Received File Size: {local_file_size:,} bytes"
     )
     return Result.Fail(error)
-
-
-def run_command(command, cwd=None, shell=True, text=True):
-    try:
-        subprocess.check_call(
-            command,
-            stdout=sys.stdout,
-            stderr=subprocess.STDOUT,
-            cwd=cwd,
-            shell=shell,
-            text=text,
-        )
-        return Result.Ok()
-    except subprocess.CalledProcessError as e:
-        error = (
-            f"An error occurred while executing the command below:\n"
-            f"\tCommand: {e.cmd} (return code = {e.returncode})"
-        )
-        if e.stderr:
-            error += f"\n\tError: {e.stderr}"
-        return Result.Fail(error)
-
-
-def codepoint_is_assigned(codepoint: int) -> bool:
-    return codepoint in cached_data.char_name_map or get_unicode_block_containing_character(codepoint) in NO_NAME_BLOCKS
-
-
-def get_unicode_block_containing_character(codepoint: int) -> UnicodeBlockName:
-    found = [
-        block["id"]
-        for block in cached_data.blocks
-        if int(block["start_dec"]) <= codepoint and codepoint <= int(block["finish_dec"])
-    ]
-    return UnicodeBlockName.from_block_id(found[0]) if found else UnicodeBlockName.NONE

@@ -24,15 +24,15 @@ def get_prod_data():
 
 def get_unicode_db() -> Result:
     DB_FOLDER.mkdir(parents=True, exist_ok=True)
-    result = download_unicode_db_zip()
-    if result.failure:
-        return result
-    unicode_db_zip = result.value
+    download_result = download_unicode_db_zip()
+    if download_result.failure:
+        return download_result
+    unicode_db_zip = download_result.value
     if not unicode_db_zip or not unicode_db_zip.exists():
         return Result.Fail(f"Failed to download {UNICODE_DB_ZIP_FILE}")
-    result = extract_unicode_db(unicode_db_zip)
-    if result.failure:
-        return result
+    extract_result = extract_unicode_db(unicode_db_zip)
+    if extract_result.failure:
+        return extract_result
     unicode_db_zip.unlink()
     return Result.Ok()
 
@@ -58,15 +58,15 @@ def extract_unicode_db(unicode_db_zip: Path) -> Result[list[Path]]:
 
 def get_unicode_json() -> Result:
     JSON_FOLDER.mkdir(parents=True, exist_ok=True)
-    result = download_unicode_json_zip()
-    if result.failure:
-        return result
-    unicode_json_zip = result.value
+    download_result = download_unicode_json_zip()
+    if download_result.failure:
+        return download_result
+    unicode_json_zip = download_result.value
     if not unicode_json_zip or not unicode_json_zip.exists():
         return Result.Fail(f"Failed to download {UNICODE_JSON_ZIP_FILE}")
-    result = extract_unicode_json(unicode_json_zip)
-    if result.failure:
-        return result
+    extract_result = extract_unicode_json(unicode_json_zip)
+    if extract_result.failure:
+        return extract_result
     unicode_json_zip.unlink()
     return Result.Ok()
 

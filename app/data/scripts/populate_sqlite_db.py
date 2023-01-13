@@ -2,7 +2,7 @@ import json
 
 from sqlmodel import Session
 
-import app.core.db as db
+import app.db.engine as db
 from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, PLANES_JSON
 from app.core.result import Result
 from app.data.scripts.util import finish_task, NULL_BLOCK, NULL_PLANE, start_task, update_progress
