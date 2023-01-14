@@ -14,6 +14,15 @@ def create_details_element(title: str, content: str, open: bool | None = False) 
 """
 
 
+def create_readme_section(title: str, content: str, open: bool | None = False) -> str:
+    open_tag = "<details open>" if open else "<details>"
+    return f"""{open_tag}
+  <summary>
+    <strong>{title}</strong>
+  </summary>{content}</details>
+"""
+
+
 INTRODUCTION = """<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener noreferrer" target="_blank">version 15.0 of the Unicode Standard</a> (released September 13, 2022). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul>
     <li>URLs are predictable and resource-oriented.</li>
@@ -22,13 +31,24 @@ INTRODUCTION = """<p>This API provides access to detailed information for all ch
 </ul>
 """
 
-PROJECT_LINKS = """
+PROJECT_LINKS_SWAGGER_HTML = """
     <ul>
         <li><a href="https://github.com/a-luna/unicode-api" rel="noopener noreferrer" target="_blank">Source Code (github.com)</a></li>
         <li><a href="https://github.com/a-luna/unicode-api/blob/master/LICENSE" rel="noopener noreferrer" target="_blank">MIT License</a></li>
         <li>Created by Aaron Luna</li>
         <ul>
             <li><a href="https://github.com/a-luna" rel="noopener noreferrer" target="_blank">Github Profile</a></li>
+            <li><a href="https://aaronluna.dev" rel="noopener noreferrer" target="_blank">Personal Website</a></li>
+            <li><a href="mailto:contact@aaronluna.dev" rel="noopener noreferrer" class="link">Send Email</a></li>
+        </ul>
+    </ul>
+"""
+
+PROJECT_LINKS_README = """
+    <ul>
+        <li><a href="https://unicode-api.aaronluna.dev/" rel="noopener noreferrer" target="_blank">Interactive API Documents (Swagger UI)</a></li>
+        <li>Created by Aaron Luna</li>
+        <ul>
             <li><a href="https://aaronluna.dev" rel="noopener noreferrer" target="_blank">Personal Website</a></li>
             <li><a href="mailto:contact@aaronluna.dev" rel="noopener noreferrer" class="link">Send Email</a></li>
         </ul>
@@ -102,12 +122,20 @@ CHARACTER_ENDPOINTS = """
     </dl>
 """
 
-UNICODE_CHARACTERS = f"""
+UNICODE_CHARACTERS_DOCS_SWAGGER_HTML = f"""
     <div>
         <p>The <code>UnicodeCharacter</code> object represents a single character/codepoint in the <a href="https://unicode.org/reports/tr44/" rel="noopener noreferrer" target="_blank">Unicode Character Database (UCD)</a>. It contains a rich set of properties that document the purpose and intended representation of the character.</p>
         {create_details_element("Endpoints", CHARACTER_ENDPOINTS, True)}<h4>The Unicode Character Object</h4>
 <p>Each property is assigned to a <strong>property group</strong>. Responses from any <code>character</code> endpoint will only include properties from the <strong>MINIMUM</strong> property group by default. The <code>/v1/characters</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>
 {create_details_element("Properties of the <code>UnicodeCharacter</code> object", CHARACTER_PROPERTIES)}</div>
+"""
+
+UNICODE_CHARACTERS_DOCS_README = f"""
+    <div>
+        <p>The <code>UnicodeCharacter</code> object represents a single character/codepoint in the <a href="https://unicode.org/reports/tr44/" rel="noopener noreferrer" target="_blank">Unicode Character Database (UCD)</a>. It contains a rich set of properties that document the purpose and intended representation of the character.</p>
+        {create_readme_section("Endpoints", CHARACTER_ENDPOINTS, False)}<h4>The Unicode Character Object</h4>
+<p>Each property is assigned to a <strong>property group</strong>. Responses from any <code>character</code> endpoint will only include properties from the <strong>MINIMUM</strong> property group by default. The <code>/v1/characters</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>
+{create_readme_section("Properties of the <code>UnicodeCharacter</code> object", CHARACTER_PROPERTIES)}</div>
 """
 
 UNICODE_BLOCKS = """
@@ -122,16 +150,33 @@ UNICODE_PLANES = """
 </div>
 """
 
-API_DOCS = (
-    INTRODUCTION
-    + create_details_element("Project Resources/Contact Info", PROJECT_LINKS)
-    + create_details_element("Pagination", PAGINATION)
-    + create_details_element("Search", SEARCH)
-    + "<h3>Core Resources</h3>\n"
-    + create_details_element("Unicode Characters", UNICODE_CHARACTERS)
-    + create_details_element("Unicode Blocks", UNICODE_BLOCKS)
-    + create_details_element("Unicode Planes", UNICODE_PLANES)
-)
+
+def get_api_docs_for_swagger_html():
+    return (
+        INTRODUCTION
+        + create_details_element("Project Resources/Contact Info", PROJECT_LINKS_SWAGGER_HTML)
+        + create_details_element("Pagination", PAGINATION)
+        + create_details_element("Search", SEARCH)
+        + "<h3>Core Resources</h3>\n"
+        + create_details_element("Unicode Characters", UNICODE_CHARACTERS_DOCS_SWAGGER_HTML)
+        + create_details_element("Unicode Blocks", UNICODE_BLOCKS)
+        + create_details_element("Unicode Planes", UNICODE_PLANES)
+    )
+
+
+def get_api_docs_for_readme():
+    return (
+        "<h2>Unicode API</h2>\n"
+        + INTRODUCTION
+        + create_readme_section("Project Resources/Contact Info", PROJECT_LINKS_README)
+        + create_readme_section("Pagination", PAGINATION)
+        + create_readme_section("Search", SEARCH)
+        + "<h3>Core Resources</h3>\n"
+        + create_readme_section("Unicode Characters", UNICODE_CHARACTERS_DOCS_README)
+        + create_readme_section("Unicode Blocks", UNICODE_BLOCKS)
+        + create_readme_section("Unicode Planes", UNICODE_PLANES)
+    )
+
 
 # This API provides access to every character in the Unicode database. It can be used in various ways:
 # - You can list all characters ordered by codepoint using the **`/api/v1/characters`** endpoint.

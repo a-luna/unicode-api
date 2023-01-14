@@ -8,7 +8,7 @@ from fastapi_redis_cache import FastApiRedisCache
 from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
-from app.api_docs import API_DOCS
+from app.api_docs import get_api_docs_for_swagger_html
 from app.core.config import settings
 from app.custom_swagger import get_swagger_ui_html
 from app.data.cache import cached_data
@@ -19,7 +19,7 @@ STATIC_FOLDER = APP_FOLDER.joinpath("static")
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description=API_DOCS,
+    description=get_api_docs_for_swagger_html(),
     version=settings.API_VERSION,
     openapi_url=f"{settings.API_VERSION}/openapi.json",
     docs_url=None,
