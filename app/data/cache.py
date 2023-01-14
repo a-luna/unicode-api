@@ -3,7 +3,6 @@ from functools import cache, cached_property
 
 from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_NO_NAME_MAP, PLANES_JSON
 from app.core.result import Result
-from app.core.util import get_codepoint_string
 from app.data.constants import (
     CJK_COMPATIBILITY_BLOCKS,
     CJK_UNIFIED_BLOCKS,
@@ -16,6 +15,7 @@ from app.data.constants import (
     SURROGATE_BLOCK_IDS,
     TANGUT_BLOCKS,
 )
+from app.data.encoding import get_codepoint_string
 from app.schemas.enums import NamelessCharacterType
 
 UnicodeBlockDict = dict[str, int | str]

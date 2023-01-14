@@ -7,7 +7,7 @@ from sqlmodel import Session
 
 import app.db.engine as db
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
-from app.core.util import get_codepoint_string
+from app.data.encoding import get_codepoint_string
 from app.schemas.enums import CharPropertyGroup
 
 CODEPOINT_REGEX = re.compile(r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))")

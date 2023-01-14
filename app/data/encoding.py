@@ -9,6 +9,10 @@ HTML_ENTITY_MAP = {
 }
 
 
+def get_codepoint_string(codepoint: int) -> str:
+    return f"U+{codepoint:04X}"
+
+
 def get_html_entities(codepoint: int) -> list[str]:
     html_entities = [f"&#{codepoint};", f"&#x{codepoint:02X};"]
     named_entity = HTML_ENTITY_MAP.get(codepoint)

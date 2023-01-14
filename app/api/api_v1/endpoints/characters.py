@@ -17,8 +17,8 @@ from app.api.api_v1.dependencies import (
 )
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.config import settings
-from app.core.util import get_codepoint_string
 from app.data.cache import cached_data
+from app.data.encoding import get_codepoint_string
 from app.db.get_char_details import get_character_properties
 from app.schemas.enums import CharPropertyGroup
 
