@@ -4,6 +4,7 @@ from sqlalchemy.sql import text
 from sqlmodel import create_engine, Session, SQLModel
 
 from app.core.config import DB_FILE, DB_URL
+from app.db.constants import CHARACTER_PROPERTY_GROUPS
 from app.schemas.enums import CharPropertyGroup
 from app.schemas.models.block import UnicodeBlock, UnicodeBlockResponse, UnicodeBlockResult
 from app.schemas.models.camel_model import GenericCamelModel, GenericModel
@@ -16,7 +17,6 @@ from app.schemas.models.character import (
 )
 from app.schemas.models.pagination import PaginatedList, PaginatedSearchResults
 from app.schemas.models.plane import UnicodePlane, UnicodePlaneResponse
-from app.schemas.prop_groups import get_all_db_columns_in_group
 
 
 def get_session():
@@ -51,6 +51,10 @@ def _fk_pragma_on_connect(dbapi_con, _):
     dbapi_con.execute("pragma journal_mode=OFF")
     dbapi_con.execute("PRAGMA synchronous=OFF")
     dbapi_con.execute("PRAGMA cache_size=100000")
+
+
+def get_all_db_columns_in_group(prop_group: CharPropertyGroup) -> list[str]:
+    return [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
 
 
 engine = create_engine(DB_URL, echo=False, connect_args={"check_same_thread": False})
