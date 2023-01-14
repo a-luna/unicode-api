@@ -2,7 +2,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 from app.core.result import Result
-from app.core.util import download_file
+from app.data.scripts.util import download_file
 
 S3_BUCKET_URL = "https://unicode-api.us-southeast-1.linodeobjects.com"
 UNICODE_DB_ZIP_FILE = "unicode-api.db.zip"

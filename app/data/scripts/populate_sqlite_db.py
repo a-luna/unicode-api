@@ -5,7 +5,8 @@ from sqlmodel import Session
 import app.db.engine as db
 from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, PLANES_JSON
 from app.core.result import Result
-from app.data.scripts.util import finish_task, NULL_BLOCK, NULL_PLANE, start_task, update_progress
+from app.data.constants import NULL_BLOCK, NULL_PLANE
+from app.data.scripts.util import finish_task, start_task, update_progress
 from app.schemas.enums import (
     BidirectionalBracketType,
     BidirectionalClass,
@@ -58,7 +59,7 @@ def parse_unicode_characters_from_json():
     all_char_dicts = [update_char_dict_enum_values(char) for char in char_dicts]
     all_named_chars = [db.UnicodeCharacter(**char_dict) for char_dict in all_char_dicts if not char_dict["no_name"]]
     all_no_name_chars = [db.UnicodeCharacterNoName(**char_dict) for char_dict in all_char_dicts if char_dict["no_name"]]
-    finish_task(spinner, True, "Successfullly parsed character data!")
+    finish_task(spinner, True, "Successfully parsed character data!")
     return all_named_chars + all_no_name_chars
 
 
@@ -84,7 +85,7 @@ def assign_unicode_plane_to_each_block(all_planes, all_blocks):
         found = [
             plane for plane in all_planes if plane.start_block_id <= block.id and block.id <= plane.finish_block_id
         ]
-        block.plane = found[0] if found else NULL_PLANE
+        block.plane = found[0] if found else db.UnicodePlane(**NULL_PLANE)
         update_progress(spinner, "Assigning unicode planes to each block...", i, len(all_blocks))
     finish_task(spinner, True, "Successfully assigned a unicode plane to all blocks!")
     return all_blocks
@@ -98,11 +99,11 @@ def assign_unicode_block_and_plane_to_each_character(all_planes, all_blocks, all
             for block in all_blocks
             if block.start_dec <= char.codepoint_dec and char.codepoint_dec <= block.finish_dec
         ]
-        block = found_block[0] if found_block else NULL_BLOCK
+        block = found_block[0] if found_block else db.UnicodeBlock(**NULL_BLOCK)
         found_plane = [
             plane for plane in all_planes if plane.start_block_id <= block.id and block.id <= plane.finish_block_id
         ]
-        plane = found_plane[0] if found_plane else NULL_PLANE
+        plane = found_plane[0] if found_plane else db.UnicodePlane(**NULL_PLANE)
         char.block = block
         char.plane = plane
         update_progress(spinner, "Assigning unicode block and plane to each character...", i, len(all_chars))

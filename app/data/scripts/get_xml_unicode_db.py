@@ -4,7 +4,7 @@ from zipfile import is_zipfile, ZipFile
 
 from app.core.config import DATA_FOLDER
 from app.core.result import Result
-from app.core.util import download_file
+from app.data.scripts.util import download_file
 
 UNICODE_ORG_ROOT = "https://www.unicode.org/Public"
 UCDXML_FOLDER = "ucdxml"

@@ -4,8 +4,9 @@ from xml.dom import minidom
 
 from app.core.config import PLANES_JSON
 from app.core.result import Result
-from app.core.util import get_codepoint_string
-from app.data.scripts.util import finish_task, NULL_BLOCK, NULL_PLANE, start_task, update_progress
+from app.data.constants import NULL_BLOCK, NULL_PLANE
+from app.data.encoding import get_codepoint_string
+from app.data.scripts.util import finish_task, start_task, update_progress
 from app.db.constants import NO_NAME_BLOCK_IDS
 
 YES_NO_MAP = {"Y": True, "N": False}
@@ -64,7 +65,7 @@ def get_unicode_plane_containing_block_id(
         for plane in parsed_planes
         if int(plane["start_block_id"]) <= block_id and block_id <= int(plane["finish_block_id"])
     ]
-    return found[0] if found else NULL_PLANE.dict()
+    return found[0] if found else NULL_PLANE
 
 
 def parse_unicode_character_data_from_xml(
@@ -184,7 +185,7 @@ def get_unicode_block_containing_codepoint(
         for block in parsed_blocks
         if int(block["start_dec"]) <= codepoint and codepoint <= int(block["finish_dec"])
     ]
-    return found[0] if found else NULL_BLOCK.dict()
+    return found[0] if found else NULL_BLOCK
 
 
 def get_character_name(char_node, codepoint, block) -> str:
