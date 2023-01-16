@@ -23,7 +23,7 @@ body {
   --darker-text-color: hsl(224, 16%, 10%);
   --link-color: hsl(25, 100%, 40%);
   --link-hover-color: hsl(212, 72%, 35%);
-  --code-color: hsl(240, 100%, 60%);
+  --code-color: hsl(210, 85%, 50%);
 
   --details-header-bg-color: hsl(0, 0%, 85%);
   --details-header-hover-bg-color: hsl(0, 0%, 80%);
@@ -262,8 +262,24 @@ body > svg {
 }
 
 .swagger-ui details details:first-of-type dt {
-  color: var(--get-color-dark);
-  text-align: left;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;;
+}
+
+.swagger-ui details details:first-of-type dt strong {
+  color: var(--get-method-name-color);
+  background: var(--get-color-dark);
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 35px;
+  padding: 5px;
+  border-radius: 3px;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 10%);
 }
 
 .swagger-ui details details dt {
@@ -7900,6 +7916,7 @@ textarea::placeholder {
   }
 }
 .swagger-ui .opblock .opblock-summary-path {
+  color: var(--code-color);
   flex-shrink: 0;
   max-width: calc(100% - 110px - 15rem);
 }

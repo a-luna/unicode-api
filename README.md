@@ -1,14 +1,12 @@
-<h2>Unicode API</h2>
+<h1>Unicode API</h1>
 <p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener noreferrer" target="_blank">version 15.0 of the Unicode Standard</a> (released September 13, 2022). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul>
     <li>URLs are predictable and resource-oriented.</li>
     <li>Uses standard HTTP verbs and response codes.</li>
     <li>Returns JSON-encoded responses.</li>
 </ul>
-<details>
-  <summary>
-    <strong>Project Resources/Contact Info</strong>
-  </summary>
+<ul><li><a href="#project-resources-contact-info">Project Resources/Contact Info</a></li><li><a href="#pagination">Pagination</a></li><li><a href="#search">Search</a></li><li><a href="#core_resources">Core Resources</a><ul><li><a href="#unicode-characters">Unicode Characters</a><ul><li><a href="#endpoints">Endpoints</a></li><li><a href="#properties-of-the-code-unicodecharacter-code-object">Properties of the <code>UnicodeCharacter</code> object</a></li></ul></li><li><a href="#unicode-blocks">Unicode Blocks</a></li><li><a href="#unicode-planes">Unicode Planes</a></li></ul></li></ul>
+<h2 id="project-resources-contact-info">Project Resources/Contact Info</h2>
     <ul>
         <li><a href="https://unicode-api.aaronluna.dev/" rel="noopener noreferrer" target="_blank">Interactive API Documents (Swagger UI)</a></li>
         <li>Created by Aaron Luna</li>
@@ -17,40 +15,29 @@
             <li><a href="mailto:contact@aaronluna.dev" rel="noopener noreferrer" class="link">Send Email</a></li>
         </ul>
     </ul>
-</details>
-<details>
-  <summary>
-    <strong>Pagination</strong>
-  </summary>
+<h2 id="pagination">Pagination</h2>
     <div>
-        <p>All top-level API resources have support for bulk fetches via "list" API methods (i.e., you can list characters/blocks/planes). These API methods share a common structure, taking at least these three parameters: <code>limit</code>, <code>starting_after</code>, and <code>ending_before</code>.</p>
+        <p>The top-level API resources for <strong>Unicode Characters</strong> and <strong>Unicode Blocks</strong> have support for bulk fetches via "list" API methods. These API methods share a common structure, taking at least these three parameters: <code>limit</code>, <code>starting_after</code>, and <code>ending_before</code>.</p>
         <p>For your initial request, you should only provide a value for <code>limit</code> (if the default value of <code>limit=10</code> is ok, you do not need to provide values for any parameter in your initial request). The response of a list API method contains a <code>data</code> parameter that represents a single page of results, and a <code>hasMore</code> parameter that indicates whether the list contains more results after this set.</p>
-        <p>The <code>starting_after</code> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. For <strong>Unicode Characters</strong>, the value of this parameter is the <strong>codepoint</strong> property, while for <strong>Unicode Blocks</strong> the <strong>id</strong> property is used.</p>
+        <p>The <code>starting_after</code> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. For <strong>Unicode Characters</strong> (<code>/v1/characters</code>), the value of this parameter is the <code>codepoint</code> property, while for <strong>Unicode Blocks</strong>  (<code>/v1/blocks</code>) the <code>id</code> property is used.</p>
         <p>For example, if you request 10 items and the response contains <code>hasMore=true</code>, there are more search results beyond the first 10. If the 10th search result has <code>codepoint=U+0346</code>, you can retrieve the next set of results by sending <code>starting_after=U+0346</code> in a subsequent request.</p>
         <p>The <code>ending_before</code> parameter also acts as a cursor to navigate between pages, but instead of requesting the next set of results it allows you to access previous pages in the list.</p>
         <p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <code>codepoint=U+0357</code>, you can retrieve the previous set of results by sending <code>ending_before=U+0357</code> in a subsequent request.</p>
-        <p><strong><i>IMPORTANT: Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request.</i></strong></p>
+        <p>⚠️ <strong><i>IMPORTANT: Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong> ⚠️</p>
     </div>
-</details>
-<details>
-  <summary>
-    <strong>Search</strong>
-  </summary>
+<h2 id="search">Search</h2>
     <div>
-        <p></p>
+        <p>The top-level API resources for <strong>Unicode Characters</strong> and <strong>Unicode Blocks</strong> also have support for retrieval via "search" API methods. These API methods expect the same four parameters: <code>name</code>, <code>min_score</code>, <code>per_page</code>, and <code>page</code>.</p>
+        <p>In both endpoints (<code>/v1/characters/search</code> and <code>/v1/blocks/search</code>), the <code>name</code> parameter is the search term and is compared to the official name for all characters/blocks. Since a <a href="https://en.wikipedia.org/wiki/Approximate_string_matching" rel="noopener noreferrer" target="_blank">fuzzy search algorithm</a> is used for this process, the value of <code>name</code> does not need to be an exact match with a character/block name.</p>
+        <p>The response to a search request will contain a <code>results</code> parameter that represents the characters/blocks that matched your query. Each object in this list has a <code>score</code> property which is a number ranging from <strong>0-100</strong> that describes how similar the character/block name is to the <code>name</code> value provided by the user (a value of 100 means the <code>name</code> provided by the user is an exact match with a character/block name).</p>
+        <p>The response will include all search results where <code>score</code> &gt;= <code>min_score</code>. The default value for <code>min_score</code> is <strong>80</strong>, however if your request is returning zero results, you can lower this value to potentially surface lower-quality results. Keep in mind, the lowest value for <code>min_score</code> that is permitted is <strong>70</strong>, since the relevence of results quickly drops off around a score of <strong>72</strong>, often producing hundreds of results.</p>
+        <p>The <code>per_page</code> parameter controls how many results are included in a single response. The response will include a <code>hasMore</code> parameter that indicates whether there are more search results beyond the current page, as well as <code>currentPage</code> and <code>totalResults</code> parameters. If <code>hasMore=true</code>, the response will contain a <code>nextPage</code> parameter. For example, if you make a search request and receive <code>nextPage=2</code> in the response, your subsequent call can include <code>page=2</code> to fetch the next page of results.</p>
     </div>
-</details>
-<h3>Core Resources</h3>
-<details>
-  <summary>
-    <strong>Unicode Characters</strong>
-  </summary>
+<h2 id="core_resources">Core Resources</h2>
+<h3 id="unicode-characters">Unicode Characters</h3>
     <div>
         <p>The <code>UnicodeCharacter</code> object represents a single character/codepoint in the <a href="https://unicode.org/reports/tr44/" rel="noopener noreferrer" target="_blank">Unicode Character Database (UCD)</a>. It contains a rich set of properties that document the purpose and intended representation of the character.</p>
-        <details>
-  <summary>
-    <strong>Endpoints</strong>
-  </summary>
+        <h4 id="endpoints">Endpoints</h4>
     <dl>
         <dt><strong>GET</strong> <code>/v1/characters/{string}</code></dt>
         <dd>Retrieve one or more Character(s)</dd>
@@ -59,13 +46,9 @@
         <dt><strong>GET</strong> <code>/v1/characters/search</code></dt>
         <dd>Search Characters</dd>
     </dl>
-</details>
 <h4>The Unicode Character Object</h4>
 <p>Each property is assigned to a <strong>property group</strong>. Responses from any <code>character</code> endpoint will only include properties from the <strong>MINIMUM</strong> property group by default. The <code>/v1/characters</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>
-<details>
-  <summary>
-    <strong>Properties of the <code>UnicodeCharacter</code> object</strong>
-  </summary>
+<h4 id="properties-of-the-code-unicodecharacter-code-object">Properties of the <code>UnicodeCharacter</code> object</h4>
     <dl>
         <dt><strong>character</strong></dt>
         <dd>A unit of information used for the organization, control, or representation of textual data.</dd>
@@ -100,22 +83,12 @@
         <dt><strong>utf8_dec_bytes</strong></dt>
         <dd>The byte sequence for the UTF-8 encoded value for the character. This property returns a list of integers, decimal values (base-10) in range 0-127</dd>
     </dl>
-</details>
 </div>
-</details>
-<details>
-  <summary>
-    <strong>Unicode Blocks</strong>
-  </summary>
+<h3 id="unicode-blocks">Unicode Blocks</h3>
 <div>
     <p></p>
 </div>
-</details>
-<details>
-  <summary>
-    <strong>Unicode Planes</strong>
-  </summary>
+<h3 id="unicode-planes">Unicode Planes</h3>
 <div>
     <p></p>
 </div>
-</details>
