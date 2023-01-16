@@ -101,13 +101,13 @@ CHARACTER_PROPERTY_GROUPS = {
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
             else "",
         },
-        {
-            "name_in": "codepoint_dec",
-            "name_out": "codepoint_dec",
-            "char_property": "",
-            "db_column": True,
-            "responsify": False,
-        },
+        # {
+        #     "name_in": "codepoint_dec",
+        #     "name_out": "codepoint_dec",
+        #     "char_property": "",
+        #     "db_column": True,
+        #     "responsify": False,
+        # },
     ],
     CharPropertyGroup.Basic: [
         {
