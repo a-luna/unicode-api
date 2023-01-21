@@ -101,13 +101,6 @@ CHARACTER_PROPERTY_GROUPS = {
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
             else "",
         },
-        # {
-        #     "name_in": "codepoint_dec",
-        #     "name_out": "codepoint_dec",
-        #     "char_property": "",
-        #     "db_column": True,
-        #     "responsify": False,
-        # },
     ],
     CharPropertyGroup.Basic: [
         {
@@ -132,16 +125,15 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "age",
             "db_column": True,
             "responsify": False,
-        },  # version in which the codepoint was assigned
+        },
         {
             "name_in": "general_category",
             "name_out": "general_category",
             "char_property": "gc",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: GeneralCategory(char["general_category"]).display_name
-            # "response_value": lambda char: char.general_category.display_name,
-        },  # general category, see https://www.unicode.org/reports/tr44/#General_Category_Values
+            "response_value": lambda char: GeneralCategory(char["general_category"]).display_name,
+        },
         {
             "name_in": "combining_class",
             "name_out": "combining_class",
@@ -149,7 +141,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "db_column": True,
             "responsify": True,
             "response_value": lambda char: CombiningClassCategory(char["combining_class"]).display_name,
-        },  # combining class, see https://www.unicode.org/reports/tr44/#Canonical_Combining_Class_Values. Specifies, with a numeric code, how a diacritic mark is positioned with respect to the base character. This is used in the Canonical Ordering Algorithm and in normalization. The order of the numbers is significant, but not the absolute values.
+        },
         {
             "name_in": "html_entities",
             "name_out": "html_entities",

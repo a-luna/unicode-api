@@ -22,8 +22,9 @@ body {
   --base-text-color: hsl(224, 16%, 20%);
   --darker-text-color: hsl(224, 16%, 10%);
   --link-color: hsl(25, 100%, 40%);
-  --link-hover-color: hsl(212, 72%, 35%);
+  --link-hover-color: hsl(25, 72%, 35%);
   --code-color: hsl(210, 85%, 50%);
+  --header-code-color: hsl(224, 16%, 35%);
 
   --details-header-bg-color: hsl(0, 0%, 85%);
   --details-header-hover-bg-color: hsl(0, 0%, 80%);
@@ -568,6 +569,14 @@ margin: 0 auto;
 
 .swagger-ui .info h4 {
   font-size: 1.1rem;
+}
+
+.swagger-ui .renderedMarkdown h2 code,
+.swagger-ui .renderedMarkdown h3 code,
+.swagger-ui .renderedMarkdown h4 code,
+.swagger-ui .renderedMarkdown h5 code,
+.swagger-ui .renderedMarkdown h6 code {
+  color: var(--header-code-color);
 }
 
 /* END: MY CUSTOMIZATIONS */
