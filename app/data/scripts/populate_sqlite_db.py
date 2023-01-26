@@ -1,29 +1,33 @@
 import json
 
-from sqlmodel import Session
+from sqlalchemy.sql import text
+from sqlmodel import Session, SQLModel
 
 import app.db.engine as db
-from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, PLANES_JSON
+from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, DB_FILE, PLANES_JSON
 from app.core.result import Result
 from app.data.constants import NULL_BLOCK, NULL_PLANE
 from app.data.scripts.util import finish_task, start_task, update_progress
+from app.db import CHARACTER_PROPERTY_GROUPS
 from app.schemas.enums import (
     BidirectionalBracketType,
     BidirectionalClass,
+    CharPropertyGroup,
     DecompositionType,
     EastAsianWidthType,
     GeneralCategory,
     HangulSyllableType,
-    JoiningClass,
+    JoiningType,
     LineBreakType,
     NumericType,
     ScriptCode,
+    TriadicLogic,
     VerticalOrientationType,
 )
 
 
 def populate_sqlite_database():
-    db.create_db_and_tables()
+    create_db_and_tables()
     all_planes, all_blocks = parse_unicode_planes_and_blocks_from_json()
     all_chars = parse_unicode_characters_from_json()
     all_blocks = assign_unicode_plane_to_each_block(all_planes, all_blocks)
@@ -33,6 +37,29 @@ def populate_sqlite_database():
         add_unicode_data_to_database(all_planes, all_blocks, all_chars, session)
         commit_database_session(session)
     return Result.Ok()
+
+
+def create_db_and_tables():
+    if DB_FILE.exists():
+        DB_FILE.unlink()
+    SQLModel.metadata.create_all(db.engine)
+    with db.engine.connect() as con:
+        for create_index_sql in generate_raw_sql_for_all_covering_indexes():
+            con.execute(text(create_index_sql))
+
+
+def generate_raw_sql_for_all_covering_indexes() -> list[str]:
+    sql_statements = [
+        generate_raw_sql_for_covering_index(prop_group)
+        for prop_group in CharPropertyGroup
+        if prop_group != CharPropertyGroup.All
+    ]
+    return [sql for sql in sql_statements if sql]
+
+
+def generate_raw_sql_for_covering_index(prop_group: CharPropertyGroup) -> str:
+    columns = [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
+    return f'CREATE INDEX ix_character_{prop_group.index_name} ON character ({", ".join(columns)})' if columns else ""
 
 
 def parse_unicode_planes_and_blocks_from_json():
@@ -68,8 +95,12 @@ def update_char_dict_enum_values(char_dict):
     char_dict["bidirectional_class"] = BidirectionalClass.from_code(char_dict["bidirectional_class"])
     char_dict["paired_bracket_type"] = BidirectionalBracketType.from_code(char_dict["paired_bracket_type"])
     char_dict["decomposition_type"] = DecompositionType.from_code(char_dict["decomposition_type"])
+    char_dict["NFC_QC"] = TriadicLogic.from_code(char_dict["NFC_QC"])
+    char_dict["NFD_QC"] = TriadicLogic.from_code(char_dict["NFD_QC"])
+    char_dict["NFKC_QC"] = TriadicLogic.from_code(char_dict["NFKC_QC"])
+    char_dict["NFKD_QC"] = TriadicLogic.from_code(char_dict["NFKD_QC"])
     char_dict["numeric_type"] = NumericType.from_code(char_dict["numeric_type"])
-    char_dict["joining_class"] = JoiningClass.from_code(char_dict["joining_class"])
+    char_dict["joining_type"] = JoiningType.from_code(char_dict["joining_type"])
     char_dict["line_break"] = LineBreakType.from_code(char_dict["line_break"])
     char_dict["east_asian_width"] = EastAsianWidthType.from_code(char_dict["east_asian_width"])
     char_dict["script"] = ScriptCode.from_code(char_dict["script"])
