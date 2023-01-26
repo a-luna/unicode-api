@@ -40,6 +40,7 @@ UNICODE_CHARACTERS_DOCS = f"""
 {create_details_element_for_swagger_ui("<strong>Property Group: UTF-32</strong> (<code>show_props=UTF32</code>)", PROP_GROUP_UTF32)}
 {create_details_element_for_swagger_ui("<strong>Property Group: Bidirectionality</strong> (<code>show_props=Bidirectionality</code>)", PROP_GROUP_BIDIRECTIONALITY)}
 {create_details_element_for_swagger_ui("<strong>Property Group: Decomposition</strong> (<code>show_props=Decomposition</code>)", PROP_GROUP_DECOMPOSITION)}
+{create_details_element_for_swagger_ui("<strong>Property Group: Quick Check</strong> (<code>show_props=Quick_Check</code>)", PROP_GROUP_QUICK_CHECK)}
 {create_details_element_for_swagger_ui("<strong>Property Group: Numeric</strong> (<code>show_props=Numeric</code>)", PROP_GROUP_NUMERIC)}
 {create_details_element_for_swagger_ui("<strong>Property Group: Joining</strong> (<code>show_props=Joining</code>)", PROP_GROUP_JOINING)}
 {create_details_element_for_swagger_ui("<strong>Property Group: Linebreak</strong> (<code>show_props=Linebreak</code>)", PROP_GROUP_LINEBREAK)}

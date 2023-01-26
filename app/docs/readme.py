@@ -35,25 +35,42 @@ def slugify(text: str) -> str:
 
 UNICODE_CHARACTER_PROP_GROUPS_README = (
     f'{create_details_element_readme("<strong>Minimum</strong>", PROP_GROUP_MINIMUM, True)}'
-    + "\t\t"
+    + "\t\t<br />\n"
     + UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1
     + "\t\t"
     + UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2
     + f'{create_details_element_readme("<strong>Basic</strong>", PROP_GROUP_BASIC)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>UTF-8</strong>", PROP_GROUP_UTF8)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>UTF-16</strong>", PROP_GROUP_UTF16)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>UTF-32</strong>", PROP_GROUP_UTF32)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Bidirectionality</strong>", PROP_GROUP_BIDIRECTIONALITY)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Decomposition</strong>", PROP_GROUP_DECOMPOSITION)}'
+    + "\t\t<br />\n"
+    + f'{create_details_element_readme("<strong>Quick Check</strong>", PROP_GROUP_QUICK_CHECK)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Numeric</strong>", PROP_GROUP_NUMERIC)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Joining</strong>", PROP_GROUP_JOINING)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Linebreak</strong>", PROP_GROUP_LINEBREAK)}'
-    + f'{create_details_element_readme("<strong>East_Asian_Width</strong>", PROP_GROUP_EAW)}'
+    + "\t\t<br />\n"
+    + f'{create_details_element_readme("<strong>East Asian Width</strong>", PROP_GROUP_EAW)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Case</strong>", PROP_GROUP_CASE)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Script</strong>", PROP_GROUP_SCRIPT)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Hangul</strong>", PROP_GROUP_HANGUL)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Indic</strong>", PROP_GROUP_INDIC)}'
-    + f'{create_details_element_readme("<strong>Function_and_Graphic</strong>", PROP_GROUP_F_AND_G)}'
+    + "\t\t<br />\n"
+    + f'{create_details_element_readme("<strong>Function and Graphic</strong>", PROP_GROUP_F_AND_G)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Emoji</strong>", PROP_GROUP_EMOJI)}'
 )
 
