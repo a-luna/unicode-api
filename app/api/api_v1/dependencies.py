@@ -8,7 +8,6 @@ from sqlmodel import Session
 import app.db.engine as db
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
 from app.data.encoding import get_codepoint_string
-from app.schemas.enums import CharPropertyGroup
 
 CODEPOINT_REGEX = re.compile(r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))")
 MAX_CODEPOINT = 1114111
@@ -211,19 +210,6 @@ class CharacterSearchParameters:
         self.per_page = per_page or 10
         self.page = page or 1
 
-    def __str__(self):
-        return (
-            "CharacterSearchParameters<"
-            f'name="{self.name}", '
-            f'min_score="{self.min_score}", '
-            f'per_page="{self.per_page}", '
-            f'page="{self.page}"'
-            ">"
-        )
-
-    def __repr__(self):
-        return str(self)
-
 
 class BlockSearchParameters:
     def __init__(
@@ -237,19 +223,6 @@ class BlockSearchParameters:
         self.min_score = min_score or 80
         self.per_page = per_page or 10
         self.page = page or 1
-
-    def __str__(self):
-        return (
-            "BlockSearchParameters<"
-            f'name="{self.name}", '
-            f'min_score="{self.min_score}", '
-            f'per_page="{self.per_page}", '
-            f'page="{self.page}"'
-            ">"
-        )
-
-    def __repr__(self):
-        return str(self)
 
 
 class ListParameters:
@@ -278,18 +251,6 @@ class ListParameters:
             get_decimal_number_from_hex_codepoint(starting_after) if starting_after else None
         )
 
-    def __str__(self):
-        return (
-            "ListParameters<"
-            f'limit="{self.limit}", '
-            f'starting_after="{self.starting_after}", '
-            f'ending_before="{self.ending_before}"'
-            ">"
-        )
-
-    def __repr__(self):
-        return str(self)
-
 
 class ListParametersDecimal:
     def __init__(
@@ -310,18 +271,6 @@ class ListParametersDecimal:
         self.ending_before: int | None = ending_before
         self.starting_after: int | None = starting_after
 
-    def __str__(self):
-        return (
-            "ListParametersDecimal<"
-            f'limit="{self.limit}", '
-            f'starting_after="{self.starting_after}", '
-            f'ending_before="{self.ending_before}"'
-            ">"
-        )
-
-    def __repr__(self):
-        return str(self)
-
 
 class UnicodeBlockQueryParamResolver:
     def __init__(
@@ -339,18 +288,6 @@ class UnicodeBlockQueryParamResolver:
         self.name = self.block.name
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec
-
-    def __str__(self):
-        return (
-            "UnicodeBlockQueryParamResolver<"
-            f'block="{self.block.name}", '
-            f'start="{self.block.start}", '
-            f'finish="{self.block.finish}"'
-            ">"
-        )
-
-    def __repr__(self):
-        return str(self)
 
 
 class UnicodeBlockPathParamResolver:
@@ -372,18 +309,6 @@ class UnicodeBlockPathParamResolver:
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec
 
-    def __str__(self):
-        return (
-            "UnicodeBlockQueryParamResolver<"
-            f'block="{self.block.name}", '
-            f'start="{self.block.start}", '
-            f'finish="{self.block.finish}"'
-            ">"
-        )
-
-    def __repr__(self):
-        return str(self)
-
 
 class UnicodePlaneResolver:
     def __init__(
@@ -400,18 +325,6 @@ class UnicodePlaneResolver:
             )
         self.start_block_id = self.plane.start_block_id
         self.finish_block_id = self.plane.finish_block_id
-
-    def __str__(self):
-        return (
-            "UnicodePlaneResolver<"
-            f'plane="{self.plane.name}", '
-            f'start="{self.start_block_id}", '
-            f'finish="{self.finish_block_id}"'
-            ">"
-        )
-
-    def __repr__(self):
-        return str(self)
 
 
 def get_all_characters_block(session: Session) -> db.UnicodeBlock:
