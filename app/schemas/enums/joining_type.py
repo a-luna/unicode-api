@@ -1,7 +1,7 @@
 from enum import auto, IntEnum
 
 
-class JoiningClass(IntEnum):
+class JoiningType(IntEnum):
 
     NONE = auto()
     RIGHT_JOINING = auto()

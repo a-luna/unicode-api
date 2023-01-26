@@ -10,10 +10,11 @@ from app.schemas.enums import (
     EastAsianWidthType,
     GeneralCategory,
     HangulSyllableType,
-    JoiningClass,
+    JoiningType,
     LineBreakType,
     NumericType,
     ScriptCode,
+    TriadicLogic,
     VerticalOrientationType,
 )
 from app.schemas.models.camel_model import CamelModel
@@ -44,13 +45,14 @@ class UnicodeCharacterBase(CamelModel):
     decomposition_type: DecompositionType = Field(
         sa_column=Column(ChoiceType(DecompositionType, impl=Integer()), nullable=False)
     )
-    decomposition_mapping: str
-    composition_exclusion: bool
-    full_composition_exclusion: bool
+    NFC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
+    NFD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
+    NFKC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
+    NFKD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
     numeric_type: NumericType = Field(sa_column=Column(ChoiceType(NumericType, impl=Integer()), nullable=False))
     numeric_value: str
     numeric_value_parsed: float | None
-    joining_class: JoiningClass = Field(sa_column=Column(ChoiceType(JoiningClass, impl=Integer()), nullable=False))
+    joining_type: JoiningType = Field(sa_column=Column(ChoiceType(JoiningType, impl=Integer()), nullable=False))
     joining_group: str
     joining_control: bool
     line_break: LineBreakType = Field(sa_column=Column(ChoiceType(LineBreakType, impl=Integer()), nullable=False))
@@ -63,18 +65,11 @@ class UnicodeCharacterBase(CamelModel):
     simple_lowercase_mapping: str
     simple_titlecase_mapping: str
     simple_case_folding: str
-    other_uppercase: bool
-    other_lowercase: bool
-    other_uppercase_mapping: str
-    other_lowercase_mapping: str
-    other_titlecase_mapping: str
-    other_case_folding: str
     script: ScriptCode = Field(sa_column=Column(ChoiceType(ScriptCode, impl=Integer()), nullable=False))
     script_extension: str
     hangul_syllable_type: HangulSyllableType = Field(
         sa_column=Column(ChoiceType(HangulSyllableType, impl=Integer()), nullable=False)
     )
-    jamo_short_name: str
     indic_syllabic_category: str
     indic_matra_category: str
     indic_positional_category: str
@@ -87,13 +82,10 @@ class UnicodeCharacterBase(CamelModel):
     extender: bool
     soft_dotted: bool
     alphabetic: bool
-    other_alphabetic: bool
     math: bool
-    other_math: bool
     hex_digit: bool
     ascii_hex_digit: bool
     default_ignorable_code_point: bool
-    other_default_ignorable_code_point: bool
     logical_order_exception: bool
     prepended_concatenation_mark: bool
     white_space: bool
@@ -140,13 +132,14 @@ class UnicodeCharacterResponse(CamelModel):
     paired_bracket_type: str | None
     paired_bracket_property: str | None
     decomposition_type: str | None
-    decomposition_mapping: list[str] | None
-    composition_exclusion: bool | None
-    full_composition_exclusion: bool | None
+    NFC_QC: str | None
+    NFD_QC: str | None
+    NFKC_QC: str | None
+    NFKD_QC: str | None
     numeric_type: str | None
     numeric_value: str | None
     numeric_value_parsed: float | None
-    joining_class: str | None
+    joining_type: str | None
     joining_group: str | None
     joining_control: bool | None
     line_break: str | None
@@ -157,16 +150,9 @@ class UnicodeCharacterResponse(CamelModel):
     simple_lowercase_mapping: str | None
     simple_titlecase_mapping: str | None
     simple_case_folding: str | None
-    other_uppercase: bool | None
-    other_lowercase: bool | None
-    other_uppercase_mapping: list[str] | None
-    other_lowercase_mapping: list[str] | None
-    other_titlecase_mapping: list[str] | None
-    other_case_folding: list[str] | None
     script: str | None
     script_extension: list[str] | None
     hangul_syllable_type: str | None
-    jamo_short_name: str | None
     indic_syllabic_category: str | None
     indic_matra_category: str | None
     indic_positional_category: str | None
@@ -179,13 +165,10 @@ class UnicodeCharacterResponse(CamelModel):
     extender: bool | None
     soft_dotted: bool | None
     alphabetic: bool | None
-    other_alphabetic: bool | None
     math: bool | None
-    other_math: bool | None
     hex_digit: bool | None
     ascii_hex_digit: bool | None
     default_ignorable_code_point: bool | None
-    other_default_ignorable_code_point: bool | None
     logical_order_exception: bool | None
     prepended_concatenation_mark: bool | None
     white_space: bool | None

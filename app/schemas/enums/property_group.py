@@ -13,6 +13,7 @@ class CharPropertyGroup(StrEnum):
     UTF32 = auto()
     Bidirectionality = auto()
     Decomposition = auto()
+    Quick_Check = auto()
     Numeric = auto()
     Joining = auto()
     Linebreak = auto()
