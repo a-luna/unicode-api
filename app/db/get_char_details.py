@@ -1,14 +1,43 @@
+import operator
+from functools import reduce
 from typing import Any, Type
 
 from sqlalchemy import column, select
 from sqlalchemy.engine import Engine
 
 import app.db.engine as db
-from app.db.constants import CHARACTER_PROPERTY_GROUPS
+from app.data.cache import cached_data
+from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.schemas.enums import CharPropertyGroup
 
 
-def get_character_properties(
+def get_character_properties(engine: Engine, codepoint: int, show_props: list[CharPropertyGroup] | None = None):
+    show_props = check_prop_group_selections(show_props)
+    char_name = cached_data.get_character_name(codepoint)
+    char_table_name = get_character_table_name_for_codepoint(codepoint)
+    char_prop_dicts = [
+        get_character_prop_group(engine, codepoint, group, char_name, char_table_name) for group in show_props
+    ]
+    return reduce(operator.ior, char_prop_dicts, {})
+
+
+def check_prop_group_selections(prop_groups: list[CharPropertyGroup] | None = None) -> list[CharPropertyGroup]:
+    if not prop_groups:
+        prop_groups = [CharPropertyGroup.Minimum]
+    if CharPropertyGroup.Minimum not in prop_groups:
+        prop_groups = [CharPropertyGroup.Minimum] + prop_groups
+    if prop_groups and CharPropertyGroup.All in prop_groups:
+        prop_groups = [group for group in CharPropertyGroup if group != CharPropertyGroup.All]
+    return prop_groups
+
+
+def get_character_table_name_for_codepoint(
+    codepoint: int,
+) -> (Type[db.UnicodeCharacterNoName] | Type[db.UnicodeCharacter]):
+    return db.UnicodeCharacter if cached_data.character_is_uniquely_named(codepoint) else db.UnicodeCharacterNoName
+
+
+def get_character_prop_group(
     engine: Engine,
     codepoint: int,
     prop_group: CharPropertyGroup,
@@ -17,7 +46,7 @@ def get_character_properties(
 ):
     char_props: dict[str, bool | int | str] = {"codepoint_dec": codepoint, "name": char_name}
     with engine.connect() as con:
-        col_names = db.get_all_db_columns_in_group(prop_group)
+        col_names = [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
         if col_names:
             query = (
                 select(column(col_name) for col_name in col_names)
