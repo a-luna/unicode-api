@@ -49,14 +49,14 @@ def init_redis():
 
 @app.on_event("startup")
 def init_unicode_obj():
-    _ = cached_data.char_unique_name_map
-    _ = cached_data.char_unique_name_search_choices
-    _ = cached_data.char_generic_name_map
-    _ = cached_data.char_generic_name_search_choices
+    _ = cached_data.character_unique_name_map
+    _ = cached_data.character_unique_name_choices
+    _ = cached_data.character_generic_name_map
+    _ = cached_data.character_generic_name_choices
     _ = cached_data.blocks
     _ = cached_data.block_id_map
     _ = cached_data.block_name_map
-    _ = cached_data.block_name_search_choices
+    _ = cached_data.block_name_choices
     _ = cached_data.planes
     _ = cached_data.plane_number_map
     _ = cached_data.plane_name_map

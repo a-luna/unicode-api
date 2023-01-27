@@ -108,8 +108,8 @@ def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQuer
 def search_characters_by_name(engine: Engine, query: str, score_cutoff: int = 80) -> list[db.UnicodeCharacterResponse]:
     fuzzy_search_results = process.extract(
         query.lower(),
-        cached_data.char_unique_name_search_choices,
-        limit=cached_data.total_char_unique_name_search_choices,
+        cached_data.character_unique_name_choices,
+        limit=cached_data.total_character_unique_name_choices,
     )
     return [
         get_character_details(engine, result, [CharPropertyGroup.Minimum], float(score))
@@ -124,11 +124,6 @@ def get_character_details(
     show_props: list[CharPropertyGroup] | None = None,
     score: float | None = None,
 ) -> db.UnicodeCharacterResponse:
-    if not cached_data.codepoint_is_in_unicode_range(codepoint):
-        raise HTTPException(
-            status_code=int(HTTPStatus.NOT_FOUND),
-            detail=f"Failed to retrieve data for character matching codepoint {get_codepoint_string(codepoint)}.",
-        )
     response_dict = get_character_properties(engine, codepoint, show_props)
     if score:
         response_dict["score"] = float(f"{score:.1f}")

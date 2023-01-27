@@ -7,6 +7,7 @@ from sqlmodel import Session
 
 import app.db.engine as db
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
+from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
 
 CODEPOINT_REGEX = re.compile(r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))")
@@ -175,7 +176,7 @@ def get_decimal_number_from_hex_codepoint(codepoint: str) -> int:
         raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=CODEPOINT_INVALID_ERROR)
     groups = match.groupdict()
     codepoint_dec = int(groups.get("codepoint_prefix", "0") or groups.get("codepoint", "0"), 16)
-    if codepoint_dec > MAX_CODEPOINT:
+    if not cached_data.codepoint_is_in_unicode_range(codepoint_dec):
         raise HTTPException(
             status_code=int(HTTPStatus.BAD_REQUEST),
             detail=(

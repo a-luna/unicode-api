@@ -392,12 +392,11 @@ class UnicodeBlockName(StrEnum):
 
     @property
     def block_id(self) -> int:
-        block = cached_data.block_name_map.get(str(self))
-        return int(block["id"]) if block else 0
+        block = cached_data.get_unicode_block_by_name(str(self))
+        return int(block["id"])
 
     @classmethod
     def from_block_id(cls, block_id):
-        for enum_item in cls:
-            if block_id == enum_item.block_id:
-                return enum_item
-        return cls.NONE
+        block = cached_data.get_unicode_block_by_id(block_id)
+        block_name = str(block["name"]).upper().replace("-", "_").replace(" ", "_")
+        return cls(block_name)
