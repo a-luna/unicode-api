@@ -2,14 +2,14 @@ import pytest
 from fastapi.testclient import TestClient
 from humps import camelize
 
-from app.db.constants import CHARACTER_PROPERTY_GROUPS
+from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.main import app
 from app.schemas.enums.property_group import CharPropertyGroup
 
 client = TestClient(app)
 
 ALL_CHARACTER_PROPERTIES = {
-    0: {
+    "∑": {
         "character": "∑",
         "name": "N-ARY SUMMATION",
         "codepoint": "U+2211",
@@ -36,13 +36,14 @@ ALL_CHARACTER_PROPERTIES = {
         "pairedBracketType": "None (n)",
         "pairedBracketProperty": "∑ (U+2211)",
         "decompositionType": "None (none)",
-        "decompositionMapping": ["∑ (U+2211)"],
-        "compositionExclusion": False,
-        "fullCompositionExclusion": False,
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
         "numericType": "None (None)",
         "numericValue": "NaN",
         "numericValueParsed": None,
-        "joiningClass": "Non Joining (U)",
+        "joiningType": "Non Joining (U)",
         "joiningGroup": "No_Joining_Group",
         "joiningControl": False,
         "lineBreak": "Ambiguous (Alphabetic Or Ideographic) (AI)",
@@ -53,16 +54,9 @@ ALL_CHARACTER_PROPERTIES = {
         "simpleLowercaseMapping": "∑ (U+2211)",
         "simpleTitlecaseMapping": "∑ (U+2211)",
         "simpleCaseFolding": "∑ (U+2211)",
-        "otherUppercase": False,
-        "otherLowercase": False,
-        "otherUppercaseMapping": ["∑ (U+2211)"],
-        "otherLowercaseMapping": ["∑ (U+2211)"],
-        "otherTitlecaseMapping": ["∑ (U+2211)"],
-        "otherCaseFolding": ["∑ (U+2211)"],
         "script": "Common (Zyyy)",
         "scriptExtension": ["Common (Zyyy)"],
         "hangulSyllableType": "Not Applicable (NA)",
-        "jamoShortName": "",
         "indicSyllabicCategory": "Other",
         "indicMatraCategory": "NA",
         "indicPositionalCategory": "NA",
@@ -75,13 +69,10 @@ ALL_CHARACTER_PROPERTIES = {
         "extender": False,
         "softDotted": False,
         "alphabetic": False,
-        "otherAlphabetic": False,
-        "math": False,
-        "otherMath": True,
+        "math": True,
         "hexDigit": False,
         "asciiHexDigit": False,
         "defaultIgnorableCodePoint": False,
-        "otherDefaultIgnorableCodePoint": False,
         "logicalOrderException": False,
         "prependedConcatenationMark": False,
         "whiteSpace": False,
@@ -94,7 +85,7 @@ ALL_CHARACTER_PROPERTIES = {
         "emojiComponent": False,
         "extendedPictographic": False,
     },
-    1: {
+    "ཀྵ": {
         "character": "ཀྵ",
         "name": "TIBETAN LETTER KSSA",
         "codepoint": "U+0F69",
@@ -121,13 +112,14 @@ ALL_CHARACTER_PROPERTIES = {
         "pairedBracketType": "None (n)",
         "pairedBracketProperty": "ཀྵ (U+0F69)",
         "decompositionType": "Canonical (can)",
-        "decompositionMapping": ["ཀ (U+0F40)", "ྵ (U+0FB5)"],
-        "compositionExclusion": True,
-        "fullCompositionExclusion": True,
+        "NFC_QC": "No",
+        "NFD_QC": "No",
+        "NFKC_QC": "No",
+        "NFKD_QC": "No",
         "numericType": "None (None)",
         "numericValue": "NaN",
         "numericValueParsed": None,
-        "joiningClass": "Non Joining (U)",
+        "joiningType": "Non Joining (U)",
         "joiningGroup": "No_Joining_Group",
         "joiningControl": False,
         "lineBreak": "Ordinary Alphabetic And Symbol (AL)",
@@ -138,16 +130,9 @@ ALL_CHARACTER_PROPERTIES = {
         "simpleLowercaseMapping": "ཀྵ (U+0F69)",
         "simpleTitlecaseMapping": "ཀྵ (U+0F69)",
         "simpleCaseFolding": "ཀྵ (U+0F69)",
-        "otherUppercase": False,
-        "otherLowercase": False,
-        "otherUppercaseMapping": ["ཀྵ (U+0F69)"],
-        "otherLowercaseMapping": ["ཀྵ (U+0F69)"],
-        "otherTitlecaseMapping": ["ཀྵ (U+0F69)"],
-        "otherCaseFolding": ["ཀྵ (U+0F69)"],
         "script": "Tibetan (Tibt)",
         "scriptExtension": ["Tibetan (Tibt)"],
         "hangulSyllableType": "Not Applicable (NA)",
-        "jamoShortName": "",
         "indicSyllabicCategory": "Consonant",
         "indicMatraCategory": "NA",
         "indicPositionalCategory": "NA",
@@ -159,14 +144,11 @@ ALL_CHARACTER_PROPERTIES = {
         "diacritic": False,
         "extender": False,
         "softDotted": False,
-        "alphabetic": False,
-        "otherAlphabetic": True,
+        "alphabetic": True,
         "math": False,
-        "otherMath": False,
         "hexDigit": False,
         "asciiHexDigit": False,
         "defaultIgnorableCodePoint": False,
-        "otherDefaultIgnorableCodePoint": False,
         "logicalOrderException": False,
         "prependedConcatenationMark": False,
         "whiteSpace": False,
@@ -179,7 +161,7 @@ ALL_CHARACTER_PROPERTIES = {
         "emojiComponent": False,
         "extendedPictographic": False,
     },
-    2: {
+    "🐍": {
         "character": "🐍",
         "name": "SNAKE",
         "codepoint": "U+1F40D",
@@ -206,13 +188,14 @@ ALL_CHARACTER_PROPERTIES = {
         "pairedBracketType": "None (n)",
         "pairedBracketProperty": "🐍 (U+1F40D)",
         "decompositionType": "None (none)",
-        "decompositionMapping": ["🐍 (U+1F40D)"],
-        "compositionExclusion": False,
-        "fullCompositionExclusion": False,
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
         "numericType": "None (None)",
         "numericValue": "NaN",
         "numericValueParsed": None,
-        "joiningClass": "Non Joining (U)",
+        "joiningType": "Non Joining (U)",
         "joiningGroup": "No_Joining_Group",
         "joiningControl": False,
         "lineBreak": "Ideographic (ID)",
@@ -223,16 +206,9 @@ ALL_CHARACTER_PROPERTIES = {
         "simpleLowercaseMapping": "🐍 (U+1F40D)",
         "simpleTitlecaseMapping": "🐍 (U+1F40D)",
         "simpleCaseFolding": "🐍 (U+1F40D)",
-        "otherUppercase": False,
-        "otherLowercase": False,
-        "otherUppercaseMapping": ["🐍 (U+1F40D)"],
-        "otherLowercaseMapping": ["🐍 (U+1F40D)"],
-        "otherTitlecaseMapping": ["🐍 (U+1F40D)"],
-        "otherCaseFolding": ["🐍 (U+1F40D)"],
         "script": "Common (Zyyy)",
         "scriptExtension": ["Common (Zyyy)"],
         "hangulSyllableType": "Not Applicable (NA)",
-        "jamoShortName": "",
         "indicSyllabicCategory": "Other",
         "indicMatraCategory": "NA",
         "indicPositionalCategory": "NA",
@@ -245,13 +221,10 @@ ALL_CHARACTER_PROPERTIES = {
         "extender": False,
         "softDotted": False,
         "alphabetic": False,
-        "otherAlphabetic": False,
         "math": False,
-        "otherMath": False,
         "hexDigit": False,
         "asciiHexDigit": False,
         "defaultIgnorableCodePoint": False,
-        "otherDefaultIgnorableCodePoint": False,
         "logicalOrderException": False,
         "prependedConcatenationMark": False,
         "whiteSpace": False,
@@ -267,7 +240,8 @@ ALL_CHARACTER_PROPERTIES = {
 }
 
 
-def get_character_properties(prop_group, prop_data):
+def get_character_properties(char, prop_group):
+    prop_data = ALL_CHARACTER_PROPERTIES[char]
     minimum = get_prop_group(CharPropertyGroup.Minimum, prop_data)
     char_props = {}
     if prop_group == CharPropertyGroup.All:
@@ -286,16 +260,14 @@ def get_prop_group(prop_group, prop_data):
     }
 
 
-@pytest.mark.parametrize("char_index", [0, 1, 2])
-def test_get_character_details_default(char_index):
-    char = ALL_CHARACTER_PROPERTIES[char_index]["character"]
+@pytest.mark.parametrize("char", ["∑", "ཀྵ", "🐍"])
+def test_get_character_details_default(char):
     response = client.get(f"/v1/characters/{char}")
     assert response.status_code == 200
-    assert response.json() == [
-        get_character_properties(CharPropertyGroup.Minimum, ALL_CHARACTER_PROPERTIES[char_index])
-    ]
+    assert response.json() == [get_character_properties(char, CharPropertyGroup.Minimum)]
 
 
+@pytest.mark.parametrize("char", ["∑", "ཀྵ", "🐍"])
 @pytest.mark.parametrize(
     "prop_group",
     [
@@ -307,6 +279,7 @@ def test_get_character_details_default(char_index):
         CharPropertyGroup.UTF32,
         CharPropertyGroup.Bidirectionality,
         CharPropertyGroup.Decomposition,
+        CharPropertyGroup.Quick_Check,
         CharPropertyGroup.Numeric,
         CharPropertyGroup.Joining,
         CharPropertyGroup.Linebreak,
@@ -319,9 +292,7 @@ def test_get_character_details_default(char_index):
         CharPropertyGroup.Emoji,
     ],
 )
-@pytest.mark.parametrize("char_index", [0, 1, 2])
-def test_get_character_details_show_props(prop_group, char_index):
-    char = ALL_CHARACTER_PROPERTIES[char_index]["character"]
+def test_get_character_details_show_props(char, prop_group):
     response = client.get(f"/v1/characters/{char}?show_props={prop_group.name}")
     assert response.status_code == 200
-    assert response.json() == [get_character_properties(prop_group, ALL_CHARACTER_PROPERTIES[char_index])]
+    assert response.json() == [get_character_properties(char, prop_group)]
