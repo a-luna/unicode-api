@@ -354,7 +354,7 @@ class ScriptCode(IntEnum):
             "YI": "Yiii",
             "ZANABAZAR_SQUARE": "Zanb",
         }
-        return code_map.get(self.name, "")
+        return code_map.get(self.name, "None")
 
     @classmethod
     def from_code(cls, code):

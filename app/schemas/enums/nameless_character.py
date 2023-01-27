@@ -9,7 +9,7 @@ class NamelessCharacterType(IntEnum):
     RESERVED = auto()
 
     def __str__(self):
-        return f'<{self.name.replace("_", "-").lower()}>'
+        return self.name.replace("_", "-").lower()
 
     @property
     def display_name(self) -> str:

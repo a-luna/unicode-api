@@ -316,6 +316,30 @@ body > svg {
   background-color: var(--inner-dl-bg-color);
 }
 
+.swagger-ui details details ul {
+  border: none;
+  padding: 0 0 0.5rem 2rem;
+  background-color: var(--inner-dl-bg-color);
+}
+
+.swagger-ui details details > div {
+  background-color: var(--inner-dl-bg-color);
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+.swagger-ui .renderedMarkdown details details p {
+  font-size: 0.8rem;
+}
+
+.swagger-ui details details > div > p:first-child {
+  font-weight: 700;
+  font-style: italic;
+}
+
 .parameters details summary {
   color: var(--params-details-header-text-color);
   background-color: var(--params-details-header-bg-color);

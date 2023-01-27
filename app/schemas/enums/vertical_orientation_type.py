@@ -30,7 +30,7 @@ class VerticalOrientationType(IntEnum):
             "TRANSFORMED_UPRIGHT": "Tu",
             "TRANSFORMED_ROTATED": "Tr",
         }
-        return code_map.get(self.name, "")
+        return code_map.get(self.name, "None")
 
     @classmethod
     def from_code(cls, code):
