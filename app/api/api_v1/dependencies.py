@@ -283,9 +283,7 @@ class UnicodeBlockQueryParamResolver:
         if not block or block == UnicodeBlockName.NONE:
             self.block: db.UnicodeBlock = get_all_characters_block(session)
         else:
-            self.block: db.UnicodeBlock = (
-                session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == block.block_id).one()
-            )
+            self.block: db.UnicodeBlock = create_block_from_cached_data(block.block_id)
         self.name = self.block.name
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec
@@ -302,9 +300,7 @@ class UnicodeBlockPathParamResolver:
             self.block: db.UnicodeBlock = get_all_characters_block(session)
             self.plane_abbrev = "ALL"
         else:
-            self.block: db.UnicodeBlock = (
-                session.query(db.UnicodeBlock).filter(db.UnicodeBlock.id == name.block_id).one()
-            )
+            self.block: db.UnicodeBlock = create_block_from_cached_data(name.block_id)
             self.plane_abbrev = self.block.plane.abbreviation
         self.name = self.block.name
         self.start = self.block.start_dec
@@ -356,3 +352,12 @@ def get_all_characters_plane(session: Session) -> db.UnicodePlane:
         total_allocated=1114112,
         total_defined=sum(len(plane.characters) for plane in session.query(db.UnicodePlane).all()),
     )
+
+
+def create_block_from_cached_data(block_id: int) -> db.UnicodeBlock:
+    block_dict = cached_data.get_unicode_block_by_id(block_id)
+    plane_dict = cached_data.get_unicode_plane_containing_block_id(block_id)
+    block = db.UnicodeBlock(**block_dict)
+    plane = db.UnicodePlane(**plane_dict)
+    block.plane = plane
+    return block

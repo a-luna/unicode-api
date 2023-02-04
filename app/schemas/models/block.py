@@ -23,8 +23,11 @@ class UnicodeBlockResponse(CamelModel):
     total_defined: int | None
 
 
-class UnicodeBlock(UnicodeBlockBase, table=True):
+class UnicodeBlockResult(UnicodeBlockResponse):
+    score: float | None
 
+
+class UnicodeBlock(UnicodeBlockBase, table=True):
     __tablename__ = "block"  # type: ignore
 
     id: int | None = Field(default=None, primary_key=True)
@@ -35,14 +38,17 @@ class UnicodeBlock(UnicodeBlockBase, table=True):
     characters: list["UnicodeCharacter"] = Relationship(back_populates="block")  # type: ignore
     characters_no_name: list["UnicodeCharacterNoName"] = Relationship(back_populates="block")  # type: ignore
 
-    @classmethod
-    def responsify(cls, block) -> "UnicodeBlockResponse":
-        block_dict = block.dict(by_alias=True)
-        block_dict["plane"] = block.plane.abbreviation
-        block_dict["start"] = f"U+{block.start}"
-        block_dict["finish"] = f"U+{block.finish}"
+    def as_response(self) -> "UnicodeBlockResponse":
+        block_dict = self.dict(by_alias=True)
+        block_dict["plane"] = self.plane.abbreviation
+        block_dict["start"] = f"U+{self.start}"
+        block_dict["finish"] = f"U+{self.finish}"
         return UnicodeBlockResponse(**block_dict)
 
-
-class UnicodeBlockResult(UnicodeBlockResponse):
-    score: float | None
+    def as_search_result(self, score=None) -> "UnicodeBlockResult":
+        block_dict = self.dict(by_alias=True)
+        block_dict["plane"] = self.plane.abbreviation
+        block_dict["start"] = f"U+{self.start}"
+        block_dict["finish"] = f"U+{self.finish}"
+        block_dict["score"] = f"{score:.1f}"
+        return UnicodeBlockResult(**block_dict)
