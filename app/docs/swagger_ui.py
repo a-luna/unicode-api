@@ -71,7 +71,7 @@ def get_api_docs_for_swagger_ui():
         + create_details_element_for_swagger_ui("Pagination", PAGINATION)
         + create_details_element_for_swagger_ui("Search", SEARCH)
         + "<h3>Core Resources</h3>\n"
-        + create_details_element_for_swagger_ui("Unicode Characters", UNICODE_CHARACTERS_DOCS, True)
+        + create_details_element_for_swagger_ui("Unicode Characters", UNICODE_CHARACTERS_DOCS)
         + create_details_element_for_swagger_ui("Unicode Blocks", UNICODE_BLOCKS_DOCS)
         + create_details_element_for_swagger_ui("Unicode Planes", UNICODE_PLANES_DOCS)
     )

@@ -73,6 +73,7 @@ async def swagger_ui_html():
         swagger_ui_parameters={
             "docExpansion": "list",
             "defaultModelsExpandDepth": -1,
+            "useUnsafeMarkdown": True,
             "syntaxHighlight.theme": "arta",
             "tryItOutEnabled": "true",
             "displayRequestDuration": "true",

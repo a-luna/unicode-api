@@ -139,7 +139,10 @@ body > svg {
   font-weight: 500;
 }
 
-.swagger-ui .renderedMarkdown p {
+.swagger-ui .renderedMarkdown div > p,
+.swagger-ui .wrapper div > p,
+.swagger-ui .renderedMarkdown dd > p:not(:last-of-type),
+.swagger-ui .renderedMarkdown dd > p:first-of-type {
   margin: 0 0 15px 0 !important;
 }
 
@@ -318,8 +321,12 @@ body > svg {
 
 .swagger-ui details details ul {
   border: none;
-  padding: 0 0 0.5rem 2rem;
+  padding: 0 0 1rem 2rem;
   background-color: var(--inner-dl-bg-color);
+}
+
+.swagger-ui details details ul:last-child {
+  padding: 0 0 0.5rem 2rem;
 }
 
 .swagger-ui details details > div {
@@ -335,7 +342,8 @@ body > svg {
   font-size: 0.8rem;
 }
 
-.swagger-ui details details > div > p:first-child {
+.swagger-ui details details > div > p:first-child,
+.swagger-ui details details > div.prop-group-ref   {
   font-weight: 700;
   font-style: italic;
 }
