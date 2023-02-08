@@ -1,4 +1,4 @@
-FROM python:3.10.5
+FROM python:3.10.9
 WORKDIR /code
 RUN pip install -U pip setuptools wheel
 COPY ./requirements.txt /code/requirements.txt
