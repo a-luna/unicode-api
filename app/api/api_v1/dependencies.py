@@ -59,9 +59,9 @@ UNICODE_CHAR_STRING_DESCRIPTION = """
     </summary>
     <dl>
         <dt><span>Ⱒ</span><sup>2</sup></dt>
-        <dd><a href="/v1/characters/%E2%B0%A2" target="_blank">%E2%B0%A2</a></dd>
+        <dd><a href="/v1/characters/%E2%B0%A2" rel="noopener noreferrer" target="_blank">%E2%B0%A2</a></dd>
         <dt><span>👨‍🌾 </span><sup>3</sup></dt>
-        <dd><a href="/v1/characters/%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE" target="_blank">%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE</a></dd>
+        <dd><a href="/v1/characters/%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE" rel="noopener noreferrer" target="_blank">%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE</a></dd>
     </dl>
     <div>
         <sup>1</sup>

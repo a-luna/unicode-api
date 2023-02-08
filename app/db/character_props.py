@@ -472,13 +472,13 @@ CHARACTER_PROPERTY_GROUPS = {
             else ScriptCode.NONE.display_name,
         },
         {
-            "name_in": "script_extension",
-            "name_out": "script_extension",
+            "name_in": "script_extensions",
+            "name_out": "script_extensions",
             "char_property": "scx",
             "db_column": True,
             "responsify": True,
-            "response_value": lambda char: get_script_extension(char["script_extension"])
-            if "script_extension" in char
+            "response_value": lambda char: get_script_extensions(char["script_extensions"])
+            if "script_extensions" in char
             else [ScriptCode.NONE.display_name],
         },
     ],
@@ -729,5 +729,5 @@ def get_mapped_codepoint(codepoint_hex: str, include_char_name: bool = False) ->
     )
 
 
-def get_script_extension(value: str) -> list[str]:
+def get_script_extensions(value: str) -> list[str]:
     return [ScriptCode.from_code(script).display_name for script in value.split(" ")]

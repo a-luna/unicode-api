@@ -66,7 +66,7 @@ class UnicodeCharacterBase(CamelModel):
     simple_titlecase_mapping: str
     simple_case_folding: str
     script: ScriptCode = Field(sa_column=Column(ChoiceType(ScriptCode, impl=Integer()), nullable=False))
-    script_extension: str
+    script_extensions: str
     hangul_syllable_type: HangulSyllableType = Field(
         sa_column=Column(ChoiceType(HangulSyllableType, impl=Integer()), nullable=False)
     )
@@ -151,7 +151,7 @@ class UnicodeCharacterResponse(CamelModel):
     simple_titlecase_mapping: str | None
     simple_case_folding: str | None
     script: str | None
-    script_extension: list[str] | None
+    script_extensions: list[str] | None
     hangul_syllable_type: str | None
     indic_syllabic_category: str | None
     indic_matra_category: str | None
@@ -183,7 +183,6 @@ class UnicodeCharacterResponse(CamelModel):
 
 
 class UnicodeCharacter(UnicodeCharacterBase, table=True):
-
     __tablename__ = "character"  # type: ignore
 
     block: "UnicodeBlock" = Relationship(back_populates="characters")  # type: ignore
@@ -191,7 +190,6 @@ class UnicodeCharacter(UnicodeCharacterBase, table=True):
 
 
 class UnicodeCharacterNoName(UnicodeCharacterBase, table=True):
-
     __tablename__ = "character_no_name"  # type: ignore
 
     block: "UnicodeBlock" = Relationship(back_populates="characters_no_name")  # type: ignore

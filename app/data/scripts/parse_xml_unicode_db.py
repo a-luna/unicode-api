@@ -133,7 +133,7 @@ def parse_character_details(
         "simple_titlecase_mapping": get_mapped_codepoint(char_node.getAttribute("stc"), codepoint),
         "simple_case_folding": get_mapped_codepoint(char_node.getAttribute("scf"), codepoint),
         "script": char_node.getAttribute("sc"),
-        "script_extension": char_node.getAttribute("scx"),
+        "script_extensions": char_node.getAttribute("scx"),
         "hangul_syllable_type": char_node.getAttribute("hst"),
         "indic_syllabic_category": char_node.getAttribute("InSC"),
         "indic_matra_category": char_node.getAttribute("InMC") or "NA",
