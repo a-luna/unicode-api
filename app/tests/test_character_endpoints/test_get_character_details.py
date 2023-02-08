@@ -30,37 +30,17 @@ def get_prop_group(prop_group, prop_data):
     }
 
 
-@pytest.mark.parametrize("char", ["∑", "ཀྵ", "🐍"])
+@pytest.mark.parametrize("char", ALL_CHARACTER_PROPERTIES.keys())
 def test_get_character_details_default(char):
     response = client.get(f"/v1/characters/{char}")
     assert response.status_code == 200
     assert response.json() == [get_character_properties(char, CharPropertyGroup.Minimum)]
 
 
-@pytest.mark.parametrize("char", ["∑", "ཀྵ", "🐍"])
+@pytest.mark.parametrize("char", ALL_CHARACTER_PROPERTIES.keys())
 @pytest.mark.parametrize(
     "prop_group",
-    [
-        CharPropertyGroup.All,
-        CharPropertyGroup.Minimum,
-        CharPropertyGroup.Basic,
-        CharPropertyGroup.UTF8,
-        CharPropertyGroup.UTF16,
-        CharPropertyGroup.UTF32,
-        CharPropertyGroup.Bidirectionality,
-        CharPropertyGroup.Decomposition,
-        CharPropertyGroup.Quick_Check,
-        CharPropertyGroup.Numeric,
-        CharPropertyGroup.Joining,
-        CharPropertyGroup.Linebreak,
-        CharPropertyGroup.East_Asian_Width,
-        CharPropertyGroup.Case,
-        CharPropertyGroup.Script,
-        CharPropertyGroup.Hangul,
-        CharPropertyGroup.Indic,
-        CharPropertyGroup.Function_and_Graphic,
-        CharPropertyGroup.Emoji,
-    ],
+    [prop_group for prop_group in CharPropertyGroup],
 )
 def test_get_character_details_show_props(char, prop_group):
     response = client.get(f"/v1/characters/{char}?show_props={prop_group.name}")
