@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class VerticalOrientationType(IntEnum):
-
     NONE = auto()
     UPRIGHT = auto()
     ROTATED = auto()

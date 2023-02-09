@@ -2,7 +2,6 @@ from enum import IntEnum
 
 
 class TriadicLogic(IntEnum):
-
     Y = 1
     N = 0
     M = -1

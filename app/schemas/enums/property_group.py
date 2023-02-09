@@ -4,7 +4,6 @@ from fastapi_utils.enums import StrEnum
 
 
 class CharPropertyGroup(StrEnum):
-
     All = auto()
     Minimum = auto()
     Basic = auto()

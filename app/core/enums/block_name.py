@@ -7,7 +7,6 @@ from app.data.cache import cached_data
 
 
 class UnicodeBlockName(StrEnum):
-
     NONE = auto()
     BASIC_LATIN = auto()
     LATIN_1_SUPPLEMENT = auto()

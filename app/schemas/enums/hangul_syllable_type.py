@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class HangulSyllableType(IntEnum):
-
     NOT_APPLICABLE = auto()
     LEADING_JAMO = auto()
     VOWEL_JAMO = auto()

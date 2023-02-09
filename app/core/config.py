@@ -26,7 +26,6 @@ DB_URL = f"sqlite:///{DB_FILE}"
 
 
 class Settings(BaseSettings):
-
     ENV: str = os.environ.get("ENV", "DEV")
     PROJECT_NAME: str = "Unicode API"
     API_VERSION: str = "/v1"

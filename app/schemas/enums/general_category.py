@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class GeneralCategory(IntEnum):
-
     NONE = auto()
     UPPERCASE_LETTER = auto()
     LOWERCASE_LETTER = auto()

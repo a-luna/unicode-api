@@ -14,7 +14,6 @@ class UnicodePlaneResponse(CamelModel):
 
 
 class UnicodePlane(UnicodePlaneResponse, table=True):
-
     __tablename__ = "plane"  # type: ignore
 
     id: int | None = Field(default=None, primary_key=True)

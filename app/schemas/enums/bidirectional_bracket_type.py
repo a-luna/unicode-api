@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class BidirectionalBracketType(IntEnum):
-
     NONE = auto()
     OPEN = auto()
     CLOSE = auto()

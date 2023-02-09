@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class EastAsianWidthType(IntEnum):
-
     NONE = auto()
     EAST_ASIAN_AMBIGUOUS = auto()
     EAST_ASIAN_FULLWIDTH = auto()

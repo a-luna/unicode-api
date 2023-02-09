@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class LineBreakType(IntEnum):
-
     ORDINARY_ALPHABETIC_AND_SYMBOL = auto()
     AMBIGUOUS_ALPHABETIC_OR_IDEOGRAPHIC = auto()
     BREAK_OPPORTUNITY_BEFORE_AND_AFTER = auto()

@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class JoiningType(IntEnum):
-
     NONE = auto()
     RIGHT_JOINING = auto()
     LEFT_JOINING = auto()

@@ -2,7 +2,6 @@ from enum import IntEnum
 
 
 class CombiningClassCategory(IntEnum):
-
     NOT_REORDERED = 0
     OVERLAY = 1
     HAN_READING = 6

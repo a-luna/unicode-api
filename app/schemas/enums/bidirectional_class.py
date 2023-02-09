@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class BidirectionalClass(IntEnum):
-
     NONE = auto()
     LEFT_TO_RIGHT = auto()
     RIGHT_TO_LEFT = auto()

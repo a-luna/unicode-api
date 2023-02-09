@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class NumericType(IntEnum):
-
     NONE = auto()
     DECIMAL = auto()
     DIGIT = auto()

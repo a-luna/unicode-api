@@ -6,7 +6,6 @@ from app.data.cache import cached_data
 
 
 class UnicodePlaneName(StrEnum):
-
     BASIC_MULTILINGUAL_PLANE = auto()
     SUPPLEMENTARY_MULTILINGUAL_PLANE = auto()
     SUPPLEMENTARY_IDEOGRAPHIC_PLANE = auto()

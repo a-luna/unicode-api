@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class NamelessCharacterType(IntEnum):
-
     NONCHARACTER = auto()
     SURROGATE = auto()
     PRIVATE_USE = auto()

@@ -1,6 +1,7 @@
 import json
 from functools import cache, cached_property
 
+import app.db.engine as db
 from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_NO_NAME_MAP, PLANES_JSON
 from app.core.result import Result
 from app.data.constants import (

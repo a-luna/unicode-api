@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class ScriptCode(IntEnum):
-
     NONE = auto()
     ADLAM = auto()
     AHOM = auto()
