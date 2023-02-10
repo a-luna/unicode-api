@@ -8,7 +8,7 @@ from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, DB_FILE, PLANES_JSON
 from app.core.result import Result
 from app.data.constants import NULL_BLOCK, NULL_PLANE
 from app.data.scripts.util import finish_task, start_task, update_progress
-from app.db import CHARACTER_PROPERTY_GROUPS
+from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.schemas.enums import (
     BidirectionalBracketType,
     BidirectionalClass,
