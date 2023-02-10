@@ -401,7 +401,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: EastAsianWidthType(char["east_asian_width"]).display_name
             if "east_asian_width" in char
-            else EastAsianWidthType.NONE,
+            else get_default_eaw_display_name(char["codepoint_dec"]),
         },
     ],
     CharPropertyGroup.Case: [
@@ -718,6 +718,16 @@ def get_default_bidi_class_display_name(codepoint: int) -> str:
     return bidi_class.display_name
 
 
+def get_default_eaw_display_name(codepoint: int) -> str:
+    block = cached_data.get_unicode_block_containing_codepoint(codepoint)
+    eaw = (
+        EastAsianWidthType.EAST_ASIAN_AMBIGUOUS
+        if block.id in PRIVATE_USE_BLOCK_IDS
+        else EastAsianWidthType.EAST_ASIAN_WIDE
+        if block.id in ALL_CJK_IDEOGRAPH_BLOCK_IDS
+        else EastAsianWidthType.NEUTRAL_NOT_EAST_ASIAN
+    )
+    return eaw.display_name
 def get_mapped_codepoint(codepoint_hex: str, include_char_name: bool = False) -> str:
     return (
         ""

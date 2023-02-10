@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class EastAsianWidthType(IntEnum):
-    NONE = auto()
     EAST_ASIAN_AMBIGUOUS = auto()
     EAST_ASIAN_FULLWIDTH = auto()
     EAST_ASIAN_HALFWIDTH = auto()
@@ -39,4 +38,4 @@ class EastAsianWidthType(IntEnum):
             "Na": cls.EAST_ASIAN_NARROW,
             "W": cls.EAST_ASIAN_WIDE,
         }
-        return code_map.get(code, cls.NONE)
+        return code_map.get(code, cls.NEUTRAL_NOT_EAST_ASIAN)
