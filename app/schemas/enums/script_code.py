@@ -2,7 +2,6 @@ from enum import auto, IntEnum
 
 
 class ScriptCode(IntEnum):
-    NONE = auto()
     ADLAM = auto()
     AHOM = auto()
     ANATOLIAN_HIEROGLYPHS = auto()
@@ -353,7 +352,7 @@ class ScriptCode(IntEnum):
             "YI": "Yiii",
             "ZANABAZAR_SQUARE": "Zanb",
         }
-        return code_map.get(self.name, "None")
+        return code_map.get(self.name, "Zzzz")
 
     @classmethod
     def from_code(cls, code):
@@ -525,4 +524,4 @@ class ScriptCode(IntEnum):
             "Yiii": cls.YI,
             "Zanb": cls.ZANABAZAR_SQUARE,
         }
-        return code_map.get(code, cls.NONE)
+        return code_map.get(code, cls.UNKNOWN)

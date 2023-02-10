@@ -469,7 +469,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: ScriptCode(char["script"]).display_name
             if "script" in char
-            else ScriptCode.NONE.display_name,
+            else ScriptCode.UNKNOWN.display_name,
         },
         {
             "name_in": "script_extensions",
@@ -479,7 +479,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: get_script_extensions(char["script_extensions"])
             if "script_extensions" in char
-            else [ScriptCode.NONE.display_name],
+            else [ScriptCode.UNKNOWN.display_name],
         },
     ],
     CharPropertyGroup.Hangul: [
