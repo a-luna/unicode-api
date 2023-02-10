@@ -119,7 +119,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: CombiningClassCategory(char["combining_class"]).display_name
             if "combining_class" in char
-            else CombiningClassCategory.NOT_REORDERED,
+            else CombiningClassCategory.NOT_REORDERED.display_name,
         },
         {
             "name_in": "html_entities",
@@ -149,7 +149,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: get_utf8_hex_bytes(chr(char["codepoint_dec"]))
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
+            else [],
         },
         {
             "name_in": "utf8_dec_bytes",
@@ -159,7 +159,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: get_utf8_dec_bytes(chr(char["codepoint_dec"]))
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
+            else [],
         },
     ],
     CharPropertyGroup.UTF16: [
@@ -181,7 +181,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: get_utf16_hex_bytes(chr(char["codepoint_dec"]))
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
+            else [],
         },
         {
             "name_in": "utf16_dec_bytes",
@@ -191,7 +191,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: get_utf16_dec_bytes(chr(char["codepoint_dec"]))
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
+            else [],
         },
     ],
     CharPropertyGroup.UTF32: [
@@ -213,7 +213,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: get_utf32_hex_bytes(chr(char["codepoint_dec"]))
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
+            else [],
         },
         {
             "name_in": "utf32_dec_bytes",
@@ -223,7 +223,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: get_utf32_dec_bytes(chr(char["codepoint_dec"]))
             if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
+            else [],
         },
     ],
     CharPropertyGroup.Bidirectionality: [
@@ -397,7 +397,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: LineBreakType(char["line_break"]).display_name
             if "line_break" in char
-            else LineBreakType.UNKNOWN,
+            else LineBreakType.UNKNOWN.display_name,
         },
     ],
     CharPropertyGroup.East_Asian_Width: [
