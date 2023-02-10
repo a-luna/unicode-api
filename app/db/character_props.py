@@ -1,5 +1,6 @@
 from app.data.cache import cached_data
-from app.data.constants import DEFAULT_BIDI_CLASS_AL, DEFAULT_BIDI_CLASS_ET, DEFAULT_BIDI_CLASS_R
+    DEFAULT_VO_U_BLOCK_IDS,
+    DEFAULT_VO_U_PLANE_NUMBERS,
 from app.data.encoding import (
     get_codepoint_string,
     get_html_entities,
@@ -638,7 +639,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "responsify": True,
             "response_value": lambda char: VerticalOrientationType(char["vertical_orientation"]).display_name
             if "vertical_orientation" in char
-            else VerticalOrientationType.NONE.display_name,
+            else get_default_vo_display_name(char["codepoint_dec"]),
         },
         {
             "name_in": "regional_indicator",
@@ -728,6 +729,18 @@ def get_default_eaw_display_name(codepoint: int) -> str:
         else EastAsianWidthType.NEUTRAL_NOT_EAST_ASIAN
     )
     return eaw.display_name
+
+
+def get_default_vo_display_name(codepoint: int) -> str:
+    block = cached_data.get_unicode_block_containing_codepoint(codepoint)
+    vo_type = (
+        VerticalOrientationType.UPRIGHT
+        if block.plane.number in DEFAULT_VO_U_PLANE_NUMBERS or block.id in DEFAULT_VO_U_BLOCK_IDS
+        else VerticalOrientationType.ROTATED
+    )
+    return vo_type.display_name
+
+
 def get_mapped_codepoint(codepoint_hex: str, include_char_name: bool = False) -> str:
     return (
         ""
