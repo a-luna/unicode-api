@@ -30,3 +30,50 @@ use_parentheses = true
 include_trailing_comma = true
 force_alphabetical_sort_within_sections = true
 color_output = true
+
+[tool.pytest.ini_options]
+addopts = "-ra --showlocals --cov-report html --verbose --cache-clear --random-order-bucket=package"
+norecursedirs = [
+    ".git",
+    ".pytest_cache",
+    ".vscode",
+]
+
+[tool.coverage.run]
+include = [
+    "app/main.py",
+    "app/tasks.py",
+    "app/api/api_v1/*",
+    "app/api/api_v1/endpoints/*",
+    "app/core/*",
+    "app/core/enums/*",
+    "app/data/cache.py",
+    "app/data/constants.py",
+    "app/data/encoding.py",
+    "app/db/*",
+    "app/schemas/*",
+    "app/schemas/enums/*",
+    "app/schemas/models/*","",
+]
+omit = [
+    "app/data/scripts/*",
+    "app/docs/*",
+]
+
+[tool.coverage.report]
+skip_covered = true
+skip_empty = true
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self\\.debug",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "def init_redis",
+    "def init_unicode",
+]
+
+[tool.coverage.html]
+directory = "coverage_html"
