@@ -67,7 +67,7 @@
         <li>Created by Aaron Luna</li>
         <ul>
             <li><a href="https://aaronluna.dev" rel="noopener noreferrer" target="_blank">Personal Website</a></li>
-            <li><a href="mailto:contact@aaronluna.dev" rel="noopener noreferrer" class="link">Send Email</a></li>
+            <li><a href="mailto:contact@aaronluna.dev">Send Email</a></li>
         </ul>
     </ul>
 <h2 id="pagination">Pagination</h2>
@@ -121,7 +121,7 @@
 		</details>
 		<br />
 <p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>
-		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response:</p>
+		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>
 		<details>
             <summary>
                 <strong><strong>Basic</strong></strong>
@@ -188,7 +188,7 @@
             <summary>
                 <strong><strong>Bidirectionality</strong></strong>
             </summary>
-            <div>Reference: <a href="https://www.unicode.org/reports/tr9/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #9, "Unicode Bidirectional Algorithm"</a></div>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr9/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #9, "Unicode Bidirectional Algorithm"</a></div>
             <dl>
                 <dt><strong>bidirectionalClass</strong></dt>
                 <dd>A value assigned to each Unicode character based on the appropriate directional formatting style. For the property values, see <a href="https://www.unicode.org/reports/tr44/#Bidi_Class_Values" rel="noopener noreferrer" target="_blank">Bidirectional Class Values</a>.</dd>
@@ -225,7 +225,7 @@
             <summary>
                 <strong><strong>Decomposition</strong></strong>
             </summary>
-            <div>Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#page=46" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 3.7, <i>Decomposition</i></a></div>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#page=46" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 3.7, <i>Decomposition</i></a></div>
             <dl>
                 <dt><strong>decompositionType</strong></dt>
                 <dd>
@@ -274,16 +274,18 @@
                     <li><code>NFKD&nbsp;</code>Compatible decomposition and ordering</li>
                     <li><code>NFKC&nbsp;</code>Composition after compatible decomposition and ordering</li>
                 </ul>
+                <p>In an effort to make the process of normalizing/determining if a string is already normalized less tedious and complex, four “quick check” properties exist for each character (<strong>NFD_QC</strong>, <strong>NFC_QC</strong>, <strong>NFKD_QC</strong>, and <strong>NFKC_QC</strong>, one for each normalization form).</p>
+                <p>These properties allow implementations to quickly determine whether a string is in a particular Normalization Form. This is, in general, many times faster than normalizing and then comparing.</p>
             </div>
             <dl>
                 <dt><strong>NFD_QC</strong></dt>
-                <dd>Canonical decomposition and ordering</dd>
+                <dd><strong>NFD_QC</strong> stands for <strong>Normalization Form D Quick Check</strong>. This property is used to quickly check if a character is already in NFD form, and thus does not need to be further normalized.</dd>
                 <dt><strong>NFC_QC</strong></dt>
-                <dd>Composition after canonical decomposition and ordering</dd>
+                <dd><strong>NFC_QC</strong> stands for <strong>Normalization Form C Quick Check</strong>. This property is used to quickly check if a character is already in NFC form, and thus does not need to be further normalized.</dd>
                 <dt><strong>NFKD_QC</strong></dt>
-                <dd>Compatible decomposition and ordering</dd>
+                <dd><strong>NFKD_QC</strong> stands for <strong>Normalization Form KD Quick Check</strong>. This property is used to quickly check if a character is already in NFKD form, and thus does not need to be further normalized.</dd>
                 <dt><strong>NFKC_QC</strong></dt>
-                <dd>Composition after compatible decomposition and ordering</dd>
+                <dd><strong>NFKC_QC</strong> stands for <strong>Normalization Form KC Quick Check</strong>. This property is used to quickly check if a character is already in NFKC form, and thus does not need to be further normalized.</dd>
             </dl>
 		</details>
 		<br />
@@ -291,7 +293,7 @@
             <summary>
                 <strong><strong>Numeric</strong></strong>
             </summary>
-            <div>Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#page=18" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 4.6, <i>Numeric Value</i></a></div>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#page=18" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 4.6, <i>Numeric Value</i></a></div>
             <dl>
                 <dt><strong>numericType</strong></dt>
                 <dd>
@@ -310,7 +312,8 @@
                     <p>If the character has the property value <code><strong>numericValue=Numeric</code></strong>, then the <code>numericValue</code> of that character is represented with a positive or negative integer or rational number in this field, and fields 6 and 7 are null. This includes fractions such as, for example, "1/5" for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>).</p>
                 </dd>
                 <dt><strong>numericValueParsed</strong></dt>
-                <dd>(description needed)</dd>
+                <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is a floating point version of the <strong>numericValue</strong> property (which is a string value). For example, <code>0.2</code> for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>)
+                </dd>
             </dl>
 		</details>
 		<br />
@@ -318,7 +321,7 @@
             <summary>
                 <strong><strong>Joining</strong></strong>
             </summary>
-            <div>Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch09.pdf#page=19" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 9.2, <i>Arabic</i></a></div>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch09.pdf#page=19" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 9.2, <i>Arabic</i></a></div>
             <dl>
                 <dt><strong>joiningType</strong></dt>
                 <dd>
@@ -344,7 +347,7 @@
             <summary>
                 <strong><strong>Linebreak</strong></strong>
             </summary>
-            <div>Reference: <a href="https://www.unicode.org/reports/tr41/tr41-30.html#UAX14" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #14, "Unicode Line Breaking Algorithm"</a></div>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr14/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #14, "Unicode Line Breaking Algorithm"</a></div>
             <dl>
                 <dt><strong>lineBreak</strong></dt>
                 <dd>
@@ -395,6 +398,7 @@
             <summary>
                 <strong><strong>East Asian Width</strong></strong>
             </summary>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr11/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #11, "East Asian Width"</a></div>
             <dl>
                 <dt><strong>eastAsianWidth</strong></dt>
                 <dd>
@@ -435,11 +439,15 @@
             <summary>
                 <strong><strong>Script</strong></strong>
             </summary>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr24/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #11, "Unicode Script Property"</a></div>
             <dl>
                 <dt><strong>script</strong></dt>
                 <dd>The script (writing system) to which the character primarily belongs to, such as "Latin," "Greek," or "Common," which indicates a character that is used in different scripts.</dd>
-                <dt><strong>scriptExtension</strong></dt>
-                <dd>(description needed)</dd>
+                <dt><strong>scriptExtensions</strong></dt>
+                <dd>
+                    <p>Further refines the script category of a character by providing additional information about the character's usage and context. This property allows for more specific categorization of characters that may have multiple uses or are used in multiple scripts.</p>
+                    <p>The script extensions property can also be used to indicate characters that are used in multiple scripts, such as characters that are used in both Latin and Cyrillic scripts.</p>
+                </dd>
             </dl>
 		</details>
 		<br />
@@ -469,11 +477,11 @@
             </summary>
             <dl>
                 <dt><strong>indicSyllabicCategory</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Used to identify the type of syllable that a character belongs to, such as a vowel, consonant, or a combination of both.</dd>
                 <dt><strong>indicMatraCategory</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Used to identify the type of matra (vowel sign) associated with a character, such as a short or long vowel sign.</dd>
                 <dt><strong>indicPositionalCategory</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Used to identify the position of a character in a syllable, such as the initial, medial, or final position.</dd>
             </dl>
 		</details>
 		<br />
@@ -511,13 +519,18 @@
                 <dt><strong>logicalOrderException</strong></dt>
                 <dd>Boolean value that indicates whether the character belongs to the small set of characters that do not use logical order and hence require special handling in most processing</dd>
                 <dt><strong>prependedConcatenationMark</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Boolean value that indicates whether the character belongs to a small class of visible format controls, which precede and then span a sequence of other characters, usually digits. These have also been known as "subtending marks", because most of them take a form which visually extends underneath the sequence of following digits.</dd>
                 <dt><strong>whiteSpace</strong></dt>
                 <dd>Boolean value that indicates whether the character should be treated by programming languages as a whitespace character when parsing elements. This concept does not match the more restricted whitespace concept in many programming languages, but it is a generalization of that concept to the "Unicode world."</dd>
                 <dt><strong>verticalOrientation</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>A property used to establish a default for the correct orientation of characters when used in vertical text layout, as described in <a href="https://www.unicode.org/reports/tr50/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #50, "Unicode Vertical Text Layout"</a></dd>
                 <dt><strong>regionalIndicator</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>
+                    <p>The regional indicator symbols are a set of 26 alphabetic Unicode characters (A–Z) intended to be used to encode <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2" rel="noopener noreferrer" target="_blank">ISO 3166-1 alpha-2 two-letter country codes</a> in a way that allows optional special treatment.</p>
+                    <p>They are encoded in the range 🇦 (<code>U+1F1E6 <span>REGIONAL INDICATOR SYMBOL LETTER A</span></code>) to 🇿 (<code>U+1F1FF <span>REGIONAL INDICATOR SYMBOL LETTER Z</span></code>) Within the <strong>Enclosed Alphanumeric Supplement</strong> block in the <strong>Supplementary Multilingual Plane.</strong></p>
+                    <p>These were defined as an alternative to encoding separate characters for each country flag. Although they can be displayed as Roman letters, it is intended that implementations may choose to display them in other ways, such as by using national flags.</p>
+                    <p>For example, since the ISO 3166-1 alpha-2 country code for Ukraine is <code>UA</code>, when the characters 🇺 (<code>U+1F1FA</code>) and 🇦 (<code>U+1F1E6</code>) are placed next to eachother the Ukrainian flag should be rendered: 🇺🇦.</p>
+                </dd>
             </dl>
 		</details>
 		<br />
@@ -525,19 +538,20 @@
             <summary>
                 <strong><strong>Emoji</strong></strong>
             </summary>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr51/" rel="noopener noreferrer" target="_blank">Unicode Technical Standard #51, "Unicode Emoji"</a></div>
             <dl>
                 <dt><strong>emoji</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Boolean value that indicates whether the character is recommended for use as emoji.</dd>
                 <dt><strong>emojiPresentation</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Boolean value that indicates whether the character has emoji presentation by default.</dd>
                 <dt><strong>emojiModifier</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Boolean value that indicates whether the character is used as an emoji modifier. Currently this includes only the skin tone modifier characters.</dd>
                 <dt><strong>emojiModifierBase</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Boolean value that indicates whether the character can serve as a base for emoji modifiers.</dd>
                 <dt><strong>emojiComponent</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Boolean value that indicates whether the character is used in emoji sequences but normally does not appear on emoji keyboards as a separate choice (e.g., keycap base characters or Regional_Indicator characters).</dd>
                 <dt><strong>extendedPictographic</strong></dt>
-                <dd>(description needed)</dd>
+                <dd>Boolean value that indicates whether the character is a pictographic symbol or otherwise similar in kind to characters with the Emoji property. This enables segmentation rules involving emoji to be specified stably, even in cases where an existing non-emoji pictographic symbol later comes to be treated as an emoji.</dd>
             </dl>
 		</details>
 	</div>
