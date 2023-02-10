@@ -16,7 +16,7 @@ class UnicodePlaneName(StrEnum):
 
     def __str__(self) -> str:
         plane = cached_data.plane_name_map.get(self.print_name)
-        return str(plane["abbreviation"]) if plane else ""
+        return plane.abbreviation if plane else ""
 
     def __repr__(self):
         return f'UnicodePlaneName<name="{self.print_name}">'
@@ -41,7 +41,7 @@ class UnicodePlaneName(StrEnum):
     @property
     def number(self) -> int:
         plane = cached_data.plane_name_map.get(self.print_name)
-        return int(plane["number"]) if plane else -1
+        return plane.number if plane else -1
 
     @classmethod
     def from_abbreviation(cls, abbrev):

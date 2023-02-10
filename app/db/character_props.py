@@ -697,13 +697,12 @@ CHARACTER_PROPERTY_GROUPS = {
 
 def get_block_name_containing_codepoint(codepoint: int) -> str:
     block = cached_data.get_unicode_block_containing_codepoint(codepoint)
-    return str(block["name"])
+    return block.name
 
 
 def get_plane_abbreviation_containing_codepoint(codepoint: int) -> str:
     block = cached_data.get_unicode_block_containing_codepoint(codepoint)
-    plane = cached_data.get_unicode_plane_containing_block_id(int(block["id"]))
-    return str(plane["abbreviation"])
+    return block.plane.abbreviation
 
 
 def get_default_bidi_class_display_name(codepoint: int) -> str:
