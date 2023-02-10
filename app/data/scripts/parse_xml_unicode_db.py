@@ -4,7 +4,7 @@ from xml.dom import minidom
 
 from app.core.config import PLANES_JSON
 from app.core.result import Result
-from app.data.constants import NO_NAME_BLOCK_IDS, NULL_BLOCK, NULL_PLANE
+from app.data.constants import GENERIC_NAME_BLOCK_IDS, NULL_BLOCK, NULL_PLANE
 from app.data.encoding import get_codepoint_string
 from app.data.scripts.util import finish_task, start_task, update_progress
 
@@ -103,7 +103,7 @@ def parse_character_details(
         "codepoint_dec": codepoint_dec,
         "block_id": block["id"],
         "plane_number": plane["number"],
-        "no_name": block["id"] in NO_NAME_BLOCK_IDS,
+        "no_name": block["id"] in GENERIC_NAME_BLOCK_IDS,
         "age": char_node.getAttribute("age"),
         "general_category": char_node.getAttribute("gc"),
         "combining_class": int(char_node.getAttribute("ccc")),
