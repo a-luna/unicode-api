@@ -13,7 +13,7 @@ PROJECT_LINKS_SWAGGER_HTML = """    <ul>
         <ul>
             <li><a href="https://github.com/a-luna" rel="noopener noreferrer" target="_blank">Github Profile</a></li>
             <li><a href="https://aaronluna.dev" rel="noopener noreferrer" target="_blank">Personal Website</a></li>
-            <li><a href="mailto:contact@aaronluna.dev" rel="noopener noreferrer" class="link">Send Email</a></li>
+            <li><a href="mailto:contact@aaronluna.dev">Send Email</a></li>
         </ul>
     </ul>
 """
@@ -24,7 +24,7 @@ PROJECT_LINKS_README = """
         <li>Created by Aaron Luna</li>
         <ul>
             <li><a href="https://aaronluna.dev" rel="noopener noreferrer" target="_blank">Personal Website</a></li>
-            <li><a href="mailto:contact@aaronluna.dev" rel="noopener noreferrer" class="link">Send Email</a></li>
+            <li><a href="mailto:contact@aaronluna.dev">Send Email</a></li>
         </ul>
     </ul>
 """
@@ -468,7 +468,7 @@ UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = "<p>⚠️ <strong><i>NOTE: Specifyi
 
 UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2 = (
     "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
-    + '<p>For example, you could view the properteies from groups <strong>Numeric</strong>, <strong>UTF-8</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>).</p>\n'
+    + '<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>\n'
 )
 
 BLOCK_ENDPOINTS = """
