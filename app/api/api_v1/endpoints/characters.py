@@ -108,8 +108,8 @@ def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQuer
 def search_characters_by_name(engine: Engine, query: str, score_cutoff: int = 80) -> list[db.UnicodeCharacterResponse]:
     fuzzy_search_results = process.extract(
         query.lower(),
-        cached_data.character_unique_name_choices,
-        limit=cached_data.total_character_unique_name_choices,
+        cached_data.unique_name_character_choices,
+        limit=cached_data.total_unique_name_characters,
     )
     return [
         get_character_details(engine, result, [CharPropertyGroup.Minimum], float(score))

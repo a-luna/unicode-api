@@ -25,29 +25,29 @@ UnicodePlaneDict = dict[str, int | str]
 
 class UnicodeDataCache:
     @cached_property
-    def character_unique_name_map(self) -> dict[int, str]:
+    def unique_name_character_map(self) -> dict[int, str]:
         json_map = json.loads(CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
     @cached_property
-    def character_unique_name_choices(self) -> dict[int, str]:
-        return {codepoint: name.lower() for (codepoint, name) in self.character_unique_name_map.items()}
+    def unique_name_character_choices(self) -> dict[int, str]:
+        return {codepoint: name.lower() for (codepoint, name) in self.unique_name_character_map.items()}
 
     @property
-    def total_character_unique_name_choices(self) -> int:
-        return len(self.character_unique_name_map)
+    def total_unique_name_characters(self) -> int:
+        return len(self.unique_name_character_map)
 
     @cached_property
-    def character_generic_name_map(self) -> dict[int, str]:
+    def generic_name_character_map(self) -> dict[int, str]:
         return json.loads(CHAR_NO_NAME_MAP.read_text())
 
     @cached_property
-    def character_generic_name_choices(self) -> dict[int, str]:
-        return {codepoint: name.lower() for (codepoint, name) in self.character_generic_name_map.items()}
+    def generic_name_character_choices(self) -> dict[int, str]:
+        return {codepoint: name.lower() for (codepoint, name) in self.generic_name_character_map.items()}
 
     @property
-    def total_character_generic_name_choices(self) -> int:
-        return len(self.character_generic_name_map)
+    def total_generic_name_characters(self) -> int:
+        return len(self.generic_name_character_map)
 
     @cached_property
     def blocks(self) -> list[UnicodeBlockDict]:
@@ -83,7 +83,7 @@ class UnicodeDataCache:
 
     @property
     def all_assigned_codepoints(self) -> set[int]:
-        return set(list(self.character_unique_name_map.keys()) + list(self.character_generic_name_map.keys()))
+        return set(list(self.unique_name_character_map.keys()) + list(self.generic_name_character_map.keys()))
 
     def get_unicode_block_by_id(self, block_id: int) -> UnicodeBlockDict:
         return self.block_id_map.get(block_id, NULL_BLOCK)
@@ -118,7 +118,7 @@ class UnicodeDataCache:
         return block["id"] in SURROGATE_BLOCK_IDS
 
     def character_is_uniquely_named(self, codepoint: int) -> bool:
-        return codepoint in self.character_unique_name_map
+        return codepoint in self.unique_name_character_map
 
     @cache
     def get_character_name(self, codepoint: int) -> str:
@@ -134,7 +134,7 @@ class UnicodeDataCache:
             if block["id"] in TANGUT_BLOCK_IDS
             else f"{block} ({get_codepoint_string(codepoint)})"
             if block["id"] in SINGLE_NO_NAME_BLOCK_IDS
-            else cached_data.character_unique_name_map.get(codepoint)
+            else self.unique_name_character_map.get(codepoint)
         )
         return char_name or f"Undefined Codepoint ({get_codepoint_string(codepoint)}) (Reserved for {block})"
 
