@@ -8,7 +8,6 @@ from sqlmodel import Session
 import app.db.engine as db
 from app.api.api_v1.dependencies import (
     BlockSearchParameters,
-    create_block_from_cached_data,
     ListParametersDecimal,
     UnicodeBlockPathParamResolver,
     UnicodePlaneResolver,
@@ -92,7 +91,7 @@ def get_block_list_endpoints(list_params: ListParametersDecimal, plane: UnicodeP
 
 
 def create_block_response(block_id: int) -> db.UnicodeBlockResponse:
-    block = create_block_from_cached_data(block_id)
+    block = cached_data.get_unicode_block_by_id(block_id)
     return block.as_response()
 
 
@@ -110,5 +109,5 @@ def search_blocks_by_name(query: str, score_cutoff: int = 80):
 
 
 def create_block_search_result(block_id: int, score: float) -> db.UnicodeBlockResult:
-    block = create_block_from_cached_data(block_id)
+    block = cached_data.get_unicode_block_by_id(block_id)
     return block.as_search_result(score)
