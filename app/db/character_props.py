@@ -1,4 +1,7 @@
 from app.data.cache import cached_data
+    DEFAULT_BC_AL_CODEPOINTS,
+    DEFAULT_BC_ET_CODEPOINTS,
+    DEFAULT_BC_R_CODEPOINTS,
     DEFAULT_VO_U_BLOCK_IDS,
     DEFAULT_VO_U_PLANE_NUMBERS,
 from app.data.encoding import (
@@ -709,11 +712,11 @@ def get_plane_abbreviation_containing_codepoint(codepoint: int) -> str:
 def get_default_bidi_class_display_name(codepoint: int) -> str:
     bidi_class = (
         BidirectionalClass.RIGHT_TO_LEFT
-        if codepoint in DEFAULT_BIDI_CLASS_R
+        if codepoint in DEFAULT_BC_R_CODEPOINTS
         else BidirectionalClass.ARABIC_LETTER
-        if codepoint in DEFAULT_BIDI_CLASS_AL
+        if codepoint in DEFAULT_BC_AL_CODEPOINTS
         else BidirectionalClass.EUROPEAN_TERMINATOR
-        if codepoint in DEFAULT_BIDI_CLASS_ET
+        if codepoint in DEFAULT_BC_ET_CODEPOINTS
         else BidirectionalClass.LEFT_TO_RIGHT
     )
     return bidi_class.display_name
