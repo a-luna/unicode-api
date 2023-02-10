@@ -94,7 +94,7 @@ def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQuer
     elif list_params.ending_before:
         start = list_params.ending_before - list_params.limit
     stop = min(block.finish + 1, start + list_params.limit)
-    if start < block.start or start > block.finish:
+    if start < block.start or start > stop:
         raise HTTPException(
             status_code=int(HTTPStatus.BAD_REQUEST),
             detail=(
