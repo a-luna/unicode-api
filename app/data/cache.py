@@ -148,7 +148,7 @@ class UnicodeDataCache:
         block = self.get_unicode_block_containing_codepoint(codepoint)
         char_type = self.get_unassigned_character_type(codepoint, block)
         return (
-            f"<{char_type}-{codepoint:04X}> (Reserved for block: {block.name} {block.start} - {block.finish})"
+            f"<{char_type}-{codepoint:04X}> (Block: {block.name} Start: U+{block.start} End: U+{block.finish})"
             if char_type == UnassignedCharacterType.RESERVED
             else f"<{char_type}-{codepoint:04X}>"
             if char_type != UnassignedCharacterType.INVALID
