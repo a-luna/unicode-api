@@ -32,7 +32,7 @@ force_alphabetical_sort_within_sections = true
 color_output = true
 
 [tool.pytest.ini_options]
-addopts = "-ra --showlocals --cov-report html --verbose --cache-clear --random-order-bucket=package"
+addopts = "-ra --showlocals --cov=app --cov-report term:skip-covered --cov-report html -vv --cache-clear --random-order-bucket=package"
 norecursedirs = [
     ".git",
     ".pytest_cache",
@@ -40,21 +40,6 @@ norecursedirs = [
 ]
 
 [tool.coverage.run]
-include = [
-    "app/main.py",
-    "app/tasks.py",
-    "app/api/api_v1/*",
-    "app/api/api_v1/endpoints/*",
-    "app/core/*",
-    "app/core/enums/*",
-    "app/data/cache.py",
-    "app/data/constants.py",
-    "app/data/encoding.py",
-    "app/db/*",
-    "app/schemas/*",
-    "app/schemas/enums/*",
-    "app/schemas/models/*","",
-]
 omit = [
     "app/data/scripts/*",
     "app/docs/*",
