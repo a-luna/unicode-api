@@ -23,6 +23,8 @@ CHAR_NO_NAME_MAP = JSON_FOLDER.joinpath("char_no_name_map.json")
 DEFAULT_REDIS_URL = "redis://127.0.0.1:6379"
 S3_BUCKET_URL = "s3://unicode-api"
 DB_URL = f"sqlite:///{DB_FILE}"
+DEV_API_ROOT = "http://localhost:3507"
+PROP_API_ROOT = "https://unicode-api.aaronluna.dev"
 
 
 class Settings(BaseSettings):
@@ -35,6 +37,7 @@ class Settings(BaseSettings):
     SERVER_NAME: str = "unicode-api.aaronluna.dev"
     SERVER_HOST: str = "https://unicode-api.aaronluna.dev"
     CACHE_HEADER: str = "X-UnicodeAPI-Cache"
+    API_ROOT = DEV_API_ROOT if os.environ.get("ENV") == "DEV" else PROP_API_ROOT
 
     class Config:
         case_sensitive = True

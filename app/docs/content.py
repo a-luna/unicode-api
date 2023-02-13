@@ -1,3 +1,5 @@
+from app.core.config import settings
+
 INTRODUCTION = """<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener noreferrer" target="_blank">version 15.0 of the Unicode Standard</a> (released September 13, 2022). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul>
     <li>URLs are predictable and resource-oriented.</li>
@@ -468,7 +470,7 @@ UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = "<p>⚠️ <strong><i>NOTE: Specifyi
 
 UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2 = (
     "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
-    + '<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>\n'
+    + f'<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>\n'
 )
 
 BLOCK_ENDPOINTS = """

@@ -6,6 +6,7 @@ from sqlalchemy.engine import Engine
 from sqlmodel import Session
 
 import app.db.engine as db
+from app.core.config import settings
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
 from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
@@ -44,7 +45,7 @@ CODEPOINT_INVALID_ERROR = (
     "minimum length of four digits."
 )
 
-UNICODE_CHAR_STRING_DESCRIPTION = """
+UNICODE_CHAR_STRING_DESCRIPTION = f"""
 <p>A string containing unicode characters, which can be expressed either directly (unencoded) or as a URI-encoded string. If you are unsure which format to use, please see the <strong>Examples</strong> below.</p>
 <details>
     <summary>
@@ -59,9 +60,9 @@ UNICODE_CHAR_STRING_DESCRIPTION = """
     </summary>
     <dl>
         <dt><span>Ⱒ</span><sup>2</sup></dt>
-        <dd><a href="/v1/characters/%E2%B0%A2" rel="noopener noreferrer" target="_blank">%E2%B0%A2</a></dd>
+        <dd><a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2" rel="noopener noreferrer" target="_blank">%E2%B0%A2</a></dd>
         <dt><span>👨‍🌾 </span><sup>3</sup></dt>
-        <dd><a href="/v1/characters/%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE" rel="noopener noreferrer" target="_blank">%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE</a></dd>
+        <dd><a href="{settings.API_ROOT}/v1/characters/%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE" rel="noopener noreferrer" target="_blank">%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE</a></dd>
     </dl>
     <div>
         <sup>1</sup>
