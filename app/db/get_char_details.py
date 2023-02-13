@@ -32,15 +32,12 @@ def get_character_prop_group(
     codepoint: int,
     prop_group: CharPropertyGroup,
 ):
-    char_props = {"codepoint_dec": codepoint, "name": cached_data.get_character_name(codepoint)}
+    char_props = {"codepoint_dec": codepoint}
     with engine.connect() as con:
-        col_names = [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
+        col_names = [column(prop["name_in"]) for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
+        char_table = get_table_name_for_codepoint(codepoint)
         if col_names:
-            query = (
-                select(column(col_name) for col_name in col_names)
-                .select_from(get_table_name_for_codepoint(codepoint))
-                .where(column("codepoint_dec") == codepoint)
-            )
+            query = select(col_names).select_from(char_table).where(column("codepoint_dec") == codepoint)
             for row in con.execute(query):
                 char_props.update(dict(row._mapping))
     return update_character_properties(char_props, prop_group)
@@ -54,13 +51,8 @@ def update_character_properties(char_props: dict[str, Any | bool | int | str | N
     updated_dict = {}
     all_prop_names = [prop_map["name_in"] for prop_map in CHARACTER_PROPERTY_GROUPS[prop_group]]
     for prop_name in all_prop_names:
-        prop_map = [map for map in CHARACTER_PROPERTY_GROUPS[prop_group] if map["name_in"] == prop_name][0]
-        prop_value = (
-            prop_map["response_value"](char_props)
-            if prop_map["responsify"]
-            else char_props[prop_name]
-            if prop_name in char_props
-            else None
-        )
-        updated_dict[prop_map["name_out"]] = prop_value
+        match = [map for map in CHARACTER_PROPERTY_GROUPS[prop_group] if map["name_in"] == prop_name]
+        if not match:
+            continue
+        updated_dict[match[0]["name_out"]] = match[0]["response_value"](char_props)
     return updated_dict

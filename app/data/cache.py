@@ -16,7 +16,7 @@ from app.data.constants import (
     TANGUT_BLOCK_IDS,
 )
 from app.data.encoding import get_codepoint_string
-from app.schemas.enums import NamelessCharacterType
+from app.schemas.enums import UnassignedCharacterType
 
 
 class UnicodeDataCache:
@@ -35,7 +35,8 @@ class UnicodeDataCache:
 
     @cached_property
     def generic_name_character_map(self) -> dict[int, str]:
-        return json.loads(CHAR_NO_NAME_MAP.read_text())
+        json_map = json.loads(CHAR_NO_NAME_MAP.read_text())
+        return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
     @cached_property
     def generic_name_character_choices(self) -> dict[int, str]:
@@ -113,12 +114,25 @@ class UnicodeDataCache:
     def character_is_uniquely_named(self, codepoint: int) -> bool:
         return codepoint in self.unique_name_character_map
 
+    def character_is_generically_named(self, codepoint: int) -> bool:
+        return codepoint in self.generic_name_character_map
+
     @cache
     def get_character_name(self, codepoint: int) -> str:
-        if not self.codepoint_is_assigned(codepoint):
-            return self.get_codepoint_label_for_nameless_character(codepoint)
+        return (
+            self.get_unique_name_for_codepoint(codepoint)
+            if self.character_is_uniquely_named(codepoint)
+            else self.get_generic_name_for_codepoint(codepoint)
+            if self.character_is_generically_named(codepoint)
+            else self.get_label_for_unassigned_codepoint(codepoint)
+        )
+
+    def get_unique_name_for_codepoint(self, codepoint: int) -> str:
+        return self.unique_name_character_map.get(codepoint, "")
+
+    def get_generic_name_for_codepoint(self, codepoint: int) -> str:
         block = self.get_unicode_block_containing_codepoint(codepoint)
-        char_name = (
+        return (
             f"CJK UNIFIED IDEOGRAPH-{codepoint:04X}"
             if block.id in CJK_UNIFIED_BLOCK_IDS
             else f"CJK COMPATIBILITY IDEOGRAPH-{codepoint:04X}"
@@ -127,31 +141,32 @@ class UnicodeDataCache:
             if block.id in TANGUT_BLOCK_IDS
             else f"{block} ({get_codepoint_string(codepoint)})"
             if block.id in SURROGATE_BLOCK_IDS or block.id in PRIVATE_USE_BLOCK_IDS
-            else self.unique_name_character_map.get(codepoint)
+            else ""
         )
-        return char_name or f"Undefined Codepoint ({get_codepoint_string(codepoint)}) (Reserved for {block})"
 
-    def get_codepoint_label_for_nameless_character(self, codepoint: int) -> str:
-        result = self.get_nameless_character_type(codepoint)
-        if result.success:
-            charType = result.value
-            return f"<{charType}-{codepoint:04X}>"
-        return f"Invalid Codepoint ({get_codepoint_string(codepoint)})"
-
-    def get_nameless_character_type(self, codepoint: int) -> Result[NamelessCharacterType]:
-        if not self.codepoint_is_in_unicode_range(codepoint):
-            return Result.Fail(f"{get_codepoint_string(codepoint)} is not a valid codepoint in the Unicode Standard")
+    def get_label_for_unassigned_codepoint(self, codepoint: int) -> str:
         block = self.get_unicode_block_containing_codepoint(codepoint)
-        charType = (
-            NamelessCharacterType.NONCHARACTER
-            if f"{codepoint:X}" in NON_CHARACTER_CODEPOINTS
-            else NamelessCharacterType.SURROGATE
-            if block.id in SURROGATE_BLOCK_IDS
-            else NamelessCharacterType.PRIVATE_USE
-            if block.id in PRIVATE_USE_BLOCK_IDS
-            else NamelessCharacterType.RESERVED
+        char_type = self.get_unassigned_character_type(codepoint, block)
+        return (
+            f"<{char_type}-{codepoint:04X}> (Reserved for block: {block.name} {block.start} - {block.finish})"
+            if char_type == UnassignedCharacterType.RESERVED
+            else f"<{char_type}-{codepoint:04X}>"
+            if char_type != UnassignedCharacterType.INVALID
+            else f"Invalid Codepoint ({get_codepoint_string(codepoint)})"
         )
-        return Result.Ok(charType)
+
+    def get_unassigned_character_type(self, codepoint: int, block: db.UnicodeBlock) -> UnassignedCharacterType:
+        return (
+            UnassignedCharacterType.NONCHARACTER
+            if f"{codepoint:X}" in NON_CHARACTER_CODEPOINTS
+            else UnassignedCharacterType.SURROGATE
+            if block.id in SURROGATE_BLOCK_IDS
+            else UnassignedCharacterType.PRIVATE_USE
+            if block.id in PRIVATE_USE_BLOCK_IDS
+            else UnassignedCharacterType.RESERVED
+            if self.codepoint_is_in_unicode_range(codepoint)
+            else UnassignedCharacterType.INVALID
+        )
 
 
 cached_data = UnicodeDataCache()
