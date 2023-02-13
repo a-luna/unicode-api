@@ -43,6 +43,9 @@ norecursedirs = [
 omit = [
     "app/data/scripts/*",
     "app/docs/*",
+    "app/tests/*",
+    "app/main.py",
+    "app/tasks.py",
 ]
 
 [tool.coverage.report]
