@@ -5,7 +5,7 @@ from humps import camelize
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.main import app
 from app.schemas.enums.property_group import CharPropertyGroup
-from app.tests.test_character_endpoints.data import ALL_CHARACTER_PROPERTIES
+from app.tests.test_character_endpoints.test_get_unicode_character_details.data import ALL_CHARACTER_PROPERTIES
 
 client = TestClient(app)
 
