@@ -1,5 +1,5 @@
 <h1>Unicode API</h1>
-<ul>
+<ul class="toc">
 	<li>
 		<a href="#introduction">Introduction</a>
 	</li>

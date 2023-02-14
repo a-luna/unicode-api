@@ -102,7 +102,7 @@ def update_readme():
 def create_toc_for_readme():
     html = get_api_docs_for_readme()
     toc = create_toc_section(2, 0, len(html), create_html_heading_map())
-    html = f"<ul>\n"
+    html = f'<ul class="toc">\n'
     for section in toc:
         html += create_toc_section_html(section, 0)
     html += "</ul>\n"
