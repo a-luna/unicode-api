@@ -101,21 +101,12 @@ class UnicodeDataCache:
         ]
         return found[0] if found else db.UnicodePlane(**NULL_PLANE)
 
-    def codepoint_is_in_unicode_range(self, codepoint: int) -> bool:
-        return codepoint >= 0 and codepoint <= MAX_CODEPOINT
-
     def codepoint_is_assigned(self, codepoint: int) -> bool:
         return codepoint in self.all_assigned_codepoints
 
     def codepoint_is_surrogate(self, codepoint: int) -> bool:
         block = self.get_unicode_block_containing_codepoint(codepoint)
         return block.id in SURROGATE_BLOCK_IDS
-
-    def character_is_uniquely_named(self, codepoint: int) -> bool:
-        return codepoint in self.unique_name_character_map
-
-    def character_is_generically_named(self, codepoint: int) -> bool:
-        return codepoint in self.generic_name_character_map
 
     @cache
     def get_character_name(self, codepoint: int) -> str:
@@ -127,8 +118,14 @@ class UnicodeDataCache:
             else self.get_label_for_unassigned_codepoint(codepoint)
         )
 
+    def character_is_uniquely_named(self, codepoint: int) -> bool:
+        return codepoint in self.unique_name_character_map
+
     def get_unique_name_for_codepoint(self, codepoint: int) -> str:
         return self.unique_name_character_map.get(codepoint, "")
+
+    def character_is_generically_named(self, codepoint: int) -> bool:
+        return codepoint in self.generic_name_character_map
 
     def get_generic_name_for_codepoint(self, codepoint: int) -> str:
         block = self.get_unicode_block_containing_codepoint(codepoint)
@@ -167,6 +164,12 @@ class UnicodeDataCache:
             if self.codepoint_is_in_unicode_range(codepoint)
             else UnassignedCharacterType.INVALID
         )
+
+    def codepoint_is_in_unicode_range(self, codepoint: int) -> bool:
+        return codepoint >= 0 and codepoint <= MAX_CODEPOINT
+
+    def _calculate_total_defined_characters(self) -> int:
+        return len([cp for cp in self.all_assigned_codepoints if not cp in CONTROL_CHARACTER_CODEPOINTS])
 
 
 cached_data = UnicodeDataCache()
