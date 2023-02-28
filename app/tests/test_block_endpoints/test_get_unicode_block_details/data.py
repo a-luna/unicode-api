@@ -7,3 +7,13 @@ BLOCK_HEBREW = {
     "totalAllocated": 112,
     "totalDefined": 88,
 }
+
+BLOCK_ETHIOPIC_EXTENDED_A = {
+    "id": 144,
+    "name": "Ethiopic Extended-A",
+    "plane": "BMP",
+    "start": "U+AB00",
+    "finish": "U+AB2F",
+    "totalAllocated": 48,
+    "totalDefined": 32,
+}

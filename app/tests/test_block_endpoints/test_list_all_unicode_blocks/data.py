@@ -1,4 +1,4 @@
-BLOCKS_IN_BMP_START_AFTER_57_LIMIT_20 = {
+PLANE_BMP_START_AFTER_57_LIMIT_20 = {
     "url": "/v1/blocks",
     "hasMore": True,
     "data": [
