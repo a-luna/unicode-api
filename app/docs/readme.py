@@ -85,12 +85,16 @@ UNICODE_CHARACTERS_DOCS = f"""
 
 UNICODE_BLOCKS_DOCS = f"""
     <div>
-        {create_readme_section(4, "Endpoints", BLOCK_ENDPOINTS)}\t\t<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>\t</div>
+        {create_readme_section(4, "Endpoints", BLOCK_ENDPOINTS)}\t\t<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
+        {UNICODE_BLOCK_OBJECT_INTRO}
+{create_details_element_readme("<strong><code>UnicodeBlock</code> Properties</strong>", UNICODE_BLOCK_OBJECT_PROPERTIES)}\t</div>
 """
 
 UNICODE_PLANES_DOCS = f"""
     <div>
-        {create_readme_section(4, "Endpoints", PLANE_ENDPOINTS)}\t\t<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>\t</div>
+        {create_readme_section(4, "Endpoints", PLANE_ENDPOINTS)}\t\t<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
+        {UNICODE_PLANE_OBJECT_INTRO}
+{create_details_element_readme("<strong><code>UnicodePlane</code> Properties</strong>", UNICODE_PLANE_OBJECT_PROPERTIES)}\t</div>
 """
 
 

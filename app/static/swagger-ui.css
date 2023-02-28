@@ -2,7 +2,7 @@
 
 body {
   display: flex;
-  margin: 0;
+  margin: 1rem 0;
   width: 100%;
 }
 
@@ -129,8 +129,7 @@ body > svg {
 }
 
 .swagger-ui {
-  border-left: 1px solid var(--darker-text-color);
-  border-right: 1px solid var(--darker-text-color);
+  border: 1px solid var(--darker-text-color);
 }
 
 .swagger-ui .renderedMarkdown p > i > strong > span {

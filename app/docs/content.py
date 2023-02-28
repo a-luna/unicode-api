@@ -64,6 +64,13 @@ CHARACTER_ENDPOINTS = """
         </dl>
 """
 
+UNICODE_CHATACTER_OBJECT_INTRO = '<p>The <code>UnicodeCharacter</code> object represents a single character/codepoint in the <a href="https://unicode.org/reports/tr44/" rel="noopener noreferrer" target="_blank">Unicode Character Database (UCD)</a>. It contains a rich set of properties that document the purpose and intended representation of the character.</p>'
+
+UNICODE_CHARACTER_PROP_GROUPS_INTRO = (
+    "<p>If each response contained every character property, it would be massively inneficient. To ensure that the API remains responsive and performant while also allowing clients to access the full set of character properties, each property is assigned to a <strong>property group</strong>.</p>"
+    + "<p>Since they are designed to return lists of characters, responses from the <code>/v1/characters</code> or <code>/v1/characters/search</code> endpoints will only include properties from the <strong>Minimum</strong> property group:</p>"
+)
+
 PROP_GROUP_MINIMUM = """
             <dl>
                 <dt><strong>character</strong></dt>
@@ -76,6 +83,13 @@ PROP_GROUP_MINIMUM = """
                 <dd>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>). The string must contain only a defined subset of characters from the standard 128 ASCII character set, any other characters must be replaced by an escape sequence representing the UTF-8 encoding of the character. For example, ∑ (<code>U+2211 <span>N-ARY SUMMATION</span></code>) is equal to <code>0xE2 0x88 0x91</code> in UTF-8 encoding. When used as part of a URI, this character must be escaped using the string <code>%E2%88%91</code>.</dd>
             </dl>
 """
+
+UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = "<p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>\n"
+
+UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2 = (
+    "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
+    + f'<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>\n'
+)
 
 PROP_GROUP_BASIC = """
             <dl>
@@ -459,23 +473,9 @@ PROP_GROUP_EMOJI = """
             </dl>
 """
 
-UNICODE_CHATACTER_OBJECT_INTRO = '<p>The <code>UnicodeCharacter</code> object represents a single character/codepoint in the <a href="https://unicode.org/reports/tr44/" rel="noopener noreferrer" target="_blank">Unicode Character Database (UCD)</a>. It contains a rich set of properties that document the purpose and intended representation of the character.</p>'
-
-UNICODE_CHARACTER_PROP_GROUPS_INTRO = (
-    "<p>If each response contained every character property, it would be massively inneficient. To ensure that the API remains responsive and performant while also allowing clients to access the full set of character properties, each property is assigned to a <strong>property group</strong>.</p>"
-    + "<p>Since they are designed to return lists of characters, responses from the <code>/v1/characters</code> or <code>/v1/characters/search</code> endpoints will only include properties from the <strong>Minimum</strong> property group:</p>"
-)
-
-UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = "<p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>\n"
-
-UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2 = (
-    "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
-    + f'<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>\n'
-)
-
 BLOCK_ENDPOINTS = """
         <dl>
-            <dt><strong>GET</strong> <code>/v1/blocks/{string}</code></dt>
+            <dt><strong>GET</strong> <code>/v1/blocks/{name}</code></dt>
             <dd>Retrieve one or more Block(s)</dd>
             <dt><strong>GET</strong> <code>/v1/blocks</code></dt>
             <dd>List Blocks</dd>
@@ -484,11 +484,64 @@ BLOCK_ENDPOINTS = """
         </dl>
 """
 
+UNICODE_BLOCK_OBJECT_INTRO = (
+    "<p>The <code>UnicodeBlock</code> object represents a grouping of characters within the Unicode encoding space. Each block is generally, but not always, meant to supply glyphs used by one or more specific languages, or in some general application area such as mathematics, surveying, decorative typesetting, social forums, etc.</p>"
+    + "<p>Each block is a uniquely named, continuous, non-overlapping range of code points, containing a multiple of 16 code points (additionally, the starting codepoint for each block is a multiple of 16). A block may contain unassigned code points, which are reserved.</p>"
+    + "<p>The <code>UnicodeBlock</code> object exposes a small set of properties such as the official name of the block, the range of code points assigned to the block and the total number of defined characters within the block:</p>"
+)
+
+UNICODE_BLOCK_OBJECT_PROPERTIES = """
+            <dl>
+                <dt><strong>id</strong></dt>
+                <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is an integer value used to navigate within a paginated list of <code>UnicodeBlock</code> objects. The first block (<code>U+0000..U+007F <span>BASIC LATIN</span></code>) has <code>id=1</code> and each block is numbered sequentially in order of starting codepoint.</dd>
+                <dt><strong>name</strong></dt>
+                <dd>
+                    <p>Unicode blocks are identified by unique names, which use only ASCII characters and are usually descriptive of the nature of the symbols (in English), such as "Tibetan" or "Supplemental Arrows-A".</p>
+                    <p>Unicode specifies a set of rules to be used when comparing block names, known as loose matching rule <a href="https://www.unicode.org/reports/tr44/tr44-30.html#Matching_Symbolic" rel="noopener noreferrer" target="_blank">UAX44-LM3</a>: <strong><i>Ignore case, whitespace, underscore ('_'), hyphens, and any initial prefix string "is".</i></strong></p>
+                    <p>For example, under this rule the block name "Supplemental Arrows-A" is equivalent to "supplemental_arrows__a" and "SUPPLEMENTALARROWSA". For any query or path parameter that expects the name of a Unicode block, these three values are equivalent and would be understood to refer to block <code>U+27F0..U+27FF <span>SUPPLEMENTAL ARROWS-A</span></code>.</p>
+                </dd>
+                <dt><strong>plane</strong></dt>
+                <dd>A string value equal to the abbreviated name of the Unicode Plane containing the block (e.g., "BMP" for Basic Multilingual Plane).</dd>
+                <dt><strong>start</strong></dt>
+                <dd>A string value equal to the first codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
+                <dt><strong>finish</strong></dt>
+                <dd>A string value equal to the last codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
+                <dt><strong>total_allocated</strong></dt>
+                <dd>An integer value equal to the total number of characters (defined or reserved) contained in the block.</dd>
+                <dt><strong>total_defined</strong></dt>
+                <dd>An integer value equal to the total number of characters with defined names, glyphs, etc in the block.</dd>
+            </dl>
+"""
+
 PLANE_ENDPOINTS = """
         <dl>
-            <dt><strong>GET</strong> <code>/v1/planes/{string}</code></dt>
+            <dt><strong>GET</strong> <code>/v1/planes/{number}</code></dt>
             <dd>Retrieve one or more Plane(s)</dd>
             <dt><strong>GET</strong> <code>/v1/planes</code></dt>
             <dd>List Planes</dd>
         </dl>
+"""
+
+UNICODE_PLANE_OBJECT_INTRO = (
+    "<p>The <code>UnicodePlane</code> object represents a continuous group of <strong>65,536</strong> (2<sup>16</sup>) code points. There are 17 planes, identified by the numbers 0 to 16. The first two positions of a character's codepoint value (U+<strong>hh</strong>hhhh) correspond to the plane number in hex format (possible values <code>0x00</code>–<code>-0x10</code>).</p>"
+    + '<p>Plane 0 is the <strong>Basic Multilingual Plane (BMP)</strong>, which contains most commonly used characters. The higher planes 1 through 16 are called "supplementary planes". The last code point in plane 16 is the last code point in Unicode, U+10FFFF.</p>'
+)
+
+UNICODE_PLANE_OBJECT_PROPERTIES = """
+            <dl>
+                <dt><strong>number</strong></dt>
+                <dd></dd>
+                <dt><strong>name</strong></dt>
+                <dd></dd>
+                <dt><strong>abbreviation</strong></dt>
+                <dd></dd>
+                <dt><strong>start</strong></dt>
+                <dd></dd>
+                <dt><strong>finish</strong></dt>
+                <dd></dd>
+                <dt><strong>total_allocated</strong></dt>
+                <dd></dd>
+                <dt><strong>total_defined</strong></dt>
+                <dd></dd>
+            </dl>
 """

@@ -55,12 +55,16 @@ UNICODE_CHARACTERS_DOCS = f"""
 
 UNICODE_BLOCKS_DOCS = f"""
     <div>
-        {create_details_element_for_swagger_ui("Endpoints", BLOCK_ENDPOINTS, True)}<h4>The <code>UnicodeBlock</code> Object</h4></div>
+        {create_details_element_for_swagger_ui("Endpoints", BLOCK_ENDPOINTS, True)}<h4>The <code>UnicodeBlock</code> Object</h4>
+        {UNICODE_BLOCK_OBJECT_INTRO}
+        {create_details_element_for_swagger_ui("<strong><code>UnicodeBlock</code> Properties</strong>", UNICODE_BLOCK_OBJECT_PROPERTIES, True)}</div>
 """
 
 UNICODE_PLANES_DOCS = f"""
     <div>
-        {create_details_element_for_swagger_ui("Endpoints", PLANE_ENDPOINTS, True)}<h4>The <code>UnicodePlane</code> Object</h4></div>
+        {create_details_element_for_swagger_ui("Endpoints", PLANE_ENDPOINTS, True)}<h4>The <code>UnicodePlane</code> Object</h4>
+        {UNICODE_PLANE_OBJECT_INTRO}
+        {create_details_element_for_swagger_ui("<strong><code>UnicodePlane</code> Properties</strong>", UNICODE_PLANE_OBJECT_PROPERTIES, True)}</div>
 """
 
 
