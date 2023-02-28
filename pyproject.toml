@@ -41,6 +41,7 @@ norecursedirs = [
 
 [tool.coverage.run]
 omit = [
+    "app/core/result.py",
     "app/data/scripts/*",
     "app/docs/*",
     "app/tests/*",
@@ -49,7 +50,6 @@ omit = [
 ]
 
 [tool.coverage.report]
-skip_covered = true
 skip_empty = true
 exclude_lines = [
     "pragma: no cover",

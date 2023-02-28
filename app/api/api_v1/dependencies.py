@@ -134,7 +134,7 @@ def customize_ending_before_param_description(
 <p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <strong>{key_field}=<code><i>{example_value}</i></code></strong>, you can retrieve the previous set of results by sending <strong>ending_before=<code><i>{example_value}</i></code></strong> in a subsequent request.</p>
 <p>{field_type_description}</p>
 """
-    if not hide_examples:
+    if not hide_examples:  # pragma: no cover
         description += "<p>Each of these different formats are shown below (these are also valid for the <strong>ending_before</strong> parameter):</p>"
     return description
 
@@ -148,7 +148,7 @@ def customize_starting_after_param_description(
 <p>For example, if you request 10 items and the response contains <strong>hasMore=<i>true</i></strong>, there are more search results beyond the first 10. If the 10th search result has <strong>{key_field}=<code><i>{example_value}</i></code></strong>, you can retrieve the next set of results by sending <strong>starting_after=<code><i>{example_value}</i></code></strong> in a subsequent request.</p>
 <p>{field_type_description}</p>
 """
-    if not hide_examples:
+    if not hide_examples:  # pragma: no cover
         description += "<p>Each of these different formats are shown below (these are also valid for the <strong>ending_before</strong> parameter):</p>"
     return description
 

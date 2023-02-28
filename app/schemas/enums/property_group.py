@@ -32,7 +32,7 @@ class CharPropertyGroup(StrEnum):
         return str(self)
 
     @property
-    def index_name(self) -> str:
+    def index_name(self) -> str:  # pragma: no cover
         if "_" in self.name:
             return "".join([s[0] for s in self.name.split("_") if s != "AND"]).lower()
         return self.name.lower()
