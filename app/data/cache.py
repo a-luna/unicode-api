@@ -3,10 +3,10 @@ from functools import cache, cached_property
 
 import app.db.engine as db
 from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_NO_NAME_MAP, PLANES_JSON
-from app.core.result import Result
 from app.data.constants import (
     CJK_COMPATIBILITY_BLOCK_IDS,
     CJK_UNIFIED_BLOCK_IDS,
+    CONTROL_CHARACTER_CODEPOINTS,
     MAX_CODEPOINT,
     NON_CHARACTER_CODEPOINTS,
     NULL_BLOCK,
@@ -70,6 +70,22 @@ class UnicodeDataCache:
         return len(self.blocks)
 
     @cached_property
+    def all_characters_block(self) -> db.UnicodeBlock:
+        block = db.UnicodeBlock(
+            id=0,
+            name="All Unicode Characters",
+            plane_id=-1,
+            start_dec=0,
+            start="0000",
+            finish_dec=1114111,
+            finish="10FFFF",
+            total_allocated=1114112,
+            total_defined=self._calculate_total_defined_characters(),
+        )
+        block.plane = self.all_characters_plane
+        return block
+
+    @cached_property
     def planes(self) -> list[db.UnicodePlane]:
         return [db.UnicodePlane(**plane) for plane in json.loads(PLANES_JSON.read_text())]
 
@@ -80,6 +96,22 @@ class UnicodeDataCache:
     @cached_property
     def plane_name_map(self) -> dict[str, db.UnicodePlane]:
         return {plane.name: plane for plane in self.planes}
+
+    @cached_property
+    def all_characters_plane(self) -> db.UnicodePlane:
+        return db.UnicodePlane(
+            number=-1,
+            name="All Unicode Characters",
+            abbreviation="ALL",
+            start="0000",
+            start_dec=0,
+            finish="10FFFF",
+            finish_dec=1114111,
+            start_block_id=1,
+            finish_block_id=327,
+            total_allocated=1114112,
+            total_defined=self._calculate_total_defined_characters(),
+        )
 
     @property
     def all_assigned_codepoints(self) -> set[int]:
@@ -94,6 +126,9 @@ class UnicodeDataCache:
     def get_unicode_block_containing_codepoint(self, codepoint: int) -> db.UnicodeBlock:
         found = [block for block in self.blocks if block.start_dec <= codepoint and codepoint <= block.finish_dec]
         return found[0] if found else db.UnicodeBlock(**NULL_BLOCK)
+
+    def get_unicode_plane_by_number(self, plane_number: int) -> db.UnicodePlane:
+        return self.plane_number_map.get(plane_number, db.UnicodePlane(**NULL_PLANE))
 
     def get_unicode_plane_containing_block_id(self, block_id: int) -> db.UnicodePlane:
         found = [

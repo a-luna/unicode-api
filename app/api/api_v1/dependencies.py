@@ -1,11 +1,8 @@
 import re
 from http import HTTPStatus
 
-from fastapi import Depends, HTTPException, Path, Query
-from sqlalchemy.engine import Engine
-from sqlmodel import Session
+from fastapi import HTTPException, Path, Query
 
-import app.db.engine as db
 from app.core.config import settings
 from app.core.enums import UnicodeBlockName, UnicodePlaneName
 from app.data.cache import cached_data
@@ -278,13 +275,12 @@ class UnicodeBlockQueryParamResolver:
     def __init__(
         self,
         block: UnicodeBlockName | None = Query(default=None, description=CHAR_SEARCH_BLOCK_NAME_DESCRIPTION),
-        db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
-        session, _ = db_ctx
-        if not block or block == UnicodeBlockName.NONE:
-            self.block: db.UnicodeBlock = get_all_characters_block(session)
-        else:
-            self.block: db.UnicodeBlock = cached_data.get_unicode_block_by_id(block.block_id)
+        self.block = (
+            cached_data.all_characters_block
+            if not block or block == UnicodeBlockName.NONE
+            else cached_data.get_unicode_block_by_id(block.block_id)
+        )
         self.name = self.block.name
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec
@@ -294,15 +290,12 @@ class UnicodeBlockPathParamResolver:
     def __init__(
         self,
         name: UnicodeBlockName | None = Path(default=None, description=BLOCK_NAME_DESCRIPTION),
-        db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
-        session, _ = db_ctx
-        if not name:
-            self.block: db.UnicodeBlock = get_all_characters_block(session)
-            self.plane_abbrev = "ALL"
-        else:
-            self.block = cached_data.get_unicode_block_by_id(name.block_id)
-            self.plane_abbrev = self.block.plane.abbreviation
+        self.block = (
+            cached_data.all_characters_block
+            if not name or name == UnicodeBlockName.NONE
+            else cached_data.get_unicode_block_by_id(name.block_id)
+        )
         self.name = self.block.name
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec
@@ -312,44 +305,9 @@ class UnicodePlaneResolver:
     def __init__(
         self,
         plane: UnicodePlaneName | None = Query(default=None, description=PLANE_NAME_DESCRIPTION),
-        db_ctx: tuple[Session, Engine] = Depends(db.get_session),
     ):
-        session, _ = db_ctx
-        if not plane:
-            self.plane: db.UnicodePlane = get_all_characters_plane(session)
-        else:
-            self.plane: db.UnicodePlane = (
-                session.query(db.UnicodePlane).filter(db.UnicodePlane.number == plane.number).one()
-            )
+        self.plane = (
+            cached_data.get_unicode_plane_by_number(plane.number) if plane else cached_data.all_characters_plane
+        )
         self.start_block_id = self.plane.start_block_id
         self.finish_block_id = self.plane.finish_block_id
-
-
-def get_all_characters_block(session: Session) -> db.UnicodeBlock:
-    return db.UnicodeBlock(
-        id=0,
-        name="All Unicode Characters",
-        plane_id=0,
-        start_dec=0,
-        start="U+0000",
-        finish_dec=1114111,
-        finish="U+10FFFF",
-        total_allocated=1114112,
-        total_defined=sum(len(block.characters) for block in session.query(db.UnicodeBlock).all()),
-    )
-
-
-def get_all_characters_plane(session: Session) -> db.UnicodePlane:
-    return db.UnicodePlane(
-        number=-1,
-        name="All Unicode Characters",
-        abbreviation="ALL",
-        start="U+0000",
-        start_dec=0,
-        finish="U+10FFFF",
-        finish_dec=1114111,
-        start_block_id=1,
-        finish_block_id=327,
-        total_allocated=1114112,
-        total_defined=sum(len(plane.characters) for plane in session.query(db.UnicodePlane).all()),
-    )
