@@ -559,21 +559,71 @@
     <div>
         <h4 id="endpoints">Endpoints</h4>
         <dl>
-            <dt><strong>GET</strong> <code>/v1/blocks/{string}</code></dt>
+            <dt><strong>GET</strong> <code>/v1/blocks/{name}</code></dt>
             <dd>Retrieve one or more Block(s)</dd>
             <dt><strong>GET</strong> <code>/v1/blocks</code></dt>
             <dd>List Blocks</dd>
             <dt><strong>GET</strong> <code>/v1/blocks/search</code></dt>
             <dd>Search Blocks</dd>
         </dl>
-		<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>	</div>
+		<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
+        <p>The <code>UnicodeBlock</code> object represents a grouping of characters within the Unicode encoding space. Each block is generally, but not always, meant to supply glyphs used by one or more specific languages, or in some general application area such as mathematics, surveying, decorative typesetting, social forums, etc.</p><p>Each block is a uniquely named, continuous, non-overlapping range of code points, containing a multiple of 16 code points (additionally, the starting codepoint for each block is a multiple of 16). A block may contain unassigned code points, which are reserved.</p><p>The <code>UnicodeBlock</code> object exposes a small set of properties such as the official name of the block, the range of code points assigned to the block and the total number of defined characters within the block:</p>
+		<details>
+            <summary>
+                <strong><strong><code>UnicodeBlock</code> Properties</strong></strong>
+            </summary>
+            <dl>
+                <dt><strong>id</strong></dt>
+                <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is an integer value used to navigate within a paginated list of <code>UnicodeBlock</code> objects. The first block (<code>U+0000..U+007F <span>BASIC LATIN</span></code>) has <code>id=1</code> and each block is numbered sequentially in order of starting codepoint.</dd>
+                <dt><strong>name</strong></dt>
+                <dd>
+                    <p>Unicode blocks are identified by unique names, which use only ASCII characters and are usually descriptive of the nature of the symbols (in English), such as "Tibetan" or "Supplemental Arrows-A".</p>
+                    <p>Unicode specifies a set of rules to be used when comparing block names, known as loose matching rule <a href="https://www.unicode.org/reports/tr44/tr44-30.html#Matching_Symbolic" rel="noopener noreferrer" target="_blank">UAX44-LM3</a>: <strong><i>Ignore case, whitespace, underscore ('_'), hyphens, and any initial prefix string "is".</i></strong></p>
+                    <p>For example, under this rule the block name "Supplemental Arrows-A" is equivalent to "supplemental_arrows__a" and "SUPPLEMENTALARROWSA". For any query or path parameter that expects the name of a Unicode block, these three values are equivalent and would be understood to refer to block <code>U+27F0..U+27FF <span>SUPPLEMENTAL ARROWS-A</span></code>.</p>
+                </dd>
+                <dt><strong>plane</strong></dt>
+                <dd>A string value equal to the abbreviated name of the Unicode Plane containing the block (e.g., "BMP" for Basic Multilingual Plane).</dd>
+                <dt><strong>start</strong></dt>
+                <dd>A string value equal to the first codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
+                <dt><strong>finish</strong></dt>
+                <dd>A string value equal to the last codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
+                <dt><strong>total_allocated</strong></dt>
+                <dd>An integer value equal to the total number of characters (defined or reserved) contained in the block.</dd>
+                <dt><strong>total_defined</strong></dt>
+                <dd>An integer value equal to the total number of characters with defined names, glyphs, etc in the block.</dd>
+            </dl>
+		</details>
+	</div>
 <h3 id="unicode-planes">Unicode Planes</h3>
     <div>
         <h4 id="endpoints">Endpoints</h4>
         <dl>
-            <dt><strong>GET</strong> <code>/v1/planes/{string}</code></dt>
+            <dt><strong>GET</strong> <code>/v1/planes/{number}</code></dt>
             <dd>Retrieve one or more Plane(s)</dd>
             <dt><strong>GET</strong> <code>/v1/planes</code></dt>
             <dd>List Planes</dd>
         </dl>
-		<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>	</div>
+		<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
+        <p>The <code>UnicodePlane</code> object represents a continuous group of <strong>65,536</strong> (2<sup>16</sup>) code points. There are 17 planes, identified by the numbers 0 to 16. The first two positions of a character's codepoint value (U+<strong>hh</strong>hhhh) correspond to the plane number in hex format (possible values <code>0x00</code>–<code>-0x10</code>).</p><p>Plane 0 is the <strong>Basic Multilingual Plane (BMP)</strong>, which contains most commonly used characters. The higher planes 1 through 16 are called "supplementary planes". The last code point in plane 16 is the last code point in Unicode, U+10FFFF.</p>
+		<details>
+            <summary>
+                <strong><strong><code>UnicodePlane</code> Properties</strong></strong>
+            </summary>
+            <dl>
+                <dt><strong>number</strong></dt>
+                <dd></dd>
+                <dt><strong>name</strong></dt>
+                <dd></dd>
+                <dt><strong>abbreviation</strong></dt>
+                <dd></dd>
+                <dt><strong>start</strong></dt>
+                <dd></dd>
+                <dt><strong>finish</strong></dt>
+                <dd></dd>
+                <dt><strong>total_allocated</strong></dt>
+                <dd></dd>
+                <dt><strong>total_defined</strong></dt>
+                <dd></dd>
+            </dl>
+		</details>
+	</div>
