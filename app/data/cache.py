@@ -39,14 +39,6 @@ class UnicodeDataCache:
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
     @cached_property
-    def generic_name_character_choices(self) -> dict[int, str]:
-        return {codepoint: name.lower() for (codepoint, name) in self.generic_name_character_map.items()}
-
-    @property
-    def total_generic_name_characters(self) -> int:
-        return len(self.generic_name_character_map)
-
-    @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
         blocks = [db.UnicodeBlock(**block) for block in json.loads(BLOCKS_JSON.read_text())]
         for block in blocks:

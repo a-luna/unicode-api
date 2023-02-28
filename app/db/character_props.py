@@ -728,14 +728,8 @@ def get_default_vo_display_name(codepoint: int) -> str:
     return vo_type.display_name
 
 
-def get_mapped_codepoint(codepoint_hex: str, include_char_name: bool = False) -> str:
-    return (
-        ""
-        if not codepoint_hex
-        else f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X} {cached_data.get_character_name(int(codepoint_hex, 16))})"
-        if include_char_name
-        else f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})"
-    )
+def get_mapped_codepoint(codepoint_hex: str) -> str:
+    return f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})" if codepoint_hex else ""
 
 
 def get_script_extensions(value: str) -> list[str]:
