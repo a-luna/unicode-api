@@ -1,4 +1,3 @@
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -8,7 +7,6 @@ from urllib.parse import urlsplit
 import requests
 from halo import Halo
 
-import app.db.engine as db
 from app.core.result import Result
 
 CHUNK_SIZE = 1024
@@ -56,39 +54,63 @@ def run_command(command, cwd=None, shell=True, text=True):
         return Result.Fail(error)
 
 
-def download_file(url: str, local_folder: Path):
-    local_folder.mkdir(parents=True, exist_ok=True)
-    file_name = Path(urlsplit(url).path).name
-    local_file_path = local_folder.joinpath(file_name)
+def download_file(url: str, dest_folder: Path) -> Result[Path]:
+    (dest_file_path, remote_file_size) = get_file_details(url, dest_folder)
+    if not remote_file_size:
+        return initiate_download(url, dest_file_path)
+    download_result = (
+        initiate_download(url, dest_file_path)
+        if not dest_file_path.exists()
+        else resume_download(url, dest_file_path, remote_file_size)
+    )
+    if download_result.error:
+        return download_result
+    verify_result = verify_download(dest_file_path, remote_file_size)
+    if verify_result.failure:
+        return verify_result
+    return Result.Ok(dest_file_path)
+
+
+def get_file_details(url: str, dest_folder: Path) -> tuple[Path, int]:
+    dest_folder.mkdir(parents=True, exist_ok=True)
+    dest_file_path = dest_folder.joinpath(Path(urlsplit(url).path).name)
     r = requests.head(url)
     remote_file_size = int(r.headers.get("content-length", 0))
-    if not remote_file_size:
-        return Result.Fail(f'Request for "{file_name}" did not return a response containing the file size.')
-    local_file_size = 0
-    resume_header = None
-    fopen_mode = "wb"
-    if not local_file_path.exists():
-        print(f'"{file_name}" does not exist. Downloading...')
-    else:
-        local_file_size = local_file_path.stat().st_size
-        if local_file_size == remote_file_size:
-            print(f'"{file_name}" is complete. Skipping...')
-            return Result.Ok(local_file_path)
-        print(f'"{file_name}" is incomplete. Resuming...')
-        resume_header = {"Range": f"bytes={local_file_size}-"}
-        fopen_mode = "ab"
+    return (dest_file_path, remote_file_size)
 
+
+def initiate_download(url: str, local_file_path: Path) -> Result[Path]:
+    print(f'"{local_file_path.name}" does not exist. Downloading...')
+    return download_file_in_chunks(url, local_file_path)
+
+
+def resume_download(url: str, dest_file_path: Path, remote_file_size: int) -> Result[Path]:
+    local_file_size = dest_file_path.stat().st_size
+    if local_file_size == remote_file_size:
+        print(f'"{dest_file_path.name}" is complete. Skipping...')
+        return Result.Ok(dest_file_path)
+    print(f'"{dest_file_path.name}" is incomplete. Resuming...')
+    return download_file_in_chunks(url, dest_file_path, local_file_size, fopen_mode="ab")
+
+
+def download_file_in_chunks(
+    url: str, dest_file_path: Path, local_file_size: int | None = None, fopen_mode: str = "wb"
+) -> Result[Path]:
+    resume_header = {"Range": f"bytes={local_file_size}-"}
     r = requests.get(url, stream=True, headers=resume_header)
-    with open(local_file_path, fopen_mode) as f:
+    with open(dest_file_path, fopen_mode) as f:
         for chunk in r.iter_content(32 * CHUNK_SIZE):
             f.write(chunk)
+    return Result.Ok(dest_file_path)
 
-    local_file_size = local_file_path.stat().st_size
+
+def verify_download(dest_file_path: Path, remote_file_size: int) -> Result[Path]:
+    local_file_size = dest_file_path.stat().st_size
     if local_file_size == remote_file_size:
-        return Result.Ok(local_file_path)
+        return Result.Ok(dest_file_path)
     more_or_fewer = "more" if local_file_size > remote_file_size else "fewer"
     error = (
-        f'Recieved {more_or_fewer} bytes than expected for "{file_name}"!\n'
+        f'Recieved {more_or_fewer} bytes than expected for "{dest_file_path.name}"!\n'
         f"Expected File Size: {remote_file_size:,} bytes\n"
         f"Received File Size: {local_file_size:,} bytes"
     )
