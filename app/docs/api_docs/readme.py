@@ -42,7 +42,7 @@ HEADING_ELEMENT_REGEX = re.compile(
 def create_details_element_readme(title: str, content: str, open: bool | None = False) -> str:
     open_tag = "<details open>" if open else "<details>"
     return f"""\t\t{open_tag}
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">

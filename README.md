@@ -103,7 +103,7 @@
 <h3 id="unicode-characters">Unicode Characters</h3>
     <div>
 		<details open>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -137,7 +137,7 @@
         <h4 id="unicodecharacter-property-groups"><code>UnicodeCharacter</code> Property Groups</h4>
         <p>If each response contained every character property, it would be massively inneficient. To ensure that the API remains responsive and performant while also allowing clients to access the full set of character properties, each property is assigned to a <strong>property group</strong>.</p><p>Since they are designed to return lists of characters, responses from the <code>/v1/characters</code> or <code>/v1/characters/search</code> endpoints will only include properties from the <strong>Minimum</strong> property group:</p>
 		<details open>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -162,7 +162,7 @@
 <p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>
 		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="https://unicode-api.aaronluna.dev/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -189,7 +189,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -210,7 +210,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -231,7 +231,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -252,7 +252,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -296,7 +296,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -336,7 +336,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -378,7 +378,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -413,7 +413,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -446,7 +446,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -504,7 +504,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -532,7 +532,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -559,7 +559,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -582,7 +582,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -609,7 +609,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -630,7 +630,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -686,7 +686,7 @@
 		</details>
 		<br />
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -716,7 +716,7 @@
 <h3 id="unicode-blocks">Unicode Blocks</h3>
     <div>
         		<details open>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -738,7 +738,7 @@
 		<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
         <p>The <code>UnicodeBlock</code> object represents a grouping of characters within the Unicode encoding space. Each block is generally, but not always, meant to supply glyphs used by one or more specific languages, or in some general application area such as mathematics, surveying, decorative typesetting, social forums, etc.</p><p>Each block is a uniquely named, continuous, non-overlapping range of code points, containing a multiple of 16 code points (additionally, the starting codepoint for each block is a multiple of 16). A block may contain unassigned code points, which are reserved.</p><p>The <code>UnicodeBlock</code> object exposes a small set of properties such as the official name of the block, the range of code points assigned to the block and the total number of defined characters within the block:</p>
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -769,7 +769,7 @@
 <h3 id="unicode-planes">Unicode Planes</h3>
     <div>
         		<details open>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
@@ -789,7 +789,7 @@
 		<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
         <p>The <code>UnicodePlane</code> object represents a continuous group of <strong>65,536</strong> (2<sup>16</sup>) code points. There are 17 planes, identified by the numbers 0 to 16. The first two positions of a character's codepoint value (U+<strong>hh</strong>hhhh) correspond to the plane number in hex format (possible values <code>0x00</code>–<code>0x10</code>).</p><p>Plane 0 is the <strong>Basic Multilingual Plane (BMP)</strong>, which contains most commonly used characters. The higher planes 1 through 16 are called "supplementary planes". The last code point in plane 16 is the last code point in Unicode, U+10FFFF.</p>
 		<details>
-            <summary style="list-style=none">
+            <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
