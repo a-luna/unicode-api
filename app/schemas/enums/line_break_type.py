@@ -99,7 +99,7 @@ class LineBreakType(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "AL": cls.ORDINARY_ALPHABETIC_AND_SYMBOL,
             "AI": cls.AMBIGUOUS_ALPHABETIC_OR_IDEOGRAPHIC,

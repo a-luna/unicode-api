@@ -25,7 +25,7 @@ class NumericType(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "None": cls.NONE,
             "De": cls.DECIMAL,

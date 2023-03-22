@@ -13,13 +13,16 @@
 		<a href="#search">Search</a>
 	</li>
 	<li>
+		<a href="#loose-matching">Loose Matching</a>
+	</li>
+	<li>
 		<a href="#core-resources">Core Resources</a>
 		<ul>
 			<li>
 				<a href="#unicode-characters">Unicode Characters</a>
 				<ul>
 					<li>
-						<a href="#endpoints">Endpoints</a>
+						<a href="#character-api-endpoints">API Endpoints</a>
 					</li>
 					<li>
 						<a href="#the-unicodecharacter-object">The <code>UnicodeCharacter</code> Object</a>
@@ -33,7 +36,7 @@
 				<a href="#unicode-blocks">Unicode Blocks</a>
 				<ul>
 					<li>
-						<a href="#endpoints">Endpoints</a>
+						<a href="#block-api-endpoints">API Endpoints</a>
 					</li>
 					<li>
 						<a href="#the-unicodeblock-object">The <code>UnicodeBlock</code> Object</a>
@@ -44,7 +47,7 @@
 				<a href="#unicode-planes">Unicode Planes</a>
 				<ul>
 					<li>
-						<a href="#endpoints">Endpoints</a>
+						<a href="#plane-api-endpoints">API Endpoints</a>
 					</li>
 					<li>
 						<a href="#the-unicodeplane-object">The <code>UnicodePlane</code> Object</a>
@@ -56,7 +59,7 @@
 </ul>
 <h2 id="introduction">Introduction</h2>
 <p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener noreferrer" target="_blank">version 15.0 of the Unicode Standard</a> (released September 13, 2022). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
-<ul>
+<ul class="api-principles">
     <li>URLs are predictable and resource-oriented.</li>
     <li>Uses standard HTTP verbs and response codes.</li>
     <li>Returns JSON-encoded responses.</li>
@@ -78,7 +81,7 @@
         <p>For example, if you request 10 items and the response contains <code>hasMore=true</code>, there are more search results beyond the first 10. If the 10th search result has <code>codepoint=U+0346</code>, you can retrieve the next set of results by sending <code>starting_after=U+0346</code> in a subsequent request.</p>
         <p>The <code>ending_before</code> parameter also acts as a cursor to navigate between pages, but instead of requesting the next set of results it allows you to access previous pages in the list.</p>
         <p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <code>codepoint=U+0357</code>, you can retrieve the previous set of results by sending <code>ending_before=U+0357</code> in a subsequent request.</p>
-        <p>⛔️ <strong><i>IMPORTANT: Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong></p>
+        <p>⚠️ <strong><i>IMPORTANT: Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong>.</p>
     </div>
 <h2 id="search">Search</h2>
     <div>
@@ -86,20 +89,42 @@
         <p>The <code>name</code> parameter is the search term and is used to retrieve a character/block using the official name defined in the UCD. Since a <a href="https://en.wikipedia.org/wiki/Approximate_string_matching" rel="noopener noreferrer" target="_blank">fuzzy search algorithm</a> is used for this process, the value of <code>name</code> does not need to be an exact match with a character/block name.</p>
         <p>The response will contain a <code>results</code> parameter that represents the characters/blocks that matched your query. Each object in this list has a <code>score</code> property which is a number ranging from <strong>0-100</strong> that describes how similar the character/block name is to the <code>name</code> value provided by the user (A value of 100 means that the <code>name</code> provided by the user is an exact match with a character/block name). The list contains all results where <code>score</code> &gt;= <code>min_score</code>, sorted by <code>score</code> (the first element in the list being the <i><strong>most similar</strong></i>).</p>
         <p>The default value for <code>min_score</code> is <strong>80</strong>, however if your request is returning zero results, you can lower this value to potentially surface lower-quality results. Keep in mind, the lowest value for <code>min_score</code> that is permitted is <strong>70</strong>, since the relevence of results quickly drops off around a score of <strong>72</strong>, often producing hundreds of results with no relevance to the search term.</p>
-        <p>The <code>per_page</code> parameter controls how many results are included in a single response. The response will include a <code>hasMore</code> parameter that indicates whether there are more search results beyond the current page, as well as <code>currentPage</code> and <code>totalResults</code> parameters. If <code>hasMore=true</code>, the response will also contain a <code>nextPage</code> parameter. For example, if you make a search request and the response has <code>hasMore=true</code> and <code>nextPage=2</code> in the response, your subsequent call can include <code>page=2</code> to fetch the next page of results.</p>
+        <p>The <code>per_page</code> parameter controls how many results are included in a single response. The response will include a <code>hasMore</code> parameter that indicates whether there are more search results beyond the current page, as well as <code>currentPage</code> and <code>totalResults</code> parameters. If <code>hasMore=true</code>, the response will also contain a <code>nextPage</code> parameter.</p>
+        <p>For example, if you receive a response to a search request with <code>hasMore=true</code> and <code>nextPage=2</code>, you can update your request to include <code>page=2</code> to fetch the next page of results. If the next response includes <code>hasMore=true</code> and <code>nextPage=3</code>, update your request to include <code>page=3</code>, etc. Rinse and repeat until you receive a response with <code>hasMore=false</code>, indicating that you have received the final set of search results.</p>
+    </div>
+<h2 id="loose-matching">Loose Matching</h2>
+    <div>
+        <p>Unicode specifies a set of rules to be used when comparing symbolic values, such as block names, known as <strong>loose matching rule</strong> <a href="https://www.unicode.org/reports/tr44/#UAX44-LM3" rel="noopener noreferrer" target="_blank">UAX44-LM3</a>. The algotithm for UAX44-LM3 is simple: <strong><i>Ignore case, whitespace, underscore ('_'), hyphens, and any initial prefix string "is".</i></strong></p>
+        <p>This rule applies to many of the parameters that are included with API requests, which avoids returning a 400 response when a parameter name, for example, is sent as 'script', but the expected value is 'Script'. Under UAX44-LM3, both values are equivalent.</p>
+        <p>For another example, under this rule the block name "Supplemental Arrows-A" is equivalent to "supplemental_arrows__a" and "SUPPLEMENTALARROWSA" since all three of these strings would be reduced to "supplementalarrowsa" after applying UAX44-LM3. For any query or path parameter that expects the name of a Unicode block, any of these three values could be provided and would be understood to refer to block <code>U+27F0..U+27FF <span>SUPPLEMENTAL ARROWS-A</span></code>.</p>
+        <p>Whenever the loose-matching rule applies to a parameter, it will be called out in the docuentation for each individual API endpoint below.</p>
     </div>
 <h2 id="core-resources">Core Resources</h2>
 <h3 id="unicode-characters">Unicode Characters</h3>
     <div>
-        <h4 id="endpoints">Endpoints</h4>
-        <dl>
-            <dt><strong>GET</strong> <code>/v1/characters/{string}</code></dt>
-            <dd>Retrieve one or more Character(s)</dd>
-            <dt><strong>GET</strong> <code>/v1/characters</code></dt>
-            <dd>List Characters</dd>
-            <dt><strong>GET</strong> <code>/v1/characters/search</code></dt>
-            <dd>Search Characters</dd>
-        </dl>
+		<details open>
+            <summary>
+                <strong><h4 id="character-api-endpoints">API Endpoints</h4></strong>
+            </summary>
+            <dl>
+                <dt><strong>GET</strong> <code>/v1/characters/{string}</code></dt>
+                <dd>Retrieve one or more character(s)<sup class="fn">🞰</sup></dd>
+                <dt><strong>GET</strong> <code>/v1/characters</code></dt>
+                <dd>List all characters<sup class="fn">🞰</sup></dd>
+                <dt><strong>GET</strong> <code>/v1/characters/filter</code></dt>
+                <dd>List characters that match filter settings<sup class="fn">†</sup></dd>
+                <dt><strong>GET</strong> <code>/v1/characters/search</code></dt>
+                <dd>Search characters<sup class="fn">†</sup></dd>
+            </dl>
+            <div class="footnotes">
+                <div class="footnote">
+                    <sup class="symbol">🞰</sup><span class="note">Supports requests for all codepoints in the Unicode space (i.e., assigned, reserved, noncharacter, surrogate, and private-use codepoints).</span>
+                </div>
+                <div class="footnote">
+                    <sup class="symbol">†</sup><span class="note">Supports <strong>ONLY</strong> assigned codepoints.</span>
+                </div>
+            </div>
+		</details>
 		<h4 id="the-unicodecharacter-object">The <code>UnicodeCharacter</code> Object</h4>
         <p>The <code>UnicodeCharacter</code> object represents a single character/codepoint in the <a href="https://unicode.org/reports/tr44/" rel="noopener noreferrer" target="_blank">Unicode Character Database (UCD)</a>. It contains a rich set of properties that document the purpose and intended representation of the character.</p>
         <h4 id="unicodecharacter-property-groups"><code>UnicodeCharacter</code> Property Groups</h4>
@@ -116,7 +141,7 @@
                 <dt><strong>codepoint</strong></dt>
                 <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
                 <dt><strong>uriEncoded</strong></dt>
-                <dd>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>). The string must contain only a defined subset of characters from the standard 128 ASCII character set, any other characters must be replaced by an escape sequence representing the UTF-8 encoding of the character. For example, ∑ (<code>U+2211 <span>N-ARY SUMMATION</span></code>) is equal to <code>0xE2 0x88 0x91</code> in UTF-8 encoding. When used as part of a URI, this character must be escaped using the string <code>%E2%88%91</code>.</dd>
+                <dd>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>). The string must contain only a defined subset of characters from the standard 128 ASCII character set, any other characters must be replaced by an escape sequence representing the UTF-8 encoding of the character. For example, ∑ (<code>U+2211 <span>N-ARY SUMMATION</span></code>) is equal to <code>0xE2 0x88 0x91</code> in UTF-8 encoding. When used as part of a URI, this character must be escaped using the URI-escaped string <code>%E2%88%91</code>.</dd>
             </dl>
 		</details>
 		<br />
@@ -134,7 +159,7 @@
                 <dt><strong>age</strong></dt>
                 <dd>The version of Unicode in which the character was assigned to a codepoint, such as "1.1" or "4.0.".</dd>
                 <dt><strong>generalCategory</strong></dt>
-                <dd>The <a href="https://www.unicode.org/versions/latest/ch04.pdf#G124142" rel="noopener noreferrer" target="_blank">General Category</a> that this character belongs to (e.g., letters, numbers, punctuation, symbols, etc.). The full list of values which are valid for this property is defined in <a href="http://www.unicode.org/reports/tr44/#General_Category_Values">Unicode Standard Annex #44</a></dd>
+                <dd>The <a href="https://www.unicode.org/versions/latest/ch04.pdf#G124142" rel="noopener noreferrer" target="_blank">General Category</a> that this character belongs to (e.g., letters, numbers, punctuation, symbols, etc.). The full list of values which are valid for this property is defined in <a href="http://www.unicode.org/reports/tr44/#General_Category_Values" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #44</a></dd>
                 <dt><strong>combiningClass</strong></dt>
                 <dd>Specifies, with a numeric code, how a diacritic mark is positioned with respect to the base character. This is used in the Canonical Ordering Algorithm and in normalization. For more info, please see <a href="https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#page=11" rel="noopener noreferrer" target="_blank">Unicode Standard Section 4.3</a>.</dd>
                 <dt><strong>htmlEntities</strong></dt>
@@ -307,9 +332,9 @@
                 </dd>
                 <dt><strong>numericValue</strong></dt>
                 <dd>
-                    <p>If the character has the property value <code><strong>numericValue=Decimal</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9) in fields 6, 7, and 8. Characters with the property value <code><strong>numericValue=Decimal</code></strong> are restricted to digits which can be used in a decimal radix positional numeral system and which are encoded in the standard in a contiguous ascending range 0..9.</p>
-                    <p>If the character has the property value <code><strong>numericValue=Digit</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9) in fields 7 and 8, and field 6 is null. This covers digits that need special handling, such as the compatibility superscript digits. Starting with Unicode 6.3.0, no newly encoded numeric characters will be given <code><strong>numericValue=Digit</code></strong>, nor will existing characters with <code><strong>numericValue=Decimal</code></strong> be changed to <code><strong>numericValue=Digit</code></strong>. The distinction between those two types is not considered useful.</p>
-                    <p>If the character has the property value <code><strong>numericValue=Numeric</code></strong>, then the <code>numericValue</code> of that character is represented with a positive or negative integer or rational number in this field, and fields 6 and 7 are null. This includes fractions such as, for example, "1/5" for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>).</p>
+                    <p>If the character has the property value <code><strong>numericValue=Decimal</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9).</p>
+                    <p>If the character has the property value <code><strong>numericValue=Digit</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9). This covers digits that need special handling, such as the compatibility superscript digits. Starting with Unicode 6.3.0, no newly encoded numeric characters will be given <code><strong>numericValue=Digit</code></strong>, nor will existing characters with <code><strong>numericValue=Decimal</code></strong> be changed to <code><strong>numericValue=Digit</code></strong>. The distinction between those two types is not considered useful.</p>
+                    <p>If the character has the property value <code><strong>numericValue=Numeric</code></strong>, then the <code>numericValue</code> of that character is represented with a positive or negative integer or rational number. This includes fractions such as, for example, "1/5" for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>).</p>
                 </dd>
                 <dt><strong>numericValueParsed</strong></dt>
                 <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is a floating point version of the <strong>numericValue</strong> property (which is a string value). For example, <code>0.2</code> for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>)
@@ -439,7 +464,7 @@
             <summary>
                 <strong><strong>Script</strong></strong>
             </summary>
-            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr24/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #11, "Unicode Script Property"</a></div>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr24/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #24, "Unicode Script Property"</a></div>
             <dl>
                 <dt><strong>script</strong></dt>
                 <dd>The script (writing system) to which the character primarily belongs to, such as "Latin," "Greek," or "Common," which indicates a character that is used in different scripts.</dd>
@@ -557,7 +582,10 @@
 	</div>
 <h3 id="unicode-blocks">Unicode Blocks</h3>
     <div>
-        <h4 id="endpoints">Endpoints</h4>
+        		<details open>
+            <summary>
+                <strong><h4 id="block-api-endpoints">API Endpoints</h4></strong>
+            </summary>
         <dl>
             <dt><strong>GET</strong> <code>/v1/blocks/{name}</code></dt>
             <dd>Retrieve one or more Block(s)</dd>
@@ -566,6 +594,7 @@
             <dt><strong>GET</strong> <code>/v1/blocks/search</code></dt>
             <dd>Search Blocks</dd>
         </dl>
+		</details>
 		<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
         <p>The <code>UnicodeBlock</code> object represents a grouping of characters within the Unicode encoding space. Each block is generally, but not always, meant to supply glyphs used by one or more specific languages, or in some general application area such as mathematics, surveying, decorative typesetting, social forums, etc.</p><p>Each block is a uniquely named, continuous, non-overlapping range of code points, containing a multiple of 16 code points (additionally, the starting codepoint for each block is a multiple of 16). A block may contain unassigned code points, which are reserved.</p><p>The <code>UnicodeBlock</code> object exposes a small set of properties such as the official name of the block, the range of code points assigned to the block and the total number of defined characters within the block:</p>
 		<details>
@@ -576,11 +605,7 @@
                 <dt><strong>id</strong></dt>
                 <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is an integer value used to navigate within a paginated list of <code>UnicodeBlock</code> objects. The first block (<code>U+0000..U+007F <span>BASIC LATIN</span></code>) has <code>id=1</code> and each block is numbered sequentially in order of starting codepoint.</dd>
                 <dt><strong>name</strong></dt>
-                <dd>
-                    <p>Unicode blocks are identified by unique names, which use only ASCII characters and are usually descriptive of the nature of the symbols (in English), such as "Tibetan" or "Supplemental Arrows-A".</p>
-                    <p>Unicode specifies a set of rules to be used when comparing block names, known as loose matching rule <a href="https://www.unicode.org/reports/tr44/tr44-30.html#Matching_Symbolic" rel="noopener noreferrer" target="_blank">UAX44-LM3</a>: <strong><i>Ignore case, whitespace, underscore ('_'), hyphens, and any initial prefix string "is".</i></strong></p>
-                    <p>For example, under this rule the block name "Supplemental Arrows-A" is equivalent to "supplemental_arrows__a" and "SUPPLEMENTALARROWSA". For any query or path parameter that expects the name of a Unicode block, these three values are equivalent and would be understood to refer to block <code>U+27F0..U+27FF <span>SUPPLEMENTAL ARROWS-A</span></code>.</p>
-                </dd>
+                <dd>Unicode blocks are identified by unique names, which use only ASCII characters and are usually descriptive of the nature of the symbols (in English), such as "Tibetan" or "Supplemental Arrows-A".</dd>
                 <dt><strong>plane</strong></dt>
                 <dd>A string value equal to the abbreviated name of the Unicode Plane containing the block (e.g., "BMP" for Basic Multilingual Plane).</dd>
                 <dt><strong>start</strong></dt>
@@ -596,34 +621,50 @@
 	</div>
 <h3 id="unicode-planes">Unicode Planes</h3>
     <div>
-        <h4 id="endpoints">Endpoints</h4>
+        		<details open>
+            <summary>
+                <strong><h4 id="plane-api-endpoints">API Endpoints</h4></strong>
+            </summary>
         <dl>
             <dt><strong>GET</strong> <code>/v1/planes/{number}</code></dt>
             <dd>Retrieve one or more Plane(s)</dd>
             <dt><strong>GET</strong> <code>/v1/planes</code></dt>
             <dd>List Planes</dd>
         </dl>
+		</details>
 		<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
-        <p>The <code>UnicodePlane</code> object represents a continuous group of <strong>65,536</strong> (2<sup>16</sup>) code points. There are 17 planes, identified by the numbers 0 to 16. The first two positions of a character's codepoint value (U+<strong>hh</strong>hhhh) correspond to the plane number in hex format (possible values <code>0x00</code>–<code>-0x10</code>).</p><p>Plane 0 is the <strong>Basic Multilingual Plane (BMP)</strong>, which contains most commonly used characters. The higher planes 1 through 16 are called "supplementary planes". The last code point in plane 16 is the last code point in Unicode, U+10FFFF.</p>
+        <p>The <code>UnicodePlane</code> object represents a continuous group of <strong>65,536</strong> (2<sup>16</sup>) code points. There are 17 planes, identified by the numbers 0 to 16. The first two positions of a character's codepoint value (U+<strong>hh</strong>hhhh) correspond to the plane number in hex format (possible values <code>0x00</code>–<code>0x10</code>).</p><p>Plane 0 is the <strong>Basic Multilingual Plane (BMP)</strong>, which contains most commonly used characters. The higher planes 1 through 16 are called "supplementary planes". The last code point in plane 16 is the last code point in Unicode, U+10FFFF.</p>
 		<details>
             <summary>
                 <strong><strong><code>UnicodePlane</code> Properties</strong></strong>
             </summary>
             <dl>
                 <dt><strong>number</strong></dt>
-                <dd></dd>
+                <dd>The official number that identifies the range of codepoints within a plane. The first two positions of a character's codepoint value (U+<strong>hh</strong>hhhh) correspond to the plane number in hex format (possible values <code>0x00</code>...<code>0x10</code>). This is a decimal value, however, with possible values <strong>0...16</strong>.</dd>
                 <dt><strong>name</strong></dt>
-                <dd></dd>
+                <dd>
+                    <p>The official name of a plane, according to the Unicode Standard. As of version 15.0.0, seven of the total 17 planes have official names (the official abbreviation for each plane if also given in parentheses):</p>
+						<ol>
+							<li style="list-style-type: '0.'"><span>Basic Multilingual Plane (BMP)</span></li>
+							<li style="list-style-type: '1.'"><span>Supplementary Multilingual Plane (SMP)</span></li>
+							<li style="list-style-type: '2.'"><span>Supplementary Ideographic Plane (SIP)</span></li>
+							<li style="list-style-type: '3.'"><span>Tertiary Ideographic Plane (TIP)</span></li>
+							<li style="list-style-type: '14.'"><span>Supplementary Special-purpose Plane (SSP)</span></li>
+							<li style="list-style-type: '15.'"><span>Supplementary Private Use Area-A (SPUA-A)</span></li>
+							<li style="list-style-type: '16.'"><span>Supplementary Private Use Area-B (SPUA-B)</span></li>
+						</ol>
+                    <p>The codepoints within Planes 4-13 (<code>U+40000</code>...<code>U+​DFFFF</code>) are unassigned, and th</p>
+                </dd>
                 <dt><strong>abbreviation</strong></dt>
-                <dd></dd>
+                <dd>An acronym that identifies the plane, the list in the previous definition contains the abbreviation for each plane along with the official name.</dd>
                 <dt><strong>start</strong></dt>
-                <dd></dd>
+                <dd>A string value equal to the first codepoint allocated to the plane, expressed in <code>U+hhhhhh</code> format.</dd>
                 <dt><strong>finish</strong></dt>
-                <dd></dd>
+                <dd>A string value equal to the last codepoint allocated to the plane, expressed in <code>U+hhhhhh</code> format.</dd>
                 <dt><strong>total_allocated</strong></dt>
-                <dd></dd>
+                <dd>An integer value equal to the total number of characters (defined or reserved) contained in the plane (always 2<sup>16</sup>).</dd>
                 <dt><strong>total_defined</strong></dt>
-                <dd></dd>
+                <dd>An integer value equal to the total number of characters with defined names, glyphs, etc in the plane.</dd>
             </dl>
 		</details>
 	</div>

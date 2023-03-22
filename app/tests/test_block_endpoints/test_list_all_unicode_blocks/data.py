@@ -330,3 +330,11 @@ ALL_BLOCKS_ENDING_BEFORE_171_LIMIT_15 = {
 PLANE_TIP_START_AFTER_20_LIMIT_15 = {
     "detail": "The starting block id (21) is not within the range of blocks which comprise the specified Unicode plane (Tertiary Ideographic Plane): first block: 322, last block: 323"
 }
+
+BOTH_START_AFTER_END_BEFORE_INVALID = {
+    "detail": "Request contained values for BOTH 'ending_before' and 'starting_after', you must specify ONLY ONE of these two values."
+}
+
+INALID_PLANE_ABBREVIATION = {
+    "detail": "BDP does not match any valid Unicode plane abbreviation: BMP, SMP, SIP, TIP, SSP, SPUA-A, SPUA-B. "
+}

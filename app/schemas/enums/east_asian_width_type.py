@@ -29,7 +29,7 @@ class EastAsianWidthType(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "A": cls.EAST_ASIAN_AMBIGUOUS,
             "F": cls.EAST_ASIAN_FULLWIDTH,

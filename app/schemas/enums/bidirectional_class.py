@@ -64,7 +64,7 @@ class BidirectionalClass(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "L": cls.LEFT_TO_RIGHT,
             "R": cls.RIGHT_TO_LEFT,

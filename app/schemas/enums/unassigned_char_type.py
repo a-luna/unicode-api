@@ -10,7 +10,3 @@ class UnassignedCharacterType(IntEnum):
 
     def __str__(self):
         return self.name.replace("_", "-").lower()
-
-    @property
-    def display_name(self) -> str:
-        return str(self)

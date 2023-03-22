@@ -2,6 +2,8 @@ from enum import auto
 
 from fastapi_utils.enums import StrEnum
 
+from app.schemas.util import normalize_string_lm3
+
 
 class CharPropertyGroup(StrEnum):
     All = auto()
@@ -24,15 +26,36 @@ class CharPropertyGroup(StrEnum):
     Function_and_Graphic = auto()
     Emoji = auto()
 
-    def __str__(self):
-        return self.name.replace("_", " ").title().replace("And", "and")
-
-    @property
-    def display_name(self) -> str:
-        return str(self)
-
     @property
     def index_name(self) -> str:  # pragma: no cover
         if "_" in self.name:
-            return "".join([s[0] for s in self.name.split("_") if s != "AND"]).lower()
+            return "".join([s[0] for s in self.name.split("_") if s.upper() != "AND"]).lower()
         return self.name.lower()
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.name)
+
+    @property
+    def short_alias(self) -> str:
+        prop_aliases = {
+            "Bidirectionality": "bidi",
+            "Decomposition": "decomp",
+            "Quick_Check": "qc",
+            "Numeric": "num",
+            "Linebreak": "lb",
+            "East_Asian_Width": "eaw",
+            "Function_and_Graphic": "function",
+        }
+        return prop_aliases.get(self.name, self.normalized)
+
+    @property
+    def has_alias(self) -> bool:
+        return self.normalized != self.short_alias
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        prop_names = {e.normalized: e for e in cls}
+        prop_aliases = {e.short_alias: e for e in cls}
+        prop_names.update(prop_aliases)
+        return prop_names.get(normalize_string_lm3(name))

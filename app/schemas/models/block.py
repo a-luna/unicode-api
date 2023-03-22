@@ -26,6 +26,10 @@ class UnicodeBlockResponse(CamelModel):
 class UnicodeBlockResult(UnicodeBlockResponse):
     score: float | None
 
+    def __str__(self) -> str:
+        name = self.name.replace(" ", "_")
+        return f"{name} ({self.start}...{self.finish})"
+
 
 class UnicodeBlock(UnicodeBlockBase, table=True):
     __tablename__ = "block"  # type: ignore

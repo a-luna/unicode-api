@@ -30,7 +30,7 @@ class JoiningType(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "R": cls.RIGHT_JOINING,
             "L": cls.LEFT_JOINING,

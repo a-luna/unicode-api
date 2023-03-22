@@ -1,5 +1,7 @@
 from enum import auto, IntEnum
 
+from app.schemas.util import normalize_string_lm3
+
 
 class ScriptCode(IntEnum):
     ADLAM = auto()
@@ -177,6 +179,10 @@ class ScriptCode(IntEnum):
             .replace("Phags Pa", "Phags-pa")
             .replace("Sign Writing", "SignWriting")
         )
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -525,3 +531,8 @@ class ScriptCode(IntEnum):
             "Zanb": cls.ZANABAZAR_SQUARE,
         }
         return code_map.get(code, cls.UNKNOWN)
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        prop_names = {e.normalized: e for e in cls}
+        return prop_names.get(normalize_string_lm3(name))

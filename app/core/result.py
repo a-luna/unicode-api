@@ -21,7 +21,7 @@ class Result(Generic[T]):
 
     def __repr__(self) -> str:
         """Official string representation of a result."""
-        detail = f', error="{self.error}"' if self.failure else f", value={self.value}" if self.value else ""
+        detail = f", error={self.error!r}" if self.failure else f", value={self.value}" if self.value else ""
         return f"<Result success={self.success}{detail}>"
 
     @property

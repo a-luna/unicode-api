@@ -5,12 +5,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi_redis_cache import FastApiRedisCache
+from fastapi_utils.openapi import simplify_operation_ids
 from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
 from app.core.config import settings
 from app.data.cache import cached_data
-from app.docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
+from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 
 APP_FOLDER = Path(__file__).parent
 STATIC_FOLDER = APP_FOLDER.joinpath("static")
@@ -58,7 +59,7 @@ def init_unicode_obj():
     _ = cached_data.block_name_choices
     _ = cached_data.planes
     _ = cached_data.plane_number_map
-    _ = cached_data.plane_name_map
+    _ = cached_data.plane_abbreviation_map
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
@@ -98,3 +99,4 @@ def get_api_root():
 
 
 app.include_router(router, prefix=settings.API_VERSION)
+simplify_operation_ids(app)

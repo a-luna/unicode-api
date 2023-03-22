@@ -23,7 +23,7 @@ class BidirectionalBracketType(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "n": cls.NONE,
             "o": cls.OPEN,

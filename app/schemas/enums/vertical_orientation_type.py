@@ -32,7 +32,7 @@ class VerticalOrientationType(IntEnum):
         return code_map.get(self.name, "None")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "U": cls.UPRIGHT,
             "R": cls.ROTATED,

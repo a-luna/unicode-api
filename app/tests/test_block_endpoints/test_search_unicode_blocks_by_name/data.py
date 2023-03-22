@@ -119,3 +119,12 @@ SEARCH_TERM_CAP = {
     "totalResults": 0,
     "results": [],
 }
+
+SEARCH_TERM_BLAH = {
+    "url": "/v1/blocks/search",
+    "query": "blah",
+    "hasMore": False,
+    "currentPage": 0,
+    "totalResults": 0,
+    "results": [],
+}

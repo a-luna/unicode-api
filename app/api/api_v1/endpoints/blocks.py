@@ -1,9 +1,6 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
-from rapidfuzz import process
-from sqlalchemy.engine import Engine
-from sqlmodel import Session
 
 import app.db.engine as db
 from app.api.api_v1.dependencies import (
@@ -20,12 +17,7 @@ router = APIRouter()
 
 
 @router.get("", response_model=db.PaginatedList[db.UnicodeBlockResponse], response_model_exclude_unset=True)
-def list_all_unicode_blocks(
-    list_params: ListParametersDecimal = Depends(),
-    plane: UnicodePlaneResolver = Depends(),
-    db_ctx: tuple[Session, Engine] = Depends(db.get_session),
-):
-    session, _ = db_ctx
+def list_all_unicode_blocks(list_params: ListParametersDecimal = Depends(), plane: UnicodePlaneResolver = Depends()):
     (start, stop) = get_block_list_endpoints(list_params, plane)
     return {
         "url": f"{settings.API_VERSION}/blocks",
@@ -46,14 +38,20 @@ def search_unicode_blocks_by_name(
         "url": f"{settings.API_VERSION}/blocks/search",
         "query": search_params.name,
     }
-    results = search_blocks_by_name(search_params.name, search_params.min_score)
+    results = cached_data.search_blocks_by_name(search_params.name, search_params.min_score)
+    block_ids = [block_id for (block_id, _) in results]
     if results:
-        paginate_result = paginate_search_results(results, search_params.per_page, search_params.page)
+        paginate_result = paginate_search_results(block_ids, search_params.per_page, search_params.page)
         if paginate_result.failure:
             raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=paginate_result.error)
-        paginated = paginate_result.value
-        if paginated:
-            return params | paginated
+        paginated = paginate_result.value if paginate_result.value else {}
+        start = paginated.pop("start", 0)
+        end = paginated.pop("end", 0)
+        paginated["results"] = [
+            cached_data.get_unicode_block_by_id(block_id).as_search_result(score)
+            for (block_id, score) in results[start:end]
+        ]
+        return params | paginated
     return params | {
         "current_page": 0,
         "total_results": 0,
@@ -75,7 +73,7 @@ def get_block_list_endpoints(list_params: ListParametersDecimal, plane: UnicodeP
     start = plane.start_block_id
     if list_params.starting_after:
         start = list_params.starting_after + 1
-    elif list_params.ending_before:
+    if list_params.ending_before:
         start = list_params.ending_before - list_params.limit
     stop = min(plane.finish_block_id + 1, start + list_params.limit)
     if start < plane.start_block_id or start > plane.finish_block_id:
@@ -93,21 +91,3 @@ def get_block_list_endpoints(list_params: ListParametersDecimal, plane: UnicodeP
 def create_block_response(block_id: int) -> db.UnicodeBlockResponse:
     block = cached_data.get_unicode_block_by_id(block_id)
     return block.as_response()
-
-
-def search_blocks_by_name(query: str, score_cutoff: int = 80):
-    fuzzy_search_results = process.extract(
-        query.lower(),
-        cached_data.block_name_choices,
-        limit=cached_data.total_block_name_choices,
-    )
-    return [
-        create_block_search_result(result, score)
-        for (_, score, result) in fuzzy_search_results
-        if score >= float(score_cutoff)
-    ]
-
-
-def create_block_search_result(block_id: int, score: float) -> db.UnicodeBlockResult:
-    block = cached_data.get_unicode_block_by_id(block_id)
-    return block.as_search_result(score)

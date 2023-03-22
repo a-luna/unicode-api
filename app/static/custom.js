@@ -10,3 +10,57 @@ var svgUrls = Array.from(document.querySelectorAll("body > svg"))
   .join(",");
 
 document.querySelector("html").style.background = svgUrls;
+
+// Add click handlers to expand details element in API docs containing the link target
+// Without this, hash links within nested areas of API docs do not work
+PROP_GROUP_LINK_SELECTOR =
+  '[data-param-name="show_props"] a[href*="#"]:not([href*="loose"])';
+LOOSE_MATCHING_LINK_SELECTOR = 'a[href$="#loose-matching"]';
+SEARCH_LINK_SELECTOR = 'a[href$="#search"]';
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function addClickHandlersAfterDelay() {
+  await sleep(1000);
+  const apiEndpoints = document.querySelectorAll(".opblock");
+  apiEndpoints.forEach((el) =>
+    el.addEventListener("click", () => addClickHandlers(el), {
+      once: true,
+    })
+  );
+}
+
+async function addClickHandlers(parent) {
+  await sleep(500);
+  addPropGroupClickHandlers(parent);
+  addLinkClickHandlers(parent, LOOSE_MATCHING_LINK_SELECTOR);
+  addLinkClickHandlers(parent, SEARCH_LINK_SELECTOR);
+}
+
+const addPropGroupClickHandlers = (parent) =>
+  parent.querySelectorAll(PROP_GROUP_LINK_SELECTOR).forEach((a) => {
+    a.addEventListener("click", (e) => {
+      openDetailsElementById(e, "#unicode-characters");
+      openDetailsElementById(e, a.hash);
+    });
+  });
+
+const addLinkClickHandlers = (parent, selector) =>
+  parent
+    .querySelectorAll(selector)
+    .forEach((a) =>
+      a.addEventListener("click", (e) => openDetailsElementById(e, a.hash))
+    );
+
+function openDetailsElementById(event, id) {
+  const headingElement = document.querySelector(`${id}`);
+  if (headingElement) {
+    const detailsElement = headingElement.closest("details");
+    if (detailsElement) {
+      detailsElement.open = true;
+    }
+  }
+  event.stopPropagation();
+}
+
+window.addEventListener("load", addClickHandlersAfterDelay);

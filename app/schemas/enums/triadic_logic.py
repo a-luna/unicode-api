@@ -14,12 +14,8 @@ class TriadicLogic(IntEnum):
         }
         return name_map.get(self.name, "")
 
-    @property
-    def code(self) -> str:
-        return self.name
-
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "Y": cls.Y,
             "N": cls.N,

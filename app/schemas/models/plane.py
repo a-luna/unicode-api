@@ -28,6 +28,6 @@ class UnicodePlane(UnicodePlaneResponse, table=True):
 
     @classmethod
     def responsify(cls, plane) -> "UnicodePlaneResponse":
-        plane.start = f"U+{plane.start}"
-        plane.finish = f"U+{plane.finish}"
+        plane.start = f"U+{plane.start}" if not plane.start.startswith("U+") else plane.start
+        plane.finish = f"U+{plane.finish}" if not plane.finish.startswith("U+") else plane.finish
         return plane

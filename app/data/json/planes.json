@@ -67,7 +67,7 @@
     {
         "number": 15,
         "name": "Supplementary Private Use Area-A",
-        "abbreviation": "PUA",
+        "abbreviation": "SPUA-A",
         "start": "F0000",
         "start_dec": 983040,
         "finish": "FFFFF",
@@ -80,7 +80,7 @@
     {
         "number": 16,
         "name": "Supplementary Private Use Area-B",
-        "abbreviation": "PUB",
+        "abbreviation": "SPUA-B",
         "start": "100000",
         "start_dec": 1048576,
         "finish": "10FFFF",

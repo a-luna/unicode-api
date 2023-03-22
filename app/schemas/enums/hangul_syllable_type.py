@@ -29,7 +29,7 @@ class HangulSyllableType(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "NA": cls.NOT_APPLICABLE,
             "L": cls.LEADING_JAMO,

@@ -1,17 +1,15 @@
-from fastapi import APIRouter, Depends, Path
-from sqlalchemy.engine import Engine
-from sqlmodel import Session
+from fastapi import APIRouter, Path
 
 import app.db.engine as db
 from app.core.config import settings
+from app.data.cache import cached_data
 
 router = APIRouter()
 
 
 @router.get("", response_model=db.PaginatedList[db.UnicodePlaneResponse])
-def list_all_unicode_planes(db_ctx: tuple[Session, Engine] = Depends(db.get_session)):
-    session, _ = db_ctx
-    planes = [db.UnicodePlane.responsify(plane) for plane in session.query(db.UnicodePlane).all()]
+def list_all_unicode_planes():
+    planes = [db.UnicodePlane.responsify(plane) for plane in cached_data.planes]
     return {
         "url": f"{settings.API_VERSION}/planes",
         "total_results": len(planes),
@@ -25,25 +23,6 @@ def list_all_unicode_planes(db_ctx: tuple[Session, Engine] = Depends(db.get_sess
     response_model=db.UnicodePlaneResponse,
     response_model_exclude_unset=True,
 )
-def get_unicode_plane_details(
-    number: int = Path(ge=0, le=16), db_ctx: tuple[Session, Engine] = Depends(db.get_session)
-):
-    session, _ = db_ctx
-    plane = session.query(db.UnicodePlane).filter(db.UnicodePlane.number == number).first()
-    return db.UnicodePlane.responsify(plane) if plane else get_undefined_plane(number)
-
-
-def get_undefined_plane(plane_number: int) -> db.UnicodePlane:
-    return db.UnicodePlane(
-        name="Unassigned Plane",
-        number=plane_number,
-        abbreviation="N/A",
-        start=f"U+{plane_number:X}0000",
-        start_dec=int(f"{plane_number:X}0000", 16),
-        finish=f"U+{plane_number:X}FFFF",
-        finish_dec=int(f"{plane_number:X}FFFF", 16),
-        start_block_id=0,
-        finish_block_id=0,
-        total_allocated=0,
-        total_defined=0,
-    )
+def get_unicode_plane_details(number: int = Path(ge=0, le=16)):
+    plane = cached_data.get_unicode_plane_by_number(number)
+    return db.UnicodePlane.responsify(plane)

@@ -16,11 +16,6 @@ from app.schemas.models.pagination import PaginatedList, PaginatedSearchResults
 from app.schemas.models.plane import UnicodePlane, UnicodePlaneResponse
 
 
-def get_session():
-    with Session(engine) as session:
-        yield (session, engine)
-
-
 def _fk_pragma_on_connect(dbapi_con, _):
     dbapi_con.execute("pragma journal_mode=OFF")
     dbapi_con.execute("PRAGMA synchronous=OFF")
@@ -29,3 +24,8 @@ def _fk_pragma_on_connect(dbapi_con, _):
 
 engine = create_engine(DB_URL, echo=False, connect_args={"check_same_thread": False})
 event.listen(engine, "connect", _fk_pragma_on_connect)
+
+
+def get_session():
+    with Session(engine) as session:
+        yield (session, engine)

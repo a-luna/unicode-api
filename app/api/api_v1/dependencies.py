@@ -3,30 +3,36 @@ from http import HTTPStatus
 
 from fastapi import HTTPException, Path, Query
 
+import app.db.engine as db
 from app.core.config import settings
-from app.core.enums import UnicodeBlockName, UnicodePlaneName
 from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
+from app.docs.dependencies import (
+    BLOCK_NAME_VALUES_TABLE,
+    GENERAL_CATEGORY_VALUES_TABLE,
+    PROPERTY_GROUP_VALUES_TABLE,
+    SCRIPT_CODE_VALUES_TABLE,
+    UNICODE_AGE_VALUES_TABLE,
+)
+from app.schemas.enums import CharPropertyGroup, GeneralCategory, ScriptCode, UnicodeAge
+from app.schemas.enums.block_name import UnicodeBlockName
 
 CODEPOINT_REGEX = re.compile(r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))")
 MAX_CODEPOINT = 1114111
+MIN_SEARCH_RESULT_SCORE = 70
 
 LIMIT_DESCRIPTION = """
-<p><i><strong><span>this value is optional (default: <strong>limit=10</strong>)</span></strong></i></p>
+<ul class="param-notes">
+    <li>This value is optional (default: <code>limit=10</code>)</li>
+</ul>
 <p>A limit on the number of objects to be returned.</p>
 """
 
-MIN_DETAILS_DESCRIPTION = """
-<p><i><strong><span>this value is optional (default: <strong>min_details=true</strong>)</span></strong></i></p>
-<p>Flag that controls the level of detail for each character included in the response.</p>
-<p>The default behavior (<strong>minDetails=<i>true</i></strong>), will return <strong>only the name and codepoint value</strong> for each character. Specifying <strong>minDetails=<i>false</i></strong> will return the full set of properties specified in the <a href="#swagger-ui"><i>Properties of the UnicodeCharacter Object</i></a> section at the top of this page.</p>
-"""
-
 CODEPOINT_HEX_DESCRIPTION = """
-<p>The <strong>codepoint</strong> value must be expressed as a hexadecimal value within range <code>0000...10FFFF</code>, optionally prefixed by <strong>U+</strong> or <strong>0x</strong>.</p>
+<p>The <code>codepoint</code> property must be expressed as a hexadecimal value within range <code>0000...10FFFF</code>, optionally prefixed by <strong>U+</strong> or <strong>0x</strong>.</p>
 """
 
-BLOCK_ID_DESCRIPTION = "The <strong>id</strong> value is an integer value within range <strong>1...327</strong>"
+BLOCK_ID_DESCRIPTION = "The <code>id</code> property is an integer value within range <strong>1...327</strong>"
 
 CODEPOINT_EXAMPLES = {
     "Default (No Value)": {"summary": "No Value (This value is optional)", "value": ""},
@@ -55,13 +61,13 @@ UNICODE_CHAR_STRING_DESCRIPTION = f"""
             </div>
         </div>
     </summary>
-    <dl>
+    <dl class="param-examples">
         <dt><span>Ⱒ</span><sup>2</sup></dt>
         <dd><a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2" rel="noopener noreferrer" target="_blank">%E2%B0%A2</a></dd>
         <dt><span>👨‍🌾 </span><sup>3</sup></dt>
         <dd><a href="{settings.API_ROOT}/v1/characters/%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE" rel="noopener noreferrer" target="_blank">%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE</a></dd>
     </dl>
-    <div>
+    <div class="footnotes">
         <sup>1</sup>
         <p>These examples are implemented as links because Swagger UI doesn't handle URI-encoded string values correctly when used in the text-box below. Clicking either link will open a new tab, send a request, and display the response. You can also inspect the request/response data by opening the dev tools in the newly opened tab and refreshing the page.</p>
         <sup>2</sup>
@@ -86,20 +92,30 @@ BLOCK_NAME_DESCRIPTION = """
 </ol>
 """
 
-CHAR_SEARCH_BLOCK_NAME_DESCRIPTION = """
-<p><i><strong><span>this value is optional</span></strong></i></p>
+CHAR_SEARCH_BLOCK_NAME_DESCRIPTION = f"""
+<ul class="param-notes">
+    <li>This value is optional</li>
+    <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
+</ul>
 <p>if a valid block name is given, the response will only contain characters from that block. If this value  is not provided, the response will contain all characters in all blocks.</p>
+<p>A list of the official names for all Unicode blocks is given below, click to expand:</p>
+{BLOCK_NAME_VALUES_TABLE}
 """
 
 PLANE_NAME_DESCRIPTION = """
-<p><i><strong><span>this value is optional</span></strong></i></p>
+<ul class="param-notes">
+    <li>This value is optional</li>
+</ul>
 <p>The official name of a Unicode character plane (a plane is a continuous group of 65,536 (2<sup>16</sup>) codepoints). Only seven of the possible seventeen planes have an official name in the Unicode standard.</p>
-<p><strong>This value is optional</strong>, if a valid name is provided, the response will only contain blocks that exist within that plane. If this value is not provided, the response will contain all blocks in all planes.</p>
+<p>If a valid name is provided, the response will only contain blocks that exist within that plane. If this value is not provided, the response will contain all blocks in all planes.</p>
 """
 
 SEARCH_CHAR_NAME_DESCRIPTION = """
-<p>Search for any unicode character by name. Exact matches are unnecessary since the search algorithm will return character names similar to the search term and provide a <strong>score</strong> value for each result. </p>
-<p>You can restrict or expand your search based on the score value with the <strong>min_score</strong> parameter.</p>
+<ul class="param-notes">
+    <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
+</ul>
+<p>Search for any unicode character by name. Exact matches are unnecessary since the search algorithm will return character names similar to the search term and provide a <strong>score</strong> value for each result.</p>
+<p>For more information on this search behavior, see the <a href="#search">Search section</a> of the docs</p>
 """
 
 SEARCH_BLOCK_NAME_DESCRIPTION = """
@@ -108,63 +124,128 @@ SEARCH_BLOCK_NAME_DESCRIPTION = """
 """
 
 MIN_SCORE_DESCRIPTION = """
-<p><i><strong><span>this value is optional (default: <strong>min_score=80</strong>)</span></strong></i></p>
-<p>A score between 0 and 100 (with 100 being a perfect match) is calculated for each search result. If your search isn't returning anything, try lowering the value of <strong>min_score</strong>.</p>
+<ul class="param-notes">
+    <li>This value is optional (default: <code>min_score=80</code>)</li>
+</ul>
+<p>A score between 0 and 100 (with 100 being a perfect match) that is calculated for each search result.</p>
+<p>You can restrict or expand your search with this parameter. If your search isn't returning anything, try lowering the value of <strong>min_score</strong>.</p>
 """
 
 PER_PAGE_DESCRIPTION = """
-<p><i><strong><span>this value is optional (default: <strong>per_page=10</strong>)</span></strong></i></p>
+<ul class="param-notes">
+    <li>This value is optional (default: <code>per_page=10</code>)</li>
+</ul>
 <p>The number of search results to include in each response, must be an integer in the range <strong>1...100</strong>.</p>
 """
 
 PAGE_NUMBER_DESCRIPTION = """
-<p><i><strong><span>this value is optional (default: <strong>page=1</strong>)</span></strong></i></p>
-<p>Used to request a specific page of search results. <i><strong>Do not include this parameter with your first search request.</strong></i></p>
-<p>Each response includes a <strong>hasMore</strong> property. If your query generated more search results than the number specified in the <strong>per_page</strong> parameter, the <strong>hasMore</strong> property will be <code>True</code>. When the total number of search results is less than or equal to <strong>per_page</strong> <strong><i>OR</i></strong> the requested page includes the last search result, <strong>hasMore</strong> will be <code>False</code>.</p>
-<p>If <strong>hasMore</strong>=<code>True</code>, the response will contain a <strong>nextPage</strong> property. You can access the next set of search results by sending a subsequent request with <strong>page</strong> equal to <strong>nextPage</strong>.</p>
+<ul class="param-notes">
+    <li>This value is optional (default: <code>page=1</code>)</li>
+</ul>
+<p>Used to request a specific page of search results. Each response includes a <code>hasMore</code> property. If your query generated more search results than the number specified in the <code>per_page</code> parameter, the <code>hasMore</code> property will be <code>True</code>. When the total number of search results is less than or equal to <code>per_page</code> or the requested page includes the last search result, <code>hasMore</code> will be <code>False</code>.</p>
+<p>If <code>hasMore=True</code>, the response will contain a <code>nextPage</code> property. You can access the next set of search results by sending a subsequent request with <code>page</code> equal to <code>nextPage</code>.</p>
 """
+
+CHAR_NAME_FILTER_DESCRIPTION = """
+<ul class="param-notes">
+    <li>This value is optional</li>
+    <li class=\"alert\">This does not behave the same way that <strong><i>searching</i></strong> by <code>name</code> does for requests sent to the <code>/v1/characters/search</code> endpoint (i.e., fuzzy-searching is NOT performed)</li>
+</ul>
+
+<p>Filter Unicode characters by name. A character is considered a match if the official name of the character <strong>contains</strong> the value provided.</p>
+"""
+
+
+def get_description_and_values_table_for_property_group() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional (default: <code>show_props=Minimum</code>)</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>The full set of properties that are defined for each character in the Uhicode Standard is rather large, and sending every property in each response would be wasteful and inefficient. In order to make every property acessible while also prioritizing quick response times, you can request groups of properties to include using the <code>show_props</code> parameter.</p>"
+        + '<p>For more information on property groups, including definitions for every property in each group, see the <a href="#unicodecharacter-property-groups"><code>UnicodeCharacter</code> Property Groups</a> section of the docs.</p>'
+        + f"{PROPERTY_GROUP_VALUES_TABLE}"
+        + "<p>For each group of properties to include in the response, click the button below and enter the value from the <strong>Property Group</strong> <i><u>or</u></i> <strong>Alias</strong> column of the table above.</p>"
+    )
+
+
+def get_description_and_values_table_for_unicode_age() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + "</ul>"
+        + "<p>Filter Unicode characters by <code>age</code>. Sending multiple values will return all characters that match any of the selected Unicode versions (e.g., sending <code>age=2.0</code> and <code>age=5.0</code> will return all characters that were assigned to a codepoint in <strong>either</strong> version 2.0 or 5.0.<p>"
+        + "<p>You can view all version numbers of the Unicode Standard by expanding the section below:</p>"
+        + f"{UNICODE_AGE_VALUES_TABLE}"
+        + "<p>To add a filter setting for <code>age</code>, click the button below and enter a value from the list of Unicode version numbers.</p>"
+    )
+
+
+def get_filter_setting_description_general_category() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by <code>general_category</code>. Sending multiple values will return all characters that match any of the selected catagories (e.g., sending <code>category=P</code> and <code>category=S</code> will return <strong>both</strong> Punctuation and Symbol characters).<p>"
+        + "<p>You can view all possible general category codes by expanding the section below:</p>"
+        + f"{GENERAL_CATEGORY_VALUES_TABLE}"
+        + "<p>To add a filter setting for <code>general_category</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
+def get_filter_setting_description_script_code() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by <code>script</code>. Sending multiple values will return all characters that match any of the selected scripts (e.g., sending <code>script=Copt</code> and <code>script=Cyrl</code> will return <strong>both</strong> Greek and Coptic characters.<p>"
+        + "<p>You can view all possible script codes by expanding the section below:</p>"
+        + f"{SCRIPT_CODE_VALUES_TABLE}"
+    )
 
 
 def customize_ending_before_param_description(
-    data_type: str, key_field: str, example_value: str, field_type_description: str, hide_examples: bool
+    data_type: str, key_field: str, example_value: str, field_type_description: str
 ) -> str:
-    description = f"""
-<p><i><strong><span>this value is optional</span></strong></i></p>
-<p>The <strong>ending_before</strong> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <strong>{key_field}</strong> property.</i></u></p>
-<p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <strong>{key_field}=<code><i>{example_value}</i></code></strong>, you can retrieve the previous set of results by sending <strong>ending_before=<code><i>{example_value}</i></code></strong> in a subsequent request.</p>
+    return f"""
+<ul class="param-notes">
+    <li>This value is optional</li>
+    <li class=\"alert\">Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong>.</li>
+</ul>
+<p>The <code>ending_before</code> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <code>{key_field}</code> property.</i></u></p>
+<p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <code>{key_field}={example_value}</code>, you can retrieve the previous set of results by sending <code>ending_before={example_value}</code> in a subsequent request.</p>
 <p>{field_type_description}</p>
 """
-    if not hide_examples:  # pragma: no cover
-        description += "<p>Each of these different formats are shown below (these are also valid for the <strong>ending_before</strong> parameter):</p>"
-    return description
 
 
 def customize_starting_after_param_description(
-    data_type: str, key_field: str, example_value: str, field_type_description: str, hide_examples: bool
+    data_type: str, key_field: str, example_value: str, field_type_description: str
 ) -> str:
-    description = f"""
-<p><i><strong><span>this value is optional</span></strong></i></p>
-<p>The <strong>starting_after</strong> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <strong>{key_field}</strong> property.</i></u></p>
-<p>For example, if you request 10 items and the response contains <strong>hasMore=<i>true</i></strong>, there are more search results beyond the first 10. If the 10th search result has <strong>{key_field}=<code><i>{example_value}</i></code></strong>, you can retrieve the next set of results by sending <strong>starting_after=<code><i>{example_value}</i></code></strong> in a subsequent request.</p>
+    return f"""
+<ul class="param-notes">
+    <li>This value is optional</li>
+    <li class=\"alert\">Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong>.</li>
+</ul>
+<p>The <code>starting_after</code> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <code>{key_field}</code> property.</i></u></p>
+<p>For example, if you request 10 items and the response contains <code>hasMore=true</code>, there are more search results beyond the first 10. If the 10th search result has <code>{key_field}={example_value}</code>, you can retrieve the next set of results by sending <code>starting_after={example_value}</code> in a subsequent request.</p>
 <p>{field_type_description}</p>
 """
-    if not hide_examples:  # pragma: no cover
-        description += "<p>Each of these different formats are shown below (these are also valid for the <strong>ending_before</strong> parameter):</p>"
-    return description
 
 
 ENDING_BEFORE_CODEPOINT_DESCRIPTION = customize_ending_before_param_description(
-    "characters", "codepoint", "U+0431", CODEPOINT_HEX_DESCRIPTION, True
+    "characters", "codepoint", "U+0431", CODEPOINT_HEX_DESCRIPTION
 )
 STARTING_AFTER_CODEPOINT_DESCRIPTION = customize_starting_after_param_description(
-    "characters", "codepoint", "U+0409", CODEPOINT_HEX_DESCRIPTION, False
+    "characters", "codepoint", "U+0409", CODEPOINT_HEX_DESCRIPTION
 )
 
 ENDING_BEFORE_BLOCK_ID_DESCRIPTION = customize_ending_before_param_description(
-    "blocks", "id", "10", BLOCK_ID_DESCRIPTION, True
+    "blocks", "id", "10", BLOCK_ID_DESCRIPTION
 )
 STARTING_AFTER_BLOCK_ID_DESCRIPTION = customize_starting_after_param_description(
-    "blocks", "id", "140", BLOCK_ID_DESCRIPTION, True
+    "blocks", "id", "140", BLOCK_ID_DESCRIPTION
 )
 
 
@@ -185,22 +266,12 @@ def get_decimal_number_from_hex_codepoint(codepoint: str) -> int:
     return codepoint_dec
 
 
-def get_string_path_param(
-    string: str = Path(description=UNICODE_CHAR_STRING_DESCRIPTION, examples=UNICODE_CHAR_EXAMPLES)
-):
-    if not string:
-        raise HTTPException(
-            status_code=int(HTTPStatus.BAD_REQUEST),
-            detail="Invalid value, string must not be empty.",
-        )
-    return string
-
-
 class CharacterSearchParameters:
     def __init__(
         self,
         name: str = Query(description=SEARCH_CHAR_NAME_DESCRIPTION),
-        min_score: int | None = Query(default=None, ge=70, le=100, description=MIN_SCORE_DESCRIPTION),
+        min_score: int
+        | None = Query(default=None, ge=MIN_SEARCH_RESULT_SCORE, le=100, description=MIN_SCORE_DESCRIPTION),
         per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
         page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
     ):
@@ -234,7 +305,12 @@ class ListParameters:
             description=STARTING_AFTER_CODEPOINT_DESCRIPTION,
             examples=CODEPOINT_EXAMPLES,
         ),
-        ending_before: str | None = Query(default=None, description=ENDING_BEFORE_CODEPOINT_DESCRIPTION),
+        ending_before: str
+        | None = Query(
+            default=None,
+            description=ENDING_BEFORE_CODEPOINT_DESCRIPTION,
+            examples=CODEPOINT_EXAMPLES,
+        ),
     ):
         if ending_before and starting_after:
             raise HTTPException(
@@ -255,8 +331,20 @@ class ListParametersDecimal:
     def __init__(
         self,
         limit: int = Query(default=None, ge=1, le=100, description=LIMIT_DESCRIPTION),
-        starting_after: int | None = Query(default=None, description=STARTING_AFTER_BLOCK_ID_DESCRIPTION),
-        ending_before: int | None = Query(default=None, description=ENDING_BEFORE_BLOCK_ID_DESCRIPTION),
+        starting_after: int
+        | None = Query(
+            default=None,
+            ge=1,
+            le=cached_data.total_block_name_choices,
+            description=STARTING_AFTER_BLOCK_ID_DESCRIPTION,
+        ),
+        ending_before: int
+        | None = Query(
+            default=None,
+            ge=1,
+            le=cached_data.total_block_name_choices,
+            description=ENDING_BEFORE_BLOCK_ID_DESCRIPTION,
+        ),
     ):
         if ending_before and starting_after:
             raise HTTPException(
@@ -271,16 +359,50 @@ class ListParametersDecimal:
         self.starting_after: int | None = starting_after
 
 
+class FilterParameters:
+    def __init__(
+        self,
+        name: str | None = Query(default=None, description=CHAR_NAME_FILTER_DESCRIPTION),
+        category: list[str] | None = Query(default=None, description=get_filter_setting_description_general_category()),
+        age: list[str] | None = Query(default=None, description=get_description_and_values_table_for_unicode_age()),
+        script: list[str] | None = Query(default=None, description=get_filter_setting_description_script_code()),
+        show_props: list[str]
+        | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
+        per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
+        page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
+    ):
+        self.name = name
+        self.categories = parse_enum_values_from_parameter(GeneralCategory, "category", category) if category else None
+        self.age_list = parse_enum_values_from_parameter(UnicodeAge, "age", age) if age else None
+        self.scripts = parse_enum_values_from_parameter(ScriptCode, "script", script) if script else None
+        self.show_props = (
+            parse_enum_values_from_parameter(CharPropertyGroup, "show_props", show_props) if show_props else None
+        )
+        self.per_page = per_page or 10
+        self.page = page or 1
+
+
+def parse_enum_values_from_parameter(enum_class, param_name: str, values: list[str]):
+    results = {str_val: enum_class.match_loosely(str_val) for str_val in values}
+    invalid_results = [str_val for str_val, did_parse in results.items() if not did_parse]
+    if invalid_results:
+        needs_plural = len(invalid_results) > 1
+        raise HTTPException(
+            status_code=int(HTTPStatus.BAD_REQUEST),
+            detail=(
+                f'{len(invalid_results)} value{"s" if needs_plural else ""} provided for the {param_name!r} '
+                f'parameter {"are" if needs_plural else "is"} invalid: {invalid_results}'
+            ),
+        )
+    return list(results.values())
+
+
 class UnicodeBlockQueryParamResolver:
     def __init__(
         self,
-        block: UnicodeBlockName | None = Query(default=None, description=CHAR_SEARCH_BLOCK_NAME_DESCRIPTION),
+        block: str | None = Query(default=None, description=CHAR_SEARCH_BLOCK_NAME_DESCRIPTION),
     ):
-        self.block = (
-            cached_data.all_characters_block
-            if not block or block == UnicodeBlockName.NONE
-            else cached_data.get_unicode_block_by_id(block.block_id)
-        )
+        self.block = loose_match_string_with_unicode_block_name(block) if block else cached_data.all_characters_block
         self.name = self.block.name
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec
@@ -289,25 +411,43 @@ class UnicodeBlockQueryParamResolver:
 class UnicodeBlockPathParamResolver:
     def __init__(
         self,
-        name: UnicodeBlockName | None = Path(default=None, description=BLOCK_NAME_DESCRIPTION),
+        name: str = Path(default=..., description=BLOCK_NAME_DESCRIPTION),
     ):
-        self.block = (
-            cached_data.all_characters_block
-            if not name or name == UnicodeBlockName.NONE
-            else cached_data.get_unicode_block_by_id(name.block_id)
-        )
+        self.block = loose_match_string_with_unicode_block_name(name)
         self.name = self.block.name
         self.start = self.block.start_dec
         self.finish = self.block.finish_dec
 
 
+def loose_match_string_with_unicode_block_name(name: str) -> db.UnicodeBlock:
+    block_name = UnicodeBlockName.match_loosely(name)
+    if not block_name:
+        detail = f"{name!r} does not match any valid Unicode block name."
+        fuzzy_matches = [
+            cached_data.get_unicode_block_by_id(block_id).as_search_result(score)
+            for (block_id, score) in cached_data.search_blocks_by_name(name, score_cutoff=72)
+        ]
+        if fuzzy_matches:
+            detail += (
+                " The following block names are similar to the name you provided: "
+                f'{", ".join([str(b) for b in fuzzy_matches])}'
+            )
+        raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=detail)
+    return cached_data.get_unicode_block_by_id(block_name.block_id)
+
+
 class UnicodePlaneResolver:
     def __init__(
         self,
-        plane: UnicodePlaneName | None = Query(default=None, description=PLANE_NAME_DESCRIPTION),
+        plane: str | None = Query(default=None, description=PLANE_NAME_DESCRIPTION),
     ):
-        self.plane = (
-            cached_data.get_unicode_plane_by_number(plane.number) if plane else cached_data.all_characters_plane
-        )
+        self.plane = cached_data.get_unicode_plane_by_abbreviation(plane) if plane else cached_data.all_characters_plane
+        if self.plane.name == "None":
+            raise HTTPException(
+                status_code=int(HTTPStatus.BAD_REQUEST),
+                detail=(
+                    f"{plane} does not match any valid Unicode plane abbreviation: BMP, SMP, SIP, TIP, SSP, SPUA-A, SPUA-B. "
+                ),
+            )
         self.start_block_id = self.plane.start_block_id
         self.finish_block_id = self.plane.finish_block_id

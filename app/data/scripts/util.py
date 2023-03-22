@@ -79,24 +79,24 @@ def get_file_details(url: str, dest_folder: Path) -> tuple[Path, int]:
     return (dest_file_path, remote_file_size)
 
 
-def initiate_download(url: str, local_file_path: Path) -> Result[Path]:
-    print(f'"{local_file_path.name}" does not exist. Downloading...')
-    return download_file_in_chunks(url, local_file_path)
+def initiate_download(url: str, dest_file_path: Path) -> Result[Path]:
+    print(f"{dest_file_path.name!r} does not exist. Downloading...")
+    return download_file_in_chunks(url, dest_file_path)
 
 
 def resume_download(url: str, dest_file_path: Path, remote_file_size: int) -> Result[Path]:
     local_file_size = dest_file_path.stat().st_size
     if local_file_size == remote_file_size:
-        print(f'"{dest_file_path.name}" is complete. Skipping...')
+        print(f"{dest_file_path.name!r} is complete. Skipping...")
         return Result.Ok(dest_file_path)
-    print(f'"{dest_file_path.name}" is incomplete. Resuming...')
+    print(f"{dest_file_path.name!r} is incomplete. Resuming...")
     return download_file_in_chunks(url, dest_file_path, local_file_size, fopen_mode="ab")
 
 
 def download_file_in_chunks(
     url: str, dest_file_path: Path, local_file_size: int | None = None, fopen_mode: str = "wb"
 ) -> Result[Path]:
-    resume_header = {"Range": f"bytes={local_file_size}-"}
+    resume_header = {"Range": f"bytes={local_file_size}-"} if local_file_size else None
     r = requests.get(url, stream=True, headers=resume_header)
     with open(dest_file_path, fopen_mode) as f:
         for chunk in r.iter_content(32 * CHUNK_SIZE):
@@ -104,13 +104,13 @@ def download_file_in_chunks(
     return Result.Ok(dest_file_path)
 
 
-def verify_download(dest_file_path: Path, remote_file_size: int) -> Result[Path]:
+def verify_download(dest_file_path: Path, remote_file_size: int) -> Result:
     local_file_size = dest_file_path.stat().st_size
     if local_file_size == remote_file_size:
-        return Result.Ok(dest_file_path)
+        return Result.Ok()
     more_or_fewer = "more" if local_file_size > remote_file_size else "fewer"
     error = (
-        f'Recieved {more_or_fewer} bytes than expected for "{dest_file_path.name}"!\n'
+        f"Recieved {more_or_fewer} bytes than expected for {dest_file_path.name!r}!\n"
         f"Expected File Size: {remote_file_size:,} bytes\n"
         f"Received File Size: {local_file_size:,} bytes"
     )

@@ -1,0 +1,8 @@
+# flake8: noqa
+from app.docs.dependencies.filter_tables import (
+    BLOCK_NAME_VALUES_TABLE,
+    GENERAL_CATEGORY_VALUES_TABLE,
+    PROPERTY_GROUP_VALUES_TABLE,
+    SCRIPT_CODE_VALUES_TABLE,
+    UNICODE_AGE_VALUES_TABLE,
+)

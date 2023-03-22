@@ -201,4 +201,4 @@ class UnicodeCharacterResult(CamelModel):
     name: str
     codepoint: str
     uri_encoded: str
-    score: float
+    score: float | None

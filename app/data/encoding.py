@@ -39,11 +39,13 @@ def get_uri_encoded_value(uni_char: str) -> str:
 
 def get_utf16_hex_bytes(uni_char: str) -> list[str]:
     bytes_8bit = [f"{x:02X}" for x in uni_char.encode("utf_16_be")]
-    if len(bytes_8bit) == 2:
-        return [f"{bytes_8bit[0]}{bytes_8bit[1]}"]
-    if len(bytes_8bit) == 4:
-        return [f"{bytes_8bit[0]}{bytes_8bit[1]}", f"{bytes_8bit[2]}{bytes_8bit[3]}"]
-    return []
+    return (
+        [f"{bytes_8bit[0]}{bytes_8bit[1]}"]
+        if len(bytes_8bit) == 2
+        else [f"{bytes_8bit[0]}{bytes_8bit[1]}", f"{bytes_8bit[2]}{bytes_8bit[3]}"]
+        if len(bytes_8bit) == 4
+        else []
+    )
 
 
 def get_utf16_dec_bytes(uni_char: str) -> list[int]:
@@ -52,11 +54,13 @@ def get_utf16_dec_bytes(uni_char: str) -> list[int]:
 
 def get_utf16_value(uni_char: str) -> str:
     hex_bytes = [f"{x:02X}" for x in uni_char.encode("utf_16_be")]
-    if len(hex_bytes) == 2:
-        return f"0x{hex_bytes[0]}{hex_bytes[1]}"
-    if len(hex_bytes) == 4:
-        return f"0x{hex_bytes[0]}{hex_bytes[1]} 0x{hex_bytes[2]}{hex_bytes[3]}"
-    return ""
+    return (
+        f"0x{hex_bytes[0]}{hex_bytes[1]}"
+        if len(hex_bytes) == 2
+        else f"0x{hex_bytes[0]}{hex_bytes[1]} 0x{hex_bytes[2]}{hex_bytes[3]}"
+        if len(hex_bytes) == 4
+        else ""
+    )
 
 
 def get_utf32_hex_bytes(uni_char: str) -> list[str]:

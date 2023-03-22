@@ -1,6 +1,6 @@
 import operator
 from functools import reduce
-from typing import Any, Type
+from typing import Any
 
 from sqlalchemy import column, select
 from sqlalchemy.engine import Engine
@@ -11,48 +11,39 @@ from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.schemas.enums import CharPropertyGroup
 
 
-def get_character_properties(engine: Engine, codepoint: int, show_props: list[CharPropertyGroup] | None = None):
-    show_props = check_prop_group_selections(show_props)
-    char_prop_dicts = [get_character_prop_group(engine, codepoint, group) for group in show_props]
+def get_character_properties(
+    engine: Engine, codepoint: int, show_props: list[CharPropertyGroup] | None
+) -> dict[str, Any]:
+    prop_groups = get_prop_groups(show_props)
+    char_prop_dicts = [get_character_prop_group(engine, codepoint, group) for group in prop_groups]
     return reduce(operator.ior, char_prop_dicts, {})
 
 
-def check_prop_group_selections(prop_groups: list[CharPropertyGroup] | None = None) -> list[CharPropertyGroup]:
-    if not prop_groups:
-        prop_groups = [CharPropertyGroup.Minimum]
-    if CharPropertyGroup.Minimum not in prop_groups:
-        prop_groups = [CharPropertyGroup.Minimum] + prop_groups
-    if prop_groups and CharPropertyGroup.All in prop_groups:
-        prop_groups = [group for group in CharPropertyGroup if group != CharPropertyGroup.All]
-    return prop_groups
+def get_prop_groups(show_props: list[CharPropertyGroup] | None) -> list[CharPropertyGroup]:
+    if show_props:
+        if CharPropertyGroup.All in show_props:
+            return [group for group in CharPropertyGroup if group != CharPropertyGroup.All]
+        if CharPropertyGroup.Minimum not in show_props:
+            return [CharPropertyGroup.Minimum] + show_props
+    return [CharPropertyGroup.Minimum]
 
 
-def get_character_prop_group(
-    engine: Engine,
-    codepoint: int,
-    prop_group: CharPropertyGroup,
-):
+def get_character_prop_group(engine: Engine, codepoint: int, prop_group: CharPropertyGroup) -> dict[str, Any]:
     char_props = {"codepoint_dec": codepoint}
-    with engine.connect() as con:
-        col_names = [column(prop["name_in"]) for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
-        char_table = get_table_name_for_codepoint(codepoint)
-        if col_names:
-            query = select(col_names).select_from(char_table).where(column("codepoint_dec") == codepoint)
+    prop_columns = [column(prop["name_in"]) for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
+    if prop_columns:
+        char_table = (
+            db.UnicodeCharacter if cached_data.character_is_uniquely_named(codepoint) else db.UnicodeCharacterNoName
+        )
+        query = select(prop_columns).select_from(char_table).where(column("codepoint_dec") == codepoint)
+        with engine.connect() as con:
             for row in con.execute(query):
                 char_props.update(dict(row._mapping))
-    return update_character_properties(char_props, prop_group)
+    return get_remaining_prop_values(char_props, prop_group)
 
 
-def get_table_name_for_codepoint(codepoint: int) -> Type[db.UnicodeCharacterNoName] | Type[db.UnicodeCharacter]:
-    return db.UnicodeCharacter if cached_data.character_is_uniquely_named(codepoint) else db.UnicodeCharacterNoName
-
-
-def update_character_properties(char_props: dict[str, Any | bool | int | str | None], prop_group: CharPropertyGroup):
-    updated_dict = {}
-    all_prop_names = [prop_map["name_in"] for prop_map in CHARACTER_PROPERTY_GROUPS[prop_group]]
-    for prop_name in all_prop_names:
-        match = [map for map in CHARACTER_PROPERTY_GROUPS[prop_group] if map["name_in"] == prop_name]
-        if not match:
-            continue
-        updated_dict[match[0]["name_out"]] = match[0]["response_value"](char_props)
-    return updated_dict
+def get_remaining_prop_values(char_props: dict[str, Any], prop_group: CharPropertyGroup) -> dict[str, Any]:
+    return {
+        prop_map["name_out"]: prop_map["response_value"](char_props)
+        for prop_map in CHARACTER_PROPERTY_GROUPS[prop_group]
+    }

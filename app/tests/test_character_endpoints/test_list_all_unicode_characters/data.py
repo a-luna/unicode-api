@@ -12,55 +12,55 @@ ALL_CHARS_START_AFTER_172E_LIMIT_25 = {
         {"character": "᜶", "name": "PHILIPPINE DOUBLE PUNCTUATION", "codepoint": "U+1736", "uriEncoded": "%E1%9C%B6"},
         {
             "character": "᜷",
-            "name": "<reserved-1737> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-1737>",
             "codepoint": "U+1737",
             "uriEncoded": "%E1%9C%B7",
         },
         {
             "character": "᜸",
-            "name": "<reserved-1738> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-1738>",
             "codepoint": "U+1738",
             "uriEncoded": "%E1%9C%B8",
         },
         {
             "character": "᜹",
-            "name": "<reserved-1739> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-1739>",
             "codepoint": "U+1739",
             "uriEncoded": "%E1%9C%B9",
         },
         {
             "character": "᜺",
-            "name": "<reserved-173A> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-173A>",
             "codepoint": "U+173A",
             "uriEncoded": "%E1%9C%BA",
         },
         {
             "character": "᜻",
-            "name": "<reserved-173B> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-173B>",
             "codepoint": "U+173B",
             "uriEncoded": "%E1%9C%BB",
         },
         {
             "character": "᜼",
-            "name": "<reserved-173C> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-173C>",
             "codepoint": "U+173C",
             "uriEncoded": "%E1%9C%BC",
         },
         {
             "character": "᜽",
-            "name": "<reserved-173D> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-173D>",
             "codepoint": "U+173D",
             "uriEncoded": "%E1%9C%BD",
         },
         {
             "character": "᜾",
-            "name": "<reserved-173E> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-173E>",
             "codepoint": "U+173E",
             "uriEncoded": "%E1%9C%BE",
         },
         {
             "character": "᜿",
-            "name": "<reserved-173F> (Block: Hanunoo, Start: U+1720, End: U+173F)",
+            "name": "<reserved-173F>",
             "codepoint": "U+173F",
             "uriEncoded": "%E1%9C%BF",
         },
@@ -101,43 +101,43 @@ BLOCK_COUNTING_ROD_NUMERALS_END_BEFORE_1D380 = {
         {"character": "𝍸", "name": "TALLY MARK FIVE", "codepoint": "U+1D378", "uriEncoded": "%F0%9D%8D%B8"},
         {
             "character": "𝍹",
-            "name": "<reserved-1D379> (Block: Counting Rod Numerals, Start: U+1D360, End: U+1D37F)",
+            "name": "<reserved-1D379>",
             "codepoint": "U+1D379",
             "uriEncoded": "%F0%9D%8D%B9",
         },
         {
             "character": "𝍺",
-            "name": "<reserved-1D37A> (Block: Counting Rod Numerals, Start: U+1D360, End: U+1D37F)",
+            "name": "<reserved-1D37A>",
             "codepoint": "U+1D37A",
             "uriEncoded": "%F0%9D%8D%BA",
         },
         {
             "character": "𝍻",
-            "name": "<reserved-1D37B> (Block: Counting Rod Numerals, Start: U+1D360, End: U+1D37F)",
+            "name": "<reserved-1D37B>",
             "codepoint": "U+1D37B",
             "uriEncoded": "%F0%9D%8D%BB",
         },
         {
             "character": "𝍼",
-            "name": "<reserved-1D37C> (Block: Counting Rod Numerals, Start: U+1D360, End: U+1D37F)",
+            "name": "<reserved-1D37C>",
             "codepoint": "U+1D37C",
             "uriEncoded": "%F0%9D%8D%BC",
         },
         {
             "character": "𝍽",
-            "name": "<reserved-1D37D> (Block: Counting Rod Numerals, Start: U+1D360, End: U+1D37F)",
+            "name": "<reserved-1D37D>",
             "codepoint": "U+1D37D",
             "uriEncoded": "%F0%9D%8D%BD",
         },
         {
             "character": "𝍾",
-            "name": "<reserved-1D37E> (Block: Counting Rod Numerals, Start: U+1D360, End: U+1D37F)",
+            "name": "<reserved-1D37E>",
             "codepoint": "U+1D37E",
             "uriEncoded": "%F0%9D%8D%BE",
         },
         {
             "character": "𝍿",
-            "name": "<reserved-1D37F> (Block: Counting Rod Numerals, Start: U+1D360, End: U+1D37F)",
+            "name": "<reserved-1D37F>",
             "codepoint": "U+1D37F",
             "uriEncoded": "%F0%9D%8D%BF",
         },
@@ -147,3 +147,21 @@ BLOCK_COUNTING_ROD_NUMERALS_END_BEFORE_1D380 = {
 BLOCK_THAI_START_AFTER_INVALID = {
     "detail": "The starting codepoint value U+16F01 is outside the range of characters U+0E00...U+0E7F (Thai)"
 }
+
+BOTH_START_AFTER_END_BEFORE_INVALID = {
+    "detail": "Request contained values for BOTH 'ending_before' and 'starting_after', you must specify ONLY ONE of these two values."
+}
+
+INVALID_CODEPOINT_STRING_1 = {
+    "detail": "'Code point must be a hexadecimal value within range `0x00 - 0x10FFFF`, optionally prefixed by 'U+' or '0x'. For example, '72', 'U+0072, '0x72' and '0x0072' are valid ways to express the same code point. It is important to note that 'U+72' IS NOT valid because codepoints prefixed with 'U+' MUST be left-padded with zeroes to a minimum length of four digits."
+}
+
+INVALID_CODEPOINT_STRING_2 = {
+    "detail": "Codepoint U+110000 is not within the range of unicode characters (U+0000 to U+10FFFF)."
+}
+
+INVALID_BLOCK_NAME = {
+    "detail": "'ancient numbers' does not match any valid Unicode block name. The following block names are similar to the name you provided: Ancient_Greek_Numbers (U+10140...U+1018F), Sinhala_Archaic_Numbers (U+111E0...U+111FF), Cuneiform_Numbers_and_Punctuation (U+12400...U+1247F), Ancient_Greek_Musical_Notation (U+1D200...U+1D24F), Aegean_Numbers (U+10100...U+1013F), Ancient_Symbols (U+10190...U+101CF)"
+}
+
+INVALID_BLOCK_NAME_NO_FUZZY_MATCHES = {"detail": "'blah' does not match any valid Unicode block name."}

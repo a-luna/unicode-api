@@ -51,7 +51,7 @@ ALL_PLANES = {
         {
             "number": 15,
             "name": "Supplementary Private Use Area-A",
-            "abbreviation": "PUA",
+            "abbreviation": "SPUA-A",
             "start": "U+F0000",
             "finish": "U+FFFFF",
             "totalAllocated": 65536,
@@ -60,7 +60,7 @@ ALL_PLANES = {
         {
             "number": 16,
             "name": "Supplementary Private Use Area-B",
-            "abbreviation": "PUB",
+            "abbreviation": "SPUA-B",
             "start": "U+100000",
             "finish": "U+10FFFF",
             "totalAllocated": 65536,

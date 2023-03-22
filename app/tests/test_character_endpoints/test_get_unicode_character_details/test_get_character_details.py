@@ -5,7 +5,11 @@ from humps import camelize
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.main import app
 from app.schemas.enums.property_group import CharPropertyGroup
-from app.tests.test_character_endpoints.test_get_unicode_character_details.data import ALL_CHARACTER_PROPERTIES
+from app.tests.test_character_endpoints.test_get_unicode_character_details.data import (
+    ALL_CHARACTER_PROPERTIES,
+    ALL_PROP_GROUP_NAMES,
+    INVALID_PROP_GROUP_NAMES,
+)
 
 client = TestClient(app)
 
@@ -38,11 +42,14 @@ def test_get_character_details_default(char):
 
 
 @pytest.mark.parametrize("char", ALL_CHARACTER_PROPERTIES.keys())
-@pytest.mark.parametrize(
-    "prop_group",
-    [prop_group for prop_group in CharPropertyGroup],
-)
+@pytest.mark.parametrize("prop_group", ALL_PROP_GROUP_NAMES)
 def test_get_character_details_show_props(char, prop_group):
-    response = client.get(f"/v1/characters/{char}?show_props={prop_group.name}")
+    response = client.get(f"/v1/characters/{char}?show_props={prop_group}")
     assert response.status_code == 200
-    assert response.json() == [get_character_properties(char, prop_group)]
+    assert response.json() == [get_character_properties(char, CharPropertyGroup.match_loosely(prop_group))]
+
+
+def test_invalid_prop_group_name():
+    response = client.get("/v1/characters/%F0%9B%B1%A0?show_props=foo&show_props=bar&show_props=baz")
+    assert response.status_code == 400
+    assert response.json() == INVALID_PROP_GROUP_NAMES

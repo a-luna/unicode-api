@@ -78,7 +78,7 @@ def parse_unicode_character_data_from_xml(
     all_chars = [
         parse_character_details(char, parsed_blocks, parsed_planes, spinner, i, len(char_nodes))
         for (i, char) in enumerate(char_nodes, start=1)
-        if "cp" in char.attributes
+        if "cp" in char.attributes  # type: ignore
     ]
     finish_task(spinner, True, "Successfully parsed Unicode character data from XML database file!")
     return all_chars

@@ -4,6 +4,7 @@ from enum import auto
 from fastapi_utils.enums import StrEnum
 
 from app.data.cache import cached_data
+from app.schemas.util import normalize_string_lm3
 
 
 class UnicodeBlockName(StrEnum):
@@ -394,8 +395,11 @@ class UnicodeBlockName(StrEnum):
         block = cached_data.get_unicode_block_by_name(str(self))
         return block.id if block.id else 0
 
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(str(self))
+
     @classmethod
-    def from_block_id(cls, block_id):
-        block = cached_data.get_unicode_block_by_id(block_id)
-        block_name = block.name.upper().replace("-", "_").replace(" ", "_")
-        return cls(block_name)
+    def match_loosely(cls, name: str):
+        norm_names = {e.normalized: e for e in cls}
+        return norm_names.get(normalize_string_lm3(name))

@@ -1,5 +1,7 @@
 from enum import auto, IntEnum
 
+from app.schemas.util import normalize_string_lm3
+
 
 class GeneralCategory(IntEnum):
     NONE = auto()
@@ -44,6 +46,10 @@ class GeneralCategory(IntEnum):
 
     def __str__(self):
         return self.name.replace("_", " ").title()
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -94,7 +100,7 @@ class GeneralCategory(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):
+    def from_code(cls, code):  # pragma: no cover
         code_map = {
             "Lu": cls.UPPERCASE_LETTER,
             "Ll": cls.LOWERCASE_LETTER,
@@ -136,3 +142,8 @@ class GeneralCategory(IntEnum):
             "C": cls.OTHER,
         }
         return code_map.get(code, cls.NONE)
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        prop_names = {e.normalized: e for e in cls if e != e.NONE}
+        return prop_names.get(normalize_string_lm3(name))

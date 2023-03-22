@@ -1,7 +1,35 @@
 import re
 
 from app.core.config import ROOT_FOLDER
-from app.docs.content import *
+from app.docs.api_docs.content.block import BLOCK_ENDPOINTS, UNICODE_BLOCK_OBJECT_INTRO, UNICODE_BLOCK_OBJECT_PROPERTIES
+from app.docs.api_docs.content.character import (
+    CHARACTER_ENDPOINTS,
+    PROP_GROUP_BASIC,
+    PROP_GROUP_BIDIRECTIONALITY,
+    PROP_GROUP_CASE,
+    PROP_GROUP_DECOMPOSITION,
+    PROP_GROUP_EAW,
+    PROP_GROUP_EMOJI,
+    PROP_GROUP_F_AND_G,
+    PROP_GROUP_HANGUL,
+    PROP_GROUP_INDIC,
+    PROP_GROUP_JOINING,
+    PROP_GROUP_LINEBREAK,
+    PROP_GROUP_MINIMUM,
+    PROP_GROUP_NUMERIC,
+    PROP_GROUP_QUICK_CHECK,
+    PROP_GROUP_SCRIPT,
+    PROP_GROUP_UTF8,
+    PROP_GROUP_UTF16,
+    PROP_GROUP_UTF32,
+    UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1,
+    UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2,
+    UNICODE_CHARACTER_PROP_GROUPS_INTRO,
+    UNICODE_CHATACTER_OBJECT_INTRO,
+)
+from app.docs.api_docs.content.intro import INTRODUCTION, LOOSE_MATCHING, PAGINATION, PROJECT_LINKS_README, SEARCH
+from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
+from app.docs.util import slugify
 
 HtmlHeading = dict[str, int | str]
 HeadingMap = dict[int, list[HtmlHeading]]
@@ -22,15 +50,6 @@ def create_details_element_readme(title: str, content: str, open: bool | None = 
 
 def create_readme_section(heading_level: int, title: str, content: str):
     return f'<h{heading_level} id="{slugify(title)}">{title}</h{heading_level}>' + content
-
-
-def slugify(text: str) -> str:
-    text = text.lower().strip()
-    text = re.compile(r"\s+").sub("-", text)
-    text = re.compile(r"([^A-Za-z0-9-])+").sub("-", text)
-    text = re.compile(r"--+").sub("-", text)
-    text = re.compile(r"(^-|-$)").sub("", text)
-    return text
 
 
 UNICODE_CHARACTER_PROP_GROUPS_README = (
@@ -76,7 +95,7 @@ UNICODE_CHARACTER_PROP_GROUPS_README = (
 
 UNICODE_CHARACTERS_DOCS = f"""
     <div>
-        {create_readme_section(4, "Endpoints", CHARACTER_ENDPOINTS)}\t\t<h4 id="the-unicodecharacter-object">The <code>UnicodeCharacter</code> Object</h4>
+{create_details_element_readme('<h4 id="character-api-endpoints">API Endpoints</h4>', CHARACTER_ENDPOINTS, True)}\t\t<h4 id="the-unicodecharacter-object">The <code>UnicodeCharacter</code> Object</h4>
         {UNICODE_CHATACTER_OBJECT_INTRO}
         <h4 id="unicodecharacter-property-groups"><code>UnicodeCharacter</code> Property Groups</h4>
         {UNICODE_CHARACTER_PROP_GROUPS_INTRO}
@@ -85,14 +104,14 @@ UNICODE_CHARACTERS_DOCS = f"""
 
 UNICODE_BLOCKS_DOCS = f"""
     <div>
-        {create_readme_section(4, "Endpoints", BLOCK_ENDPOINTS)}\t\t<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
+        {create_details_element_readme('<h4 id="block-api-endpoints">API Endpoints</h4>', BLOCK_ENDPOINTS, True)}\t\t<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
         {UNICODE_BLOCK_OBJECT_INTRO}
 {create_details_element_readme("<strong><code>UnicodeBlock</code> Properties</strong>", UNICODE_BLOCK_OBJECT_PROPERTIES)}\t</div>
 """
 
 UNICODE_PLANES_DOCS = f"""
     <div>
-        {create_readme_section(4, "Endpoints", PLANE_ENDPOINTS)}\t\t<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
+        {create_details_element_readme('<h4 id="plane-api-endpoints">API Endpoints</h4>', PLANE_ENDPOINTS, True)}\t\t<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
         {UNICODE_PLANE_OBJECT_INTRO}
 {create_details_element_readme("<strong><code>UnicodePlane</code> Properties</strong>", UNICODE_PLANE_OBJECT_PROPERTIES)}\t</div>
 """
@@ -105,8 +124,8 @@ def update_readme():
 
 def create_toc_for_readme():
     html = get_api_docs_for_readme()
-    toc = create_toc_section(2, 0, len(html), create_html_heading_map())
-    html = f'<ul class="toc">\n'
+    toc = create_toc_section(2, 0, len(html), create_html_heading_map(html))
+    html = '<ul class="toc">\n'
     for section in toc:
         html += create_toc_section_html(section, 0)
     html += "</ul>\n"
@@ -115,11 +134,11 @@ def create_toc_for_readme():
 
 def get_api_docs_for_readme():
     return (
-        '<h2 id="introduction">Introduction</h2>\n'
-        + INTRODUCTION
+        create_readme_section(2, "Introduction", INTRODUCTION)
         + create_readme_section(2, "Project Resources/Contact Info", PROJECT_LINKS_README)
         + create_readme_section(2, "Pagination", PAGINATION)
         + create_readme_section(2, "Search", SEARCH)
+        + create_readme_section(2, "Loose Matching", LOOSE_MATCHING)
         + '<h2 id="core-resources">Core Resources</h2>\n'
         + create_readme_section(3, "Unicode Characters", UNICODE_CHARACTERS_DOCS)
         + create_readme_section(3, "Unicode Blocks", UNICODE_BLOCKS_DOCS)
@@ -127,10 +146,9 @@ def get_api_docs_for_readme():
     )
 
 
-def create_html_heading_map() -> HeadingMap:
+def create_html_heading_map(html) -> HeadingMap:
     heading_elements = []
-    readme_html = get_api_docs_for_readme()
-    for match in HEADING_ELEMENT_REGEX.finditer(readme_html):
+    for match in HEADING_ELEMENT_REGEX.finditer(html):
         match_dict = match.groupdict()
         heading_elements.append(
             {
@@ -169,5 +187,5 @@ def create_toc_section_html(section, indent_count):
         for sub_toc in section["children"]:
             html += create_toc_section_html(sub_toc, indent_count + 2)
         html += ("\t" * (indent_count + 2)) + "</ul>\n"
-    html += ("\t" * (indent_count + 1)) + f"</li>\n"
+    html += ("\t" * (indent_count + 1)) + "</li>\n"
     return html
