@@ -266,35 +266,35 @@ body > svg {
   padding: 0.25rem 1rem 0.25rem 0;
 }
 
-.swagger-ui summary > div > span > strong > h3,
-.swagger-ui summary > div > span > strong > h4 {
+.swagger-ui .info summary > div > span > strong > h3,
+.swagger-ui .info summary > div > span > strong > h4 {
   font-size: 1rem;;
 }
 
-.swagger-ui summary div > span > strong > h6 {
+.swagger-ui .info summary div > span > strong > h6 {
   font-size: 0.85rem;
 }
 
-.swagger-ui summary > div > span > strong > h3,
-.swagger-ui summary > div > span > strong > h4,
-.swagger-ui summary div > span > strong > h6 {
+.swagger-ui .info summary > div > span > strong > h3,
+.swagger-ui .info summary > div > span > strong > h4,
+.swagger-ui .info summary div > span > strong > h6 {
   margin: 0;
 }
 
-.swagger-ui summary > div > div {
+.swagger-ui .info summary > div > div {
   height: 16px;
   transition: transform 0.3s ease-in;
 }
 
-.swagger-ui [open] > summary > div > div {
+.swagger-ui .info [open] > summary > div > div {
   transform: rotate(90deg);
 }
 
-.swagger-ui details summary > div > div > svg {
+.swagger-ui .info details summary > div > div > svg {
   height: 100%;
 }
 
-.swagger-ui summary:hover {
+.swagger-ui .info summary:hover {
   background-color: var(--details-header-hover-bg-color);
 }
 

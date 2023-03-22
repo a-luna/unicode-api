@@ -283,8 +283,8 @@
             <summary>
                 <strong><strong>Quick Check</strong></strong>
             </summary>
+            <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr15/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #15, "Unicode Normalization Forms"</a></div>
             <div>
-                <p>Reference: <a href="https://www.unicode.org/reports/tr15/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #15, "Unicode Normalization Forms"</a></p>
                 <p>Unicode, being a unifying character set, contains characters that allow similar results to be expressed in different ways. Given that similar text can be written in different ways, we have a problem. How can we determine if two strings are equal ? How can we find a substring in a string?</p>
                 <p>The answer is to convert the string to a well-known form, a process known as <strong>normalization</strong>. Unicode normalization is a set of rules based on tables and algorithms. It defines two kinds of normalization equivalence: <strong>canonical</strong> and <strong>compatible</strong>.</p>
                 <p>Code point sequences that are defined as <strong>canonically equivalent</strong> are assumed to have the same appearance and meaning when printed or displayed. For example, "Å" (<code>U+212B ANGSTROM SIGN</code>) is canonically equivalent to <strong>BOTH</strong> "Å" (<code>U+00C5 LATIN CAPITAL LETTER A WITH RING ABOVE</code>) and "A" (<code>U+00C5 LATIN CAPITAL LETTER A</code>) + "◌̊" (<code>U+030A COMBINING RING ABOVE</code>).</p>
@@ -294,10 +294,10 @@
                 <p>An additional difficulty is that the normalized ordering of multiple consecutive combining marks must be defined. This is done using a concept called the Canonical Combining Class or CCC, a Unicode character property (available as the <strong>combiningClass</strong> property in the <strong>Basic</strong> property group).</p>
                 <p>When you take all of these concepts into consideration, four normalization forms are defined:</p>
                 <ul>
-                    <li><code>NFD&nbsp;&nbsp;</code>Canonical decomposition and ordering</li>
-                    <li><code>NFC&nbsp;&nbsp;</code>Composition after canonical decomposition and ordering</li>
-                    <li><code>NFKD&nbsp;</code>Compatible decomposition and ordering</li>
-                    <li><code>NFKC&nbsp;</code>Composition after compatible decomposition and ordering</li>
+                    <li><code>NFD</code>&nbsp;&nbsp;Canonical decomposition and ordering</li>
+                    <li><code>NFC</code>&nbsp;&nbsp;Composition after canonical decomposition and ordering</li>
+                    <li><code>NFKD</code>&nbsp;Compatible decomposition and ordering</li>
+                    <li><code>NFKC</code>&nbsp;Composition after compatible decomposition and ordering</li>
                 </ul>
                 <p>In an effort to make the process of normalizing/determining if a string is already normalized less tedious and complex, four “quick check” properties exist for each character (<strong>NFD_QC</strong>, <strong>NFC_QC</strong>, <strong>NFKD_QC</strong>, and <strong>NFKC_QC</strong>, one for each normalization form).</p>
                 <p>These properties allow implementations to quickly determine whether a string is in a particular Normalization Form. This is, in general, many times faster than normalizing and then comparing.</p>
