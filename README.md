@@ -104,14 +104,14 @@
     <div>
 		<details open>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><h4 id="character-api-endpoints">API Endpoints</h4></strong>
+                <strong style="flex: 1"><h4 id="character-api-endpoints">API Endpoints</h4></strong>
             </summary>
             <dl>
                 <dt><strong>GET</strong> <code>/v1/characters/{string}</code></dt>
@@ -138,14 +138,14 @@
         <p>If each response contained every character property, it would be massively inneficient. To ensure that the API remains responsive and performant while also allowing clients to access the full set of character properties, each property is assigned to a <strong>property group</strong>.</p><p>Since they are designed to return lists of characters, responses from the <code>/v1/characters</code> or <code>/v1/characters/search</code> endpoints will only include properties from the <strong>Minimum</strong> property group:</p>
 		<details open>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Minimum</strong></strong>
+                <strong style="flex: 1"><strong>Minimum</strong></strong>
             </summary>
             <dl>
                 <dt><strong>character</strong></dt>
@@ -163,14 +163,14 @@
 		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>) by submitting the following request: <a href="https://unicode-api.aaronluna.dev/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Basic</strong></strong>
+                <strong style="flex: 1"><strong>Basic</strong></strong>
             </summary>
             <dl>
                 <dt><strong>block</strong></dt>
@@ -190,14 +190,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>UTF-8</strong></strong>
+                <strong style="flex: 1"><strong>UTF-8</strong></strong>
             </summary>
             <dl>
                 <dt><strong>utf8</strong></dt>
@@ -211,14 +211,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>UTF-16</strong></strong>
+                <strong style="flex: 1"><strong>UTF-16</strong></strong>
             </summary>
             <dl>
                 <dt><strong>utf16</strong></dt>
@@ -232,14 +232,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>UTF-32</strong></strong>
+                <strong style="flex: 1"><strong>UTF-32</strong></strong>
             </summary>
             <dl>
                 <dt><strong>utf32</strong></dt>
@@ -253,14 +253,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Bidirectionality</strong></strong>
+                <strong style="flex: 1"><strong>Bidirectionality</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr9/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #9, "Unicode Bidirectional Algorithm"</a></div>
             <dl>
@@ -297,14 +297,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Decomposition</strong></strong>
+                <strong style="flex: 1"><strong>Decomposition</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#page=46" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 3.7, <i>Decomposition</i></a></div>
             <dl>
@@ -337,14 +337,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Quick Check</strong></strong>
+                <strong style="flex: 1"><strong>Quick Check</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr15/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #15, "Unicode Normalization Forms"</a></div>
             <div>
@@ -379,14 +379,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Numeric</strong></strong>
+                <strong style="flex: 1"><strong>Numeric</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#page=18" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 4.6, <i>Numeric Value</i></a></div>
             <dl>
@@ -414,14 +414,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Joining</strong></strong>
+                <strong style="flex: 1"><strong>Joining</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch09.pdf#page=19" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 9.2, <i>Arabic</i></a></div>
             <dl>
@@ -447,14 +447,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Linebreak</strong></strong>
+                <strong style="flex: 1"><strong>Linebreak</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr14/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #14, "Unicode Line Breaking Algorithm"</a></div>
             <dl>
@@ -505,14 +505,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>East Asian Width</strong></strong>
+                <strong style="flex: 1"><strong>East Asian Width</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr11/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #11, "East Asian Width"</a></div>
             <dl>
@@ -533,14 +533,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Case</strong></strong>
+                <strong style="flex: 1"><strong>Case</strong></strong>
             </summary>
             <dl>
                 <dt><strong>uppercase</strong></dt>
@@ -560,14 +560,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Script</strong></strong>
+                <strong style="flex: 1"><strong>Script</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr24/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #24, "Unicode Script Property"</a></div>
             <dl>
@@ -583,14 +583,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Hangul</strong></strong>
+                <strong style="flex: 1"><strong>Hangul</strong></strong>
             </summary>
             <dl>
                 <dt><strong>hangulSyllableType</strong></dt>
@@ -610,14 +610,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Indic</strong></strong>
+                <strong style="flex: 1"><strong>Indic</strong></strong>
             </summary>
             <dl>
                 <dt><strong>indicSyllabicCategory</strong></dt>
@@ -631,14 +631,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Function and Graphic</strong></strong>
+                <strong style="flex: 1"><strong>Function and Graphic</strong></strong>
             </summary>
             <dl>
                 <dt><strong>dash</strong></dt>
@@ -687,14 +687,14 @@
 		<br />
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong>Emoji</strong></strong>
+                <strong style="flex: 1"><strong>Emoji</strong></strong>
             </summary>
             <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/reports/tr51/" rel="noopener noreferrer" target="_blank">Unicode Technical Standard #51, "Unicode Emoji"</a></div>
             <dl>
@@ -717,14 +717,14 @@
     <div>
         		<details open>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><h4 id="block-api-endpoints">API Endpoints</h4></strong>
+                <strong style="flex: 1"><h4 id="block-api-endpoints">API Endpoints</h4></strong>
             </summary>
         <dl>
             <dt><strong>GET</strong> <code>/v1/blocks/{name}</code></dt>
@@ -739,14 +739,14 @@
         <p>The <code>UnicodeBlock</code> object represents a grouping of characters within the Unicode encoding space. Each block is generally, but not always, meant to supply glyphs used by one or more specific languages, or in some general application area such as mathematics, surveying, decorative typesetting, social forums, etc.</p><p>Each block is a uniquely named, continuous, non-overlapping range of code points, containing a multiple of 16 code points (additionally, the starting codepoint for each block is a multiple of 16). A block may contain unassigned code points, which are reserved.</p><p>The <code>UnicodeBlock</code> object exposes a small set of properties such as the official name of the block, the range of code points assigned to the block and the total number of defined characters within the block:</p>
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong><code>UnicodeBlock</code> Properties</strong></strong>
+                <strong style="flex: 1"><strong><code>UnicodeBlock</code> Properties</strong></strong>
             </summary>
             <dl>
                 <dt><strong>id</strong></dt>
@@ -770,14 +770,14 @@
     <div>
         		<details open>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><h4 id="plane-api-endpoints">API Endpoints</h4></strong>
+                <strong style="flex: 1"><h4 id="plane-api-endpoints">API Endpoints</h4></strong>
             </summary>
         <dl>
             <dt><strong>GET</strong> <code>/v1/planes/{number}</code></dt>
@@ -790,14 +790,14 @@
         <p>The <code>UnicodePlane</code> object represents a continuous group of <strong>65,536</strong> (2<sup>16</sup>) code points. There are 17 planes, identified by the numbers 0 to 16. The first two positions of a character's codepoint value (U+<strong>hh</strong>hhhh) correspond to the plane number in hex format (possible values <code>0x00</code>–<code>0x10</code>).</p><p>Plane 0 is the <strong>Basic Multilingual Plane (BMP)</strong>, which contains most commonly used characters. The higher planes 1 through 16 are called "supplementary planes". The last code point in plane 16 is the last code point in Unicode, U+10FFFF.</p>
 		<details>
             <summary style="list-style=none">
-                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; width: 100%; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                             <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
                         </svg>
                     </div>
                 </div>
-                <strong><strong><code>UnicodePlane</code> Properties</strong></strong>
+                <strong style="flex: 1"><strong><code>UnicodePlane</code> Properties</strong></strong>
             </summary>
             <dl>
                 <dt><strong>number</strong></dt>
