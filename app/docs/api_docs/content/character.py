@@ -140,24 +140,24 @@ PROP_GROUP_DECOMPOSITION = """
                 <dd>
                     <p>The type of the decomposition (canonical or compatibility). The possible values are listed below:</p>
                     <ul>
-                        <li><code>none&nbsp;</code>None</li>
-                        <li><code>can&nbsp;&nbsp;</code>Canonical</li>
-                        <li><code>com&nbsp;&nbsp;</code>Otherwise Unspecified Compatibility Character</li>
-                        <li><code>enc&nbsp;&nbsp;</code>Encircled Form</li>
-                        <li><code>fin&nbsp;&nbsp;</code>Final Presentation Form (Arabic)</li>
-                        <li><code>font&nbsp;</code>Font Variant</li>
-                        <li><code>fra&nbsp;&nbsp;</code>Vulgar Fraction Form</li>
-                        <li><code>init&nbsp;</code>Initial Presentation Form (Arabic)</li>
-                        <li><code>iso&nbsp;&nbsp;</code>Isolated Presentation Form (Arabic)</li>
-                        <li><code>med&nbsp;&nbsp;</code>Medial Presentation Form (Arabic)</li>
-                        <li><code>nar&nbsp;&nbsp;</code>Narrow (or Hankaku) Compatibility Character</li>
-                        <li><code>nb&nbsp;&nbsp;&nbsp;</code>No No-break Version Of A Space Or Hyphen</li>
-                        <li><code>sml&nbsp;&nbsp;</code>Small Variant Form (CNS Compatibility)</li>
-                        <li><code>sqr&nbsp;&nbsp;</code>CJK Squared Font Variant</li>
-                        <li><code>sub&nbsp;&nbsp;</code>Subscript Form</li>
-                        <li><code>sup&nbsp;&nbsp;</code>Superscript Form</li>
-                        <li><code>vert&nbsp;</code>Vertical Layout Presentation Form</li>
-                        <li><code>wide&nbsp;</code>Wide (or Zenkaku) Compatibility Character</li>
+                        <li><code>none</code>&nbsp;None</li>
+                        <li><code>can</code>&nbsp;&nbsp;Canonical</li>
+                        <li><code>com</code>&nbsp;&nbsp;Otherwise Unspecified Compatibility Character</li>
+                        <li><code>enc</code>&nbsp;&nbsp;Encircled Form</li>
+                        <li><code>fin</code>&nbsp;&nbsp;Final Presentation Form (Arabic)</li>
+                        <li><code>font</code>&nbsp;Font Variant</li>
+                        <li><code>fra</code>&nbsp;&nbsp;Vulgar Fraction Form</li>
+                        <li><code>init</code>&nbsp;Initial Presentation Form (Arabic)</li>
+                        <li><code>iso</code>&nbsp;&nbsp;Isolated Presentation Form (Arabic)</li>
+                        <li><code>med</code>&nbsp;&nbsp;Medial Presentation Form (Arabic)</li>
+                        <li><code>nar</code>&nbsp;&nbsp;Narrow (or Hankaku) Compatibility Character</li>
+                        <li><code>nb</code>&nbsp;&nbsp;&nbsp;No No-break Version Of A Space Or Hyphen</li>
+                        <li><code>sml</code>&nbsp;&nbsp;Small Variant Form (CNS Compatibility)</li>
+                        <li><code>sqr</code>&nbsp;&nbsp;CJK Squared Font Variant</li>
+                        <li><code>sub</code>&nbsp;&nbsp;Subscript Form</li>
+                        <li><code>sup</code>&nbsp;&nbsp;Superscript Form</li>
+                        <li><code>vert</code>&nbsp;Vertical Layout Presentation Form</li>
+                        <li><code>wide</code>&nbsp;Wide (or Zenkaku) Compatibility Character</li>
                     </ul>
                 </dd>
             </dl>
@@ -202,10 +202,10 @@ PROP_GROUP_NUMERIC = """
                 <dd>
                     <p>If a character is normally used as a number, it will be assigned a value other than <code>None</code>, which is the default value used for all non-number characters:</p>
                     <ul>
-                        <li><code>None&nbsp;</code>None</li>
-                        <li><code>De&nbsp;&nbsp;&nbsp;</code>Decimal</li>
-                        <li><code>Di&nbsp;&nbsp;&nbsp;</code>Digit</li>
-                        <li><code>Nu&nbsp;&nbsp;&nbsp;</code>Numeric</li>
+                        <li><code>None</code>&nbsp;None</li>
+                        <li><code>De</code>&nbsp;&nbsp;&nbsp;Decimal</li>
+                        <li><code>Di</code>&nbsp;&nbsp;&nbsp;Digit</li>
+                        <li><code>Nu</code>&nbsp;&nbsp;&nbsp;Numeric</li>
                     </ul>
                 </dd>
                 <dt><strong>numericValue</strong></dt>
@@ -227,12 +227,12 @@ PROP_GROUP_JOINING = """
                 <dd>
                     <p>Each Arabic letter must be depicted by one of a number of possible contextual glyph forms. The appropriate form is determined on the basis of the cursive joining behavior of that character as it interacts with the cursive joining behavior of adjacent characters. In the Unicode Standard, such cursive joining behavior is formally described in terms of values of a character property called <strong>joiningType</strong>. Each Arabic character falls into one of the types listed below:</p>
                     <ul>
-                        <li><code>R&nbsp;</code>Right Joining</li>
-                        <li><code>L&nbsp;</code>Left Joining</li>
-                        <li><code>D&nbsp;</code>Dual Joining</li>
-                        <li><code>C&nbsp;</code>Join Causing</li>
-                        <li><code>U&nbsp;</code>Non Joining</li>
-                        <li><code>T&nbsp;</code>Transparent</li>
+                        <li><code>R</code>&nbsp;Right Joining</li>
+                        <li><code>L</code>&nbsp;Left Joining</li>
+                        <li><code>D</code>&nbsp;Dual Joining</li>
+                        <li><code>C</code>&nbsp;Join Causing</li>
+                        <li><code>U</code>&nbsp;Non Joining</li>
+                        <li><code>T</code>&nbsp;Transparent</li>
                     </ul>
                     <p>Note that for cursive joining scripts which are typically rendered top-to-bottom, rather than right-to-left, <code><strong>joiningType=L</code></strong> conventionally refers to bottom joining, and <code><strong>joiningType=R</code></strong> conventionally refers to top joining.</p>
                 </dd>
@@ -298,12 +298,12 @@ PROP_GROUP_EAW = """
                 <dd>
                     <p>The width of the character, in terms of East Asian writing systems that distinguish between full width, half width, and narrow. The possible values are listed in <a href="https://www.unicode.org/reports/tr11/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #11</a>:</p>
                     <ul>
-                        <li><code>A&nbsp;&nbsp;</code>East Asian Ambiguous</li>
-                        <li><code>F&nbsp;&nbsp;</code>East Asian Fullwidth</li>
-                        <li><code>H&nbsp;&nbsp;</code>East Asian Halfwidth</li>
-                        <li><code>N&nbsp;&nbsp;</code>Neutral Not East Asian</li>
-                        <li><code>Na&nbsp;</code>East Asian Narrow</li>
-                        <li><code>W&nbsp;&nbsp;</code>East Asian Wide</li>
+                        <li><code>A</code>&nbsp;&nbsp;East Asian Ambiguous</li>
+                        <li><code>F</code>&nbsp;&nbsp;East Asian Fullwidth</li>
+                        <li><code>H</code>&nbsp;&nbsp;East Asian Halfwidth</li>
+                        <li><code>N</code>&nbsp;&nbsp;Neutral Not East Asian</li>
+                        <li><code>Na</code>&nbsp;East Asian Narrow</li>
+                        <li><code>W</code>&nbsp;&nbsp;East Asian Wide</li>
                     </ul>
                 </dd>
             </dl>
@@ -345,12 +345,12 @@ PROP_GROUP_HANGUL = """
                 <dd>
                     <p>Type of syllable, for characters that are Hangul (Korean) syllabic characters. Possible values </p>
                     <ul>
-                        <li><code>NA&nbsp;&nbsp;</code>Not Applicable
-                        <li><code>L&nbsp;&nbsp;&nbsp;</code>Leading Jamo
-                        <li><code>V&nbsp;&nbsp;&nbsp;</code>Vowel Jamo
-                        <li><code>T&nbsp;&nbsp;&nbsp;</code>Trailing Jamo
-                        <li><code>LV&nbsp;&nbsp;</code>Lv Syllable
-                        <li><code>LVT&nbsp;</code>Lvt Syllable
+                        <li><code>NA</code>&nbsp;&nbsp;Not Applicable
+                        <li><code>L</code>&nbsp;&nbsp;&nbsp;Leading Jamo
+                        <li><code>V</code>&nbsp;&nbsp;&nbsp;Vowel Jamo
+                        <li><code>T</code>&nbsp;&nbsp;&nbsp;Trailing Jamo
+                        <li><code>LV</code>&nbsp;&nbsp;Lv Syllable
+                        <li><code>LVT</code>&nbsp;Lvt Syllable
                     </ul>
                 </dd>
             </dl>
