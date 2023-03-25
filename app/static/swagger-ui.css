@@ -443,7 +443,6 @@ body > svg {
   font-size: 0.8rem;
 }
 
-.swagger-ui details details > div > p:first-child,
 .swagger-ui details details > div.prop-group-ref   {
   font-weight: 700;
   font-style: italic;
