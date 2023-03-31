@@ -335,14 +335,14 @@ class ListParametersDecimal:
         | None = Query(
             default=None,
             ge=1,
-            le=cached_data.total_block_name_choices,
+            le=len(cached_data.blocks),
             description=STARTING_AFTER_BLOCK_ID_DESCRIPTION,
         ),
         ending_before: int
         | None = Query(
             default=None,
             ge=1,
-            le=cached_data.total_block_name_choices,
+            le=len(cached_data.blocks),
             description=ENDING_BEFORE_BLOCK_ID_DESCRIPTION,
         ),
     ):

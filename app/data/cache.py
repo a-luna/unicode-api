@@ -33,10 +33,6 @@ class UnicodeDataCache:
     def unique_name_character_choices(self) -> dict[int, str]:
         return {codepoint: name.lower() for (codepoint, name) in self.unique_name_character_map.items()}
 
-    @property
-    def total_unique_name_characters(self) -> int:
-        return len(self.unique_name_character_map)
-
     @cached_property
     def generic_name_character_map(self) -> dict[int, str]:
         json_map = json.loads(CHAR_NO_NAME_MAP.read_text())
@@ -60,10 +56,6 @@ class UnicodeDataCache:
     @cached_property
     def block_name_choices(self) -> dict[int, str]:
         return {block.id: block.name.lower() for block in self.blocks if block and block.id}
-
-    @property
-    def total_block_name_choices(self) -> int:
-        return len(self.blocks)
 
     @cached_property
     def all_characters_block(self) -> db.UnicodeBlock:
@@ -148,7 +140,7 @@ class UnicodeDataCache:
         fuzzy_search_results = process.extract(
             query.lower(),
             self.unique_name_character_choices,
-            limit=self.total_unique_name_characters,
+            limit=len(self.unique_name_character_map),
         )
         return [(result, score) for (_, score, result) in fuzzy_search_results if score >= float(score_cutoff)]
 
@@ -167,7 +159,7 @@ class UnicodeDataCache:
         fuzzy_search_results = process.extract(
             query.lower(),
             self.block_name_choices,
-            limit=self.total_block_name_choices,
+            limit=len(self.blocks),
         )
         return [(result, score) for (_, score, result) in fuzzy_search_results if score >= float(score_cutoff)]
 
