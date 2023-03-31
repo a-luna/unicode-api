@@ -29,7 +29,7 @@ class UnicodeDataCache:
         json_map = json.loads(CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
-    @cached_property
+    @property
     def unique_name_character_choices(self) -> dict[int, str]:
         return {codepoint: name.lower() for (codepoint, name) in self.unique_name_character_map.items()}
 
@@ -45,15 +45,15 @@ class UnicodeDataCache:
             block.plane = self.get_unicode_plane_containing_block_id(block.id if block.id else 0)
         return blocks
 
-    @cached_property
+    @property
     def block_id_map(self) -> dict[int, db.UnicodeBlock]:
         return {block.id: block for block in self.blocks if block and block.id}
 
-    @cached_property
+    @property
     def block_name_map(self) -> dict[str, db.UnicodeBlock]:
         return {block.name: block for block in self.blocks}
 
-    @cached_property
+    @property
     def block_name_choices(self) -> dict[int, str]:
         return {block.id: block.name.lower() for block in self.blocks if block and block.id}
 
@@ -77,11 +77,11 @@ class UnicodeDataCache:
     def planes(self) -> list[db.UnicodePlane]:
         return [db.UnicodePlane(**plane) for plane in json.loads(PLANES_JSON.read_text())]
 
-    @cached_property
+    @property
     def plane_number_map(self) -> dict[int, db.UnicodePlane]:
         return {plane.number: plane for plane in self.planes}
 
-    @cached_property
+    @property
     def plane_abbreviation_map(self) -> dict[str, db.UnicodePlane]:
         return {plane.abbreviation: plane for plane in self.planes}
 
@@ -101,31 +101,31 @@ class UnicodeDataCache:
             total_defined=len([cp for cp in self.all_assigned_codepoints if cp not in ALL_CONTROL_CHARACTERS]),
         )
 
-    @cached_property
+    @property
     def all_codepoints_in_unicode_space(self) -> set[int]:
         return set(range(0, MAX_CODEPOINT + 1))
 
-    @cached_property
+    @property
     def all_assigned_codepoints(self) -> set[int]:
         return set(list(self.unique_name_character_map.keys()) + list(self.generic_name_character_map.keys()))
 
-    @cached_property
+    @property
     def all_noncharacter_codepoints(self) -> set[int]:
         return set(NON_CHARACTER_CODEPOINTS)
 
-    @cached_property
+    @property
     def all_surrogate_codepoints(self) -> set[int]:
         su_blocks = [self.get_unicode_block_by_id(block_id) for block_id in SURROGATE_BLOCK_IDS]
         su_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in su_blocks]
         return set(itertools.chain(*su_codepoints)) - self.all_noncharacter_codepoints
 
-    @cached_property
+    @property
     def all_private_use_codepoints(self) -> set[int]:
         pu_blocks = [self.get_unicode_block_by_id(block_id) for block_id in PRIVATE_USE_BLOCK_IDS]
         pu_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in pu_blocks]
         return set(itertools.chain(*pu_codepoints)) - self.all_noncharacter_codepoints
 
-    @cached_property
+    @property
     def all_reserved_codepoints(self) -> set[int]:
         return (
             self.all_codepoints_in_unicode_space

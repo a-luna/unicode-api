@@ -51,22 +51,18 @@ def init_redis():
 @app.on_event("startup")
 def init_unicode_obj():
     _ = cached_data.unique_name_character_map
-    _ = cached_data.unique_name_character_choices
     _ = cached_data.generic_name_character_map
     _ = cached_data.blocks
-    _ = cached_data.block_id_map
-    _ = cached_data.block_name_map
-    _ = cached_data.block_name_choices
+    _ = cached_data.all_characters_block
     _ = cached_data.planes
-    _ = cached_data.plane_number_map
-    _ = cached_data.plane_abbreviation_map
+    _ = cached_data.all_characters_plane
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
 async def swagger_ui_html():
     return get_swagger_ui_html(
         openapi_url=app.openapi_url or "/openapi.json",
-        title=f"{settings.PROJECT_NAME} - Swagger UI",
+        title=f"{settings.PROJECT_NAME} Docs - Swagger UI",
         swagger_js_url="/static/swagger-ui-bundle.js",
         swagger_css_url="/static/swagger-ui.css",
         swagger_favicon_url="/static/favicon.png",
