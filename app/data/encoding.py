@@ -53,14 +53,7 @@ def get_utf16_dec_bytes(uni_char: str) -> list[int]:
 
 
 def get_utf16_value(uni_char: str) -> str:
-    hex_bytes = [f"{x:02X}" for x in uni_char.encode("utf_16_be")]
-    return (
-        f"0x{hex_bytes[0]}{hex_bytes[1]}"
-        if len(hex_bytes) == 2
-        else f"0x{hex_bytes[0]}{hex_bytes[1]} 0x{hex_bytes[2]}{hex_bytes[3]}"
-        if len(hex_bytes) == 4
-        else ""
-    )
+    return " ".join(f"0x{byte}" for byte in get_utf16_hex_bytes(uni_char))
 
 
 def get_utf32_hex_bytes(uni_char: str) -> list[str]:
