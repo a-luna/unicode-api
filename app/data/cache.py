@@ -68,7 +68,7 @@ class UnicodeDataCache:
             finish_dec=MAX_CODEPOINT,
             finish="10FFFF",
             total_allocated=(MAX_CODEPOINT + 1),
-            total_defined=len([cp for cp in self.all_assigned_codepoints if cp not in ALL_CONTROL_CHARACTERS]),
+            total_defined=self.official_number_of_unicode_characters,
         )
         block.plane = self.all_characters_plane
         return block
@@ -98,7 +98,7 @@ class UnicodeDataCache:
             start_block_id=1,
             finish_block_id=327,
             total_allocated=(MAX_CODEPOINT + 1),
-            total_defined=len([cp for cp in self.all_assigned_codepoints if cp not in ALL_CONTROL_CHARACTERS]),
+            total_defined=self.official_number_of_unicode_characters,
         )
 
     @property
@@ -108,6 +108,10 @@ class UnicodeDataCache:
     @property
     def all_assigned_codepoints(self) -> set[int]:
         return set(list(self.unique_name_character_map.keys()) + list(self.generic_name_character_map.keys()))
+
+    @property
+    def all_control_character_codepoints(self) -> set[int]:
+        return set(ALL_CONTROL_CHARACTERS)
 
     @property
     def all_noncharacter_codepoints(self) -> set[int]:
@@ -133,6 +137,22 @@ class UnicodeDataCache:
             - self.all_noncharacter_codepoints
             - self.all_surrogate_codepoints
             - self.all_private_use_codepoints
+        )
+
+    @property
+    def official_number_of_unicode_characters(self) -> int:
+        # The "official" number of characters listed for each version of Unicode is the total number
+        # #of graphic and format characters (i.e., excluding private-use characters, control characters,
+        # noncharacters and surrogate code points).
+        return len(
+            list(
+                self.all_codepoints_in_unicode_space
+                - self.all_control_character_codepoints
+                - self.all_noncharacter_codepoints
+                - self.all_surrogate_codepoints
+                - self.all_private_use_codepoints
+                - self.all_reserved_codepoints
+            )
         )
 
     def search_characters_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:
