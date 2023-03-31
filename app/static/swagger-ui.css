@@ -764,7 +764,8 @@ margin: 0 auto;
 }
 
 .swagger-ui code span {
-  font-variant: small-caps;;
+  font-size: 0.8rem;
+  font-weight: 500;
 }
 
 .swagger-ui .parameters-container {
@@ -3443,7 +3444,7 @@ textarea::placeholder {
 }
 .swagger-ui .code,
 .swagger-ui code {
-  font-family: 'DroidSansMono Nerd Font Mono', 'Roboto Mono', menlo, monospace;
+  font-family: 'Roboto Mono', menlo, monospace;
 }
 .swagger-ui .courier {
   font-family: Courier Next, courier, monospace;
@@ -8646,7 +8647,7 @@ textarea::placeholder {
   margin: 3em auto;
 }
 .swagger-ui .opblock-body pre.microlight {
-  font-size: 12px;
+  font-size: 0.8rem;
   margin: 0;
   padding: 10px;
   white-space: pre-wrap;
