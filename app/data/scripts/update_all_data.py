@@ -91,7 +91,7 @@ def backup_sqlite_db():
 def backup_json_files():
     zip_file = JSON_FOLDER.joinpath("unicode_json.zip")
     with ZipFile(zip_file, "w", ZIP_DEFLATED) as zip:
-        zip.write(PLANES_JSON, f"{PLANES_JSON. name}")
+        zip.write(PLANES_JSON, f"{PLANES_JSON.name}")
         zip.write(BLOCKS_JSON, f"{BLOCKS_JSON.name}")
         zip.write(CHAR_NAME_MAP, f"{CHAR_NAME_MAP.name}")
         zip.write(CHAR_NO_NAME_MAP, f"{CHAR_NO_NAME_MAP.name}")
