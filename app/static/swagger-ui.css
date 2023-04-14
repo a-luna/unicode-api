@@ -56,7 +56,7 @@ body {
   --params-details-header-text-color: hsl(0, 0%, 100%);
   --params-dl-border-color: hsl(210, 30%, 20%);
   --params-dl-bg-color: hsl(210, 30%, 80%);
-  --params-details-footer-bg-color: hsl(210, 30%, 80%);
+  --params-details-footer-bg-color: var(--opblock-bg-color);
 
   --params-table-header-bg-color: hsl(210, 30%, 25%);
   --params-table-header-text-color: hsl(0, 0%, 100%);
@@ -155,7 +155,11 @@ body > svg {
 }
 
 .swagger-ui {
-  border: 1px solid var(--darker-text-color);
+  border: none;
+}
+
+.swagger-ui .information-container.wrapper {
+  margin: 0 0 2rem 0;
 }
 
 .swagger-ui .api-principles {
@@ -313,8 +317,8 @@ body > svg {
   list-style: none;
 }
 
-.swagger-ui details details summary:hover,
-.swagger-ui details [open] > summary {
+.swagger-ui .info details details summary:hover,
+.swagger-ui .info details [open] > summary {
   background-color: var(--inner-details-header-hover-bg-color);
 }
 
@@ -544,7 +548,11 @@ body > svg {
 
 .swagger-ui .parameters details .param-examples dt,
 .swagger-ui .parameters details .param-examples dd {
-  background-color: hsl(210, 30%, 85%);
+  background-color: var(--params-dl-bg-color);
+}
+
+.swagger-ui .parameters [open] > summary {
+  border-bottom: none !important;
 }
 
 .swagger-ui .parameters details > div.footnotes {
@@ -556,11 +564,12 @@ body > svg {
   background-color: var(--params-details-footer-bg-color);
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
-  border-top: 0.5px solid var(--params-dl-border-color);
+  border-top: none;
   border-bottom: 1px solid var(--params-dl-border-color);
   border-right: 1px solid var(--params-dl-border-color);
   border-left: 1px solid var(--params-dl-border-color);
   padding: 0.75rem 0.75rem 0.5rem 0.25rem;
+  margin: 0;
 }
 
 .swagger-ui .parameters details > div:last-of-type p {
@@ -760,7 +769,6 @@ margin: 0 auto;
 
 .swagger-ui {
   line-height: 1.6;
-  padding-top: 0.5rem;
 }
 
 .swagger-ui code span {
@@ -954,6 +962,7 @@ margin: 0 auto;
 .swagger-ui .footnotes {
   display: flex;
   flex-flow: column nowrap;
+  gap: 0.5rem;
   margin: 1rem 0.5rem 2rem 0.5rem;
   padding: 0;
   background-color: var(--dl-bg-color);
@@ -974,19 +983,29 @@ margin: 0 auto;
 .swagger-ui .footnote .symbol {
   font-weight: 700;
   color: var(--code-color);
-  font-size: 86%;
-  
 }
 
+.swagger-ui .fn1 {
+  font-size: 92%;
+}
+
+.swagger-ui .fn2 {
+  font-size: 86%;
+}
 
 .swagger-ui .footnote .symbol {
-  margin: 0 0 4px 0;
-  width: 11px;
+  margin: 0;
+  width: 9px;
   top: 0;
+  font-size: 100%;
 }
 
 .swagger-ui .footnote .note {
   align-self: flex-end;
+}
+
+.swagger-ui .wrapper:nth-of-type(4) {
+  display: none;
 }
 
 /* END: MY CUSTOMIZATIONS */
@@ -8139,14 +8158,11 @@ textarea::placeholder {
   max-width: 1460px;
   margin: 0 auto;
   box-sizing: border-box;
+  border: 1px solid var(--darker-text-color);
 }
 .swagger-ui .wrapper:nth-of-type(3) {
   padding-top: 0.5rem;
-}
-.swagger-ui .wrapper:nth-of-type(3),
-.swagger-ui .wrapper:nth-of-type(4) {
   padding-right: 1.5rem;
-  padding-bottom: 0.5rem;
   padding-left: 1.5rem;
   background-color: var(--page-bg-color);
 }
@@ -9739,8 +9755,6 @@ textarea::placeholder {
 .swagger-ui .info {
   margin: 0;
   padding: 0;
-  border-bottom: 1px solid var(--darker-text-color);
-  background-color: var(--api-description-bg-color);
 }
 .swagger-ui .info > div {
   background-color: var(--api-description-bg-color);

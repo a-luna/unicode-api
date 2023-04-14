@@ -1,5 +1,5 @@
 {
-  "version": 3
+  "version": 3,
   "sources": [
     "webpack:///./src/style/main.scss",
     "webpack:///./node_modules/tachyons-sass/scss/_normalize.scss",

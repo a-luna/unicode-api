@@ -4,17 +4,17 @@ from app.core.config import settings
 CHARACTER_ENDPOINTS = """
             <dl>
                 <dt><strong>GET</strong> <code>/v1/characters/{string}</code></dt>
-                <dd>Retrieve one or more character(s)<sup class="fn">🞰</sup></dd>
+                <dd>Retrieve one or more character(s)<sup class="fn fn1">∗</sup></dd>
                 <dt><strong>GET</strong> <code>/v1/characters</code></dt>
-                <dd>List all characters<sup class="fn">🞰</sup></dd>
+                <dd>List all characters<sup class="fn fn1">∗</sup></dd>
                 <dt><strong>GET</strong> <code>/v1/characters/filter</code></dt>
-                <dd>List characters that match filter settings<sup class="fn">†</sup></dd>
+                <dd>List characters that match filter settings<sup class="fn fn2">†</sup></dd>
                 <dt><strong>GET</strong> <code>/v1/characters/search</code></dt>
-                <dd>Search characters<sup class="fn">†</sup></dd>
+                <dd>Search characters<sup class="fn fn2">†</sup></dd>
             </dl>
             <div class="footnotes">
                 <div class="footnote">
-                    <sup class="symbol">🞰</sup><span class="note">Supports requests for all codepoints in the Unicode space (i.e., assigned, reserved, noncharacter, surrogate, and private-use codepoints).</span>
+                    <sup class="symbol">∗</sup><span class="note">Supports requests for all codepoints in the Unicode space (i.e., assigned, reserved, noncharacter, surrogate, and private-use codepoints).</span>
                 </div>
                 <div class="footnote">
                     <sup class="symbol">†</sup><span class="note">Supports <strong>ONLY</strong> assigned codepoints.</span>

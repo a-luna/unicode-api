@@ -158,9 +158,7 @@ class UnicodeDataCache:
     def search_characters_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:
         score_cutoff = max(70, score_cutoff)
         fuzzy_search_results = process.extract(
-            query.lower(),
-            self.unique_name_character_choices,
-            limit=len(self.unique_name_character_map),
+            query.lower(), self.unique_name_character_choices, limit=len(self.unique_name_character_map)
         )
         return [(result, score) for (_, score, result) in fuzzy_search_results if score >= float(score_cutoff)]
 
@@ -176,11 +174,7 @@ class UnicodeDataCache:
 
     def search_blocks_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:
         score_cutoff = max(70, score_cutoff)
-        fuzzy_search_results = process.extract(
-            query.lower(),
-            self.block_name_choices,
-            limit=len(self.blocks),
-        )
+        fuzzy_search_results = process.extract(query.lower(), self.block_name_choices, limit=len(self.blocks))
         return [(result, score) for (_, score, result) in fuzzy_search_results if score >= float(score_cutoff)]
 
     def get_unicode_plane_by_number(self, plane_number: int) -> db.UnicodePlane:

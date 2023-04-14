@@ -212,7 +212,7 @@ def customize_ending_before_param_description(
     return f"""
 <ul class="param-notes">
     <li>This value is optional</li>
-    <li class=\"alert\">Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong>.</li>
+    <li class=\"alert\">Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code></i></strong>.</li>
 </ul>
 <p>The <code>ending_before</code> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <code>{key_field}</code> property.</i></u></p>
 <p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <code>{key_field}={example_value}</code>, you can retrieve the previous set of results by sending <code>ending_before={example_value}</code> in a subsequent request.</p>
@@ -226,7 +226,7 @@ def customize_starting_after_param_description(
     return f"""
 <ul class="param-notes">
     <li>This value is optional</li>
-    <li class=\"alert\">Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong>.</li>
+    <li class=\"alert\">Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code></i></strong>.</li>
 </ul>
 <p>The <code>starting_after</code> parameter acts as a cursor to navigate between paginated responses, however, the value used for this parameter is different for each endpoint. <i><u>For Unicode {data_type}, the value of this parameter is the <code>{key_field}</code> property.</i></u></p>
 <p>For example, if you request 10 items and the response contains <code>hasMore=true</code>, there are more search results beyond the first 10. If the 10th search result has <code>{key_field}={example_value}</code>, you can retrieve the next set of results by sending <code>starting_after={example_value}</code> in a subsequent request.</p>
