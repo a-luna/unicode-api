@@ -78,3 +78,5 @@ characters.json
 char_name_map.json
 char_no_name_map.json
 ucd.all.flat.xml
+
+.ruff_cache
