@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from humps import camelize
 
+from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.main import app
 from app.schemas.enums.property_group import CharPropertyGroup
@@ -36,7 +37,10 @@ def get_prop_group(prop_group, prop_data):
 
 @pytest.mark.parametrize("char", ALL_CHARACTER_PROPERTIES.keys())
 def test_get_character_details_default(char):
-    response = client.get(f"/v1/characters/{char}")
+    url = f"/v1/characters/{char}"
+    if any(char.isascii() and not char.isprintable() for char in url):
+        url = f"/v1/characters/{get_uri_encoded_value(char)}"
+    response = client.get(url)
     assert response.status_code == 200
     assert response.json() == [get_character_properties(char, CharPropertyGroup.Minimum)]
 
@@ -44,7 +48,10 @@ def test_get_character_details_default(char):
 @pytest.mark.parametrize("char", ALL_CHARACTER_PROPERTIES.keys())
 @pytest.mark.parametrize("prop_group", ALL_PROP_GROUP_NAMES)
 def test_get_character_details_show_props(char, prop_group):
-    response = client.get(f"/v1/characters/{char}?show_props={prop_group}")
+    url = f"/v1/characters/{char}?show_props={prop_group}"
+    if any(char.isascii() and not char.isprintable() for char in url):
+        url = f"/v1/characters/{get_uri_encoded_value(char)}?show_props={prop_group}"
+    response = client.get(url)
     assert response.status_code == 200
     assert response.json() == [get_character_properties(char, CharPropertyGroup.match_loosely(prop_group))]
 
