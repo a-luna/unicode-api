@@ -336,5 +336,5 @@ BOTH_START_AFTER_END_BEFORE_INVALID = {
 }
 
 INALID_PLANE_ABBREVIATION = {
-    "detail": "BDP does not match any valid Unicode plane abbreviation: BMP, SMP, SIP, TIP, SSP, SPUA-A, SPUA-B. "
+    "detail": "BDP does not match any Unicode plane abbreviation: BMP, SMP, SIP, TIP, SSP, SPUA-A, SPUA-B."
 }
