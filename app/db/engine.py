@@ -1,6 +1,6 @@
 # flake8: noqa
 from sqlalchemy import event
-from sqlmodel import create_engine, Session
+from sqlmodel import create_engine
 
 from app.core.config import DB_URL
 from app.schemas.models.block import UnicodeBlock, UnicodeBlockResponse, UnicodeBlockResult
@@ -24,8 +24,3 @@ def _fk_pragma_on_connect(dbapi_con, _):
 
 engine = create_engine(DB_URL, echo=False, connect_args={"check_same_thread": False})
 event.listen(engine, "connect", _fk_pragma_on_connect)
-
-
-def get_session():
-    with Session(engine) as session:
-        yield (session, engine)

@@ -174,7 +174,11 @@ GENERAL_CATEGORY_VALUES = """
 def create_unicode_block_name_details_element():
     dt_elements = [f"\t\t\t\t<dt><code>U+{b.start}...U+{b.finish}</code></dt>\n" for b in cached_data.blocks]
     dd_elements = [
-        f'\t\t\t\t<dd class="block-name" style="color: var(--{b.plane.abbreviation.lower()}-text-color)">{b.name}</dd>\n'
+        (
+            '\t\t\t\t<dd class="block-name" '
+            f'style="color: var(--{b.plane.abbreviation.lower()}-text-color)">'
+            f"{b.name}</dd>\n"
+        )
         for b in cached_data.blocks
     ]
     block_data = zip(dt_elements, dd_elements, strict=True)
