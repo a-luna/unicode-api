@@ -5,10 +5,12 @@ function svgToBase64Image(svgElement) {
   return "data:image/svg+xml;base64," + window.btoa(div.innerHTML);
 }
 
+// Encode SVG elements that are direct descendants of the body component as base64 strings
 var svgUrls = Array.from(document.querySelectorAll("body > svg"))
   .map((svg) => 'url("' + svgToBase64Image(svg) + '")')
   .join(",");
 
+// Set page background to SVG base64 string values to create repeating pattern effect
 document.querySelector("html").style.background = svgUrls;
 
 // Add click handlers to expand details element in API docs containing the link target

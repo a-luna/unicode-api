@@ -130,7 +130,7 @@ body {
   --bg-gradient-1: #bdff2e;
   --bg-gradient-2: #2f2e2e;
 
-  --bmp-text-color: hsl(218, 100%, 35%);
+  --bmp-text-color: hsl(0, 0%, 30%);
   --smp-text-color: hsl(19, 100%, 45%);
   --sip-text-color: hsl(200, 74%, 50%);
   --tip-text-color: hsl(113, 100%, 30%);
@@ -577,6 +577,8 @@ body > svg {
   line-height: 1.4;
   padding: 0;
   margin: 0 !important;
+  font-style: italic;
+  font-weight: 700;
 }
 
 .parameters details sup {
