@@ -142,7 +142,7 @@ class UnicodeDataCache:
     @property
     def official_number_of_unicode_characters(self) -> int:
         # The "official" number of characters listed for each version of Unicode is the total number
-        # #of graphic and format characters (i.e., excluding private-use characters, control characters,
+        # of graphic and format characters (i.e., excluding private-use characters, control characters,
         # noncharacters and surrogate code points).
         return len(
             list(
