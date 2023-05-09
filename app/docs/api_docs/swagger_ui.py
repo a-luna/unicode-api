@@ -142,7 +142,7 @@ def get_swagger_ui_html(
 
     if os.environ.get("ENV", "DEV") == "PROD":
         html += """
-        <script async defer data-website-id="be7afe60-557b-4d2b-a504-ee2dc4583cb4" src="https://aluna-umami.netlify.app/umami.js"></script>
+        <script async src="https://aluna-umami.netlify.app/script.js" data-website-id="13067599-d69c-4a00-a745-207308bd4d18"></script>
         """
 
     html += f"""
