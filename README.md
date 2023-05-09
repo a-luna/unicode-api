@@ -81,7 +81,7 @@
         <p>For example, if you request 10 items and the response contains <code>hasMore=true</code>, there are more search results beyond the first 10. If the 10th search result has <code>codepoint=U+0346</code>, you can retrieve the next set of results by sending <code>starting_after=U+0346</code> in a subsequent request.</p>
         <p>The <code>ending_before</code> parameter also acts as a cursor to navigate between pages, but instead of requesting the next set of results it allows you to access previous pages in the list.</p>
         <p>For example, if you previously requested 10 items beyond the first page of results, and the first search result of the current page has <code>codepoint=U+0357</code>, you can retrieve the previous set of results by sending <code>ending_before=U+0357</code> in a subsequent request.</p>
-        <p>⚠️ <strong><i>IMPORTANT: Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code>.</i></strong>.</p>
+        <p>⚠️ <strong><i>IMPORTANT: Only one of <code>starting_after</code> or <code>ending_before</code> may be used in a request, sending a value for both parameters will produce a response with status <code>400 Bad Request</code></i></strong>.</p>
     </div>
 <h2 id="search">Search</h2>
     <div>
@@ -115,17 +115,17 @@
             </summary>
             <dl>
                 <dt><strong>GET</strong> <code>/v1/characters/{string}</code></dt>
-                <dd>Retrieve one or more character(s)<sup class="fn">🞰</sup></dd>
+                <dd>Retrieve one or more character(s)<sup class="fn fn1">*</sup></dd>
                 <dt><strong>GET</strong> <code>/v1/characters</code></dt>
-                <dd>List all characters<sup class="fn">🞰</sup></dd>
+                <dd>List all characters<sup class="fn fn1">*</sup></dd>
                 <dt><strong>GET</strong> <code>/v1/characters/filter</code></dt>
-                <dd>List characters that match filter settings<sup class="fn">†</sup></dd>
+                <dd>List characters that match filter settings<sup class="fn fn2">†</sup></dd>
                 <dt><strong>GET</strong> <code>/v1/characters/search</code></dt>
-                <dd>Search characters<sup class="fn">†</sup></dd>
+                <dd>Search characters<sup class="fn fn2">†</sup></dd>
             </dl>
             <div class="footnotes">
                 <div class="footnote">
-                    <sup class="symbol">🞰</sup><span class="note">Supports requests for all codepoints in the Unicode space (i.e., assigned, reserved, noncharacter, surrogate, and private-use codepoints).</span>
+                    <sup class="symbol">*</sup><span class="note">Supports requests for all codepoints in the Unicode space (i.e., assigned, reserved, noncharacter, surrogate, and private-use codepoints).</span>
                 </div>
                 <div class="footnote">
                     <sup class="symbol">†</sup><span class="note">Supports <strong>ONLY</strong> assigned codepoints.</span>
@@ -199,9 +199,10 @@
                 </div>
                 <strong style="flex: 1"><strong>UTF-8</strong></strong>
             </summary>
+            <div>UTF-8 is a method of encoding the Unicode character set where each code unit is equal to 8-bits. UTF-8 is backwards-compatible with ASCII and all codepoints in range 0-127 are represented as a single byte. Codepoints greater than 127 are represented as a sequence of 2-4 bytes.</div>
             <dl>
                 <dt><strong>utf8</strong></dt>
-                <dd>The UTF-8 encoded value for the character as a hex string. UTF-8 is a method of encoding the Unicode character set where each code unit is equal to 8-bits. UTF-8 is backwards-compatible with ASCII and all codepoints in range 0-127 are represented as a single byte. Codepoints greater than 127 are represented as a sequence of 2-4 bytes.</dd>
+                <dd>The UTF-8 encoded value for the character as a hex string.</dd>
                 <dt><strong>utf8HexBytes</strong></dt>
                 <dd>The byte sequence for the UTF-8 encoded value for the character. This property returns a list of strings, hex values (base-16) in range <code>00-FF</code>.</dd>
                 <dt><strong>utf8DecBytes</strong></dt>
@@ -220,9 +221,10 @@
                 </div>
                 <strong style="flex: 1"><strong>UTF-16</strong></strong>
             </summary>
+            <div>UTF-16 is a method of encoding the Unicode character set where each code unit is equal to 16-bits. All codepoints in the BMP (Plane 0) can be represented as a single 16-bit code unit (2 bytes). Code points in the supplementary planes (Planes 1-16) are represented as pairs of 16-bit code units (4 bytes).</div>
             <dl>
                 <dt><strong>utf16</strong></dt>
-                <dd>The UTF-16 encoded value for the character as a hex string. UTF-16 is a method of encoding the Unicode character set where each code unit is equal to 16-bits. All codepoints in the BMP (Plane 0) can be represented as a single 16-bit code unit (2 bytes). Code points in the supplementary planes (Planes 1-16) are represented as pairs of 16-bit code units (4 bytes).</dd>
+                <dd>The UTF-16 encoded value for the character as a hex string.</dd>
                 <dt><strong>utf16HexBytes</strong></dt>
                 <dd>The byte sequence for the UTF-16 encoded value for the character. This property returns a list of strings, hex values (base-16) in range <code>0000-FFFF</code>.</dd>
                 <dt><strong>utf16DecBytes</strong></dt>
@@ -241,9 +243,10 @@
                 </div>
                 <strong style="flex: 1"><strong>UTF-32</strong></strong>
             </summary>
+            <div>UTF-32 is a method of encoding the Unicode character set where each code unit is equal to 32-bits. UTF-32 is the simplest Unicode encoding form. Each Unicode code point is represented directly by a single 32-bit code unit. Because of this, UTF-32 has a one-to-one relationship between encoded character and code unit; it is a fixed-width character encoding form.</div>
             <dl>
                 <dt><strong>utf32</strong></dt>
-                <dd>The UTF-32 encoded value for the character as a hex string. UTF-32 is a method of encoding the Unicode character set where each code unit is equal to 32-bits. UTF-32 is the simplest Unicode encoding form. Each Unicode code point is represented directly by a single 32-bit code unit. Because of this, UTF-32 has a one-to-one relationship between encoded character and code unit; it is a fixed-width character encoding form.</dd>
+                <dd>The UTF-32 encoded value for the character as a hex string.</dd>
                 <dt><strong>utf32HexBytes</strong></dt>
                 <dd>The byte sequence for the UTF-32 encoded value for the character. This property returns a list of strings, hex values (base-16) in range <code>00000000-0010FFFF</code>.</dd>
                 <dt><strong>utf32DecBytes</strong></dt>
