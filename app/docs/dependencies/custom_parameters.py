@@ -167,35 +167,39 @@ def get_description_and_values_table_for_unicode_age() -> str:
         '<ul class="param-notes">'
         + "<li>This value is optional</li>"
         + "</ul>"
-        + "<p>Filter Unicode characters by <code>age</code>. Sending multiple values will return all characters that match any of the selected Unicode versions (e.g., sending <code>age=2.0</code> and <code>age=5.0</code> will return all characters that were assigned to a codepoint in <strong>either</strong> version 2.0 or 5.0.<p>"
-        + "<p>You can view all version numbers of the Unicode Standard by expanding the section below:</p>"
+        + "<p>Filter Unicode characters by <code>age</code> (i.e., the version of the Unicode Standard in which the character was originally assigned to a codepoint). Sending multiple values will return all characters that match any of the selected Unicode versions (e.g., sending <code>age=2.0</code> and <code>age=5.0</code> will return all characters that were assigned to a codepoint in <strong>either</strong> version 2.0 or 5.0.<p>"
+        + "<p>Version numbers for all releases of the Unicode Standard are shown in the table below:</p>"
         + f"{UNICODE_AGE_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>age</code>, click the button below and enter a value from the list of Unicode version numbers.</p>"
     )
 
 
-def get_filter_setting_description_general_category() -> str:
+def get_description_and_values_table_for_general_category() -> str:
     return (
         '<ul class="param-notes">'
         + "<li>This value is optional</li>"
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
         + "<p>Filter Unicode characters by <code>general_category</code>. Sending multiple values will return all characters that match any of the selected catagories (e.g., sending <code>category=P</code> and <code>category=S</code> will return <strong>both</strong> Punctuation and Symbol characters).<p>"
-        + "<p>You can view all possible general category codes by expanding the section below:</p>"
+        + "<p>All valid general category codes are shown in the table below:</p>"
         + f"{GENERAL_CATEGORY_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>general_category</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 
-def get_filter_setting_description_script_code() -> str:
+def get_description_and_values_table_for_script_code() -> str:
     return (
         '<ul class="param-notes">'
         + "<li>This value is optional</li>"
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
         + "<p>Filter Unicode characters by <code>script</code>. Sending multiple values will return all characters that match any of the selected scripts (e.g., sending <code>script=Copt</code> and <code>script=Cyrl</code> will return <strong>both</strong> Greek and Coptic characters.<p>"
-        + "<p>You can view all possible script codes by expanding the section below:</p>"
+        + "<p>All valid script codes are shown in the table below:</p>"
         + f"{SCRIPT_CODE_VALUES_TABLE}"
+        + "<p>To add a filter setting for <code>script</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
 def get_description_and_values_table_for_bidi_class() -> str:
     return (
         '<ul class="param-notes">'
