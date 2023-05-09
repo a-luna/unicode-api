@@ -28,6 +28,13 @@ class UnicodeAge(StrEnum):
     V14_0 = "14.0"
     V15_0 = "15.0"
 
+    def __str__(self) -> str:
+        return self.name.replace("_", ".")[1:]
+
+    @property
+    def code(self) -> str:
+        return str(self)
+
     @classmethod
     def match_loosely(cls, age: str):
         age_map = {f"{e}": e for e in cls}

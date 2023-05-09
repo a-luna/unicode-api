@@ -224,28 +224,6 @@ def create_block_name_color_legend():
     return html
 
 
-def create_table_listing_unicode_age_values() -> str:
-    html = """<div class="filter-table-outer">
-    <div class="filter-table-wrapper">
-        <table id="unicode-age-values">
-            <tbody>
-                <tr>
-                    <th>Unicode Version</th>
-                </tr>
-        """
-    for age in UnicodeAge:
-        html += f"""\t\t\t\t<tr>
-                    <td>{age}</td>
-                </tr>
-            """
-    html += """\t\t\t</tbody>
-        </table>
-    </div>
-</div>
-    """
-    return html
-
-
 def create_table_listing_prop_group_names() -> str:
     html = """<div class="filter-table-outer">
     <div class="filter-table-wrapper">
@@ -311,7 +289,9 @@ BLOCK_NAME_VALUES_TABLE = create_details_element_for_swagger_ui(
 )
 
 GENERAL_CATEGORY_VALUES_TABLE = GENERAL_CATEGORY_VALUES
-UNICODE_AGE_VALUES_TABLE = create_table_listing_unicode_age_values()
+UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
+    UnicodeAge, "unicode-age", column_1_text="Unicode Version Number", hide_column_2=True
+)
 PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
 SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script-code", column_2_text="Script Name")
 BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
