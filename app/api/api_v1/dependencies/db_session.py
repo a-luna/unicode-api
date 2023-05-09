@@ -48,6 +48,8 @@ def construct_filter_query(
     if filter_params.scripts:
         script_conditions = [column("script_extensions").contains(script.code) for script in filter_params.scripts]
         query = query.where(or_(*script_conditions))
+    if filter_params.bidi_class_list:
+        query = query.where(column("bidirectional_class").in_(filter_params.bidi_class_list))
     return query
 
 

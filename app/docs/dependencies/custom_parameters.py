@@ -2,6 +2,7 @@ import re
 
 from app.core.config import settings
 from app.docs.dependencies import (
+    BIDI_CLASS_VALUES_TABLE,
     BLOCK_NAME_VALUES_TABLE,
     GENERAL_CATEGORY_VALUES_TABLE,
     PROPERTY_GROUP_VALUES_TABLE,
@@ -195,6 +196,16 @@ def get_filter_setting_description_script_code() -> str:
         + "<p>Filter Unicode characters by <code>script</code>. Sending multiple values will return all characters that match any of the selected scripts (e.g., sending <code>script=Copt</code> and <code>script=Cyrl</code> will return <strong>both</strong> Greek and Coptic characters.<p>"
         + "<p>You can view all possible script codes by expanding the section below:</p>"
         + f"{SCRIPT_CODE_VALUES_TABLE}"
+def get_description_and_values_table_for_bidi_class() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by <code>bidirectional_class</code>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>bidi_class=AL</code> and <code>bidi_class=AN</code> will return characters that are treated as Arabic Letters <strong>and</strong> characters that are treated as Arabic Numbers when formatting bidiretional text.<p>"
+        + "<p>All valid bidirectional class values are shown in the table below:</p>"
+        + f"{BIDI_CLASS_VALUES_TABLE}"
+        + "<p>To add a filter setting for <code>bidirectional_class</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 

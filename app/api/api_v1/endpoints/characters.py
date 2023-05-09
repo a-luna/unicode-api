@@ -8,19 +8,19 @@ from app.api.api_v1.dependencies import (
     CharacterSearchParameters,
     DBSession,
     FilterParameters,
-    ListParameters,
-    UnicodeBlockQueryParamResolver,
     get_session,
+    ListParameters,
     parse_enum_values_from_parameter,
+    UnicodeBlockQueryParamResolver,
 )
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.config import settings
 from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
 from app.docs.dependencies.custom_parameters import (
+    get_description_and_values_table_for_property_group,
     UNICODE_CHAR_EXAMPLES,
     UNICODE_CHAR_STRING_DESCRIPTION,
-    get_description_and_values_table_for_property_group,
 )
 from app.schemas.enums import CharPropertyGroup
 
@@ -101,7 +101,14 @@ def get_unicode_character_details(
     | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
     db_ctx: DBSession = Depends(get_session),
 ):
-    prop_groups = parse_enum_values_from_parameter(CharPropertyGroup, "show_props", show_props) if show_props else None
+    if show_props:
+        result = parse_enum_values_from_parameter(CharPropertyGroup, "show_props", show_props)
+        if result.success:
+            prop_groups = result.value
+        else:
+            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
+    else:
+        prop_groups = None
     return [get_character_details(db_ctx, ord(char), prop_groups) for char in string]
 
 
@@ -157,10 +164,6 @@ def get_character_details(
     show_props: list[CharPropertyGroup] | None,
     score: float | None = None,
 ) -> db.UnicodeCharacterResponse:
-    response_dict = db_ctx.get_character_properties(codepoint, show_props)
-    if score:
-        response_dict["score"] = float(f"{score:.1f}")
-    return db.UnicodeCharacterResponse(**response_dict)
     response_dict = db_ctx.get_character_properties(codepoint, show_props)
     if score:
         response_dict["score"] = float(f"{score:.1f}")

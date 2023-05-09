@@ -1,5 +1,7 @@
 from enum import auto, IntEnum
 
+from app.schemas.util import normalize_string_lm3
+
 
 class BidirectionalClass(IntEnum):
     NONE = auto()
@@ -29,6 +31,10 @@ class BidirectionalClass(IntEnum):
 
     def __str__(self):
         return self.name.replace("_", " ").title()
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -91,3 +97,8 @@ class BidirectionalClass(IntEnum):
             "PDI": cls.POP_DIRECTIONAL_ISOLATE,
         }
         return code_map.get(code, cls.NONE)
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        prop_names = {e.normalized: e for e in cls}
+        return prop_names.get(normalize_string_lm3(name))

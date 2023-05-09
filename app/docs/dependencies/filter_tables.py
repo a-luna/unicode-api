@@ -1,7 +1,7 @@
 from app.data.cache import cached_data
 from app.docs.api_docs.swagger_ui import create_details_element_for_swagger_ui
 from app.docs.util import slugify
-from app.schemas.enums import CharPropertyGroup, ScriptCode, UnicodeAge
+from app.schemas.enums import BidirectionalClass, CharPropertyGroup, ScriptCode, UnicodeAge
 
 GENERAL_CATEGORY_VALUES = """
 <div class="filter-table-outer">
@@ -274,27 +274,35 @@ def get_prop_group_name_maybe_linked(pg: CharPropertyGroup) -> str:
     return f'<a href="#{slugify(pg.name)}">{pg.name}</a>' if pg != CharPropertyGroup.All else pg.name
 
 
-def create_table_listing_enum_values(enumClass, filter_param) -> str:
+def create_table_listing_enum_values(
+    enumClass, filter_param, column_1_text="Code", column_2_text="Description", hide_column_2=False
+) -> str:
     html = f"""<div class="filter-table-outer">
     <div class="filter-table-wrapper">
         <table id="{filter_param}-values">
             <tbody>
                 <tr>
-                    <th>Code</th>
-                    <th>Description</th>
-                </tr>
-    """
+                    <th>{column_1_text}</th>"""
+    if not hide_column_2:
+        html += f"""
+                    <th>{column_2_text}</th>"""
+    html += """
+                </tr>"""
     for e in enumClass:
-        html += f"""\t\t\t\t<tr>
-                    <td>{e.code}</td>
-                    <td>{e.display_name.split(" (", 1 )[0]}</td>
-                </tr>
-        """
-    html += """\t\t\t</tbody>
+        if e.code:
+            html += f"""
+                <tr>
+                    <td>{e.code}</td>"""
+            if not hide_column_2:
+                html += f"""
+                    <td>{e}</td>"""
+        html += """
+                </tr>"""
+    html += """
+            </tbody>
         </table>
     </div>
-</div>
-    """
+</div>"""
     return html
 
 
@@ -305,4 +313,7 @@ BLOCK_NAME_VALUES_TABLE = create_details_element_for_swagger_ui(
 GENERAL_CATEGORY_VALUES_TABLE = GENERAL_CATEGORY_VALUES
 UNICODE_AGE_VALUES_TABLE = create_table_listing_unicode_age_values()
 PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
-SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script-code")
+SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script-code", column_2_text="Script Name")
+BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
+    BidirectionalClass, "bidi-class", column_2_text="Bidirectional Class"
+)
