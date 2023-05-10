@@ -89,7 +89,7 @@ python-jose==3.3.0
 pyupgrade==3.4.0
 PyYAML==6.0
 rapidfuzz==3.0.0
-redis==4.5.4
+redis==4.5.5
 requests==2.30.0
 rfc3986==2.0.0
 rich==13.3.5
@@ -122,5 +122,5 @@ uvloop==0.17.0
 virtualenv==20.23.0
 watchfiles==0.19.0
 wcwidth==0.2.6
-websockets==11.0.2
+websockets==11.0.3
 wrapt==1.15.0
