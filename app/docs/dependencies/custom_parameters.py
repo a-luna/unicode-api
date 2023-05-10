@@ -42,7 +42,7 @@ CODEPOINT_INVALID_ERROR = (
 )
 
 UNICODE_CHAR_STRING_DESCRIPTION = f"""
-<p>A string containing unicode characters, which can be expressed either directly (unencoded) or as a URI-encoded string. If you are unsure which format to use, please see the <strong>Examples</strong> below.</p>
+<p>A string containing Unicode characters, which can be expressed either directly (unencoded) or as a URI-encoded string. If you are unsure which format to use, please see the <strong>Examples</strong> below.</p>
 <details>
     <summary>
         <div>

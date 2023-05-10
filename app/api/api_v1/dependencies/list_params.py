@@ -26,7 +26,7 @@ def get_decimal_number_from_hex_codepoint(codepoint: str) -> int:
         raise HTTPException(
             status_code=int(HTTPStatus.BAD_REQUEST),
             detail=(
-                f"Codepoint {get_codepoint_string(codepoint_dec)} is not within the range of unicode "
+                f"Codepoint {get_codepoint_string(codepoint_dec)} is not within the range of Unicode "
                 "characters (U+0000 to U+10FFFF)."
             ),
         )

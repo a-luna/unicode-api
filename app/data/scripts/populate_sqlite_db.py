@@ -63,7 +63,7 @@ def generate_raw_sql_for_covering_index(prop_group: CharPropertyGroup) -> str:
 
 
 def parse_unicode_planes_and_blocks_from_json():
-    spinner = start_task("Parsing unicode plane and block data from JSON...")
+    spinner = start_task("Parsing Unicode plane and block data from JSON...")
     all_planes = [db.UnicodePlane(**plane) for plane in json.loads(PLANES_JSON.read_text())]
     all_blocks = [db.UnicodeBlock(**block) for block in json.loads(BLOCKS_JSON.read_text())]
     finish_task(spinner, True, "Successfully parsed plane and block data!")
@@ -71,7 +71,7 @@ def parse_unicode_planes_and_blocks_from_json():
 
 
 def parse_unicode_characters_from_json():
-    spinner = start_task("Parsing unicode character data from JSON...")
+    spinner = start_task("Parsing Unicode character data from JSON...")
     all_char_dicts = [update_char_dict_enum_values(char) for char in json.loads(CHARACTERS_JSON.read_text())]
     all_named_chars = [db.UnicodeCharacter(**char_dict) for char_dict in all_char_dicts if not char_dict["no_name"]]
     all_no_name_chars = [db.UnicodeCharacterNoName(**char_dict) for char_dict in all_char_dicts if char_dict["no_name"]]
@@ -99,12 +99,12 @@ def update_char_dict_enum_values(char_dict):
 
 
 def assign_unicode_plane_to_each_block(all_planes, all_blocks):
-    spinner = start_task("Assigning unicode plane to each block...")
-    update_progress(spinner, "Assigning unicode planes to each block...", 0, len(all_blocks))
+    spinner = start_task("Assigning Unicode plane to each block...")
+    update_progress(spinner, "Assigning Unicode planes to each block...", 0, len(all_blocks))
     for i, block in enumerate(all_blocks, start=1):
         block.plane = get_unicode_plane_containing_block(all_planes, block)
-        update_progress(spinner, "Assigning unicode planes to each block...", i, len(all_blocks))
-    finish_task(spinner, True, "Successfully assigned a unicode plane to all blocks!")
+        update_progress(spinner, "Assigning Unicode planes to each block...", i, len(all_blocks))
+    finish_task(spinner, True, "Successfully assigned a Unicode plane to all blocks!")
     return all_blocks
 
 
@@ -114,12 +114,12 @@ def get_unicode_plane_containing_block(all_planes, block):
 
 
 def assign_unicode_block_and_plane_to_each_character(all_planes, all_blocks, all_chars):
-    spinner = start_task("Assigning unicode block and plane to each character...")
+    spinner = start_task("Assigning Unicode block and plane to each character...")
     for i, char in enumerate(all_chars, start=1):
         char.block = get_unicode_block_containing_codepoint(all_blocks, char.codepoint_dec)
         char.plane = get_unicode_plane_containing_block(all_planes, char.block)
-        update_progress(spinner, "Assigning unicode block and plane to each character...", i, len(all_chars))
-    finish_task(spinner, True, "Successfully assigned a unicode block and plane to all characters!")
+        update_progress(spinner, "Assigning Unicode block and plane to each character...", i, len(all_chars))
+    finish_task(spinner, True, "Successfully assigned a Unicode block and plane to all characters!")
     return all_chars
 
 
@@ -129,7 +129,7 @@ def get_unicode_block_containing_codepoint(all_blocks, codepoint):
 
 
 def add_unicode_data_to_database(all_planes, all_blocks, all_chars, session):
-    spinner = start_task("Adding unicode data to database session...")
+    spinner = start_task("Adding Unicode data to database session...")
     for plane in all_planes:
         session.add(plane)
     session.commit()
@@ -138,7 +138,7 @@ def add_unicode_data_to_database(all_planes, all_blocks, all_chars, session):
     session.commit()
     for i, char in enumerate(all_chars, start=1):
         session.add(char)
-        update_progress(spinner, "Adding unicode characters to database session...", i, len(all_chars))
+        update_progress(spinner, "Adding Unicode characters to database session...", i, len(all_chars))
     finish_task(spinner, True, "Successfully added all characters to database session!!")
 
 
