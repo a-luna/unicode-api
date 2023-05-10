@@ -107,13 +107,16 @@ SEARCH_CHAR_NAME_DESCRIPTION = """
 <ul class="param-notes">
     <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
 </ul>
-<p>Search for any unicode character by name. Exact matches are unnecessary since the search algorithm will return character names similar to the search term and provide a <strong>score</strong> value for each result.</p>
-<p>For more information on this search behavior, see the <a href="#search">Search section</a> of the docs</p>
+<p>Search for any Unicode character by name. Exact matches are unnecessary since the search algorithm will return character names similar to the search term and provide a <strong>score</strong> value for each result.</p>
+<p>You can restrict or expand your search based on the score value with the <strong>min_score</strong> parameter. For more information on this search behavior, see the <a href="#search">Search section</a> of the docs</p>
 """
 
 SEARCH_BLOCK_NAME_DESCRIPTION = """
-<p>Search for any unicode block by name. Exact matches are unnecessary since the search algorithm will return block names similar to the search term and provide a <strong>score</strong> value for each result.</p>
-<p>You can restrict or expand your search based on the score value with the <strong>min_score</strong> parameter.</p>
+<ul class="param-notes">
+    <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
+</ul>
+<p>Search for any Unicode block by name. Exact matches are unnecessary since the search algorithm will return block names similar to the search term and provide a <strong>score</strong> value for each result that indicates how similar your search term is to each block name.</p>
+<p>You can restrict or expand your search based on the score value with the <strong>min_score</strong> parameter. For more information on this search behavior, see the <a href="#search">Search section</a> of the docs.</p>
 """
 
 MIN_SCORE_DESCRIPTION = """
