@@ -19,6 +19,7 @@ PROP_GROUP_LINK_SELECTOR =
   '[data-param-name="show_props"] a[href*="#"]:not([href*="loose"])';
 LOOSE_MATCHING_LINK_SELECTOR = 'a[href$="#loose-matching"]';
 SEARCH_LINK_SELECTOR = 'a[href$="#search"]';
+BLOCK_DOC_LINK_SELECTOR = 'a[href="#the-unicodeblock-object"]';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -35,6 +36,7 @@ async function addClickHandlersAfterDelay() {
 async function addClickHandlers(parent) {
   await sleep(500);
   addPropGroupClickHandlers(parent);
+  addBlockDocLinks(parent);
   addLinkClickHandlers(parent, LOOSE_MATCHING_LINK_SELECTOR);
   addLinkClickHandlers(parent, SEARCH_LINK_SELECTOR);
 }
@@ -43,6 +45,14 @@ const addPropGroupClickHandlers = (parent) =>
   parent.querySelectorAll(PROP_GROUP_LINK_SELECTOR).forEach((a) => {
     a.addEventListener("click", (e) => {
       openDetailsElementById(e, "#unicode-characters");
+      openDetailsElementById(e, a.hash);
+    });
+  });
+
+const addBlockDocLinks = (parent) => 
+  parent.querySelectorAll(BLOCK_DOC_LINK_SELECTOR).forEach((a) => {
+    a.addEventListener("click", (e) => {
+      openDetailsElementById(e, "#unicode-blocks");
       openDetailsElementById(e, a.hash);
     });
   });

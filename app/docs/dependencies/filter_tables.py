@@ -1,9 +1,8 @@
 from app.data.cache import cached_data
-from app.docs.api_docs.swagger_ui import create_details_element_for_swagger_ui
 from app.docs.util import slugify
 from app.schemas.enums import BidirectionalClass, CharPropertyGroup, ScriptCode, UnicodeAge
 
-GENERAL_CATEGORY_VALUES = """
+GENERAL_CATEGORY_VALUES_TABLE = """
 <div class="filter-table-outer">
     <div class="filter-table-wrapper">
         <table id="general-category-values">
@@ -171,80 +170,101 @@ GENERAL_CATEGORY_VALUES = """
 """
 
 
-def create_unicode_block_name_details_element():
-    dt_elements = [f"\t\t\t\t<dt><code>U+{b.start}...U+{b.finish}</code></dt>\n" for b in cached_data.blocks]
-    dd_elements = [
-        (
-            '\t\t\t\t<dd class="block-name" '
-            f'style="color: var(--{b.plane.abbreviation.lower()}-text-color)">'
-            f"{b.name}</dd>\n"
-        )
-        for b in cached_data.blocks
-    ]
-    block_data = zip(dt_elements, dd_elements, strict=True)
-    html = '\t\t\t<div class="filter-table-outer">\n'
-    html += '\t\t\t\t<div class="filter-table-wrapper">\n'
+def create_table_listing_unicode_plane_abbreviations():
+    html = """
+<div class="filter-table-outer">
+    <div class="filter-table-wrapper">
+        <table id="plane-abbrev-values">
+            <tbody>
+                <tr>
+                    <th>Abbreviation</th>
+                    <th>Plane Name</th>
+                </tr>"""
+    for plane in cached_data.planes:
+        html += f"""
+                <tr>
+                    <td>{plane.abbreviation}</td>
+                    <td>{plane.name}</td>
+                </tr>"""
+    html += """
+            </tbody>
+        </table>
+    </div>
+</div>
+"""
+    return html
+
+
+def create_table_listing_unicode_block_names():
+    html = """          <div class="filter-table-outer">
+                <div class="filter-table-wrapper">"""
     html += create_block_name_color_legend()
-    html += "\t\t\t\t\t<dl>\n"
-    html += '\t\t\t\t\t\t<dt class="block-name-header"><strong>Block Range</strong></dt>\n'
-    html += '\t\t\t\t\t\t<dd class="block-name-header"><strong>Block Name</strong></dd>\n'
-    for dt, dd in block_data:
-        html += dt
-        html += dd
-    html += "\t\t\t\t\t</dl>\n"
-    html += "\t\t\t\t</div>\n"
-    html += "\t\t\t</div>\n"
+    html += """
+                    <table id="block-name-values">
+                        <thead>
+                            <tr>
+                                <th class="block-name-header"><strong>Block Range</strong></th>
+                                <th class="block-name-header"><strong>Block Name</strong></th>
+                            </tr>
+                        </thead>
+                        <tbody>"""
+    for block in cached_data.blocks:
+        html += f"""
+                            <tr>
+                                <td><code>U+{block.start}...U+{block.finish}</code></td>
+                                <td class="block-name" style="color: var(--{block.plane.abbreviation.lower()}-text-color)">{block.name}</td>
+                            </tr>"""
+    html += """
+                        </tbody>
+                    </table>
+                </div>
+            </div>"""
     return html
 
 
 def create_block_name_color_legend():
-    list_items = [
-        (
-            f'\t\t\t\t\t<li style="color: var(--{p.abbreviation.lower()}-text-color)">'
-            f'<span class="color-swatch" style="background-color: var(--{p.abbreviation.lower()}-text-color)"></span>'
-            f"<span>{p.name} ({p.abbreviation})</span></li>\n"
-        )
-        for p in cached_data.planes
-    ]
-    col_1 = list_items[:4]
-    col_2 = list_items[4:]
-    html = '\t\t\t<div class="block-name-info">\n'
-    html += "\t\t\t\t<p>The color of each block name indicates the plane it belongs to:</p>\n"
-    html += '\t\t\t\t<div class="block-name-color-legend-wrapper">\n'
-    html += '\t\t\t\t\t<ul class="block-name-color-legend">\n'
-    for el in col_1:
-        html += el
-    html += "\t\t\t\t\t</ul>\n"
-    html += '\t\t\t\t\t<ul class="block-name-color-legend">\n'
-    for el in col_2:
-        html += el
-    html += "\t\t\t\t\t</ul>\n"
-    html += "\t\t\t\t</div>\n"
-    html += "\t\t\t</div>\n"
+    html = """
+                    <div class="block-name-info">
+                        <p>The color of each block name indicates the plane it belongs to:</p>
+                        <div class="block-name-color-legend-wrapper">
+                            <ul class="block-name-color-legend">"""
+    for plane in cached_data.planes[:4]:
+        html += f"""
+                                <li style="color: var(--{plane.abbreviation.lower()}-text-color)"><span class="color-swatch" style="background-color: var(--{plane.abbreviation.lower()}-text-color)"></span><span>{plane.name} ({plane.abbreviation})</span></li>"""
+    html += """
+                            </ul>
+                            <ul class="block-name-color-legend">"""
+    for plane in cached_data.planes[4:]:
+        html += f"""
+                                <li style="color: var(--{plane.abbreviation.lower()}-text-color)"><span class="color-swatch" style="background-color: var(--{plane.abbreviation.lower()}-text-color)"></span><span>{plane.name} ({plane.abbreviation})</span></li>"""
+    html += """
+                            </ul>
+                        </div>
+                    </div>"""
     return html
 
 
 def create_table_listing_prop_group_names() -> str:
-    html = """<div class="filter-table-outer">
+    html = """
+<div class="filter-table-outer">
     <div class="filter-table-wrapper">
         <table id="prop-group-values">
             <tbody>
                 <tr>
                     <th>Property Group</th>
                     <th>Alias</th>
-                </tr>
-    """
+                </tr>"""
     for pg in CharPropertyGroup:
-        html += f"""\t\t\t\t<tr>
+        html += f"""
+                <tr>
                     <td>{get_prop_group_name_maybe_linked(pg)}</td>
                     <td>{pg.short_alias if pg.has_alias else ""}</td>
-                </tr>
-            """
-    html += """\t\t\t</tbody>
+                </tr>"""
+    html += """
+            </tbody>
         </table>
     </div>
-</div>
-    """
+</div>"""
     return html
 
 
@@ -255,7 +275,8 @@ def get_prop_group_name_maybe_linked(pg: CharPropertyGroup) -> str:
 def create_table_listing_enum_values(
     enumClass, filter_param, column_1_text="Code", column_2_text="Description", hide_column_2=False
 ) -> str:
-    html = f"""<div class="filter-table-outer">
+    html = f"""
+<div class="filter-table-outer">
     <div class="filter-table-wrapper">
         <table id="{filter_param}-values">
             <tbody>
@@ -284,15 +305,12 @@ def create_table_listing_enum_values(
     return html
 
 
-BLOCK_NAME_VALUES_TABLE = create_details_element_for_swagger_ui(
-    "Unicode Block Names", create_unicode_block_name_details_element()
-)
-
-GENERAL_CATEGORY_VALUES_TABLE = GENERAL_CATEGORY_VALUES
+PLANE_ABBREV_VALUES_TABLE = create_table_listing_unicode_plane_abbreviations()
+BLOCK_NAME_VALUES_TABLE = create_table_listing_unicode_block_names()
+PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
 UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
     UnicodeAge, "unicode-age", column_1_text="Unicode Version Number", hide_column_2=True
 )
-PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
 SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script-code", column_2_text="Script Name")
 BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
     BidirectionalClass, "bidi-class", column_2_text="Bidirectional Class"

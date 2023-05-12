@@ -76,13 +76,15 @@ UNICODE_CHAR_EXAMPLES = {
     "Emoji": {"summary": "Unencoded Emoji", "value": "🏃🏿‍♀️"},
 }
 
-BLOCK_NAME_DESCRIPTION = """
-<p>The unique name assigned to each block of Unicode characters. In order to be used as a string enum value, a series of operations are performed on the block name:</p>
-<ol>
-    <li>Numbers and uppercase characters are left unchanged</li>
-    <li>All lowercase characters are replaced with the uppercase version</li>
-    <li>All remaining characters (e.g., whitespace, hyphens) are replaced by the underscore ("_") character.</li>
-</ol>
+BLOCK_NAME_DESCRIPTION = f"""
+<ul class="param-notes">
+    <li>This value is optional</li>
+    <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
+</ul>
+<p>The name of a Unicode block. If the value provided matches the name of a Unicode block according to the loose-matching rule, the response will contain a <a href="#the-unicodeblock-object"><code>UnicodeBlock</code> object</a> for the specified block.</p>
+<p>A list of the official names for all Unicode blocks is given below:</p>
+{BLOCK_NAME_VALUES_TABLE}
+<p>Enter the name of any block into the field below:</p>
 """
 
 CHAR_SEARCH_BLOCK_NAME_DESCRIPTION = f"""
@@ -90,9 +92,10 @@ CHAR_SEARCH_BLOCK_NAME_DESCRIPTION = f"""
     <li>This value is optional</li>
     <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
 </ul>
-<p>if a valid block name is given, the response will only contain characters from that block. If this value  is not provided, the response will contain all characters in all blocks.</p>
-<p>A list of the official names for all Unicode blocks is given below, click to expand:</p>
+<p>if a valid block name is given, the response will only contain characters from that block. If this value is not provided, the response will contain all characters in all blocks.</p>
+<p>A list of the official names for all Unicode blocks is given below:</p>
 {BLOCK_NAME_VALUES_TABLE}
+<p>To only list characters from a single block, enter the name of the block into the field below:</p>
 """
 
 PLANE_NAME_DESCRIPTION = """
