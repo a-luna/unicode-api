@@ -146,7 +146,3 @@ def commit_database_session(session):
     spinner = start_task("Committing all data from this session to the database...")
     session.commit()
     finish_task(spinner, True, "Successfully committed all data!")
-
-
-if __name__ == "__main__":
-    populate_sqlite_database()

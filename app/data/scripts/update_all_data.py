@@ -16,8 +16,8 @@ from app.core.config import (
 )
 from app.core.result import Result
 from app.data.scripts import (
+    download_xml_unicode_database,
     finish_task,
-    get_xml_unicode_database,
     parse_xml_unicode_database,
     populate_sqlite_database,
     run_command,
@@ -26,40 +26,43 @@ from app.data.scripts import (
 
 
 def update_all_data(version: str):
+    result = get_xml_unicode_database(version)
+    if result.failure or not result.value:
+        return result
+    xml_file = result.value
+
+    result = parse_xml_unicode_database(xml_file)
+    if result.failure or not result.value:
+        return result
+    (all_planes, all_blocks, all_chars) = result.value
+    update_unicode_json_files(all_planes, all_blocks, all_chars)
+
+    result = populate_sqlite_database()
+    if result.failure:
+        return result
+
+    if os.environ.get("ENV") == "PROD":
+        if xml_file.exists():
+            xml_file.unlink()
+        delete_character_json_file()
+    else:
+        result = backup_db_and_json_files()
+        if result.failure:
+            return result
+    return Result.Ok()
+
+
+def get_xml_unicode_database(version: str) -> Result[Path]:
     spinner = start_task(f"Downloading Unicode XML Database v{version} from unicode.org...")
     spinner.stop_and_persist()
-    get_xml_result = get_xml_unicode_database(version)
-    if get_xml_result.failure:
+    get_xml_result = download_xml_unicode_database(version)
+    if get_xml_result.failure or not get_xml_result.value:
         finish_task(spinner, False, "Download failed! Please check the internet connection.")
         return get_xml_result
     spinner.start()
     finish_task(spinner, True, f"Successfully downloaded Unicode XML Database v{version}!")
     xml_file = get_xml_result.value
-    if xml_file and xml_file.exists():
-        result = parse_xml_unicode_database(xml_file)
-        if result.failure:
-            return result
-        if result.value:
-            (all_planes, all_blocks, all_chars) = result.value
-            update_unicode_json_files(all_planes, all_blocks, all_chars)
-
-            populate_db_result = populate_sqlite_database()
-            if populate_db_result.failure:
-                return populate_db_result
-            if os.environ.get("ENV") == "PROD":
-                if xml_file.exists():
-                    xml_file.unlink()
-                delete_character_json_file()
-            else:
-                zip_file = backup_sqlite_db()
-                result = upload_zip_file_to_s3(zip_file)
-                if result.failure:
-                    return result
-                zip_file = backup_json_files()
-                result = upload_zip_file_to_s3(zip_file)
-                if result.failure:
-                    return result
-            return Result.Ok()
+    return Result.Ok(xml_file)
 
 
 def update_unicode_json_files(all_planes, all_blocks, all_chars):
@@ -77,6 +80,18 @@ def update_unicode_json_files(all_planes, all_blocks, all_chars):
 def delete_character_json_file():
     if CHARACTERS_JSON.exists():
         CHARACTERS_JSON.unlink()
+
+
+def backup_db_and_json_files():
+    zip_file = backup_sqlite_db()
+    result = upload_zip_file_to_s3(zip_file)
+    if result.failure:
+        return result
+    zip_file = backup_json_files()
+    result = upload_zip_file_to_s3(zip_file)
+    if result.failure:
+        return result
+    return Result.Ok()
 
 
 def backup_sqlite_db():
