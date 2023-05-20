@@ -27,12 +27,8 @@ class DBSession:
         return get_character_properties(self.engine, codepoint, show_props)
 
     def filter_all_characters(self, filter_params: FilterParameters) -> list[int]:
-        return filter_all_characters(self.session, filter_params)
-
-
-def filter_all_characters(session: Session, filter_params: FilterParameters) -> list[int]:
-    queries = [construct_filter_query(filter_params, table) for table in CHAR_TABLES]
-    return apply_filter(session, queries)
+        queries = [construct_filter_query(filter_params, table) for table in CHAR_TABLES]
+        return apply_filter(self.session, queries)
 
 
 def construct_filter_query(
