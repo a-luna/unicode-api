@@ -1,6 +1,6 @@
 from app.data.cache import cached_data
 from app.docs.util import slugify
-from app.schemas.enums import BidirectionalClass, CharPropertyGroup, ScriptCode, UnicodeAge
+from app.schemas.enums import BidirectionalClass, CharPropertyGroup, DecompositionType, ScriptCode, UnicodeAge
 
 GENERAL_CATEGORY_VALUES_TABLE = """
 <div class="filter-table-outer">
@@ -314,4 +314,7 @@ UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
 SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script-code", column_2_text="Script Name")
 BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
     BidirectionalClass, "bidi-class", column_2_text="Bidirectional Class"
+)
+DECOMP_TYPE_VALUES_TABLE = create_table_listing_enum_values(
+    DecompositionType, "decomp-type", column_2_text="Decomposition Type"
 )

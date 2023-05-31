@@ -1,4 +1,6 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
+
+from app.schemas.util import normalize_string_lm3
 
 
 class DecompositionType(IntEnum):
@@ -32,6 +34,10 @@ class DecompositionType(IntEnum):
             .replace("Cjk", "CJK")
             .replace("Or Zenkaku", "(or Zenkaku)")
         )
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -84,3 +90,8 @@ class DecompositionType(IntEnum):
             "wide": cls.WIDE_OR_ZENKAKU_COMPATIBILITY_CHARACTER,
         }
         return code_map.get(code, cls.NONE)
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        prop_names = {e.normalized: e for e in cls if e != e.NONE}
+        return prop_names.get(normalize_string_lm3(name))

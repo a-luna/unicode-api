@@ -8,12 +8,20 @@ from app.docs.dependencies.custom_parameters import (
     PAGE_NUMBER_DESCRIPTION,
     PER_PAGE_DESCRIPTION,
     get_description_and_values_table_for_bidi_class,
+    get_description_and_values_table_for_decomp_type,
     get_description_and_values_table_for_general_category,
     get_description_and_values_table_for_property_group,
     get_description_and_values_table_for_script_code,
     get_description_and_values_table_for_unicode_age,
 )
-from app.schemas.enums import BidirectionalClass, CharPropertyGroup, GeneralCategory, ScriptCode, UnicodeAge
+from app.schemas.enums import (
+    BidirectionalClass,
+    CharPropertyGroup,
+    DecompositionType,
+    GeneralCategory,
+    ScriptCode,
+    UnicodeAge,
+)
 
 
 class FilterParameters:
@@ -26,12 +34,14 @@ class FilterParameters:
         script: list[str] | None = Query(default=None, description=get_description_and_values_table_for_script_code()),
         bidi_class: list[str]
         | None = Query(default=None, description=get_description_and_values_table_for_bidi_class()),
+        decomp_type: list[str]
+        | None = Query(default=None, description=get_description_and_values_table_for_decomp_type()),
         show_props: list[str]
         | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
         per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
         page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
     ):
-        self.parse_all_enum_values(category, age, script, bidi_class, show_props)
+        self.parse_all_enum_values(category, age, script, bidi_class, decomp_type, show_props)
         self.name = name
         self.per_page = per_page or 10
         self.page = page or 1
@@ -42,6 +52,7 @@ class FilterParameters:
         age: list[str] | None,
         script: list[str] | None,
         bidi_class: list[str] | None,
+        decomp_type: list[str] | None,
         show_props: list[str] | None,
     ):
         errors = []
@@ -49,6 +60,7 @@ class FilterParameters:
         self.age_list = None
         self.scripts = None
         self.bidi_class_list = None
+        self.decomp_types = None
         self.show_props = None
 
         if category:
@@ -79,6 +91,13 @@ class FilterParameters:
             else:
                 errors.append(result.error)
 
+        if decomp_type:
+            result = parse_enum_values_from_parameter(DecompositionType, "decomp_type", decomp_type)
+            if result.success:
+                self.decomp_types = result.value
+            else:
+                errors.append(result.error)
+
         if show_props:
             result = parse_enum_values_from_parameter(CharPropertyGroup, "show_props", show_props)
             if result.success:
@@ -98,9 +117,9 @@ def parse_enum_values_from_parameter(enum_class, param_name: str, values: list[s
     if not invalid_results:
         return Result.Ok(list(results.values()))
     else:
-        needs_plural = len(invalid_results) > 1
+        plural = len(invalid_results) > 1
         error = (
-            f'{len(invalid_results)} value{"s" if needs_plural else ""} provided for the {param_name!r} parameter '
-            f'{"are" if needs_plural else "is"} invalid: {invalid_results}'
+            f'{len(invalid_results)} value{"s" if plural else ""} provided for the {param_name!r} parameter '
+            f'{"are" if plural else "is"} invalid: {invalid_results}'
         )
         return Result.Fail(error)

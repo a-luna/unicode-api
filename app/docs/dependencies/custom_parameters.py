@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.docs.dependencies import (
     BIDI_CLASS_VALUES_TABLE,
     BLOCK_NAME_VALUES_TABLE,
+    DECOMP_TYPE_VALUES_TABLE,
     GENERAL_CATEGORY_VALUES_TABLE,
     PROPERTY_GROUP_VALUES_TABLE,
     SCRIPT_CODE_VALUES_TABLE,
@@ -216,6 +217,19 @@ def get_description_and_values_table_for_bidi_class() -> str:
         + "<p>All valid bidirectional class values are shown in the table below:</p>"
         + f"{BIDI_CLASS_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>bidirectional_class</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
+def get_description_and_values_table_for_decomp_type() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by <code>decomposition_type</code>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>decomp_type=sub</code> and <code>decomp_type=sup</code> will return characters that decompose as subscript <strong>and</strong> superscript characters when normalization algorithms are applied.<p>"
+        + "<p>All valid decomposition types are shown in the table below:</p>"
+        + f"{DECOMP_TYPE_VALUES_TABLE}"
+        + "<p>To add a filter setting for <code>decomposition_type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 
