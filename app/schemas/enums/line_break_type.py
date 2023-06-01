@@ -1,4 +1,6 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
+
+from app.schemas.util import normalize_string_lm3
 
 
 class LineBreakType(IntEnum):
@@ -51,6 +53,10 @@ class LineBreakType(IntEnum):
             .replace(" Numeric", " (Numeric)")
             .replace("South East Asian", "(South East Asian)")
         )
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -139,3 +145,8 @@ class LineBreakType(IntEnum):
             "ZW": cls.ZERO_WIDTH_SPACE,
         }
         return code_map.get(code, cls.UNKNOWN)
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        prop_names = {e.normalized: e for e in cls}
+        return prop_names.get(normalize_string_lm3(name))

@@ -6,6 +6,7 @@ from app.docs.dependencies import (
     BLOCK_NAME_VALUES_TABLE,
     DECOMP_TYPE_VALUES_TABLE,
     GENERAL_CATEGORY_VALUES_TABLE,
+    LINE_BREAK_TYPE_VALUES_TABLE,
     PROPERTY_GROUP_VALUES_TABLE,
     SCRIPT_CODE_VALUES_TABLE,
     UNICODE_AGE_VALUES_TABLE,
@@ -174,7 +175,7 @@ def get_description_and_values_table_for_unicode_age() -> str:
         '<ul class="param-notes">'
         + "<li>This value is optional</li>"
         + "</ul>"
-        + "<p>Filter Unicode characters by <code>age</code> (i.e., the version of the Unicode Standard in which the character was originally assigned to a codepoint). Sending multiple values will return all characters that match any of the selected Unicode versions (e.g., sending <code>age=2.0</code> and <code>age=5.0</code> will return all characters that were assigned to a codepoint in <strong>either</strong> version 2.0 or 5.0.<p>"
+        + "<p>Filter Unicode characters by <strong>Age</strong> (i.e., the version of the Unicode Standard in which the character was originally assigned to a codepoint). Sending multiple values will return all characters that match any of the selected Unicode versions (e.g., sending <code>age=2.0</code> and <code>age=5.0</code> will return all characters that were assigned to a codepoint in <strong>either</strong> version 2.0 or 5.0.<p>"
         + "<p>Version numbers for all releases of the Unicode Standard are shown in the table below:</p>"
         + f"{UNICODE_AGE_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>age</code>, click the button below and enter a value from the list of Unicode version numbers.</p>"
@@ -187,7 +188,7 @@ def get_description_and_values_table_for_general_category() -> str:
         + "<li>This value is optional</li>"
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
-        + "<p>Filter Unicode characters by <code>general_category</code>. Sending multiple values will return all characters that match any of the selected catagories (e.g., sending <code>category=P</code> and <code>category=S</code> will return <strong>both</strong> Punctuation and Symbol characters).<p>"
+        + "<p>Filter Unicode characters by <strong>General Category</strong>. Sending multiple values will return all characters that match any of the selected catagories (e.g., sending <code>category=P</code> and <code>category=S</code> will return <strong>both</strong> Punctuation and Symbol characters).<p>"
         + "<p>All valid general category codes are shown in the table below:</p>"
         + f"{GENERAL_CATEGORY_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>general_category</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
@@ -200,7 +201,7 @@ def get_description_and_values_table_for_script_code() -> str:
         + "<li>This value is optional</li>"
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
-        + "<p>Filter Unicode characters by <code>script</code>. Sending multiple values will return all characters that match any of the selected scripts (e.g., sending <code>script=Copt</code> and <code>script=Cyrl</code> will return <strong>both</strong> Greek and Coptic characters.<p>"
+        + "<p>Filter Unicode characters by <strong>Script</strong>. Sending multiple values will return all characters that match any of the selected scripts (e.g., sending <code>script=Copt</code> and <code>script=Cyrl</code> will return <strong>both</strong> Greek and Coptic characters.<p>"
         + "<p>All valid script codes are shown in the table below:</p>"
         + f"{SCRIPT_CODE_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>script</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
@@ -213,7 +214,7 @@ def get_description_and_values_table_for_bidi_class() -> str:
         + "<li>This value is optional</li>"
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
-        + "<p>Filter Unicode characters by <code>bidirectional_class</code>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>bidi_class=AL</code> and <code>bidi_class=AN</code> will return characters that are treated as Arabic Letters <strong>and</strong> characters that are treated as Arabic Numbers when formatting bidiretional text.<p>"
+        + "<p>Filter Unicode characters by <strong>Bidirectional Class</strong>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>bidi_class=AL</code> and <code>bidi_class=AN</code> will return characters that are treated as Arabic Letters <strong>and</strong> characters that are treated as Arabic Numbers when formatting bidiretional text.<p>"
         + "<p>All valid bidirectional class values are shown in the table below:</p>"
         + f"{BIDI_CLASS_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>bidirectional_class</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
@@ -226,10 +227,23 @@ def get_description_and_values_table_for_decomp_type() -> str:
         + "<li>This value is optional</li>"
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
-        + "<p>Filter Unicode characters by <code>decomposition_type</code>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>decomp_type=sub</code> and <code>decomp_type=sup</code> will return characters that decompose as subscript <strong>and</strong> superscript characters when normalization algorithms are applied.<p>"
+        + "<p>Filter Unicode characters by <strong>Decomposition Type</strong>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>decomp_type=sub</code> and <code>decomp_type=sup</code> will return characters that decompose as subscript <strong>and</strong> superscript characters when normalization algorithms are applied.<p>"
         + "<p>All valid decomposition types are shown in the table below:</p>"
         + f"{DECOMP_TYPE_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>decomposition_type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
+def get_description_and_values_table_for_line_break_type() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by <strong>Line Break Type</strong>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>line_break=WJ</code> and <code>line_break=ZW</code> will return characters that prohibit line breaks before and after their location in a string.<p>"
+        + "<p>All valid line break types are shown in the table below:</p>"
+        + f"{LINE_BREAK_TYPE_VALUES_TABLE}"
+        + "<p>To add a filter setting for <code>line_break_type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 

@@ -10,6 +10,7 @@ from app.docs.dependencies.custom_parameters import (
     get_description_and_values_table_for_bidi_class,
     get_description_and_values_table_for_decomp_type,
     get_description_and_values_table_for_general_category,
+    get_description_and_values_table_for_line_break_type,
     get_description_and_values_table_for_property_group,
     get_description_and_values_table_for_script_code,
     get_description_and_values_table_for_unicode_age,
@@ -19,6 +20,7 @@ from app.schemas.enums import (
     CharPropertyGroup,
     DecompositionType,
     GeneralCategory,
+    LineBreakType,
     ScriptCode,
     UnicodeAge,
 )
@@ -36,12 +38,14 @@ class FilterParameters:
         | None = Query(default=None, description=get_description_and_values_table_for_bidi_class()),
         decomp_type: list[str]
         | None = Query(default=None, description=get_description_and_values_table_for_decomp_type()),
+        line_break: list[str]
+        | None = Query(default=None, description=get_description_and_values_table_for_line_break_type()),
         show_props: list[str]
         | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
         per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
         page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
     ):
-        self.parse_all_enum_values(category, age, script, bidi_class, decomp_type, show_props)
+        self.parse_all_enum_values(category, age, script, bidi_class, decomp_type, line_break, show_props)
         self.name = name
         self.per_page = per_page or 10
         self.page = page or 1
@@ -53,6 +57,7 @@ class FilterParameters:
         script: list[str] | None,
         bidi_class: list[str] | None,
         decomp_type: list[str] | None,
+        line_break: list[str] | None,
         show_props: list[str] | None,
     ):
         errors = []
@@ -61,6 +66,7 @@ class FilterParameters:
         self.scripts = None
         self.bidi_class_list = None
         self.decomp_types = None
+        self.line_break_types = None
         self.show_props = None
 
         if category:
@@ -95,6 +101,13 @@ class FilterParameters:
             result = parse_enum_values_from_parameter(DecompositionType, "decomp_type", decomp_type)
             if result.success:
                 self.decomp_types = result.value
+            else:
+                errors.append(result.error)
+
+        if line_break:
+            result = parse_enum_values_from_parameter(LineBreakType, "line_break", line_break)
+            if result.success:
+                self.line_break_types = result.value
             else:
                 errors.append(result.error)
 

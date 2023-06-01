@@ -1,6 +1,13 @@
 from app.data.cache import cached_data
 from app.docs.util import slugify
-from app.schemas.enums import BidirectionalClass, CharPropertyGroup, DecompositionType, ScriptCode, UnicodeAge
+from app.schemas.enums import (
+    BidirectionalClass,
+    CharPropertyGroup,
+    DecompositionType,
+    LineBreakType,
+    ScriptCode,
+    UnicodeAge,
+)
 
 GENERAL_CATEGORY_VALUES_TABLE = """
 <div class="filter-table-outer">
@@ -317,4 +324,7 @@ BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
 )
 DECOMP_TYPE_VALUES_TABLE = create_table_listing_enum_values(
     DecompositionType, "decomp-type", column_2_text="Decomposition Type"
+)
+LINE_BREAK_TYPE_VALUES_TABLE = create_table_listing_enum_values(
+    LineBreakType, "line-break", column_2_text="Line Break Type"
 )

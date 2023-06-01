@@ -48,6 +48,8 @@ def construct_filter_query(
         query = query.where(column("bidirectional_class").in_(filter_params.bidi_class_list))
     if filter_params.decomp_types:
         query = query.where(column("decomposition_type").in_(filter_params.decomp_types))
+    if filter_params.line_break_types:
+        query = query.where(column("line_break").in_(filter_params.line_break_types))
     return query
 
 
