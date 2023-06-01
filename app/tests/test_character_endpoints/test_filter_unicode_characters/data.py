@@ -55,6 +55,26 @@ FILTER_BY_DECOMP_TYPE = {
     ],
 }
 
+FILTER_BY_LINE_BREAK_TYPE = {
+    "url": "/v1/characters/filter",
+    "hasMore": True,
+    "currentPage": 1,
+    "nextPage": 2,
+    "totalResults": 13,
+    "results": [
+        {"character": ",", "name": "COMMA", "codepoint": "U+002C", "uriEncoded": "%2C"},
+        {"character": ".", "name": "FULL STOP", "codepoint": "U+002E", "uriEncoded": "%2E"},
+        {"character": ":", "name": "COLON", "codepoint": "U+003A", "uriEncoded": "%3A"},
+        {"character": ";", "name": "SEMICOLON", "codepoint": "U+003B", "uriEncoded": "%3B"},
+        {"character": ";", "name": "GREEK QUESTION MARK", "codepoint": "U+037E", "uriEncoded": "%CD%BE"},
+        {"character": "։", "name": "ARMENIAN FULL STOP", "codepoint": "U+0589", "uriEncoded": "%D6%89"},
+        {"character": "،", "name": "ARABIC COMMA", "codepoint": "U+060C", "uriEncoded": "%D8%8C"},
+        {"character": "؍", "name": "ARABIC DATE SEPARATOR", "codepoint": "U+060D", "uriEncoded": "%D8%8D"},
+        {"character": "߸", "name": "NKO COMMA", "codepoint": "U+07F8", "uriEncoded": "%DF%B8"},
+        {"character": "⁄", "name": "FRACTION SLASH", "codepoint": "U+2044", "uriEncoded": "%E2%81%84"},
+    ],
+}
+
 INVALID_FILTER_PARAM_VALUES = {
-    "detail": "Invalid values were provided for the following 6 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
+    "detail": "Invalid values were provided for the following 7 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }

@@ -4,6 +4,7 @@ from app.main import app
 from app.tests.test_character_endpoints.test_filter_unicode_characters.data import (
     FILTER_BY_BIDI_CLASS,
     FILTER_BY_DECOMP_TYPE,
+    FILTER_BY_LINE_BREAK_TYPE,
     FILTER_BY_UNICODE_AGE,
     INVALID_FILTER_PARAM_VALUES,
     INVALID_PAGE_NUMBER,
@@ -50,9 +51,15 @@ def test_filter_by_decomp_type():
     assert response.json() == FILTER_BY_DECOMP_TYPE
 
 
+def test_filter_by_line_break():
+    response = client.get("/v1/characters/filter?line_break=is")
+    assert response.status_code == 200
+    assert response.json() == FILTER_BY_LINE_BREAK_TYPE
+
+
 def test_invalid_filter_param_values():
     response = client.get(
-        "/v1/characters/filter?category=aa&category=bb&age=7.1&age=12.97&script=blar&script=blee&bidi_class=vv&bidi_class=rr&show_props=soup&show_props=salad&decomp_type=gosh"
+        "/v1/characters/filter?category=aa&category=bb&age=7.1&age=12.97&script=blar&script=blee&bidi_class=vv&bidi_class=rr&show_props=soup&show_props=salad&decomp_type=gosh&line_break=ha"
     )
     assert response.status_code == 400
     assert response.json() == INVALID_FILTER_PARAM_VALUES
