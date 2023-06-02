@@ -5,6 +5,7 @@ from app.tests.test_character_endpoints.test_filter_unicode_characters.data impo
     FILTER_BY_BIDIRECTIONAL_CLASS,
     FILTER_BY_CCC,
     FILTER_BY_DECOMPOSITION_TYPE,
+    FILTER_BY_JOINING_TYPE,
     FILTER_BY_LINE_BREAK_TYPE,
     FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT,
     FILTER_BY_NUMERIC_TYPE,
@@ -59,6 +60,12 @@ def test_filter_by_numeric_type():
     assert response.json() == FILTER_BY_NUMERIC_TYPE
 
 
+def test_filter_by_joining_type():
+    response = client.get("/v1/characters/filter?join_type=l")
+    assert response.status_code == 200
+    assert response.json() == FILTER_BY_JOINING_TYPE
+
+
 def test_no_characters_match_filter_settings():
     response = client.get("/v1/characters/filter?name=test&script=copt&show_props=all")
     assert response.status_code == 200
@@ -83,6 +90,7 @@ def test_invalid_filter_param_values():
         "&line_break=ha"
         "&ccc=300"
         "&num_type=dd"
+        "&join_type=j"
     )
     assert response.status_code == 400
     assert response.json() == INVALID_FILTER_PARAM_VALUES
