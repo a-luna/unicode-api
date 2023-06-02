@@ -1,4 +1,4 @@
-NAME_SPIRITUS_CATEGORY_MN_SCRIPT_COPT = {
+FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT = {
     "url": "/v1/characters/filter",
     "hasMore": False,
     "currentPage": 1,
@@ -32,7 +32,7 @@ FILTER_BY_UNICODE_AGE = {
     ],
 }
 
-FILTER_BY_BIDI_CLASS = {
+FILTER_BY_BIDIRECTIONAL_CLASS = {
     "url": "/v1/characters/filter",
     "hasMore": False,
     "currentPage": 1,
@@ -40,7 +40,7 @@ FILTER_BY_BIDI_CLASS = {
     "results": [{"character": "₫", "name": "DONG SIGN", "codepoint": "U+20AB", "uriEncoded": "%E2%82%AB"}],
 }
 
-FILTER_BY_DECOMP_TYPE = {
+FILTER_BY_DECOMPOSITION_TYPE = {
     "url": "/v1/characters/filter",
     "hasMore": False,
     "currentPage": 1,
@@ -75,6 +75,14 @@ FILTER_BY_LINE_BREAK_TYPE = {
     ],
 }
 
+FILTER_BY_CCC = {
+    "url": "/v1/characters/filter",
+    "hasMore": False,
+    "currentPage": 1,
+    "totalResults": 1,
+    "results": [{"character": "᷎", "name": "COMBINING OGONEK ABOVE", "codepoint": "U+1DCE", "uriEncoded": "%E1%B7%8E"}],
+}
+
 INVALID_FILTER_PARAM_VALUES = {
-    "detail": "Invalid values were provided for the following 7 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
+    "detail": "Invalid values were provided for the following 8 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'combining_class' parameter is invalid: ['300']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }
