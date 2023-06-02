@@ -7,6 +7,7 @@ from app.tests.test_character_endpoints.test_filter_unicode_characters.data impo
     FILTER_BY_DECOMPOSITION_TYPE,
     FILTER_BY_LINE_BREAK_TYPE,
     FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT,
+    FILTER_BY_NUMERIC_TYPE,
     FILTER_BY_UNICODE_AGE,
     INVALID_FILTER_PARAM_VALUES,
     INVALID_PAGE_NUMBER,
@@ -52,6 +53,12 @@ def test_filter_by_combining_class_category():
     assert response.json() == FILTER_BY_CCC
 
 
+def test_filter_by_numeric_type():
+    response = client.get("/v1/characters/filter?script=khar&num_type=di")
+    assert response.status_code == 200
+    assert response.json() == FILTER_BY_NUMERIC_TYPE
+
+
 def test_no_characters_match_filter_settings():
     response = client.get("/v1/characters/filter?name=test&script=copt&show_props=all")
     assert response.status_code == 200
@@ -73,7 +80,9 @@ def test_invalid_filter_param_values():
         "&bidi_class=vv&bidi_class=rr"
         "&show_props=soup&show_props=salad"
         "&decomp_type=gosh"
-        "&line_break=ha&ccc=300"
+        "&line_break=ha"
+        "&ccc=300"
+        "&num_type=dd"
     )
     assert response.status_code == 400
     assert response.json() == INVALID_FILTER_PARAM_VALUES

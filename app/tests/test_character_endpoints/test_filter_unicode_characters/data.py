@@ -83,6 +83,19 @@ FILTER_BY_CCC = {
     "results": [{"character": "᷎", "name": "COMBINING OGONEK ABOVE", "codepoint": "U+1DCE", "uriEncoded": "%E1%B7%8E"}],
 }
 
+FILTER_BY_NUMERIC_TYPE = {
+    "url": "/v1/characters/filter",
+    "hasMore": False,
+    "currentPage": 1,
+    "totalResults": 4,
+    "results": [
+        {"character": "𐩀", "name": "KHAROSHTHI DIGIT ONE", "codepoint": "U+10A40", "uriEncoded": "%F0%90%A9%80"},
+        {"character": "𐩁", "name": "KHAROSHTHI DIGIT TWO", "codepoint": "U+10A41", "uriEncoded": "%F0%90%A9%81"},
+        {"character": "𐩂", "name": "KHAROSHTHI DIGIT THREE", "codepoint": "U+10A42", "uriEncoded": "%F0%90%A9%82"},
+        {"character": "𐩃", "name": "KHAROSHTHI DIGIT FOUR", "codepoint": "U+10A43", "uriEncoded": "%F0%90%A9%83"},
+    ],
+}
+
 INVALID_FILTER_PARAM_VALUES = {
-    "detail": "Invalid values were provided for the following 8 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'combining_class' parameter is invalid: ['300']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
+    "detail": "Invalid values were provided for the following 9 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'combining_class' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }
