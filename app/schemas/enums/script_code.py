@@ -1,4 +1,4 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
@@ -534,5 +534,5 @@ class ScriptCode(IntEnum):
 
     @classmethod
     def match_loosely(cls, name: str):
-        prop_names = {e.normalized: e for e in cls}
-        return prop_names.get(normalize_string_lm3(name))
+        script_code_map = {e.normalized: e for e in cls}
+        return script_code_map.get(normalize_string_lm3(name))

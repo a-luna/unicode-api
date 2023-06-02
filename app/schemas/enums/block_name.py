@@ -401,5 +401,5 @@ class UnicodeBlockName(StrEnum):
 
     @classmethod
     def match_loosely(cls, name: str):
-        norm_names = {e.normalized: e for e in cls}
-        return norm_names.get(normalize_string_lm3(name))
+        block_name_map = {e.normalized: e for e in cls}
+        return block_name_map.get(normalize_string_lm3(name))

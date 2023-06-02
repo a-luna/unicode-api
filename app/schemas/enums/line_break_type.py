@@ -148,5 +148,5 @@ class LineBreakType(IntEnum):
 
     @classmethod
     def match_loosely(cls, name: str):
-        prop_names = {e.normalized: e for e in cls}
-        return prop_names.get(normalize_string_lm3(name))
+        line_break_types_map = {e.normalized: e for e in cls}
+        return line_break_types_map.get(normalize_string_lm3(name))

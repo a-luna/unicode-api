@@ -1,4 +1,4 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
@@ -100,5 +100,5 @@ class BidirectionalClass(IntEnum):
 
     @classmethod
     def match_loosely(cls, name: str):
-        prop_names = {e.normalized: e for e in cls}
-        return prop_names.get(normalize_string_lm3(name))
+        bidi_class_map = {e.normalized: e for e in cls}
+        return bidi_class_map.get(normalize_string_lm3(name))
