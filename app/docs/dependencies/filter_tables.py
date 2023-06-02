@@ -5,6 +5,7 @@ from app.schemas.enums import (
     CharPropertyGroup,
     CombiningClassCategory,
     DecompositionType,
+    JoiningType,
     LineBreakType,
     NumericType,
     ScriptCode,
@@ -334,3 +335,4 @@ CCC_VALUES_TABLE = create_table_listing_enum_values(
     CombiningClassCategory, "combining-class", column_2_text="Combining Class Category"
 )
 NUMERIC_TYPES_TABLE = create_table_listing_enum_values(NumericType, "num-type", column_2_text="Numeric Type")
+JOINING_TYPES_TABLE = create_table_listing_enum_values(JoiningType, "join-type", column_2_text="Joining Type")

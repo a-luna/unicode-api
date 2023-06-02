@@ -1,4 +1,6 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
+
+from app.schemas.util import normalize_string_lm3
 
 
 class JoiningType(IntEnum):
@@ -12,6 +14,10 @@ class JoiningType(IntEnum):
 
     def __str__(self):
         return self.name.replace("_", " ").title()
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -40,3 +46,8 @@ class JoiningType(IntEnum):
             "T": cls.TRANSPARENT,
         }
         return code_map.get(code, cls.NONE)
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        joining_types_map = {e.normalized: e for e in cls if e != e.NONE}
+        return joining_types_map.get(normalize_string_lm3(name))

@@ -54,6 +54,8 @@ def construct_filter_query(
         query = query.where(column("combining_class").in_(filter_params.ccc_list))
     if filter_params.num_types:
         query = query.where(column("numeric_type").in_(filter_params.num_types))
+    if filter_params.join_types:
+        query = query.where(column("joining_type").in_(filter_params.join_types))
     return query
 
 

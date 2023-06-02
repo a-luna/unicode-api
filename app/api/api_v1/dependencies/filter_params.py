@@ -11,6 +11,7 @@ from app.docs.dependencies.custom_parameters import (
     get_description_and_values_table_for_combining_class_category,
     get_description_and_values_table_for_decomp_type,
     get_description_and_values_table_for_general_category,
+    get_description_and_values_table_for_joining_type,
     get_description_and_values_table_for_line_break_type,
     get_description_and_values_table_for_numeric_type,
     get_description_and_values_table_for_property_group,
@@ -23,6 +24,7 @@ from app.schemas.enums import (
     CombiningClassCategory,
     DecompositionType,
     GeneralCategory,
+    JoiningType,
     LineBreakType,
     NumericType,
     ScriptCode,
@@ -48,13 +50,15 @@ class FilterParameters:
         | None = Query(default=None, description=get_description_and_values_table_for_combining_class_category()),
         num_type: list[str]
         | None = Query(default=None, description=get_description_and_values_table_for_numeric_type()),
+        join_type: list[str]
+        | None = Query(default=None, description=get_description_and_values_table_for_joining_type()),
         show_props: list[str]
         | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
         per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
         page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
     ):
         self.parse_all_enum_values(
-            category, age, script, bidi_class, decomp_type, line_break, ccc, num_type, show_props
+            category, age, script, bidi_class, decomp_type, line_break, ccc, num_type, join_type, show_props
         )
         self.name = name
         self.per_page = per_page or 10
@@ -70,6 +74,7 @@ class FilterParameters:
         line_break: list[str] | None,
         ccc: list[str] | None,
         num_type: list[str] | None,
+        join_type: list[str] | None,
         show_props: list[str] | None,
     ):
         errors = []
@@ -81,6 +86,7 @@ class FilterParameters:
         self.line_break_types = None
         self.ccc_list = None
         self.num_types = None
+        self.join_types = None
         self.show_props = None
 
         if category:
@@ -136,6 +142,13 @@ class FilterParameters:
             result = parse_enum_values_from_parameter(NumericType, "num_type", num_type)
             if result.success:
                 self.num_types = result.value
+            else:
+                errors.append(result.error)
+
+        if join_type:
+            result = parse_enum_values_from_parameter(JoiningType, "join_type", join_type)
+            if result.success:
+                self.join_types = result.value
             else:
                 errors.append(result.error)
 

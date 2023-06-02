@@ -7,6 +7,7 @@ from app.docs.dependencies import (
     CCC_VALUES_TABLE,
     DECOMP_TYPE_VALUES_TABLE,
     GENERAL_CATEGORY_VALUES_TABLE,
+    JOINING_TYPES_TABLE,
     LINE_BREAK_TYPE_VALUES_TABLE,
     NUMERIC_TYPES_TABLE,
     PROPERTY_GROUP_VALUES_TABLE,
@@ -271,6 +272,19 @@ def get_description_and_values_table_for_numeric_type() -> str:
         + "<p>All valid line break types are shown in the table below:</p>"
         + f"{NUMERIC_TYPES_TABLE}"
         + "<p>To add a filter setting for <code>Numeric Type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
+def get_description_and_values_table_for_joining_type() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by <strong>Joining Type</strong>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>join_type=R</code> and <code>join_type=D</code> will return characters that cursively join to a character displayed to their right in visual order <strong>AND</strong> characters that cursively join to characters displayed both to their left and their right in visual order.<p>"
+        + "<p>All valid line break types are shown in the table below:</p>"
+        + f"{JOINING_TYPES_TABLE}"
+        + "<p>To add a filter setting for <code>Joining Type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 
