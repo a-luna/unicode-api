@@ -1,4 +1,6 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
+
+from app.schemas.util import normalize_string_lm3
 
 
 class NumericType(IntEnum):
@@ -9,6 +11,10 @@ class NumericType(IntEnum):
 
     def __str__(self):
         return self.name.replace("_", " ").title()
+
+    @property
+    def normalized(self) -> str:
+        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -33,3 +39,8 @@ class NumericType(IntEnum):
             "Nu": cls.NUMERIC,
         }
         return code_map.get(code, cls.NONE)
+
+    @classmethod
+    def match_loosely(cls, name: str):
+        numeric_types_map = {e.normalized: e for e in cls}
+        return numeric_types_map.get(normalize_string_lm3(name))

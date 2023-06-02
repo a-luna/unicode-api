@@ -52,6 +52,8 @@ def construct_filter_query(
         query = query.where(column("line_break").in_(filter_params.line_break_types))
     if filter_params.ccc_list:
         query = query.where(column("combining_class").in_(filter_params.ccc_list))
+    if filter_params.num_types:
+        query = query.where(column("numeric_type").in_(filter_params.num_types))
     return query
 
 

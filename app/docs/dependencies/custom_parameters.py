@@ -8,6 +8,7 @@ from app.docs.dependencies import (
     DECOMP_TYPE_VALUES_TABLE,
     GENERAL_CATEGORY_VALUES_TABLE,
     LINE_BREAK_TYPE_VALUES_TABLE,
+    NUMERIC_TYPES_TABLE,
     PROPERTY_GROUP_VALUES_TABLE,
     SCRIPT_CODE_VALUES_TABLE,
     UNICODE_AGE_VALUES_TABLE,
@@ -253,10 +254,23 @@ def get_description_and_values_table_for_combining_class_category() -> str:
         '<ul class="param-notes">'
         + "<li>This value is optional</li>"
         + "</ul>"
-        + "<p>Filter Unicode characters by <strong>Combining Class Category</strong>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>ccc=6</code> and <code>ccc=9</code> will return characters act as diactritic reading marks for CJK unified ideographs <strong>AND</strong> Virama characters.<p>"
+        + "<p>Filter Unicode characters by <strong>Combining Class Category</strong>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>ccc=6</code> and <code>ccc=9</code> will return characters that act as diactritic reading marks for CJK unified ideographs <strong>AND</strong> Virama characters.<p>"
         + "<p>All valid line break types are shown in the table below:</p>"
         + f"{CCC_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>Combining Class Category</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
+def get_description_and_values_table_for_numeric_type() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by <strong>Numeric Type</strong>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>num_type=De</code> and <code>num_type=Nu</code> will return characters where the <code>numericValue</code> of the digit is represented with an integer digit <strong>OR</strong> a rational number.<p>"
+        + "<p>All valid line break types are shown in the table below:</p>"
+        + f"{NUMERIC_TYPES_TABLE}"
+        + "<p>To add a filter setting for <code>Numeric Type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 
