@@ -16,9 +16,7 @@ def get_codepoint_string(codepoint: int) -> str:
 def get_html_entities(codepoint: int) -> list[str]:
     html_entities = [f"&#{codepoint};", f"&#x{codepoint:02X};"]
     named_entity = HTML_ENTITY_MAP.get(codepoint)
-    if named_entity:
-        html_entities.append(f"&{named_entity}")
-    return html_entities
+    return html_entities + [f"&{named_entity}"] if named_entity else html_entities
 
 
 def get_utf8_dec_bytes(uni_char: str) -> list[int]:
