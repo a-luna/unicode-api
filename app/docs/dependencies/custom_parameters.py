@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.docs.dependencies import (
     BIDI_CLASS_VALUES_TABLE,
     BLOCK_NAME_VALUES_TABLE,
+    CCC_VALUES_TABLE,
     DECOMP_TYPE_VALUES_TABLE,
     GENERAL_CATEGORY_VALUES_TABLE,
     LINE_BREAK_TYPE_VALUES_TABLE,
@@ -244,6 +245,18 @@ def get_description_and_values_table_for_line_break_type() -> str:
         + "<p>All valid line break types are shown in the table below:</p>"
         + f"{LINE_BREAK_TYPE_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>line_break_type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
+def get_description_and_values_table_for_combining_class_category() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + "</ul>"
+        + "<p>Filter Unicode characters by <strong>Combining Class Category</strong>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>ccc=6</code> and <code>ccc=9</code> will return characters act as diactritic reading marks for CJK unified ideographs <strong>AND</strong> Virama characters.<p>"
+        + "<p>All valid line break types are shown in the table below:</p>"
+        + f"{CCC_VALUES_TABLE}"
+        + "<p>To add a filter setting for <code>Combining Class Category</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 

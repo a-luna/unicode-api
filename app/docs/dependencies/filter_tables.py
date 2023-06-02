@@ -3,6 +3,7 @@ from app.docs.util import slugify
 from app.schemas.enums import (
     BidirectionalClass,
     CharPropertyGroup,
+    CombiningClassCategory,
     DecompositionType,
     LineBreakType,
     ScriptCode,
@@ -327,4 +328,7 @@ DECOMP_TYPE_VALUES_TABLE = create_table_listing_enum_values(
 )
 LINE_BREAK_TYPE_VALUES_TABLE = create_table_listing_enum_values(
     LineBreakType, "line-break", column_2_text="Line Break Type"
+)
+CCC_VALUES_TABLE = create_table_listing_enum_values(
+    CombiningClassCategory, "combining-class", column_2_text="Combining Class Category"
 )

@@ -8,7 +8,7 @@ class CombiningClassCategory(IntEnum):
     NUKTA = 7
     KANA_VOICING = 8
     VIRAMA = 9
-    CCC10 = 10
+    CCC10 = 10  # Hebrew start
     CCC11 = 11
     CCC12 = 12
     CCC13 = 13
@@ -24,8 +24,8 @@ class CombiningClassCategory(IntEnum):
     CCC23 = 23
     CCC24 = 24
     CCC25 = 25
-    CCC26 = 26
-    CCC27 = 27
+    CCC26 = 26  # Hebrew end
+    CCC27 = 27  # Arabic start
     CCC28 = 28
     CCC29 = 29
     CCC30 = 30
@@ -33,18 +33,18 @@ class CombiningClassCategory(IntEnum):
     CCC32 = 32
     CCC33 = 33
     CCC34 = 34
-    CCC35 = 35
-    CCC36 = 36
-    CCC84 = 84
-    CCC91 = 91
-    CCC103 = 103
-    CCC107 = 107
-    CCC118 = 118
-    CCC122 = 122
-    CCC129 = 129
+    CCC35 = 35  # Arabic end
+    CCC36 = 36  # Syriac
+    CCC84 = 84  # Telegu start
+    CCC91 = 91  # Telegu end
+    CCC103 = 103  # Thai start
+    CCC107 = 107  # Thai end
+    CCC118 = 118  # Lao start
+    CCC122 = 122  # Lao end
+    CCC129 = 129  # Tibetan start
     CCC130 = 130
     CCC132 = 132
-    CCC133 = 133
+    CCC133 = 133  # Tibetan end
     ATTACHED_BELOW_LEFT = 200
     ATTACHED_BELOW = 202
     ATTACHED_BELOW_RIGHT = 204
@@ -66,8 +66,17 @@ class CombiningClassCategory(IntEnum):
     IOTA_SUBSCRIPT = 240
 
     def __str__(self):
-        return f'{self.name.replace("_", " ").title()} ({int(self)})'
+        return self.name.replace("_", " ").title() if not self.name.startswith("CCC") else self.name
 
     @property
     def display_name(self) -> str:
-        return str(self)
+        return f"{self} ({self.code})"
+
+    @property
+    def code(self) -> str:
+        return f"{int(self)}"
+
+    @classmethod
+    def match_loosely(cls, code: str):
+        ccc_map = {e.code: e for e in cls}
+        return ccc_map.get(code)
