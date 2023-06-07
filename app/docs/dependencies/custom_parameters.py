@@ -256,7 +256,7 @@ def get_description_and_values_table_for_combining_class_category() -> str:
         + "<li>This value is optional</li>"
         + "</ul>"
         + "<p>Filter Unicode characters by <strong>Combining Class Category</strong>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>ccc=6</code> and <code>ccc=9</code> will return characters that act as diactritic reading marks for CJK unified ideographs <strong>AND</strong> Virama characters.<p>"
-        + "<p>All valid line break types are shown in the table below:</p>"
+        + "<p>All valid combining class category values are shown in the table below:</p>"
         + f"{CCC_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>Combining Class Category</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
@@ -269,7 +269,7 @@ def get_description_and_values_table_for_numeric_type() -> str:
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
         + "<p>Filter Unicode characters by <strong>Numeric Type</strong>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>num_type=De</code> and <code>num_type=Nu</code> will return characters where the <code>numericValue</code> of the digit is represented with an integer digit <strong>OR</strong> a rational number.<p>"
-        + "<p>All valid line break types are shown in the table below:</p>"
+        + "<p>All valid values for numeric type are shown in the table below:</p>"
         + f"{NUMERIC_TYPES_TABLE}"
         + "<p>To add a filter setting for <code>Numeric Type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
@@ -282,7 +282,7 @@ def get_description_and_values_table_for_joining_type() -> str:
         + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
         + "</ul>"
         + "<p>Filter Unicode characters by <strong>Joining Type</strong>. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>join_type=R</code> and <code>join_type=D</code> will return characters that cursively join to a character displayed to their right in visual order <strong>AND</strong> characters that cursively join to characters displayed both to their left and their right in visual order.<p>"
-        + "<p>All valid line break types are shown in the table below:</p>"
+        + "<p>All valid values for joining type are shown in the table below:</p>"
         + f"{JOINING_TYPES_TABLE}"
         + "<p>To add a filter setting for <code>Joining Type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
