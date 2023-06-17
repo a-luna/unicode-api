@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
 
 class JoiningType(IntEnum):
-    NONE = auto()
+    NONE = 0
     RIGHT_JOINING = auto()
     LEFT_JOINING = auto()
     DUAL_JOINING = auto()
@@ -48,6 +50,6 @@ class JoiningType(IntEnum):
         return code_map.get(code, cls.NONE)
 
     @classmethod
-    def match_loosely(cls, name: str):
+    def match_loosely(cls, name: str) -> JoiningType:
         joining_types_map = {e.normalized: e for e in cls if e != e.NONE}
-        return joining_types_map.get(normalize_string_lm3(name))
+        return joining_types_map.get(normalize_string_lm3(name), cls.NONE)

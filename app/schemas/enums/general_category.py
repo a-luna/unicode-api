@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
 
 class GeneralCategory(IntEnum):
-    NONE = auto()
+    NONE = 0
     UPPERCASE_LETTER = auto()
     LOWERCASE_LETTER = auto()
     TITLECASE_LETTER = auto()
@@ -144,6 +146,6 @@ class GeneralCategory(IntEnum):
         return code_map.get(code, cls.NONE)
 
     @classmethod
-    def match_loosely(cls, name: str):
+    def match_loosely(cls, name: str) -> GeneralCategory:
         gen_category_map = {e.normalized: e for e in cls if e != e.NONE}
-        return gen_category_map.get(normalize_string_lm3(name))
+        return gen_category_map.get(normalize_string_lm3(name), cls.NONE)

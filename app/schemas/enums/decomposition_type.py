@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
 
 class DecompositionType(IntEnum):
-    NONE = auto()
+    NONE = 0
     CANONICAL = auto()
     OTHERWISE_UNSPECIFIED_COMPATIBILITY_CHARACTER = auto()
     ENCIRCLED_FORM = auto()
@@ -92,6 +94,6 @@ class DecompositionType(IntEnum):
         return code_map.get(code, cls.NONE)
 
     @classmethod
-    def match_loosely(cls, name: str):
+    def match_loosely(cls, name: str) -> DecompositionType:
         decomp_types_map = {e.normalized: e for e in cls if e != e.NONE}
-        return decomp_types_map.get(normalize_string_lm3(name))
+        return decomp_types_map.get(normalize_string_lm3(name), cls.NONE)

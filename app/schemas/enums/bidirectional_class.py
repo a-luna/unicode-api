@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
 
 class BidirectionalClass(IntEnum):
-    NONE = auto()
+    NONE = 0
     LEFT_TO_RIGHT = auto()
     RIGHT_TO_LEFT = auto()
     ARABIC_LETTER = auto()
@@ -99,6 +101,6 @@ class BidirectionalClass(IntEnum):
         return code_map.get(code, cls.NONE)
 
     @classmethod
-    def match_loosely(cls, name: str):
+    def match_loosely(cls, name: str) -> BidirectionalClass:
         bidi_class_map = {e.normalized: e for e in cls}
-        return bidi_class_map.get(normalize_string_lm3(name))
+        return bidi_class_map.get(normalize_string_lm3(name), cls.NONE)

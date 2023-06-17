@@ -1,8 +1,8 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
 
 
 class BidirectionalBracketType(IntEnum):
-    NONE = auto()
+    NONE = 0
     OPEN = auto()
     CLOSE = auto()
 

@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 from fastapi_utils.enums import StrEnum
 
 
 class UnicodeAge(StrEnum):
+    UNASSIGNED = ""
     V1_1 = "1.1"
     V2_0 = "2.0"
     V2_1 = "2.1"
@@ -36,6 +39,6 @@ class UnicodeAge(StrEnum):
         return str(self)
 
     @classmethod
-    def match_loosely(cls, age: str):
+    def match_loosely(cls, age: str) -> UnicodeAge:
         age_map = {f"{e}": e for e in cls}
-        return age_map.get(age)
+        return age_map.get(age, cls.UNASSIGNED)

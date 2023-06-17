@@ -1,14 +1,14 @@
-import re
-from enum import auto
+from __future__ import annotations
 
-from fastapi_utils.enums import StrEnum
+import re
+from enum import IntEnum, auto
 
 from app.data.cache import cached_data
 from app.schemas.util import normalize_string_lm3
 
 
-class UnicodeBlockName(StrEnum):
-    NONE = auto()
+class UnicodeBlockName(IntEnum):
+    NONE = 0
     BASIC_LATIN = auto()
     LATIN_1_SUPPLEMENT = auto()
     LATIN_EXTENDED_A = auto()
@@ -400,6 +400,6 @@ class UnicodeBlockName(StrEnum):
         return normalize_string_lm3(str(self))
 
     @classmethod
-    def match_loosely(cls, name: str):
+    def match_loosely(cls, name: str) -> UnicodeBlockName:
         block_name_map = {e.normalized: e for e in cls}
-        return block_name_map.get(normalize_string_lm3(name))
+        return block_name_map.get(normalize_string_lm3(name), cls.NONE)

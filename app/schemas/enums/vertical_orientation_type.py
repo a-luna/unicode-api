@@ -1,8 +1,8 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
 
 
 class VerticalOrientationType(IntEnum):
-    NONE = auto()
+    NONE = 0
     UPRIGHT = auto()
     ROTATED = auto()
     TRANSFORMED_UPRIGHT = auto()

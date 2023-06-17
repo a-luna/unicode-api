@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import IntEnum
 
 
@@ -77,6 +79,6 @@ class CombiningClassCategory(IntEnum):
         return f"{int(self)}"
 
     @classmethod
-    def match_loosely(cls, code: str):
+    def match_loosely(cls, code: str) -> CombiningClassCategory:
         ccc_map = {e.code: e for e in cls}
-        return ccc_map.get(code)
+        return ccc_map.get(code, cls.NOT_REORDERED)

@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
 
 class LineBreakType(IntEnum):
+    NONE = 0
     ORDINARY_ALPHABETIC_AND_SYMBOL = auto()
     AMBIGUOUS_ALPHABETIC_OR_IDEOGRAPHIC = auto()
     BREAK_OPPORTUNITY_BEFORE_AND_AFTER = auto()
@@ -147,6 +150,6 @@ class LineBreakType(IntEnum):
         return code_map.get(code, cls.UNKNOWN)
 
     @classmethod
-    def match_loosely(cls, name: str):
+    def match_loosely(cls, name: str) -> LineBreakType:
         line_break_types_map = {e.normalized: e for e in cls}
-        return line_break_types_map.get(normalize_string_lm3(name))
+        return line_break_types_map.get(normalize_string_lm3(name), cls.NONE)
