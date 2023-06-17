@@ -255,11 +255,12 @@ def create_table_listing_prop_group_names() -> str:
                     <th>Alias</th>
                 </tr>"""
     for pg in enum.CharPropertyGroup:
-        html += f"""
-                <tr>
-                    <td>{get_prop_group_name_maybe_linked(pg)}</td>
-                    <td>{pg.short_alias if pg.has_alias else ""}</td>
-                </tr>"""
+        if pg != enum.CharPropertyGroup.NONE:
+            html += f"""
+                    <tr>
+                        <td>{get_prop_group_name_maybe_linked(pg)}</td>
+                        <td>{pg.short_alias if pg.has_alias else ""}</td>
+                    </tr>"""
     html += """
             </tbody>
         </table>
