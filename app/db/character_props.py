@@ -42,6 +42,14 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: cached_data.get_character_name(char["codepoint_dec"]),
         },
         {
+            "name_in": "description",
+            "name_out": "description",
+            "char_property": "kDefinition",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: char["description"] if "description" in char else "",
+        },
+        {
             "name_in": "codepoint",
             "name_out": "codepoint",
             "char_property": "cp",

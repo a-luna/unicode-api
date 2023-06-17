@@ -138,6 +138,7 @@ def parse_character_details(
         "indic_syllabic_category": char_node.getAttribute("InSC"),
         "indic_matra_category": char_node.getAttribute("InMC") or "NA",
         "indic_positional_category": char_node.getAttribute("InPC"),
+        "description": char_node.getAttribute("kDefinition"),
         "dash": YES_NO_MAP[char_node.getAttribute("Dash")],
         "hyphen": YES_NO_MAP[char_node.getAttribute("Hyphen")],
         "quotation_mark": YES_NO_MAP[char_node.getAttribute("QMark")],

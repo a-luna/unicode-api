@@ -10,6 +10,7 @@ class UnicodeCharacterBase(CamelModel):
     codepoint_dec: int = Field(index=True, primary_key=True)
     codepoint: str = Field(index=True)
     name: str = Field(index=True)
+    description: str
     age: str
     plane_number: int
     general_category: enum.GeneralCategory = Field(
@@ -99,6 +100,7 @@ class UnicodeCharacterBase(CamelModel):
 class UnicodeCharacterResponse(CamelModel):
     character: str = ""
     name: str = ""
+    description: str = ""
     codepoint: str = ""
     uri_encoded: str = ""
     block: str = ""
@@ -253,6 +255,7 @@ class UnicodeCharacterNoName(UnicodeCharacterBase, table=True):
 class UnicodeCharacterResult(CamelModel):
     character: str
     name: str
+    description: str | None
     codepoint: str
     uri_encoded: str
     score: float | None
