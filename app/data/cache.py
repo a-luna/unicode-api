@@ -4,7 +4,7 @@ from functools import cache, cached_property
 
 from rapidfuzz import process
 
-import app.db.engine as db
+import app.db.models as db
 from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_NO_NAME_MAP, PLANES_JSON
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,

@@ -3,7 +3,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
-import app.db.engine as db
+import app.db.models as db
 from app.api.api_v1.dependencies import (
     CharacterSearchParameters,
     DBSession,

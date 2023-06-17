@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import HTTPException, Path, Query
 
-import app.db.engine as db
+import app.db.models as db
 from app.data.cache import cached_data
 from app.docs.dependencies.custom_parameters import BLOCK_NAME_DESCRIPTION, CHAR_SEARCH_BLOCK_NAME_DESCRIPTION
 from app.schemas.enums.block_name import UnicodeBlockName
@@ -32,7 +32,7 @@ class UnicodeBlockPathParamResolver:
 
 def loose_match_string_with_unicode_block_name(name: str) -> db.UnicodeBlock:
     block_name = UnicodeBlockName.match_loosely(name)
-    if block_name:
+    if block_name and block_name != UnicodeBlockName.NONE:
         return cached_data.get_unicode_block_by_id(block_name.block_id)
     else:
         detail = f"{name!r} does not match any valid Unicode block name."

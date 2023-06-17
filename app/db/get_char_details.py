@@ -5,7 +5,7 @@ from typing import Any
 from sqlalchemy import column, select
 from sqlalchemy.engine import Engine
 
-import app.db.engine as db
+import app.db.models as db
 from app.data.cache import cached_data
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.schemas.enums import CharPropertyGroup

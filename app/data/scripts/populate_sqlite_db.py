@@ -3,27 +3,14 @@ import json
 from sqlalchemy.sql import text
 from sqlmodel import Session, SQLModel
 
-import app.db.engine as db
+import app.db.models as db
+import app.schemas.enums as enum
 from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, DB_FILE, PLANES_JSON
 from app.core.result import Result
 from app.data.constants import NULL_BLOCK, NULL_PLANE
 from app.data.scripts.util import finish_task, start_task, update_progress
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
-from app.schemas.enums import (
-    BidirectionalBracketType,
-    BidirectionalClass,
-    CharPropertyGroup,
-    DecompositionType,
-    EastAsianWidthType,
-    GeneralCategory,
-    HangulSyllableType,
-    JoiningType,
-    LineBreakType,
-    NumericType,
-    ScriptCode,
-    TriadicLogic,
-    VerticalOrientationType,
-)
+from app.db.engine import engine
 
 
 def populate_sqlite_database():
@@ -33,7 +20,7 @@ def populate_sqlite_database():
     all_blocks = assign_unicode_plane_to_each_block(all_planes, all_blocks)
     all_chars = assign_unicode_block_and_plane_to_each_character(all_planes, all_blocks, all_chars)
 
-    with Session(db.engine) as session:
+    with Session(engine) as session:
         add_unicode_data_to_database(all_planes, all_blocks, all_chars, session)
         commit_database_session(session)
     return Result.Ok()
@@ -42,8 +29,8 @@ def populate_sqlite_database():
 def create_db_and_tables():
     if DB_FILE.exists():
         DB_FILE.unlink()
-    SQLModel.metadata.create_all(db.engine)
-    with db.engine.connect() as con:
+    SQLModel.metadata.create_all(engine)
+    with engine.connect() as con:
         for create_index_sql in generate_raw_sql_for_all_covering_indexes():
             con.execute(text(create_index_sql))
 
@@ -57,7 +44,7 @@ def generate_raw_sql_for_all_covering_indexes() -> list[str]:
     return [sql for sql in sql_statements if sql]
 
 
-def generate_raw_sql_for_covering_index(prop_group: CharPropertyGroup) -> str:
+def generate_raw_sql_for_covering_index(prop_group: enum.CharPropertyGroup) -> str:
     columns = [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
     return f'CREATE INDEX ix_character_{prop_group.index_name} ON character ({", ".join(columns)})' if columns else ""
 
@@ -80,21 +67,21 @@ def parse_unicode_characters_from_json():
 
 
 def update_char_dict_enum_values(char_dict):
-    char_dict["general_category"] = GeneralCategory.from_code(char_dict["general_category"])
-    char_dict["bidirectional_class"] = BidirectionalClass.from_code(char_dict["bidirectional_class"])
-    char_dict["paired_bracket_type"] = BidirectionalBracketType.from_code(char_dict["paired_bracket_type"])
-    char_dict["decomposition_type"] = DecompositionType.from_code(char_dict["decomposition_type"])
-    char_dict["NFC_QC"] = TriadicLogic.from_code(char_dict["NFC_QC"])
-    char_dict["NFD_QC"] = TriadicLogic.from_code(char_dict["NFD_QC"])
-    char_dict["NFKC_QC"] = TriadicLogic.from_code(char_dict["NFKC_QC"])
-    char_dict["NFKD_QC"] = TriadicLogic.from_code(char_dict["NFKD_QC"])
-    char_dict["numeric_type"] = NumericType.from_code(char_dict["numeric_type"])
-    char_dict["joining_type"] = JoiningType.from_code(char_dict["joining_type"])
-    char_dict["line_break"] = LineBreakType.from_code(char_dict["line_break"])
-    char_dict["east_asian_width"] = EastAsianWidthType.from_code(char_dict["east_asian_width"])
-    char_dict["script"] = ScriptCode.from_code(char_dict["script"])
-    char_dict["hangul_syllable_type"] = HangulSyllableType.from_code(char_dict["hangul_syllable_type"])
-    char_dict["vertical_orientation"] = VerticalOrientationType.from_code(char_dict["vertical_orientation"])
+    char_dict["general_category"] = enum.GeneralCategory.from_code(char_dict["general_category"])
+    char_dict["bidirectional_class"] = enum.BidirectionalClass.from_code(char_dict["bidirectional_class"])
+    char_dict["paired_bracket_type"] = enum.BidirectionalBracketType.from_code(char_dict["paired_bracket_type"])
+    char_dict["decomposition_type"] = enum.DecompositionType.from_code(char_dict["decomposition_type"])
+    char_dict["NFC_QC"] = enum.TriadicLogic.from_code(char_dict["NFC_QC"])
+    char_dict["NFD_QC"] = enum.TriadicLogic.from_code(char_dict["NFD_QC"])
+    char_dict["NFKC_QC"] = enum.TriadicLogic.from_code(char_dict["NFKC_QC"])
+    char_dict["NFKD_QC"] = enum.TriadicLogic.from_code(char_dict["NFKD_QC"])
+    char_dict["numeric_type"] = enum.NumericType.from_code(char_dict["numeric_type"])
+    char_dict["joining_type"] = enum.JoiningType.from_code(char_dict["joining_type"])
+    char_dict["line_break"] = enum.LineBreakType.from_code(char_dict["line_break"])
+    char_dict["east_asian_width"] = enum.EastAsianWidthType.from_code(char_dict["east_asian_width"])
+    char_dict["script"] = enum.ScriptCode.from_code(char_dict["script"])
+    char_dict["hangul_syllable_type"] = enum.HangulSyllableType.from_code(char_dict["hangul_syllable_type"])
+    char_dict["vertical_orientation"] = enum.VerticalOrientationType.from_code(char_dict["vertical_orientation"])
     return char_dict
 
 

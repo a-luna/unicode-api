@@ -5,8 +5,9 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.sql import Select
 from sqlmodel import Session
 
-import app.db.engine as db
+import app.db.models as db
 from app.api.api_v1.dependencies.filter_params import FilterParameters
+from app.db.engine import engine
 from app.db.get_char_details import get_character_properties
 from app.schemas.enums import CharPropertyGroup
 
@@ -14,8 +15,8 @@ CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterNoName]
 
 
 def get_session():
-    with Session(db.engine) as session:
-        yield DBSession(session, db.engine)
+    with Session(engine) as session:
+        yield DBSession(session, engine)
 
 
 class DBSession:

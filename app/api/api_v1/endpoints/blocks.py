@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, Depends, HTTPException
 
-import app.db.engine as db
+import app.db.models as db
 from app.api.api_v1.dependencies import (
     BlockSearchParameters,
     ListParametersDecimal,

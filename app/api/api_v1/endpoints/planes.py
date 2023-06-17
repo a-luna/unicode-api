@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Path
 
-import app.db.engine as db
+import app.db.models as db
 from app.core.config import settings
 from app.data.cache import cached_data
 
