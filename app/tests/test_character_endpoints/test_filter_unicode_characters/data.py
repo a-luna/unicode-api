@@ -115,6 +115,26 @@ FILTER_BY_JOINING_TYPE = {
     ],
 }
 
+FILTER_BY_CHAR_FLAG = {
+    "url": "/v1/characters/filter",
+    "hasMore": False,
+    "currentPage": 1,
+    "totalResults": 11,
+    "results": [
+        {"character": "-", "name": "HYPHEN-MINUS", "codepoint": "U+002D", "uriEncoded": "%2D"},
+        {"character": "­", "name": "SOFT HYPHEN", "codepoint": "U+00AD", "uriEncoded": "%C2%AD"},
+        {"character": "֊", "name": "ARMENIAN HYPHEN", "codepoint": "U+058A", "uriEncoded": "%D6%8A"},
+        {"character": "᠆", "name": "MONGOLIAN TODO SOFT HYPHEN", "codepoint": "U+1806", "uriEncoded": "%E1%A0%86"},
+        {"character": "‐", "name": "HYPHEN", "codepoint": "U+2010", "uriEncoded": "%E2%80%90"},
+        {"character": "‑", "name": "NON-BREAKING HYPHEN", "codepoint": "U+2011", "uriEncoded": "%E2%80%91"},
+        {"character": "⸗", "name": "DOUBLE OBLIQUE HYPHEN", "codepoint": "U+2E17", "uriEncoded": "%E2%B8%97"},
+        {"character": "・", "name": "KATAKANA MIDDLE DOT", "codepoint": "U+30FB", "uriEncoded": "%E3%83%BB"},
+        {"character": "﹣", "name": "SMALL HYPHEN-MINUS", "codepoint": "U+FE63", "uriEncoded": "%EF%B9%A3"},
+        {"character": "－", "name": "FULLWIDTH HYPHEN-MINUS", "codepoint": "U+FF0D", "uriEncoded": "%EF%BC%8D"},
+        {"character": "･", "name": "HALFWIDTH KATAKANA MIDDLE DOT", "codepoint": "U+FF65", "uriEncoded": "%EF%BD%A5"},
+    ],
+}
+
 INVALID_FILTER_PARAM_VALUES = {
-    "detail": "Invalid values were provided for the following 10 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'combining_class' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
+    "detail": "Invalid values were provided for the following 11 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'ccc' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }

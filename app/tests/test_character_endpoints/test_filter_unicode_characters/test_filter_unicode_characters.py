@@ -4,6 +4,7 @@ from app.main import app
 from app.tests.test_character_endpoints.test_filter_unicode_characters.data import (
     FILTER_BY_BIDIRECTIONAL_CLASS,
     FILTER_BY_CCC,
+    FILTER_BY_CHAR_FLAG,
     FILTER_BY_DECOMPOSITION_TYPE,
     FILTER_BY_JOINING_TYPE,
     FILTER_BY_LINE_BREAK_TYPE,
@@ -66,6 +67,12 @@ def test_filter_by_joining_type():
     assert response.json() == FILTER_BY_JOINING_TYPE
 
 
+def test_filter_by_char_flags():
+    response = client.get("/v1/characters/filter?flag=Is%20Hyphen&per_page=20")
+    assert response.status_code == 200
+    assert response.json() == FILTER_BY_CHAR_FLAG
+
+
 def test_no_characters_match_filter_settings():
     response = client.get("/v1/characters/filter?name=test&script=copt&show_props=all")
     assert response.status_code == 200
@@ -91,6 +98,7 @@ def test_invalid_filter_param_values():
         "&ccc=300"
         "&num_type=dd"
         "&join_type=j"
+        "&flag=special&flag=basic"
     )
     assert response.status_code == 400
     assert response.json() == INVALID_FILTER_PARAM_VALUES
