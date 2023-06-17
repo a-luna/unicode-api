@@ -11,16 +11,16 @@ from app.data.scripts.util import finish_task, start_task, update_progress
 YES_NO_MAP = {"Y": True, "N": False}
 
 CharDetailsDict = dict[str, bool | int | str]
+BlockOrPlaneDetailsDict = dict[str, int | str]
+AllParsedUnicodeData = tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict], list[CharDetailsDict]]
 
 
-def parse_xml_unicode_database(
-    xml_file: Path,
-) -> Result[tuple[list[dict[str, int | str]], list[dict[str, int | str]], list[CharDetailsDict]]]:
+def parse_xml_unicode_database(xml_file: Path) -> Result[AllParsedUnicodeData]:
     spinner = start_task("Parsing Unicode XML database...")
     unicode_xml = minidom.parse(str(xml_file))  # nosec
     spinner.text = "Parsing Unicode plane and block data from XML database file..."
-    all_planes: list[dict[str, int | str]] = json.loads(PLANES_JSON.read_text())
-    all_blocks: list[dict[str, int | str]] = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
+    all_planes: list[BlockOrPlaneDetailsDict] = json.loads(PLANES_JSON.read_text())
+    all_blocks: list[BlockOrPlaneDetailsDict] = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
     finish_task(spinner, True, "Successfully parsed Unicode plane and block data from XML database file!")
     all_chars: list[CharDetailsDict] = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
     spinner = start_task("Counting number of defined characters in each block and plane...")
@@ -31,13 +31,13 @@ def parse_xml_unicode_database(
 
 
 def parse_unicode_block_data_from_xml(
-    xml_doc: minidom.Document, parsed_planes: list[dict[str, int | str]]
-) -> list[dict[str, int | str]]:
+    xml_doc: minidom.Document, parsed_planes: list[BlockOrPlaneDetailsDict]
+) -> list[BlockOrPlaneDetailsDict]:
     all_blocks = xml_doc.getElementsByTagName("block")
     return [parse_block_details(id, block, parsed_planes) for id, block in enumerate(all_blocks, start=1)]
 
 
-def parse_block_details(id: int, block_node, parsed_planes: list[dict[str, int | str]]):
+def parse_block_details(id: int, block_node, parsed_planes: list[BlockOrPlaneDetailsDict]):
     start = block_node.getAttribute("first-cp")
     finish = block_node.getAttribute("last-cp")
     start_dec = int(start, 16)
@@ -57,8 +57,8 @@ def parse_block_details(id: int, block_node, parsed_planes: list[dict[str, int |
 
 
 def get_unicode_plane_containing_block_id(
-    block_id: int, parsed_planes: list[dict[str, int | str]]
-) -> dict[str, int | str]:
+    block_id: int, parsed_planes: list[BlockOrPlaneDetailsDict]
+) -> BlockOrPlaneDetailsDict:
     found = [
         plane
         for plane in parsed_planes
@@ -71,7 +71,7 @@ def parse_unicode_character_data_from_xml(
     xml_doc: minidom.Document,
     parsed_blocks: list[dict[str, str | int]],
     parsed_planes: list[dict[str, str | int]],
-) -> list[dict[str, bool | int | str]]:
+) -> list[CharDetailsDict]:
     spinner = start_task("Parsing Unicode character data from XML database file...")
     char_nodes = xml_doc.getElementsByTagName("char")
     update_progress(spinner, "Parsing Unicode character data from XML database file...", 0, len(char_nodes))
@@ -85,7 +85,7 @@ def parse_unicode_character_data_from_xml(
 
 
 def parse_character_details(
-    char_node,
+    char_node: minidom.Element,
     parsed_blocks: list[dict[str, str | int]],
     parsed_planes: list[dict[str, str | int]],
     spinner,
