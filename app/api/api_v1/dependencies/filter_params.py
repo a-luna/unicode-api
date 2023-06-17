@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from fastapi import HTTPException, Query
 
+import app.schemas.enums as enum
 from app.core.result import Result
 from app.docs.dependencies.custom_parameters import (
     CHAR_NAME_FILTER_DESCRIPTION,
@@ -75,19 +76,21 @@ class FilterParameters:
         ccc: list[str] | None,
         num_type: list[str] | None,
         join_type: list[str] | None,
+        flag: list[str] | None,
         show_props: list[str] | None,
-    ):
-        errors = []
-        self.categories = None
-        self.age_list = None
-        self.scripts = None
-        self.bidi_class_list = None
-        self.decomp_types = None
-        self.line_break_types = None
-        self.ccc_list = None
-        self.num_types = None
-        self.join_types = None
-        self.show_props = None
+    ) -> None:
+        errors: list[str] = []
+        self.categories: list[enum.GeneralCategory] | None = None
+        self.age_list: list[enum.UnicodeAge] | None = None
+        self.scripts: list[enum.ScriptCode] | None = None
+        self.bidi_class_list: list[enum.BidirectionalClass] | None = None
+        self.decomp_types: list[enum.DecompositionType] | None = None
+        self.line_break_types: list[enum.LineBreakType] | None = None
+        self.ccc_list: list[enum.CombiningClassCategory] | None = None
+        self.num_types: list[enum.NumericType] | None = None
+        self.join_types: list[enum.JoiningType] | None = None
+        self.flags: list[enum.CharacterFilterFlags] | None = None
+        self.show_props: list[enum.CharPropertyGroup] | None = None
 
         if category:
             result = parse_enum_values_from_parameter(GeneralCategory, "category", category)

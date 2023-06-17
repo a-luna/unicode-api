@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from humps import camelize
 
+import app.schemas.enums as enum
 from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.main import app
@@ -42,7 +43,7 @@ def test_get_character_details_default(char):
         url = f"/v1/characters/{get_uri_encoded_value(char)}"
     response = client.get(url)
     assert response.status_code == 200
-    assert response.json() == [get_character_properties(char, CharPropertyGroup.Minimum)]
+    assert response.json() == [get_character_properties(char, enum.CharPropertyGroup.Minimum)]
 
 
 @pytest.mark.parametrize("char", ALL_CHARACTER_PROPERTIES.keys())
@@ -53,7 +54,7 @@ def test_get_character_details_show_props(char, prop_group):
         url = f"/v1/characters/{get_uri_encoded_value(char)}?show_props={prop_group}"
     response = client.get(url)
     assert response.status_code == 200
-    assert response.json() == [get_character_properties(char, CharPropertyGroup.match_loosely(prop_group))]
+    assert response.json() == [get_character_properties(char, enum.CharPropertyGroup.match_loosely(prop_group))]
 
 
 def test_invalid_prop_group_name():

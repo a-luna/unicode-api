@@ -4,6 +4,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
 import app.db.models as db
+import app.schemas.enums as enum
 from app.api.api_v1.dependencies import (
     CharacterSearchParameters,
     DBSession,
@@ -43,7 +44,8 @@ def list_all_unicode_characters(
         "url": f"{settings.API_VERSION}/characters",
         "has_more": stop <= block.finish,
         "data": [
-            get_character_details(db_ctx, codepoint, [CharPropertyGroup.Minimum]) for codepoint in range(start, stop)
+            get_character_details(db_ctx, codepoint, [enum.CharPropertyGroup.Minimum])
+            for codepoint in range(start, stop)
         ],
     }
 
@@ -62,7 +64,7 @@ def search_unicode_characters_by_name(
     return get_paginated_character_list(
         db_ctx,
         search_results,
-        [CharPropertyGroup.Minimum],
+        [enum.CharPropertyGroup.Minimum],
         search_parameters.per_page,
         search_parameters.page,
         response_data,
@@ -133,7 +135,7 @@ def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQuer
 def get_paginated_character_list(
     db_ctx: DBSession,
     results: list[tuple[int, Any]],
-    show_props: list[CharPropertyGroup] | None,
+    show_props: list[enum.CharPropertyGroup] | None,
     per_page: int,
     page: int,
     response_data: dict[str, str],
@@ -161,7 +163,7 @@ def get_paginated_character_list(
 def get_character_details(
     db_ctx: DBSession,
     codepoint: int,
-    show_props: list[CharPropertyGroup] | None,
+    show_props: list[enum.CharPropertyGroup] | None,
     score: float | None = None,
 ) -> db.UnicodeCharacterResponse:
     response_dict = db_ctx.get_character_properties(codepoint, show_props)

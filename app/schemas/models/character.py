@@ -2,21 +2,7 @@ from sqlalchemy import Column, Integer
 from sqlalchemy_utils import ChoiceType
 from sqlmodel import Field, Relationship
 
-from app.schemas.enums import (
-    BidirectionalBracketType,
-    BidirectionalClass,
-    CombiningClassCategory,
-    DecompositionType,
-    EastAsianWidthType,
-    GeneralCategory,
-    HangulSyllableType,
-    JoiningType,
-    LineBreakType,
-    NumericType,
-    ScriptCode,
-    TriadicLogic,
-    VerticalOrientationType,
-)
+import app.schemas.enums as enum
 from app.schemas.models.camel_model import CamelModel
 
 
@@ -26,38 +12,44 @@ class UnicodeCharacterBase(CamelModel):
     name: str = Field(index=True)
     age: str
     plane_number: int
-    general_category: GeneralCategory = Field(
-        sa_column=Column(ChoiceType(GeneralCategory, impl=Integer()), nullable=False)
+    general_category: enum.GeneralCategory = Field(
+        sa_column=Column(ChoiceType(enum.GeneralCategory, impl=Integer()), nullable=False)
     )
-    combining_class: CombiningClassCategory = Field(
-        sa_column=Column(ChoiceType(CombiningClassCategory, impl=Integer()), nullable=False)
+    combining_class: enum.CombiningClassCategory = Field(
+        sa_column=Column(ChoiceType(enum.CombiningClassCategory, impl=Integer()), nullable=False)
     )
-    bidirectional_class: BidirectionalClass = Field(
-        sa_column=Column(ChoiceType(BidirectionalClass, impl=Integer()), nullable=False)
+    bidirectional_class: enum.BidirectionalClass = Field(
+        sa_column=Column(ChoiceType(enum.BidirectionalClass, impl=Integer()), nullable=False)
     )
     bidirectional_is_mirrored: bool
     bidirectional_mirroring_glyph: str
     bidirectional_control: bool
-    paired_bracket_type: BidirectionalBracketType = Field(
-        sa_column=Column(ChoiceType(BidirectionalBracketType, impl=Integer()), nullable=False)
+    paired_bracket_type: enum.BidirectionalBracketType = Field(
+        sa_column=Column(ChoiceType(enum.BidirectionalBracketType, impl=Integer()), nullable=False)
     )
     paired_bracket_property: str
-    decomposition_type: DecompositionType = Field(
-        sa_column=Column(ChoiceType(DecompositionType, impl=Integer()), nullable=False)
+    decomposition_type: enum.DecompositionType = Field(
+        sa_column=Column(ChoiceType(enum.DecompositionType, impl=Integer()), nullable=False)
     )
-    NFC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    NFD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    NFKC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    NFKD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    numeric_type: NumericType = Field(sa_column=Column(ChoiceType(NumericType, impl=Integer()), nullable=False))
+    NFC_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
+    NFD_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
+    NFKC_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
+    NFKD_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
+    numeric_type: enum.NumericType = Field(
+        sa_column=Column(ChoiceType(enum.NumericType, impl=Integer()), nullable=False)
+    )
     numeric_value: str
     numeric_value_parsed: float | None
-    joining_type: JoiningType = Field(sa_column=Column(ChoiceType(JoiningType, impl=Integer()), nullable=False))
+    joining_type: enum.JoiningType = Field(
+        sa_column=Column(ChoiceType(enum.JoiningType, impl=Integer()), nullable=False)
+    )
     joining_group: str
     joining_control: bool
-    line_break: LineBreakType = Field(sa_column=Column(ChoiceType(LineBreakType, impl=Integer()), nullable=False))
-    east_asian_width: EastAsianWidthType = Field(
-        sa_column=Column(ChoiceType(EastAsianWidthType, impl=Integer()), nullable=False)
+    line_break: enum.LineBreakType = Field(
+        sa_column=Column(ChoiceType(enum.LineBreakType, impl=Integer()), nullable=False)
+    )
+    east_asian_width: enum.EastAsianWidthType = Field(
+        sa_column=Column(ChoiceType(enum.EastAsianWidthType, impl=Integer()), nullable=False)
     )
     uppercase: bool
     lowercase: bool
@@ -65,10 +57,10 @@ class UnicodeCharacterBase(CamelModel):
     simple_lowercase_mapping: str
     simple_titlecase_mapping: str
     simple_case_folding: str
-    script: ScriptCode = Field(sa_column=Column(ChoiceType(ScriptCode, impl=Integer()), nullable=False))
+    script: enum.ScriptCode = Field(sa_column=Column(ChoiceType(enum.ScriptCode, impl=Integer()), nullable=False))
     script_extensions: str
-    hangul_syllable_type: HangulSyllableType = Field(
-        sa_column=Column(ChoiceType(HangulSyllableType, impl=Integer()), nullable=False)
+    hangul_syllable_type: enum.HangulSyllableType = Field(
+        sa_column=Column(ChoiceType(enum.HangulSyllableType, impl=Integer()), nullable=False)
     )
     indic_syllabic_category: str
     indic_matra_category: str
@@ -89,8 +81,8 @@ class UnicodeCharacterBase(CamelModel):
     logical_order_exception: bool
     prepended_concatenation_mark: bool
     white_space: bool
-    vertical_orientation: VerticalOrientationType = Field(
-        sa_column=Column(ChoiceType(VerticalOrientationType, impl=Integer()), nullable=False)
+    vertical_orientation: enum.VerticalOrientationType = Field(
+        sa_column=Column(ChoiceType(enum.VerticalOrientationType, impl=Integer()), nullable=False)
     )
     regional_indicator: bool
     emoji: bool

@@ -6,13 +6,13 @@ from sqlalchemy import column, select
 from sqlalchemy.engine import Engine
 
 import app.db.models as db
+import app.schemas.enums as enum
 from app.data.cache import cached_data
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
-from app.schemas.enums import CharPropertyGroup
 
 
 def get_character_properties(
-    engine: Engine, codepoint: int, show_props: list[CharPropertyGroup] | None
+    engine: Engine, codepoint: int, show_props: list[enum.CharPropertyGroup] | None
 ) -> dict[str, Any]:
     prop_groups = get_prop_groups(show_props)
     char_prop_dicts = [get_character_prop_group(engine, codepoint, group) for group in prop_groups]

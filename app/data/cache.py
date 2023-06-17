@@ -5,6 +5,7 @@ from functools import cache, cached_property
 from rapidfuzz import process
 
 import app.db.models as db
+import app.schemas.enums as enum
 from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_NO_NAME_MAP, PLANES_JSON
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,
@@ -20,7 +21,6 @@ from app.data.constants import (
     TANGUT_BLOCK_IDS,
 )
 from app.data.encoding import get_codepoint_string
-from app.schemas.enums import UnassignedCharacterType
 
 
 class UnicodeDataCache:
@@ -265,21 +265,21 @@ class UnicodeDataCache:
         char_type = self.get_unassigned_character_type(codepoint)
         return (
             f"<{char_type}-{codepoint:04X}>"
-            if char_type != UnassignedCharacterType.INVALID
+            if char_type != enum.UnassignedCharacterType.INVALID
             else f"Invalid Codepoint ({get_codepoint_string(codepoint)})"
         )
 
-    def get_unassigned_character_type(self, codepoint: int) -> UnassignedCharacterType:
+    def get_unassigned_character_type(self, codepoint: int) -> enum.UnassignedCharacterType:
         return (
-            UnassignedCharacterType.NONCHARACTER
+            enum.UnassignedCharacterType.NONCHARACTER
             if self.codepoint_is_noncharacter(codepoint)
-            else UnassignedCharacterType.SURROGATE
+            else enum.UnassignedCharacterType.SURROGATE
             if self.codepoint_is_surrogate(codepoint)
-            else UnassignedCharacterType.PRIVATE_USE
+            else enum.UnassignedCharacterType.PRIVATE_USE
             if self.codepoint_is_private_use(codepoint)
-            else UnassignedCharacterType.RESERVED
+            else enum.UnassignedCharacterType.RESERVED
             if self.codepoint_is_reserved(codepoint)
-            else UnassignedCharacterType.INVALID
+            else enum.UnassignedCharacterType.INVALID
         )
 
 
