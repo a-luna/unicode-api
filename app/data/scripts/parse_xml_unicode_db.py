@@ -120,7 +120,7 @@ def parse_character_details(
         "NFKD_QC": char_node.getAttribute("NFKD_QC"),
         "numeric_type": char_node.getAttribute("nt"),
         "numeric_value": char_node.getAttribute("nv"),
-        "numeric_value_parsed": parse_numeric_value(char_node.getAttribute("nv")),
+        "numeric_value_parsed": parse_numeric_value(char_node.getAttribute("nv"), codepoint),
         "joining_type": char_node.getAttribute("jt"),
         "joining_group": char_node.getAttribute("jg"),
         "joining_control": YES_NO_MAP[char_node.getAttribute("Join_C")],
@@ -271,13 +271,17 @@ def get_decomposition_mapping(decomposition_mapping: str, codepoint: int) -> str
     return decomposition_mapping if decomposition_mapping != "#" else f"{codepoint:04X}"
 
 
-def parse_numeric_value(numeric_value: str) -> int | float | None:
+def parse_numeric_value(numeric_value: str, codepoint: str) -> int | float | None:
     if numeric_value == "NaN":
         return None
     if "/" in numeric_value:
         [num, dom] = numeric_value.split("/", 1)
         return int(num) / float(dom)
-    return int(numeric_value)
+    try:
+        return int(numeric_value)
+    except ValueError as ex:
+        print(f"Error parsing numeric_value for codepoint {codepoint}: {repr(ex)}")
+        return None
 
 
 def count_defined_characters_per_block(all_chars, all_blocks):
