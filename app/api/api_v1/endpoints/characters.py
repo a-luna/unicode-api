@@ -12,8 +12,8 @@ from app.api.api_v1.dependencies import (
     ListParameters,
     UnicodeBlockQueryParamResolver,
     get_session,
-    parse_enum_values_from_parameter,
 )
+from app.api.api_v1.dependencies.filter_params import FilterParameterMatcher
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.config import settings
 from app.data.cache import cached_data
@@ -23,8 +23,8 @@ from app.docs.dependencies.custom_parameters import (
     UNICODE_CHAR_STRING_DESCRIPTION,
     get_description_and_values_table_for_property_group,
 )
-from app.schemas.enums import CharPropertyGroup
 
+PropertyGroupMatcher = FilterParameterMatcher[enum.CharPropertyGroup]("show_props", enum.CharPropertyGroup)
 DatabaseSession = Annotated[DBSession, Depends(get_session)]
 router = APIRouter()
 
@@ -105,7 +105,7 @@ def get_unicode_character_details(
     | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
 ):
     if show_props:
-        result = parse_enum_values_from_parameter(CharPropertyGroup, "show_props", show_props)
+        result = PropertyGroupMatcher.parse_enum_values(show_props)
         if result.failure:
             raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
         prop_groups = result.value
@@ -169,4 +169,6 @@ def get_character_details(
     response_dict = db_ctx.get_character_properties(codepoint, show_props)
     if score:
         response_dict["score"] = float(f"{score:.1f}")
+    if "description" in response_dict and not response_dict.get("description"):
+        response_dict.pop("description")
     return db.UnicodeCharacterResponse(**response_dict)

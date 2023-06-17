@@ -173,6 +173,68 @@ class UnicodeCharacterResponse(CamelModel):
     emoji_component: bool = False
     extended_pictographic: bool = False
 
+    @property
+    def flags(self) -> list[enum.CharacterFilterFlags]:
+        flags: list[enum.CharacterFilterFlags] = []
+        if self.bidirectional_is_mirrored:
+            flags.append(enum.CharacterFilterFlags.MIRRORED)
+        if self.bidirectional_control:
+            flags.append(enum.CharacterFilterFlags.BIDIRECTIONAL_CONTROL)
+        if self.joining_control:
+            flags.append(enum.CharacterFilterFlags.JOINING_CONTROL)
+        if self.dash:
+            flags.append(enum.CharacterFilterFlags.DASH)
+        if self.hyphen:
+            flags.append(enum.CharacterFilterFlags.HYPHEN)
+        if self.quotation_mark:
+            flags.append(enum.CharacterFilterFlags.QUOTATION_MARK)
+        if self.terminal_punctuation:
+            flags.append(enum.CharacterFilterFlags.TERMINAL_PUNCTUATION)
+        if self.sentence_terminal:
+            flags.append(enum.CharacterFilterFlags.SENTENCE_TERMINAL)
+        if self.diacritic:
+            flags.append(enum.CharacterFilterFlags.DIACRITIC)
+        if self.extender:
+            flags.append(enum.CharacterFilterFlags.EXTENDER)
+        if self.soft_dotted:
+            flags.append(enum.CharacterFilterFlags.SOFT_DOTTED)
+        if self.alphabetic:
+            flags.append(enum.CharacterFilterFlags.ALPHABETIC)
+        if self.math:
+            flags.append(enum.CharacterFilterFlags.MATHEMATICAL)
+        if self.hex_digit:
+            flags.append(enum.CharacterFilterFlags.HEX_DIGIT)
+        if self.ascii_hex_digit:
+            flags.append(enum.CharacterFilterFlags.ASCII_HEX_DIGIT)
+        if self.default_ignorable_code_point:
+            flags.append(enum.CharacterFilterFlags.DEFAULT_IGNORABLE_CODE_POINT)
+        if self.logical_order_exception:
+            flags.append(enum.CharacterFilterFlags.LOGICAL_ORDER_EXCEPTION)
+        if self.prepended_concatenation_mark:
+            flags.append(enum.CharacterFilterFlags.PREPENDED_CONCATENATION_MARK)
+        if self.white_space:
+            flags.append(enum.CharacterFilterFlags.WHITE_SPACE)
+        if self.regional_indicator:
+            flags.append(enum.CharacterFilterFlags.REGIONAL_INDICATOR)
+        if self.emoji:
+            flags.append(enum.CharacterFilterFlags.EMOJI)
+        if self.emoji_presentation:
+            flags.append(enum.CharacterFilterFlags.EMOJI_PRESENTATION)
+        if self.emoji_modifier:
+            flags.append(enum.CharacterFilterFlags.EMOJI_MODIFIER)
+        if self.emoji_modifier_base:
+            flags.append(enum.CharacterFilterFlags.EMOJI_MODIFIER_BASE)
+        if self.emoji_component:
+            flags.append(enum.CharacterFilterFlags.EMOJI_COMPONENT)
+        if self.extended_pictographic:
+            flags.append(enum.CharacterFilterFlags.EXTENDED_PICTOGRAPHIC)
+
+        return enum.CharacterFilterFlags.get_char_flags_from_int(sum(flags))
+
+    @property
+    def display_flags(self) -> list[str]:
+        return [flag.display_name for flag in self.flags]
+
 
 class UnicodeCharacter(UnicodeCharacterBase, table=True):
     __tablename__ = "character"  # type: ignore

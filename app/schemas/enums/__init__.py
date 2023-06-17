@@ -1,6 +1,7 @@
 # flake8: noqa
 from app.schemas.enums.bidirectional_bracket_type import BidirectionalBracketType
 from app.schemas.enums.bidirectional_class import BidirectionalClass
+from app.schemas.enums.char_filter_flags import CharacterFilterFlags
 from app.schemas.enums.combining_class_category import CombiningClassCategory
 from app.schemas.enums.decomposition_type import DecompositionType
 from app.schemas.enums.east_asian_width_type import EastAsianWidthType

@@ -5,6 +5,7 @@ from app.docs.dependencies import (
     BIDI_CLASS_VALUES_TABLE,
     BLOCK_NAME_VALUES_TABLE,
     CCC_VALUES_TABLE,
+    CHAR_FLAGS_TABLE,
     DECOMP_TYPE_VALUES_TABLE,
     GENERAL_CATEGORY_VALUES_TABLE,
     JOINING_TYPES_TABLE,
@@ -285,6 +286,19 @@ def get_description_and_values_table_for_joining_type() -> str:
         + "<p>All valid values for joining type are shown in the table below:</p>"
         + f"{JOINING_TYPES_TABLE}"
         + "<p>To add a filter setting for <code>Joining Type</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+    )
+
+
+def get_description_and_values_table_for_flags() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter Unicode characters by various boolean values. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>flag=emoji</code> and <code>flag=ascii_hex</code> will return <strong>both</strong> Emoji and ASCII Hex Digit characters).<p>"
+        + "<p>All possible flag values are shown in the table below:</p>"
+        + f"{CHAR_FLAGS_TABLE}"
+        + "<p>To add a filter setting for any <strong>flag</strong> value, click the button below and enter the value from the <strong>Flags (Boolean Properties)</strong> <i><u>or</u></i> <strong>Alias</strong> column of the table above.</p>"
     )
 
 

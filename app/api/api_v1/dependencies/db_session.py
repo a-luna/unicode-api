@@ -1,6 +1,6 @@
 from typing import Any
 
-from sqlalchemy import column, or_, select
+from sqlalchemy import column, or_, select, true
 from sqlalchemy.engine import Engine
 from sqlalchemy.sql import Select
 from sqlmodel import Session
@@ -57,6 +57,10 @@ def construct_filter_query(
         query = query.where(column("numeric_type").in_(filter_params.num_types))
     if filter_params.join_types:
         query = query.where(column("joining_type").in_(filter_params.join_types))
+    if filter_params.flags and len(filter_params.flags) > 0:
+        flag_conditions = [column(flag.db_column_name) == true() for flag in filter_params.flags if flag]
+        query = query.where(or_(*flag_conditions))
+
     return query
 
 
