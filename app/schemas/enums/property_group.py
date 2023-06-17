@@ -1,11 +1,12 @@
-from enum import auto
+from __future__ import annotations
 
-from fastapi_utils.enums import StrEnum
+from enum import IntEnum, auto
 
 from app.schemas.util import normalize_string_lm3
 
 
-class CharPropertyGroup(StrEnum):
+class CharPropertyGroup(IntEnum):
+    NONE = 0
     All = auto()
     Minimum = auto()
     Basic = auto()
@@ -54,8 +55,8 @@ class CharPropertyGroup(StrEnum):
         return self.normalized != self.short_alias
 
     @classmethod
-    def match_loosely(cls, name: str):
+    def match_loosely(cls, name: str) -> CharPropertyGroup:
         prop_names = {e.normalized: e for e in cls}
         prop_aliases = {e.short_alias: e for e in cls}
         prop_names.update(prop_aliases)
-        return prop_names.get(normalize_string_lm3(name))
+        return prop_names.get(normalize_string_lm3(name), cls.NONE)

@@ -1,16 +1,6 @@
+import app.schemas.enums as enum
 from app.data.cache import cached_data
 from app.docs.util import slugify
-from app.schemas.enums import (
-    BidirectionalClass,
-    CharPropertyGroup,
-    CombiningClassCategory,
-    DecompositionType,
-    JoiningType,
-    LineBreakType,
-    NumericType,
-    ScriptCode,
-    UnicodeAge,
-)
 
 GENERAL_CATEGORY_VALUES_TABLE = """
 <div class="filter-table-outer">
@@ -264,7 +254,7 @@ def create_table_listing_prop_group_names() -> str:
                     <th>Property Group</th>
                     <th>Alias</th>
                 </tr>"""
-    for pg in CharPropertyGroup:
+    for pg in enum.CharPropertyGroup:
         html += f"""
                 <tr>
                     <td>{get_prop_group_name_maybe_linked(pg)}</td>
@@ -278,12 +268,22 @@ def create_table_listing_prop_group_names() -> str:
     return html
 
 
-def get_prop_group_name_maybe_linked(pg: CharPropertyGroup) -> str:
-    return f'<a href="#{slugify(pg.name)}">{pg.name}</a>' if pg != CharPropertyGroup.All else pg.name
+def get_prop_group_name_maybe_linked(pg: enum.CharPropertyGroup) -> str:
+    return (
+        f'<a href="#{slugify(pg.name)}">{pg.name}</a>'
+        if pg not in [enum.CharPropertyGroup.All, enum.CharPropertyGroup.NONE]
+        else pg.name
+    )
 
 
 def create_table_listing_enum_values(
-    enumClass, filter_param, column_1_text="Code", column_2_text="Description", hide_column_2=False
+    enumClass,
+    filter_param,
+    column_1_text="Code",
+    column_1_attr="code",
+    hide_column_2=False,
+    column_2_text="Description",
+    column_2_attr=None,
 ) -> str:
     html = f"""
 <div class="filter-table-outer">
@@ -298,13 +298,14 @@ def create_table_listing_enum_values(
     html += """
                 </tr>"""
     for e in enumClass:
-        if e.code:
+        if e.name != "NONE" and hasattr(e, column_1_attr):
             html += f"""
                 <tr>
-                    <td>{e.code}</td>"""
+                    <td>{getattr(e, column_1_attr)}</td>"""
             if not hide_column_2:
+                col_2_value = getattr(e, column_2_attr, str(e)) if column_2_attr else str(e)
                 html += f"""
-                    <td>{e}</td>"""
+                    <td>{col_2_value}</td>"""
         html += """
                 </tr>"""
     html += """
@@ -319,20 +320,28 @@ PLANE_ABBREV_VALUES_TABLE = create_table_listing_unicode_plane_abbreviations()
 BLOCK_NAME_VALUES_TABLE = create_table_listing_unicode_block_names()
 PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
 UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
-    UnicodeAge, "unicode-age", column_1_text="Unicode Version Number", hide_column_2=True
+    enum.UnicodeAge, "unicode-age", column_1_text="Unicode Version Number", hide_column_2=True
 )
-SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script-code", column_2_text="Script Name")
+SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(enum.ScriptCode, "script-code", column_2_text="Script Name")
 BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
-    BidirectionalClass, "bidi-class", column_2_text="Bidirectional Class"
+    enum.BidirectionalClass, "bidi-class", column_2_text="Bidirectional Class"
 )
 DECOMP_TYPE_VALUES_TABLE = create_table_listing_enum_values(
-    DecompositionType, "decomp-type", column_2_text="Decomposition Type"
+    enum.DecompositionType, "decomp-type", column_2_text="Decomposition Type"
 )
 LINE_BREAK_TYPE_VALUES_TABLE = create_table_listing_enum_values(
-    LineBreakType, "line-break", column_2_text="Line Break Type"
+    enum.LineBreakType, "line-break", column_2_text="Line Break Type"
 )
 CCC_VALUES_TABLE = create_table_listing_enum_values(
-    CombiningClassCategory, "combining-class", column_2_text="Combining Class Category"
+    enum.CombiningClassCategory, "combining-class", column_2_text="Combining Class Category"
 )
-NUMERIC_TYPES_TABLE = create_table_listing_enum_values(NumericType, "num-type", column_2_text="Numeric Type")
-JOINING_TYPES_TABLE = create_table_listing_enum_values(JoiningType, "join-type", column_2_text="Joining Type")
+NUMERIC_TYPES_TABLE = create_table_listing_enum_values(enum.NumericType, "num-type", column_2_text="Numeric Type")
+JOINING_TYPES_TABLE = create_table_listing_enum_values(enum.JoiningType, "join-type", column_2_text="Joining Type")
+CHAR_FLAGS_TABLE = create_table_listing_enum_values(
+    enum.CharacterFilterFlags,
+    "flags",
+    column_1_text="Flags (Boolean Properties)",
+    column_1_attr="display_name",
+    column_2_text="Alias",
+    column_2_attr="short_alias",
+)

@@ -6,7 +6,6 @@ import app.schemas.enums as enum
 from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.main import app
-from app.schemas.enums.property_group import CharPropertyGroup
 from app.tests.test_character_endpoints.test_get_unicode_character_details.data import (
     ALL_CHARACTER_PROPERTIES,
     ALL_PROP_GROUP_NAMES,
@@ -18,21 +17,22 @@ client = TestClient(app)
 
 def get_character_properties(char, prop_group):
     prop_data = ALL_CHARACTER_PROPERTIES[char]
-    minimum = get_prop_group(CharPropertyGroup.Minimum, prop_data)
     char_props = {}
-    if prop_group == CharPropertyGroup.All:
-        for group in CharPropertyGroup:
-            if group != CharPropertyGroup.All:
+    if prop_group == enum.CharPropertyGroup.All:
+        for group in enum.CharPropertyGroup:
+            if group not in [enum.CharPropertyGroup.All, enum.CharPropertyGroup.NONE]:
                 char_props.update(get_prop_group(group, prop_data))
     else:
         char_props = get_prop_group(prop_group, prop_data)
-    return char_props | minimum
+        char_props.update(get_prop_group(enum.CharPropertyGroup.Minimum, prop_data))
+    return char_props
 
 
 def get_prop_group(prop_group, prop_data):
     return {
         camelize(prop_details["name_out"]): prop_data[camelize(prop_details["name_out"])]
         for prop_details in CHARACTER_PROPERTY_GROUPS[prop_group]
+        if camelize(prop_details["name_out"]) in prop_data
     }
 
 

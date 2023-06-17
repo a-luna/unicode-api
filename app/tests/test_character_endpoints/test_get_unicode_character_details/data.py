@@ -1,4 +1,4 @@
-from app.schemas.enums.property_group import CharPropertyGroup
+import app.schemas.enums as enum
 
 ALL_CHARACTER_PROPERTIES = {
     "∑": {
@@ -308,6 +308,7 @@ ALL_CHARACTER_PROPERTIES = {
     "櫓": {
         "character": "櫓",
         "name": "CJK COMPATIBILITY IDEOGRAPH-F931",
+        "description": "oar, scull; row",
         "codepoint": "U+F931",
         "uriEncoded": "%EF%A4%B1",
         "block": "CJK Compatibility Ideographs",
@@ -490,7 +491,7 @@ ALL_CHARACTER_PROPERTIES = {
         "NFKD_QC": "Yes",
         "numericType": "None (None)",
         "numericValue": "",
-        "numericValueParsed": 0.0,
+        "numericValueParsed": 0,
         "joiningType": "Non Joining (U)",
         "joiningGroup": "",
         "joiningControl": False,
@@ -689,8 +690,8 @@ ALL_CHARACTER_PROPERTIES = {
 
 
 def get_all_prop_names():
-    prop_names = {cls.normalized for cls in CharPropertyGroup}
-    prop_aliases = {cls.short_alias for cls in CharPropertyGroup}
+    prop_names = {cls.normalized for cls in enum.CharPropertyGroup if cls != enum.CharPropertyGroup.NONE}
+    prop_aliases = {cls.short_alias for cls in enum.CharPropertyGroup if cls != enum.CharPropertyGroup.NONE}
     prop_names.update(prop_aliases)
     return list(prop_names)
 
