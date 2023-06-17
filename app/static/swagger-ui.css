@@ -150,10 +150,6 @@ body > svg {
   display: none;;
 }
 
-[data-param-name="show_props"] select[multiple] {
-  height: 333px;
-}
-
 .swagger-ui {
   border: none;
 }

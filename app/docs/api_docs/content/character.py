@@ -315,9 +315,9 @@ PROP_GROUP_EAW = """
 PROP_GROUP_CASE = """
             <dl>
                 <dt><strong>uppercase</strong></dt>
-                <dd>The uppercase form of the character.</dd>
+                <dd>Boolean value that indicates whether the character is an uppercase letter.</dd>
                 <dt><strong>lowercase</strong></dt>
-                <dd>The lowercase form of the character.</dd>
+                <dd>Boolean value that indicates whether the character is a lowercase letter.</dd>
                 <dt><strong>simpleUppercaseMapping</strong></dt>
                 <dd>The uppercase form of the character, if expressible as a single character.</dd>
                 <dt><strong>simpleLowercaseMapping</strong></dt>

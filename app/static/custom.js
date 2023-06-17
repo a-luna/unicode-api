@@ -15,8 +15,7 @@ document.querySelector("html").style.background = svgUrls;
 
 // Add click handlers to expand details element in API docs containing the link target
 // Without this, hash links within nested areas of API docs do not work
-PROP_GROUP_LINK_SELECTOR =
-  '[data-param-name="show_props"] a[href*="#"]:not([href*="loose"])';
+PROP_GROUP_LINK_SELECTOR = '[data-param-name="show_props"] a[href*="#"]:not([href*="loose"])';
 LOOSE_MATCHING_LINK_SELECTOR = 'a[href$="#loose-matching"]';
 SEARCH_LINK_SELECTOR = 'a[href$="#search"]';
 BLOCK_DOC_LINK_SELECTOR = 'a[href="#the-unicodeblock-object"]';

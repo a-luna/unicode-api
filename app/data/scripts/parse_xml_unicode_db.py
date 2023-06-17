@@ -98,8 +98,8 @@ def parse_character_details(
     plane = get_unicode_plane_containing_block_id(int(block["id"]), parsed_planes)
     parsed_char = {
         "character": chr(codepoint_dec),
-        "name": get_character_name(char_node, codepoint_dec, parsed_blocks),
-        "codepoint": char_node.getAttribute("cp"),
+        "name": get_character_name(char_node, codepoint, codepoint_dec, parsed_blocks),
+        "codepoint": codepoint,
         "codepoint_dec": codepoint_dec,
         "block_id": block["id"],
         "plane_number": plane["number"],
@@ -179,14 +179,14 @@ def get_unicode_block_containing_codepoint(
     return found[0] if found else NULL_BLOCK
 
 
-def get_character_name(char_node, codepoint, block) -> str:
+def get_character_name(char_node, codepoint, codepoint_dec, block) -> str:
     name = char_node.getAttribute("na")
     return (
-        f'Undefined Codepoint ({get_codepoint_string(codepoint)}) (Reserved for {block["name"]})'
-        if not char_node.getAttribute("cp")
-        else get_control_char_name(codepoint)
+        f'Undefined Codepoint ({get_codepoint_string(codepoint_dec)}) (Reserved for {block["name"]})'
+        if not codepoint
+        else get_control_char_name(codepoint_dec)
         if not name
-        else name.replace("#", char_node.getAttribute("cp"))
+        else name.replace("#", codepoint)
         if "#" in name
         else name
     )
