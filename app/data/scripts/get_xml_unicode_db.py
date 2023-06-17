@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from zipfile import is_zipfile, ZipFile
+from zipfile import ZipFile, is_zipfile
 
 from app.core.config import DATA_FOLDER
 from app.core.result import Result
@@ -11,17 +11,20 @@ UCDXML_FOLDER = "ucdxml"
 ALL_CHARS_ZIP = "ucd.all.flat.zip"
 UCDXML_FILE_NAME = "ucd.all.flat.xml"
 UCDXML_FOLDER_PATH = DATA_FOLDER.joinpath("xml")
-UCDXML_FILE_PATH = UCDXML_FOLDER_PATH.joinpath(UCDXML_FILE_NAME)
 
 
 def download_xml_unicode_database(version: str) -> Result[Path]:
-    if os.environ.get("ENV") != "PROD":
+    UCDXML_VER_FOLDER = UCDXML_FOLDER_PATH.joinpath(version)
+    UCDXML_VER_FOLDER.mkdir(parents=True, exist_ok=True)
+    UCDXML_FILE_PATH = UCDXML_VER_FOLDER.joinpath(UCDXML_FILE_NAME)
+
+    if os.environ.get("ENV") != "PROD" and UCDXML_FILE_PATH.exists():
         return Result.Ok(UCDXML_FILE_PATH)
-    download_result = download_unicode_xml_zip(version, str(UCDXML_FOLDER_PATH))
+    download_result = download_unicode_xml_zip(version, str(UCDXML_VER_FOLDER))
     if download_result.failure or not download_result.value:
         return download_result
     xml_zip = download_result.value
-    extract_result = extract_unicode_xml_from_zip(xml_zip, str(UCDXML_FOLDER_PATH))
+    extract_result = extract_unicode_xml_from_zip(xml_zip, str(UCDXML_VER_FOLDER))
     if extract_result.failure or not extract_result.value:
         return extract_result
     xml_file = extract_result.value
