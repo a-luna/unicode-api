@@ -10,7 +10,6 @@ class UnicodeCharacterBase(CamelModel):
     codepoint_dec: int = Field(index=True, primary_key=True)
     codepoint: str = Field(index=True)
     name: str = Field(index=True)
-    description: str
     age: str
     plane_number: int
     general_category: enum.GeneralCategory = Field(
@@ -66,6 +65,10 @@ class UnicodeCharacterBase(CamelModel):
     indic_syllabic_category: str
     indic_matra_category: str
     indic_positional_category: str
+    ideographic: bool | None = False
+    unified_ideograph: bool | None = False
+    radical: bool | None = False
+    equivalent_unified_ideograph: bool | None = False
     dash: bool
     hyphen: bool
     quotation_mark: bool
@@ -97,10 +100,47 @@ class UnicodeCharacterBase(CamelModel):
     plane_id: int = Field(foreign_key="plane.id")
 
 
+class UnicodeCharacter(UnicodeCharacterBase, table=True):
+    __tablename__ = "character"  # type: ignore
+
+    block: "UnicodeBlock" = Relationship(back_populates="characters")  # type: ignore
+    plane: "UnicodePlane" = Relationship(back_populates="characters")  # type: ignore
+
+
+class UnicodeCharacterUnihan(UnicodeCharacterBase, table=True):
+    __tablename__ = "character_unihan"  # type: ignore
+
+    block: "UnicodeBlock" = Relationship(back_populates="characters_no_name")  # type: ignore
+    plane: "UnicodePlane" = Relationship(back_populates="characters_no_name")  # type: ignore
+
+    description: str | None
+    ideo_frequency: int | None
+    ideo_grade_level: int | None
+    rs_count_unicode: str | None
+    rs_count_kangxi: str | None
+    total_strokes: int | None
+    traditional_variant: str | None
+    simplified_variant: str | None
+    z_variant: str | None
+    compatibility_variant: str | None
+    semantic_variant: str | None
+    specialized_semantic_variant: str | None
+    spoofing_variant: str | None
+    accounting_numeric: int | None
+    primary_numeric: int | None
+    other_numeric: int | None
+    hangul: str | None
+    cantonese: str | None
+    mandarin: str | None
+    japanese_kun: str | None
+    japanese_on: str | None
+    vietnamese: str | None
+
+
 class UnicodeCharacterResponse(CamelModel):
     character: str = ""
     name: str = ""
-    description: str = ""
+    description: str | None = None
     codepoint: str = ""
     uri_encoded: str = ""
     block: str = ""
@@ -150,6 +190,28 @@ class UnicodeCharacterResponse(CamelModel):
     indic_syllabic_category: str = ""
     indic_matra_category: str = ""
     indic_positional_category: str = ""
+    ideo_frequency: int | None = None
+    ideo_grade_level: int | None = None
+    description: str | None = None
+    rs_count_unicode: str | None = None
+    rs_count_kangxi: str | None = None
+    total_strokes: str | None = None
+    traditional_variant: str | None = None
+    simplified_variant: str | None = None
+    z_variant: str | None = None
+    compatibility_variant: str | None = None
+    semantic_variant: str | None = None
+    specialized_semantic_variant: str | None = None
+    spoofing_variant: str | None = None
+    accounting_numeric: str | None = None
+    primary_numeric: str | None = None
+    other_numeric: str | None = None
+    hangul: str | None = None
+    cantonese: str | None = None
+    mandarin: str | None = None
+    japanese_kun: str | None = None
+    japanese_on: str | None = None
+    vietnamese: str | None = None
     dash: bool = False
     hyphen: bool = False
     quotation_mark: bool = False
@@ -236,20 +298,6 @@ class UnicodeCharacterResponse(CamelModel):
     @property
     def display_flags(self) -> list[str]:
         return [flag.display_name for flag in self.flags]
-
-
-class UnicodeCharacter(UnicodeCharacterBase, table=True):
-    __tablename__ = "character"  # type: ignore
-
-    block: "UnicodeBlock" = Relationship(back_populates="characters")  # type: ignore
-    plane: "UnicodePlane" = Relationship(back_populates="characters")  # type: ignore
-
-
-class UnicodeCharacterNoName(UnicodeCharacterBase, table=True):
-    __tablename__ = "character_no_name"  # type: ignore
-
-    block: "UnicodeBlock" = Relationship(back_populates="characters_no_name")  # type: ignore
-    plane: "UnicodePlane" = Relationship(back_populates="characters_no_name")  # type: ignore
 
 
 class UnicodeCharacterResult(CamelModel):

@@ -3,7 +3,7 @@ from app.schemas.models.block import UnicodeBlock, UnicodeBlockResponse, Unicode
 from app.schemas.models.character import (
     UnicodeCharacter,
     UnicodeCharacterBase,
-    UnicodeCharacterNoName,
+    UnicodeCharacterUnihan,
     UnicodeCharacterResponse,
     UnicodeCharacterResult,
 )

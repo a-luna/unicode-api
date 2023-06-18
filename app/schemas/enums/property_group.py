@@ -24,19 +24,11 @@ class CharPropertyGroup(IntEnum):
     SCRIPT = auto()
     HANGUL = auto()
     INDIC = auto()
-    Bidirectionality = auto()
-    Decomposition = auto()
-    Quick_Check = auto()
-    Numeric = auto()
-    Joining = auto()
-    Linebreak = auto()
-    East_Asian_Width = auto()
-    Case = auto()
-    Script = auto()
-    Hangul = auto()
-    Indic = auto()
-    Function_and_Graphic = auto()
-    Emoji = auto()
+    CJK_MINIMUM = auto()
+    CJK_BASIC = auto()
+    CJK_VARIANTS = auto()
+    CJK_NUMERIC = auto()
+    CJK_READINGS = auto()
     FUNCTION_AND_GRAPHIC = auto()
     EMOJI = auto()
 
@@ -79,13 +71,11 @@ class CharPropertyGroup(IntEnum):
             "LINEBREAK": "lb",
             "EAST_ASIAN_WIDTH": "eaw",
             "FUNCTION_AND_GRAPHIC": "function",
-            "Bidirectionality": "bidi",
-            "Decomposition": "decomp",
-            "Quick_Check": "qc",
-            "Numeric": "num",
-            "Linebreak": "lb",
-            "East_Asian_Width": "eaw",
-            "Function_and_Graphic": "function",
+            "CJK_MINIMUM": "cjk_m",
+            "CJK_BASIC": "cjk_b",
+            "CJK_VARIANTS": "cjk_v",
+            "CJK_NUMERIC": "cjk_n",
+            "CJK_READINGS": "cjk_r",
         }
         return prop_aliases.get(self.name, self.normalized)
 

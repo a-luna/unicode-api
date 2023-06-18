@@ -6,7 +6,7 @@ from rapidfuzz import process
 
 import app.db.models as db
 import app.schemas.enums as enum
-from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_NO_NAME_MAP, PLANES_JSON
+from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_UNIHAN_MAP, PLANES_JSON
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,
     C0_CONTROL_CHARACTERS,
@@ -34,8 +34,8 @@ class UnicodeDataCache:
         return {codepoint: name.lower() for (codepoint, name) in self.unique_name_character_map.items()}
 
     @cached_property
-    def generic_name_character_map(self) -> dict[int, str]:
-        json_map = json.loads(CHAR_NO_NAME_MAP.read_text())
+    def unihan_character_map(self) -> dict[int, str]:
+        json_map = json.loads(CHAR_UNIHAN_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
     @cached_property
@@ -107,7 +107,7 @@ class UnicodeDataCache:
 
     @property
     def all_assigned_codepoints(self) -> set[int]:
-        return set(list(self.unique_name_character_map.keys()) + list(self.generic_name_character_map.keys()))
+        return set(list(self.unique_name_character_map.keys()) + list(self.unihan_character_map.keys()))
 
     @property
     def all_control_character_codepoints(self) -> set[int]:
@@ -233,8 +233,8 @@ class UnicodeDataCache:
     def character_is_uniquely_named(self, codepoint: int) -> bool:
         return codepoint in self.unique_name_character_map
 
-    def character_is_generically_named(self, codepoint: int) -> bool:
-        return codepoint in self.generic_name_character_map
+    def character_is_unihan(self, codepoint: int) -> bool:
+        return codepoint in self.unihan_character_map
 
     @cache
     def get_character_name(self, codepoint: int) -> str:
@@ -242,7 +242,7 @@ class UnicodeDataCache:
             self.get_unique_name_for_codepoint(codepoint)
             if self.character_is_uniquely_named(codepoint)
             else self.get_generic_name_for_codepoint(codepoint)
-            if self.character_is_generically_named(codepoint)
+            if self.character_is_unihan(codepoint)
             else self.get_label_for_unassigned_codepoint(codepoint)
         )
 

@@ -46,7 +46,8 @@ def generate_raw_sql_for_all_covering_indexes() -> list[str]:
 
 def generate_raw_sql_for_covering_index(prop_group: enum.CharPropertyGroup) -> str:
     columns = [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
-    return f'CREATE INDEX ix_character_{prop_group.index_name} ON character ({", ".join(columns)})' if columns else ""
+    table = "character" if "CJK" not in prop_group.name else "character_unihan"
+    return f'CREATE INDEX ix_character_{prop_group.index_name} ON {table} ({", ".join(columns)})' if columns else ""
 
 
 def parse_unicode_planes_and_blocks_from_json():
@@ -60,10 +61,10 @@ def parse_unicode_planes_and_blocks_from_json():
 def parse_unicode_characters_from_json():
     spinner = start_task("Parsing Unicode character data from JSON...")
     all_char_dicts = [update_char_dict_enum_values(char) for char in json.loads(CHARACTERS_JSON.read_text())]
-    all_named_chars = [db.UnicodeCharacter(**char_dict) for char_dict in all_char_dicts if not char_dict["no_name"]]
-    all_no_name_chars = [db.UnicodeCharacterNoName(**char_dict) for char_dict in all_char_dicts if char_dict["no_name"]]
+    all_named_chars = [db.UnicodeCharacter(**char_dict) for char_dict in all_char_dicts if not char_dict["unihan"]]
+    all_unihan_chars = [db.UnicodeCharacterUnihan(**char_dict) for char_dict in all_char_dicts if char_dict["unihan"]]
     finish_task(spinner, True, "Successfully parsed character data!")
-    return all_named_chars + all_no_name_chars
+    return all_named_chars + all_unihan_chars
 
 
 def update_char_dict_enum_values(char_dict):

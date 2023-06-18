@@ -96,6 +96,7 @@ def parse_character_details(
     codepoint_dec = int(codepoint, 16)
     block = get_unicode_block_containing_codepoint(codepoint_dec, parsed_blocks)
     plane = get_unicode_plane_containing_block_id(int(block["id"]), parsed_planes)
+    unihan = block["id"] in GENERIC_NAME_BLOCK_IDS
     parsed_char = {
         "character": chr(codepoint_dec),
         "name": get_character_name(char_node, codepoint, codepoint_dec, parsed_blocks),
@@ -103,7 +104,7 @@ def parse_character_details(
         "codepoint_dec": codepoint_dec,
         "block_id": block["id"],
         "plane_number": plane["number"],
-        "no_name": block["id"] in GENERIC_NAME_BLOCK_IDS,
+        "unihan": unihan,
         "age": char_node.getAttribute("age"),
         "general_category": char_node.getAttribute("gc"),
         "combining_class": int(char_node.getAttribute("ccc")),
@@ -138,7 +139,10 @@ def parse_character_details(
         "indic_syllabic_category": char_node.getAttribute("InSC"),
         "indic_matra_category": char_node.getAttribute("InMC") or "NA",
         "indic_positional_category": char_node.getAttribute("InPC"),
-        "description": char_node.getAttribute("kDefinition"),
+        "ideographic": char_node.getAttribute("Ideo"),
+        "unified_ideograph": char_node.getAttribute("UIdeo"),
+        "radical": char_node.getAttribute("Radical"),
+        "equivalent_unified_ideograph": char_node.getAttribute("EqUIdeo"),
         "dash": YES_NO_MAP[char_node.getAttribute("Dash")],
         "hyphen": YES_NO_MAP[char_node.getAttribute("Hyphen")],
         "quotation_mark": YES_NO_MAP[char_node.getAttribute("QMark")],
@@ -164,6 +168,34 @@ def parse_character_details(
         "emoji_component": YES_NO_MAP[char_node.getAttribute("EComp")],
         "extended_pictographic": YES_NO_MAP[char_node.getAttribute("ExtPict")],
     }
+
+    if unihan:
+        unihan_props = {
+            "description": char_node.getAttribute("kDefinition"),
+            "ideo_frequency": parse_numeric_value(char_node.getAttribute("kFrequency"), codepoint),
+            "ideo_grade_level": parse_numeric_value(char_node.getAttribute("kGradeLevel"), codepoint),
+            "rs_count_unicode": char_node.getAttribute("kRSUnicode"),
+            "rs_count_kangxi": char_node.getAttribute("kRSKangXi"),
+            "total_strokes": parse_numeric_value(char_node.getAttribute("kTotalStrokes"), codepoint),
+            "traditional_variant": char_node.getAttribute("kTraditionalVariant"),
+            "simplified_variant": char_node.getAttribute("kSimplifiedVariant"),
+            "z_variant": char_node.getAttribute("kZVariant"),
+            "compatibility_variant": char_node.getAttribute("kCompatibilityVariant"),
+            "semantic_variant": char_node.getAttribute("kSemanticVariant"),
+            "specialized_semantic_variant": char_node.getAttribute("kSpecializedSemanticVariant"),
+            "spoofing_variant": char_node.getAttribute("kSpoofingVariant"),
+            "accounting_numeric": char_node.getAttribute("kAccountingNumeric"),
+            "primary_numeric": char_node.getAttribute("kPrimaryNumeric"),
+            "other_numeric": char_node.getAttribute("kOtherNumeric"),
+            "hangul": char_node.getAttribute("kHangul"),
+            "cantonese": char_node.getAttribute("kCantonese"),
+            "mandarin": char_node.getAttribute("kMandarin"),
+            "japanese_kun": char_node.getAttribute("kJapaneseKun"),
+            "japanese_on": char_node.getAttribute("kJapaneseOn"),
+            "vietnamese": char_node.getAttribute("kVietnamese"),
+        }
+        parsed_char |= unihan_props
+
     update_progress(spinner, "Parsing Unicode character data from XML database file...", count, total)
     return parsed_char
 

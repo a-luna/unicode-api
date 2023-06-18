@@ -1,10 +1,15 @@
+import operator
+from functools import reduce
+
 import pytest
 from fastapi.testclient import TestClient
 from humps import camelize
 
 import app.schemas.enums as enum
+from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
+from app.db.get_char_details import get_prop_groups
 from app.main import app
 from app.tests.test_character_endpoints.test_get_unicode_character_details.data import (
     ALL_CHARACTER_PROPERTIES,
@@ -17,15 +22,9 @@ client = TestClient(app)
 
 def get_character_properties(char, prop_group):
     prop_data = ALL_CHARACTER_PROPERTIES[char]
-    char_props = {}
-    if prop_group == enum.CharPropertyGroup.All:
-        for group in enum.CharPropertyGroup:
-            if group not in [enum.CharPropertyGroup.All, enum.CharPropertyGroup.NONE]:
-                char_props.update(get_prop_group(group, prop_data))
-    else:
-        char_props = get_prop_group(prop_group, prop_data)
-        char_props.update(get_prop_group(enum.CharPropertyGroup.Minimum, prop_data))
-    return char_props
+    prop_groups = get_prop_groups(ord(char), [prop_group])
+    char_prop_dicts = [get_prop_group(group, prop_data) for group in prop_groups]
+    return reduce(operator.ior, char_prop_dicts, {})
 
 
 def get_prop_group(prop_group, prop_data):
@@ -41,9 +40,14 @@ def test_get_character_details_default(char):
     url = f"/v1/characters/{char}"
     if any(char.isascii() and not char.isprintable() for char in url):
         url = f"/v1/characters/{get_uri_encoded_value(char)}"
+    prop_group = (
+        enum.CharPropertyGroup.MINIMUM
+        if not cached_data.character_is_unihan(ord(char))
+        else enum.CharPropertyGroup.CJK_MINIMUM
+    )
     response = client.get(url)
     assert response.status_code == 200
-    assert response.json() == [get_character_properties(char, enum.CharPropertyGroup.Minimum)]
+    assert response.json() == [get_character_properties(char, prop_group)]
 
 
 @pytest.mark.parametrize("char", ALL_CHARACTER_PROPERTIES.keys())

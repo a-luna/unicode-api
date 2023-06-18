@@ -44,14 +44,6 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: cached_data.get_character_name(char["codepoint_dec"]),
         },
         {
-            "name_in": "description",
-            "name_out": "description",
-            "char_property": "kDefinition",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: char["description"] if "description" in char else "",
-        },
-        {
             "name_in": "codepoint",
             "name_out": "codepoint",
             "char_property": "cp",
@@ -237,9 +229,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Bidi_M",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["bidirectional_is_mirrored"])
-            if "bidirectional_is_mirrored" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "bidirectional_is_mirrored"),
         },
         {
             "name_in": "bidirectional_mirroring_glyph",
@@ -257,9 +247,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Bidi_C",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["bidirectional_control"])
-            if "bidirectional_control" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "bidirectional_control"),
         },
         {
             "name_in": "paired_bracket_type",
@@ -277,9 +265,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "bpb",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_mapped_codepoint(char["paired_bracket_property"])
-            if "paired_bracket_property" in char
-            else "",
+            "response_value": lambda char: get_char_and_unicode_hex_value(char, "paired_bracket_property"),
         },  # bidirectional paired bracket property, see https://www.unicode.org/Public/15.0.0/ucd/BidiBrackets.txt
     ],
     enum.CharPropertyGroup.DECOMPOSITION: [
@@ -353,7 +339,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "nv",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: char["numeric_value"] if "numeric_value" in char else "",
+            "response_value": lambda char: get_string_prop_value(char, "numeric_value"),
         },
         {
             "name_in": "numeric_value_parsed",
@@ -381,7 +367,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "jg",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: char["joining_group"] if "joining_group" in char else "",
+            "response_value": lambda char: get_string_prop_value(char, "joining_group"),
         },
         {
             "name_in": "joining_control",
@@ -389,7 +375,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Join_C",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["joining_control"]) if "joining_control" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "joining_control"),
         },
     ],
     enum.CharPropertyGroup.LINEBREAK: [
@@ -423,7 +409,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Upper",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["uppercase"]) if "uppercase" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "uppercase"),
         },
         {
             "name_in": "lowercase",
@@ -431,7 +417,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Lower",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["lowercase"]) if "lowercase" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "lowercase"),
         },
         {
             "name_in": "simple_uppercase_mapping",
@@ -439,9 +425,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "suc",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_mapped_codepoint(char["simple_uppercase_mapping"])
-            if "simple_uppercase_mapping" in char
-            else "",
+            "response_value": lambda char: get_char_and_unicode_hex_value(char, "simple_uppercase_mapping"),
         },
         {
             "name_in": "simple_lowercase_mapping",
@@ -449,9 +433,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "slc",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_mapped_codepoint(char["simple_lowercase_mapping"])
-            if "simple_lowercase_mapping" in char
-            else "",
+            "response_value": lambda char: get_char_and_unicode_hex_value(char, "simple_lowercase_mapping"),
         },
         {
             "name_in": "simple_titlecase_mapping",
@@ -459,9 +441,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "stc",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_mapped_codepoint(char["simple_titlecase_mapping"])
-            if "simple_titlecase_mapping" in char
-            else "",
+            "response_value": lambda char: get_char_and_unicode_hex_value(char, "simple_titlecase_mapping"),
         },
         {
             "name_in": "simple_case_folding",
@@ -469,9 +449,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "scf",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_mapped_codepoint(char["simple_case_folding"])
-            if "simple_case_folding" in char
-            else "",
+            "response_value": lambda char: get_char_and_unicode_hex_value(char, "simple_case_folding"),
         },
     ],
     enum.CharPropertyGroup.SCRIPT: [
@@ -515,7 +493,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "InSC",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: char["indic_syllabic_category"] if "indic_syllabic_category" in char else "",
+            "response_value": lambda char: get_string_prop_value(char, "indic_syllabic_category"),
         },
         {
             "name_in": "indic_matra_category",
@@ -523,7 +501,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "NA",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: char["indic_matra_category"] if "indic_matra_category" in char else "",
+            "response_value": lambda char: get_string_prop_value(char, "indic_matra_category"),
         },
         {
             "name_in": "indic_positional_category",
@@ -531,9 +509,227 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "InPC",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: char["indic_positional_category"]
-            if "indic_positional_category" in char
+            "response_value": lambda char: get_string_prop_value(char, "indic_positional_category"),
+        },
+    ],
+    enum.CharPropertyGroup.CJK_MINIMUM: [
+        {
+            "name_in": "character",
+            "name_out": "character",
+            "char_property": "",
+            "db_required": False,
+            "db_column": False,
+            "response_value": lambda char: get_glyph_for_codepoint(char["codepoint_dec"]),
+        },
+        {
+            "name_in": "name",
+            "name_out": "name",
+            "char_property": "na",
+            "db_required": False,
+            "db_column": False,
+            "response_value": lambda char: cached_data.get_character_name(char["codepoint_dec"]),
+        },
+        {
+            "name_in": "description",
+            "name_out": "description",
+            "char_property": "kDefinition",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "description"),
+        },
+        {
+            "name_in": "codepoint",
+            "name_out": "codepoint",
+            "char_property": "cp",
+            "db_required": False,
+            "db_column": False,
+            "response_value": lambda char: get_codepoint_string(char["codepoint_dec"]),
+        },
+        {
+            "name_in": "uri_encoded",
+            "name_out": "uri_encoded",
+            "char_property": "",
+            "db_required": False,
+            "db_column": False,
+            "response_value": lambda char: get_uri_encoded_value(chr(char["codepoint_dec"])) or ""
+            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
             else "",
+        },
+    ],
+    enum.CharPropertyGroup.CJK_BASIC: [
+        {
+            "name_in": "ideo_frequency",
+            "name_out": "ideo_frequency",
+            "char_property": "kFrequency",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_int_prop_value(char, "ideo_frequency"),
+        },
+        {
+            "name_in": "ideo_grade_level",
+            "name_out": "ideo_grade_level",
+            "char_property": "kGradeLevel",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_int_prop_value(char, "ideo_grade_level"),
+        },
+        {
+            "name_in": "rs_count_unicode",
+            "name_out": "rs_count_unicode",
+            "char_property": "kRSUnicode",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "rs_count_unicode"),
+        },
+        {
+            "name_in": "rs_count_kangxi",
+            "name_out": "rs_count_kangxi",
+            "char_property": "kRSKangXi",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "rs_count_kangxi"),
+        },
+        {
+            "name_in": "total_strokes",
+            "name_out": "total_strokes",
+            "char_property": "kTotalStrokes",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "total_strokes"),
+        },
+    ],
+    enum.CharPropertyGroup.CJK_VARIANTS: [
+        {
+            "name_in": "traditional_variant",
+            "name_out": "traditional_variant",
+            "char_property": "kTraditionalVariant",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "traditional_variant"),
+        },
+        {
+            "name_in": "simplified_variant",
+            "name_out": "simplified_variant",
+            "char_property": "kSimplifiedVariant",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "simplified_variant"),
+        },
+        {
+            "name_in": "z_variant",
+            "name_out": "z_variant",
+            "char_property": "kZVariant",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "z_variant"),
+        },
+        {
+            "name_in": "compatibility_variant",
+            "name_out": "compatibility_variant",
+            "char_property": "kCompatibilityVariant",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "compatibility_variant"),
+        },
+        {
+            "name_in": "semantic_variant",
+            "name_out": "semantic_variant",
+            "char_property": "kSemanticVariant",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "semantic_variant"),
+        },
+        {
+            "name_in": "specialized_semantic_variant",
+            "name_out": "specialized_semantic_variant",
+            "char_property": "kSpecializedSemanticVariant",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "specialized_semantic_variant"),
+        },
+        {
+            "name_in": "spoofing_variant",
+            "name_out": "spoofing_variant",
+            "char_property": "kSpoofingVariant",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "spoofing_variant"),
+        },
+    ],
+    enum.CharPropertyGroup.CJK_NUMERIC: [
+        {
+            "name_in": "accounting_numeric",
+            "name_out": "accounting_numeric",
+            "char_property": "kAccountingNumeric",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_int_prop_value(char, "accounting_numeric"),
+        },
+        {
+            "name_in": "primary_numeric",
+            "name_out": "primary_numeric",
+            "char_property": "kPrimaryNumeric",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_int_prop_value(char, "primary_numeric"),
+        },
+        {
+            "name_in": "other_numeric",
+            "name_out": "other_numeric",
+            "char_property": "kOtherNumeric",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_int_prop_value(char, "other_numeric"),
+        },
+    ],
+    enum.CharPropertyGroup.CJK_READINGS: [
+        {
+            "name_in": "hangul",
+            "name_out": "hangul",
+            "char_property": "kHangul",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "hangul"),
+        },
+        {
+            "name_in": "cantonese",
+            "name_out": "cantonese",
+            "char_property": "kCantonese",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "cantonese"),
+        },
+        {
+            "name_in": "mandarin",
+            "name_out": "mandarin",
+            "char_property": "kMandarin",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "mandarin"),
+        },
+        {
+            "name_in": "japanese_kun",
+            "name_out": "japanese_kun",
+            "char_property": "kJapaneseKun",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "japanese_kun"),
+        },
+        {
+            "name_in": "japanese_on",
+            "name_out": "japanese_on",
+            "char_property": "kJapaneseOn",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "japanese_on"),
+        },
+        {
+            "name_in": "vietnamese",
+            "name_out": "vietnamese",
+            "char_property": "kVietnamese",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "vietnamese"),
         },
     ],
     enum.CharPropertyGroup.FUNCTION_AND_GRAPHIC: [
@@ -543,7 +739,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Dash",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["dash"]) if "dash" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "dash"),
         },
         {
             "name_in": "hyphen",
@@ -551,7 +747,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Hyphen",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["hyphen"]) if "hyphen" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "hyphen"),
         },
         {
             "name_in": "quotation_mark",
@@ -559,7 +755,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "QMark",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["quotation_mark"]) if "quotation_mark" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "quotation_mark"),
         },
         {
             "name_in": "terminal_punctuation",
@@ -567,9 +763,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Term",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["terminal_punctuation"])
-            if "terminal_punctuation" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "terminal_punctuation"),
         },
         {
             "name_in": "sentence_terminal",
@@ -577,7 +771,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "STerm",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["sentence_terminal"]) if "sentence_terminal" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "sentence_terminal"),
         },
         {
             "name_in": "diacritic",
@@ -585,7 +779,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Dia",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["diacritic"]) if "diacritic" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "diacritic"),
         },
         {
             "name_in": "extender",
@@ -593,7 +787,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Ext",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["extender"]) if "extender" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "extender"),
         },
         {
             "name_in": "soft_dotted",
@@ -601,7 +795,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "PCM",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["soft_dotted"]) if "soft_dotted" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "soft_dotted"),
         },
         {
             "name_in": "alphabetic",
@@ -609,7 +803,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "SD",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["alphabetic"]) if "alphabetic" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "alphabetic"),
         },
         {
             "name_in": "math",
@@ -617,7 +811,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "OAlpha",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["math"]) if "math" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "math"),
         },
         {
             "name_in": "hex_digit",
@@ -625,7 +819,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "OMath",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["hex_digit"]) if "hex_digit" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "hex_digit"),
         },
         {
             "name_in": "ascii_hex_digit",
@@ -633,7 +827,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Hex",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["ascii_hex_digit"]) if "ascii_hex_digit" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "ascii_hex_digit"),
         },
         {
             "name_in": "default_ignorable_code_point",
@@ -641,9 +835,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "AHex",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["default_ignorable_code_point"])
-            if "default_ignorable_code_point" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "default_ignorable_code_point"),
         },
         {
             "name_in": "logical_order_exception",
@@ -651,9 +843,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "ODI",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["logical_order_exception"])
-            if "logical_order_exception" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "logical_order_exception"),
         },
         {
             "name_in": "prepended_concatenation_mark",
@@ -661,9 +851,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "LOE",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["prepended_concatenation_mark"])
-            if "prepended_concatenation_mark" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "prepended_concatenation_mark"),
         },
         {
             "name_in": "white_space",
@@ -671,7 +859,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "WSpace",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["white_space"]) if "white_space" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "white_space"),
         },
         {
             "name_in": "vertical_orientation",
@@ -689,7 +877,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "RI",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["regional_indicator"]) if "regional_indicator" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "regional_indicator"),
         },
     ],
     enum.CharPropertyGroup.EMOJI: [
@@ -699,7 +887,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "Emoji",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["emoji"]) if "emoji" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "emoji"),
         },
         {
             "name_in": "emoji_presentation",
@@ -707,7 +895,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "EPres",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["emoji_presentation"]) if "emoji_presentation" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "emoji_presentation"),
         },
         {
             "name_in": "emoji_modifier",
@@ -715,7 +903,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "EMod",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["emoji_modifier"]) if "emoji_modifier" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "emoji_modifier"),
         },
         {
             "name_in": "emoji_modifier_base",
@@ -723,9 +911,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "EBase",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["emoji_modifier_base"])
-            if "emoji_modifier_base" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "emoji_modifier_base"),
         },
         {
             "name_in": "emoji_component",
@@ -733,7 +919,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "EComp",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["emoji_component"]) if "emoji_component" in char else False,
+            "response_value": lambda char: get_bool_prop_value(char, "emoji_component"),
         },
         {
             "name_in": "extended_pictographic",
@@ -741,9 +927,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "ExtPict",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: bool(char["extended_pictographic"])
-            if "extended_pictographic" in char
-            else False,
+            "response_value": lambda char: get_bool_prop_value(char, "extended_pictographic"),
         },
     ],
 }

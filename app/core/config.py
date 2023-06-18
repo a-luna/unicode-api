@@ -17,7 +17,7 @@ BLOCKS_JSON = JSON_FOLDER.joinpath("blocks.json")
 CHARACTERS_JSON = JSON_FOLDER.joinpath("characters.json")
 PLANES_JSON = JSON_FOLDER.joinpath("planes.json")
 CHAR_NAME_MAP = JSON_FOLDER.joinpath("char_name_map.json")
-CHAR_NO_NAME_MAP = JSON_FOLDER.joinpath("char_no_name_map.json")
+CHAR_UNIHAN_MAP = JSON_FOLDER.joinpath("char_unihan_map.json")
 
 # URLS
 DEFAULT_REDIS_URL = "redis://127.0.0.1:6379"

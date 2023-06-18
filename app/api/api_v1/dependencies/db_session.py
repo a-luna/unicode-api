@@ -11,7 +11,7 @@ from app.db.engine import engine
 from app.db.get_char_details import get_character_properties
 from app.schemas.enums import CharPropertyGroup
 
-CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterNoName]
+CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 
 
 def get_session():
@@ -33,7 +33,7 @@ class DBSession:
 
 
 def construct_filter_query(
-    filter_params: FilterParameters, table: db.UnicodeCharacter | db.UnicodeCharacterNoName
+    filter_params: FilterParameters, table: db.UnicodeCharacter | db.UnicodeCharacterUnihan
 ) -> Select:
     query = select(column("codepoint_dec")).select_from(table)
     if filter_params.name:
