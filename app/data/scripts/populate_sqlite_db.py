@@ -39,7 +39,7 @@ def generate_raw_sql_for_all_covering_indexes() -> list[str]:
     sql_statements = [
         generate_raw_sql_for_covering_index(prop_group)
         for prop_group in enum.CharPropertyGroup
-        if prop_group not in [enum.CharPropertyGroup.All, enum.CharPropertyGroup.NONE]
+        if prop_group not in [enum.CharPropertyGroup.ALL, enum.CharPropertyGroup.NONE]
     ]
     return [sql for sql in sql_statements if sql]
 

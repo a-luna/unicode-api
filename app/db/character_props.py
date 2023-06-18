@@ -1,3 +1,5 @@
+from typing import Any
+
 import app.schemas.enums as enum
 from app.data.cache import cached_data
 from app.data.constants import (
@@ -24,7 +26,7 @@ from app.data.encoding import (
 )
 
 CHARACTER_PROPERTY_GROUPS = {
-    enum.CharPropertyGroup.Minimum: [
+    enum.CharPropertyGroup.MINIMUM: [
         {
             "name_in": "character",
             "name_out": "character",
@@ -68,7 +70,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else "",
         },
     ],
-    enum.CharPropertyGroup.Basic: [
+    enum.CharPropertyGroup.BASIC: [
         {
             "name_in": "block_id",
             "name_out": "block",
@@ -218,7 +220,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else [],
         },
     ],
-    enum.CharPropertyGroup.Bidirectionality: [
+    enum.CharPropertyGroup.BIDIRECTIONALITY: [
         {
             "name_in": "bidirectional_class",
             "name_out": "bidirectional_class",
@@ -280,7 +282,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else "",
         },  # bidirectional paired bracket property, see https://www.unicode.org/Public/15.0.0/ucd/BidiBrackets.txt
     ],
-    enum.CharPropertyGroup.Decomposition: [
+    enum.CharPropertyGroup.DECOMPOSITION: [
         {
             "name_in": "decomposition_type",
             "name_out": "decomposition_type",
@@ -292,7 +294,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else enum.DecompositionType.NONE.display_name,
         },
     ],
-    enum.CharPropertyGroup.Quick_Check: [
+    enum.CharPropertyGroup.QUICK_CHECK: [
         {
             "name_in": "NFC_QC",
             "name_out": "NFC_QC",
@@ -334,7 +336,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else str(enum.TriadicLogic.Y),
         },
     ],
-    enum.CharPropertyGroup.Numeric: [
+    enum.CharPropertyGroup.NUMERIC: [
         {
             "name_in": "numeric_type",
             "name_out": "numeric_type",
@@ -362,7 +364,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: char["numeric_value_parsed"] if "numeric_value_parsed" in char else 0.0,
         },
     ],
-    enum.CharPropertyGroup.Joining: [
+    enum.CharPropertyGroup.JOINING: [
         {
             "name_in": "joining_type",
             "name_out": "joining_type",
@@ -390,7 +392,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: bool(char["joining_control"]) if "joining_control" in char else False,
         },
     ],
-    enum.CharPropertyGroup.Linebreak: [
+    enum.CharPropertyGroup.LINEBREAK: [
         {
             "name_in": "line_break",
             "name_out": "line_break",
@@ -402,7 +404,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else enum.LineBreakType.UNKNOWN.display_name,
         },
     ],
-    enum.CharPropertyGroup.East_Asian_Width: [
+    enum.CharPropertyGroup.EAST_ASIAN_WIDTH: [
         {
             "name_in": "east_asian_width",
             "name_out": "east_asian_width",
@@ -414,7 +416,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else get_default_eaw_display_name(char["codepoint_dec"]),
         },
     ],
-    enum.CharPropertyGroup.Case: [
+    enum.CharPropertyGroup.CASE: [
         {
             "name_in": "uppercase",
             "name_out": "uppercase",
@@ -472,7 +474,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else "",
         },
     ],
-    enum.CharPropertyGroup.Script: [
+    enum.CharPropertyGroup.SCRIPT: [
         {
             "name_in": "script",
             "name_out": "script",
@@ -494,7 +496,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else [enum.ScriptCode.UNKNOWN.display_name],
         },
     ],
-    enum.CharPropertyGroup.Hangul: [
+    enum.CharPropertyGroup.HANGUL: [
         {
             "name_in": "hangul_syllable_type",
             "name_out": "hangul_syllable_type",
@@ -506,7 +508,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else enum.HangulSyllableType.NOT_APPLICABLE.display_name,
         },
     ],
-    enum.CharPropertyGroup.Indic: [
+    enum.CharPropertyGroup.INDIC: [
         {
             "name_in": "indic_syllabic_category",
             "name_out": "indic_syllabic_category",
@@ -534,7 +536,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else "",
         },
     ],
-    enum.CharPropertyGroup.Function_and_Graphic: [
+    enum.CharPropertyGroup.FUNCTION_AND_GRAPHIC: [
         {
             "name_in": "dash",
             "name_out": "dash",
@@ -690,7 +692,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: bool(char["regional_indicator"]) if "regional_indicator" in char else False,
         },
     ],
-    enum.CharPropertyGroup.Emoji: [
+    enum.CharPropertyGroup.EMOJI: [
         {
             "name_in": "emoji",
             "name_out": "emoji",
@@ -773,6 +775,28 @@ def get_plane_abbreviation_containing_codepoint(codepoint: int) -> str:
     return block.plane.abbreviation if block.plane else "None"
 
 
+def get_string_prop_value(char_props: dict[str, Any], prop_name: str) -> str:
+    return char_props.get(prop_name, "")
+
+
+def get_bool_prop_value(char_props: dict[str, Any], prop_name: str) -> bool:
+    return True if char_props.get(prop_name, False) else False
+
+
+def get_int_prop_value(char_props: dict[str, Any], prop_name: str) -> int:
+    if prop_value := char_props.get(prop_name, 0):
+        return int(prop_value)
+    return 0
+
+
+def get_mapped_codepoint(codepoint_hex: str) -> str:
+    return f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})" if codepoint_hex else ""
+
+
+def get_char_and_unicode_hex_value(char_props: dict[str, Any], prop_name: str) -> str:
+    return get_mapped_codepoint(get_string_prop_value(char_props, prop_name))
+
+
 def get_default_age(codepoint: int) -> str:
     block = cached_data.get_unicode_block_containing_codepoint(codepoint)
     return "1.1" if block.plane and block.plane.abbreviation == "BMP" else "2.0" if block.plane else ""
@@ -822,10 +846,6 @@ def get_default_vo_display_name(codepoint: int) -> str:
         else enum.VerticalOrientationType.ROTATED
     )
     return vo_type.display_name
-
-
-def get_mapped_codepoint(codepoint_hex: str) -> str:
-    return f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})" if codepoint_hex else ""
 
 
 def get_script_extensions(value: str) -> list[str]:

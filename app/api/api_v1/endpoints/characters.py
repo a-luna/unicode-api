@@ -44,7 +44,7 @@ def list_all_unicode_characters(
         "url": f"{settings.API_VERSION}/characters",
         "has_more": stop <= block.finish,
         "data": [
-            get_character_details(db_ctx, codepoint, [enum.CharPropertyGroup.Minimum])
+            get_character_details(db_ctx, codepoint, [enum.CharPropertyGroup.MINIMUM])
             for codepoint in range(start, stop)
         ],
     }
@@ -64,7 +64,7 @@ def search_unicode_characters_by_name(
     return get_paginated_character_list(
         db_ctx,
         search_results,
-        [enum.CharPropertyGroup.Minimum],
+        [enum.CharPropertyGroup.MINIMUM],
         search_parameters.per_page,
         search_parameters.page,
         response_data,
@@ -169,6 +169,4 @@ def get_character_details(
     response_dict = db_ctx.get_character_properties(codepoint, show_props)
     if score:
         response_dict["score"] = float(f"{score:.1f}")
-    if "description" in response_dict and not response_dict.get("description"):
-        response_dict.pop("description")
     return db.UnicodeCharacterResponse(**response_dict)

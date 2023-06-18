@@ -262,12 +262,9 @@ class UnicodeDataCache:
         )
 
     def get_label_for_unassigned_codepoint(self, codepoint: int) -> str:
-        char_type = self.get_unassigned_character_type(codepoint)
-        return (
-            f"<{char_type}-{codepoint:04X}>"
-            if char_type != enum.UnassignedCharacterType.INVALID
-            else f"Invalid Codepoint ({get_codepoint_string(codepoint)})"
-        )
+        if (char_type := self.get_unassigned_character_type(codepoint)) != enum.UnassignedCharacterType.INVALID:
+            return f"<{char_type}-{codepoint:04X}>"
+        return f"Invalid Codepoint ({get_codepoint_string(codepoint)})"
 
     def get_unassigned_character_type(self, codepoint: int) -> enum.UnassignedCharacterType:
         return (

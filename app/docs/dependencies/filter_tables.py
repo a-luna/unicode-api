@@ -271,8 +271,8 @@ def create_table_listing_prop_group_names() -> str:
 
 def get_prop_group_name_maybe_linked(pg: enum.CharPropertyGroup) -> str:
     return (
-        f'<a href="#{slugify(pg.name)}">{pg.name}</a>'
-        if pg not in [enum.CharPropertyGroup.All, enum.CharPropertyGroup.NONE]
+        f'<a href="#{slugify(pg.name)}">{pg}</a>'
+        if pg not in [enum.CharPropertyGroup.ALL, enum.CharPropertyGroup.NONE]
         else pg.name
     )
 
