@@ -1,4 +1,4 @@
-import app.schemas.enums as enum
+from app.schemas.enums import CharPropertyGroup
 
 ALL_CHARACTER_PROPERTIES = {
     "∑": {
@@ -711,8 +711,8 @@ ALL_CHARACTER_PROPERTIES = {
 
 
 def get_all_prop_names():
-    prop_names = {cls.normalized for cls in enum.CharPropertyGroup if cls != enum.CharPropertyGroup.NONE}
-    prop_aliases = {cls.short_alias for cls in enum.CharPropertyGroup if cls != enum.CharPropertyGroup.NONE}
+    prop_names = {cls.normalized for cls in CharPropertyGroup if cls != CharPropertyGroup.NONE}
+    prop_aliases = {cls.short_alias for cls in CharPropertyGroup if cls != CharPropertyGroup.NONE}
     prop_names.update(prop_aliases)
     return list(prop_names)
 

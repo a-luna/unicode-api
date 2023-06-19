@@ -1,6 +1,5 @@
 from typing import Any
 
-import app.schemas.enums as enum
 from app.data.cache import cached_data
 from app.data.constants import (
     ALL_CJK_IDEOGRAPH_BLOCK_IDS,
@@ -24,9 +23,25 @@ from app.data.encoding import (
     get_utf32_hex_bytes,
     get_utf32_value,
 )
+from app.schemas.enums import (
+    BidirectionalBracketType,
+    BidirectionalClass,
+    CharPropertyGroup,
+    CombiningClassCategory,
+    DecompositionType,
+    EastAsianWidthType,
+    GeneralCategory,
+    HangulSyllableType,
+    JoiningType,
+    LineBreakType,
+    NumericType,
+    ScriptCode,
+    TriadicLogic,
+    VerticalOrientationType,
+)
 
 CHARACTER_PROPERTY_GROUPS = {
-    enum.CharPropertyGroup.MINIMUM: [
+    CharPropertyGroup.MINIMUM: [
         {
             "name_in": "character",
             "name_out": "character",
@@ -62,7 +77,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else "",
         },
     ],
-    enum.CharPropertyGroup.BASIC: [
+    CharPropertyGroup.BASIC: [
         {
             "name_in": "block_id",
             "name_out": "block",
@@ -93,7 +108,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "gc",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.GeneralCategory(char["general_category"]).display_name
+            "response_value": lambda char: GeneralCategory(char["general_category"]).display_name
             if "general_category" in char
             else get_default_general_category_display_name(char["codepoint_dec"]),
         },
@@ -103,9 +118,9 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "ccc",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.CombiningClassCategory(char["combining_class"]).display_name
+            "response_value": lambda char: CombiningClassCategory(char["combining_class"]).display_name
             if "combining_class" in char
-            else enum.CombiningClassCategory.NOT_REORDERED.display_name,
+            else CombiningClassCategory.NOT_REORDERED.display_name,
         },
         {
             "name_in": "html_entities",
@@ -116,7 +131,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_html_entities(char["codepoint_dec"]),
         },
     ],
-    enum.CharPropertyGroup.UTF8: [
+    CharPropertyGroup.UTF8: [
         {
             "name_in": "utf8",
             "name_out": "utf8",
@@ -148,7 +163,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else [],
         },
     ],
-    enum.CharPropertyGroup.UTF16: [
+    CharPropertyGroup.UTF16: [
         {
             "name_in": "utf16",
             "name_out": "utf16",
@@ -180,7 +195,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else [],
         },
     ],
-    enum.CharPropertyGroup.UTF32: [
+    CharPropertyGroup.UTF32: [
         {
             "name_in": "utf32",
             "name_out": "utf32",
@@ -212,14 +227,14 @@ CHARACTER_PROPERTY_GROUPS = {
             else [],
         },
     ],
-    enum.CharPropertyGroup.BIDIRECTIONALITY: [
+    CharPropertyGroup.BIDIRECTIONALITY: [
         {
             "name_in": "bidirectional_class",
             "name_out": "bidirectional_class",
             "char_property": "bc",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.BidirectionalClass(char["bidirectional_class"]).display_name
+            "response_value": lambda char: BidirectionalClass(char["bidirectional_class"]).display_name
             if "bidirectional_class" in char
             else get_default_bidi_class_display_name(char["codepoint_dec"]),
         },
@@ -255,10 +270,10 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "bpt",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.BidirectionalBracketType(char["paired_bracket_type"]).display_name
+            "response_value": lambda char: BidirectionalBracketType(char["paired_bracket_type"]).display_name
             if "paired_bracket_type" in char
-            else enum.BidirectionalBracketType.NONE.display_name,
-        },  # bidirectional paired bracket type, see https://www.unicode.org/Public/15.0.0/ucd/BidiBrackets.txt
+            else BidirectionalBracketType.NONE.display_name,
+        },
         {
             "name_in": "paired_bracket_property",
             "name_out": "paired_bracket_property",
@@ -266,30 +281,30 @@ CHARACTER_PROPERTY_GROUPS = {
             "db_required": True,
             "db_column": True,
             "response_value": lambda char: get_char_and_unicode_hex_value(char, "paired_bracket_property"),
-        },  # bidirectional paired bracket property, see https://www.unicode.org/Public/15.0.0/ucd/BidiBrackets.txt
+        },
     ],
-    enum.CharPropertyGroup.DECOMPOSITION: [
+    CharPropertyGroup.DECOMPOSITION: [
         {
             "name_in": "decomposition_type",
             "name_out": "decomposition_type",
             "char_property": "dt",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.DecompositionType(char["decomposition_type"]).display_name
+            "response_value": lambda char: DecompositionType(char["decomposition_type"]).display_name
             if "decomposition_type" in char
-            else enum.DecompositionType.NONE.display_name,
+            else DecompositionType.NONE.display_name,
         },
     ],
-    enum.CharPropertyGroup.QUICK_CHECK: [
+    CharPropertyGroup.QUICK_CHECK: [
         {
             "name_in": "NFC_QC",
             "name_out": "NFC_QC",
             "char_property": "NFC_QC",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: str(enum.TriadicLogic(char["NFC_QC"]))
+            "response_value": lambda char: str(TriadicLogic(char["NFC_QC"]))
             if "NFC_QC" in char
-            else str(enum.TriadicLogic.Y),
+            else str(TriadicLogic.Y),
         },
         {
             "name_in": "NFD_QC",
@@ -297,9 +312,9 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "NFD_QC",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: str(enum.TriadicLogic(char["NFD_QC"]))
+            "response_value": lambda char: str(TriadicLogic(char["NFD_QC"]))
             if "NFD_QC" in char
-            else str(enum.TriadicLogic.Y),
+            else str(TriadicLogic.Y),
         },
         {
             "name_in": "NFKC_QC",
@@ -307,9 +322,9 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "NFKC_QC",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: str(enum.TriadicLogic(char["NFKC_QC"]))
+            "response_value": lambda char: str(TriadicLogic(char["NFKC_QC"]))
             if "NFKC_QC" in char
-            else str(enum.TriadicLogic.Y),
+            else str(TriadicLogic.Y),
         },
         {
             "name_in": "NFKD_QC",
@@ -317,21 +332,21 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "NFKD_QC",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: str(enum.TriadicLogic(char["NFKD_QC"]))
+            "response_value": lambda char: str(TriadicLogic(char["NFKD_QC"]))
             if "NFKD_QC" in char
-            else str(enum.TriadicLogic.Y),
+            else str(TriadicLogic.Y),
         },
     ],
-    enum.CharPropertyGroup.NUMERIC: [
+    CharPropertyGroup.NUMERIC: [
         {
             "name_in": "numeric_type",
             "name_out": "numeric_type",
             "char_property": "nt",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.NumericType(char["numeric_type"]).display_name
+            "response_value": lambda char: NumericType(char["numeric_type"]).display_name
             if "numeric_type" in char
-            else enum.NumericType.NONE.display_name,
+            else NumericType.NONE.display_name,
         },
         {
             "name_in": "numeric_value",
@@ -350,16 +365,16 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: char["numeric_value_parsed"] if "numeric_value_parsed" in char else 0.0,
         },
     ],
-    enum.CharPropertyGroup.JOINING: [
+    CharPropertyGroup.JOINING: [
         {
             "name_in": "joining_type",
             "name_out": "joining_type",
             "char_property": "jt",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.JoiningType(char["joining_type"]).display_name
+            "response_value": lambda char: JoiningType(char["joining_type"]).display_name
             if "joining_type" in char
-            else enum.JoiningType.NON_JOINING.display_name,
+            else JoiningType.NON_JOINING.display_name,
         },
         {
             "name_in": "joining_group",
@@ -378,31 +393,31 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_bool_prop_value(char, "joining_control"),
         },
     ],
-    enum.CharPropertyGroup.LINEBREAK: [
+    CharPropertyGroup.LINEBREAK: [
         {
             "name_in": "line_break",
             "name_out": "line_break",
             "char_property": "lb",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.LineBreakType(char["line_break"]).display_name
+            "response_value": lambda char: LineBreakType(char["line_break"]).display_name
             if "line_break" in char
-            else enum.LineBreakType.UNKNOWN.display_name,
+            else LineBreakType.UNKNOWN.display_name,
         },
     ],
-    enum.CharPropertyGroup.EAST_ASIAN_WIDTH: [
+    CharPropertyGroup.EAST_ASIAN_WIDTH: [
         {
             "name_in": "east_asian_width",
             "name_out": "east_asian_width",
             "char_property": "ea",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.EastAsianWidthType(char["east_asian_width"]).display_name
+            "response_value": lambda char: EastAsianWidthType(char["east_asian_width"]).display_name
             if "east_asian_width" in char
             else get_default_eaw_display_name(char["codepoint_dec"]),
         },
     ],
-    enum.CharPropertyGroup.CASE: [
+    CharPropertyGroup.CASE: [
         {
             "name_in": "uppercase",
             "name_out": "uppercase",
@@ -452,16 +467,16 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_char_and_unicode_hex_value(char, "simple_case_folding"),
         },
     ],
-    enum.CharPropertyGroup.SCRIPT: [
+    CharPropertyGroup.SCRIPT: [
         {
             "name_in": "script",
             "name_out": "script",
             "char_property": "sc",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.ScriptCode(char["script"]).display_name
+            "response_value": lambda char: ScriptCode(char["script"]).display_name
             if "script" in char
-            else enum.ScriptCode.UNKNOWN.display_name,
+            else ScriptCode.UNKNOWN.display_name,
         },
         {
             "name_in": "script_extensions",
@@ -471,22 +486,22 @@ CHARACTER_PROPERTY_GROUPS = {
             "db_column": True,
             "response_value": lambda char: get_script_extensions(char["script_extensions"])
             if "script_extensions" in char
-            else [enum.ScriptCode.UNKNOWN.display_name],
+            else [ScriptCode.UNKNOWN.display_name],
         },
     ],
-    enum.CharPropertyGroup.HANGUL: [
+    CharPropertyGroup.HANGUL: [
         {
             "name_in": "hangul_syllable_type",
             "name_out": "hangul_syllable_type",
             "char_property": "hst",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.HangulSyllableType(char["hangul_syllable_type"]).display_name
+            "response_value": lambda char: HangulSyllableType(char["hangul_syllable_type"]).display_name
             if "hangul_syllable_type" in char
-            else enum.HangulSyllableType.NOT_APPLICABLE.display_name,
+            else HangulSyllableType.NOT_APPLICABLE.display_name,
         },
     ],
-    enum.CharPropertyGroup.INDIC: [
+    CharPropertyGroup.INDIC: [
         {
             "name_in": "indic_syllabic_category",
             "name_out": "indic_syllabic_category",
@@ -512,7 +527,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_string_prop_value(char, "indic_positional_category"),
         },
     ],
-    enum.CharPropertyGroup.CJK_MINIMUM: [
+    CharPropertyGroup.CJK_MINIMUM: [
         {
             "name_in": "character",
             "name_out": "character",
@@ -556,7 +571,7 @@ CHARACTER_PROPERTY_GROUPS = {
             else "",
         },
     ],
-    enum.CharPropertyGroup.CJK_BASIC: [
+    CharPropertyGroup.CJK_BASIC: [
         {
             "name_in": "ideo_frequency",
             "name_out": "ideo_frequency",
@@ -598,7 +613,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_string_prop_value(char, "total_strokes"),
         },
     ],
-    enum.CharPropertyGroup.CJK_VARIANTS: [
+    CharPropertyGroup.CJK_VARIANTS: [
         {
             "name_in": "traditional_variant",
             "name_out": "traditional_variant",
@@ -656,7 +671,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_string_prop_value(char, "spoofing_variant"),
         },
     ],
-    enum.CharPropertyGroup.CJK_NUMERIC: [
+    CharPropertyGroup.CJK_NUMERIC: [
         {
             "name_in": "accounting_numeric",
             "name_out": "accounting_numeric",
@@ -682,7 +697,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_int_prop_value(char, "other_numeric"),
         },
     ],
-    enum.CharPropertyGroup.CJK_READINGS: [
+    CharPropertyGroup.CJK_READINGS: [
         {
             "name_in": "hangul",
             "name_out": "hangul",
@@ -732,7 +747,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_string_prop_value(char, "vietnamese"),
         },
     ],
-    enum.CharPropertyGroup.FUNCTION_AND_GRAPHIC: [
+    CharPropertyGroup.FUNCTION_AND_GRAPHIC: [
         {
             "name_in": "dash",
             "name_out": "dash",
@@ -867,7 +882,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "char_property": "vo",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: enum.VerticalOrientationType(char["vertical_orientation"]).display_name
+            "response_value": lambda char: VerticalOrientationType(char["vertical_orientation"]).display_name
             if "vertical_orientation" in char
             else get_default_vo_display_name(char["codepoint_dec"]),
         },
@@ -880,7 +895,7 @@ CHARACTER_PROPERTY_GROUPS = {
             "response_value": lambda char: get_bool_prop_value(char, "regional_indicator"),
         },
     ],
-    enum.CharPropertyGroup.EMOJI: [
+    CharPropertyGroup.EMOJI: [
         {
             "name_in": "emoji",
             "name_out": "emoji",
@@ -988,24 +1003,24 @@ def get_default_age(codepoint: int) -> str:
 
 def get_default_general_category_display_name(codepoint: int) -> str:
     general_category = (
-        enum.GeneralCategory.SURROGATE
+        GeneralCategory.SURROGATE
         if cached_data.codepoint_is_surrogate(codepoint)
-        else enum.GeneralCategory.PRIVATE_USE
+        else GeneralCategory.PRIVATE_USE
         if cached_data.codepoint_is_private_use
-        else enum.GeneralCategory.UNASSIGNED
+        else GeneralCategory.UNASSIGNED
     )
     return general_category.display_name
 
 
 def get_default_bidi_class_display_name(codepoint: int) -> str:
     bidi_class = (
-        enum.BidirectionalClass.RIGHT_TO_LEFT
+        BidirectionalClass.RIGHT_TO_LEFT
         if codepoint in DEFAULT_BC_R_CODEPOINTS
-        else enum.BidirectionalClass.ARABIC_LETTER
+        else BidirectionalClass.ARABIC_LETTER
         if codepoint in DEFAULT_BC_AL_CODEPOINTS
-        else enum.BidirectionalClass.EUROPEAN_TERMINATOR
+        else BidirectionalClass.EUROPEAN_TERMINATOR
         if codepoint in DEFAULT_BC_ET_CODEPOINTS
-        else enum.BidirectionalClass.LEFT_TO_RIGHT
+        else BidirectionalClass.LEFT_TO_RIGHT
     )
     return bidi_class.display_name
 
@@ -1013,11 +1028,11 @@ def get_default_bidi_class_display_name(codepoint: int) -> str:
 def get_default_eaw_display_name(codepoint: int) -> str:
     block = cached_data.get_unicode_block_containing_codepoint(codepoint)
     eaw = (
-        enum.EastAsianWidthType.EAST_ASIAN_AMBIGUOUS
+        EastAsianWidthType.EAST_ASIAN_AMBIGUOUS
         if cached_data.codepoint_is_private_use
-        else enum.EastAsianWidthType.EAST_ASIAN_WIDE
+        else EastAsianWidthType.EAST_ASIAN_WIDE
         if block.id in ALL_CJK_IDEOGRAPH_BLOCK_IDS
-        else enum.EastAsianWidthType.NEUTRAL_NOT_EAST_ASIAN
+        else EastAsianWidthType.NEUTRAL_NOT_EAST_ASIAN
     )
     return eaw.display_name
 
@@ -1025,12 +1040,12 @@ def get_default_eaw_display_name(codepoint: int) -> str:
 def get_default_vo_display_name(codepoint: int) -> str:
     block = cached_data.get_unicode_block_containing_codepoint(codepoint)
     vo_type = (
-        enum.VerticalOrientationType.UPRIGHT
+        VerticalOrientationType.UPRIGHT
         if block.plane and block.plane.number in DEFAULT_VO_U_PLANE_NUMBERS or block.id in DEFAULT_VO_U_BLOCK_IDS
-        else enum.VerticalOrientationType.ROTATED
+        else VerticalOrientationType.ROTATED
     )
     return vo_type.display_name
 
 
 def get_script_extensions(value: str) -> list[str]:
-    return [enum.ScriptCode.from_code(script).display_name for script in value.split(" ")]
+    return [ScriptCode.from_code(script).display_name for script in value.split(" ")]

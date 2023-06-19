@@ -4,7 +4,6 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
 import app.db.models as db
-import app.schemas.enums as enum
 from app.api.api_v1.dependencies import (
     CharacterSearchParameters,
     DBSession,
@@ -23,8 +22,9 @@ from app.docs.dependencies.custom_parameters import (
     UNICODE_CHAR_STRING_DESCRIPTION,
     get_description_and_values_table_for_property_group,
 )
+from app.schemas.enums import CharPropertyGroup
 
-PropertyGroupMatcher = FilterParameterMatcher[enum.CharPropertyGroup]("show_props", enum.CharPropertyGroup)
+PropertyGroupMatcher = FilterParameterMatcher[CharPropertyGroup]("show_props", CharPropertyGroup)
 DatabaseSession = Annotated[DBSession, Depends(get_session)]
 router = APIRouter()
 
@@ -44,8 +44,7 @@ def list_all_unicode_characters(
         "url": f"{settings.API_VERSION}/characters",
         "has_more": stop <= block.finish,
         "data": [
-            get_character_details(db_ctx, codepoint, [enum.CharPropertyGroup.MINIMUM])
-            for codepoint in range(start, stop)
+            get_character_details(db_ctx, codepoint, [CharPropertyGroup.MINIMUM]) for codepoint in range(start, stop)
         ],
     }
 
@@ -64,7 +63,7 @@ def search_unicode_characters_by_name(
     return get_paginated_character_list(
         db_ctx,
         search_results,
-        [enum.CharPropertyGroup.MINIMUM],
+        [CharPropertyGroup.MINIMUM],
         search_parameters.per_page,
         search_parameters.page,
         response_data,
@@ -135,7 +134,7 @@ def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQuer
 def get_paginated_character_list(
     db_ctx: DBSession,
     results: list[tuple[int, Any]],
-    show_props: list[enum.CharPropertyGroup] | None,
+    show_props: list[CharPropertyGroup] | None,
     per_page: int,
     page: int,
     response_data: dict[str, str],
@@ -163,7 +162,7 @@ def get_paginated_character_list(
 def get_character_details(
     db_ctx: DBSession,
     codepoint: int,
-    show_props: list[enum.CharPropertyGroup] | None,
+    show_props: list[CharPropertyGroup] | None,
     score: float | None = None,
 ) -> db.UnicodeCharacterResponse:
     response_dict = db_ctx.get_character_properties(codepoint, show_props)

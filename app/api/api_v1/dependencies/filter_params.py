@@ -5,7 +5,6 @@ from typing import Generic, Type, TypeVar
 
 from fastapi import HTTPException, Query
 
-import app.schemas.enums as enum
 from app.core.result import Result
 from app.docs.dependencies.custom_parameters import (
     CHAR_NAME_FILTER_DESCRIPTION,
@@ -22,6 +21,19 @@ from app.docs.dependencies.custom_parameters import (
     get_description_and_values_table_for_property_group,
     get_description_and_values_table_for_script_code,
     get_description_and_values_table_for_unicode_age,
+)
+from app.schemas.enums import (
+    BidirectionalClass,
+    CharacterFilterFlags,
+    CharPropertyGroup,
+    CombiningClassCategory,
+    DecompositionType,
+    GeneralCategory,
+    JoiningType,
+    LineBreakType,
+    NumericType,
+    ScriptCode,
+    UnicodeAge,
 )
 
 T = TypeVar("T")
@@ -106,20 +118,20 @@ class FilterParameters:
         show_props: list[str] | None,
     ) -> None:
         errors: list[str] = []
-        self.categories: list[enum.GeneralCategory] | None = None
-        self.age_list: list[enum.UnicodeAge] | None = None
-        self.scripts: list[enum.ScriptCode] | None = None
-        self.bidi_class_list: list[enum.BidirectionalClass] | None = None
-        self.decomp_types: list[enum.DecompositionType] | None = None
-        self.line_break_types: list[enum.LineBreakType] | None = None
-        self.ccc_list: list[enum.CombiningClassCategory] | None = None
-        self.num_types: list[enum.NumericType] | None = None
-        self.join_types: list[enum.JoiningType] | None = None
-        self.flags: list[enum.CharacterFilterFlags] | None = None
-        self.show_props: list[enum.CharPropertyGroup] | None = None
+        self.categories: list[GeneralCategory] | None = None
+        self.age_list: list[UnicodeAge] | None = None
+        self.scripts: list[ScriptCode] | None = None
+        self.bidi_class_list: list[BidirectionalClass] | None = None
+        self.decomp_types: list[DecompositionType] | None = None
+        self.line_break_types: list[LineBreakType] | None = None
+        self.ccc_list: list[CombiningClassCategory] | None = None
+        self.num_types: list[NumericType] | None = None
+        self.join_types: list[JoiningType] | None = None
+        self.flags: list[CharacterFilterFlags] | None = None
+        self.show_props: list[CharPropertyGroup] | None = None
 
         if category:
-            GeneralCategoryMatcher = FilterParameterMatcher[enum.GeneralCategory]("category", enum.GeneralCategory)
+            GeneralCategoryMatcher = FilterParameterMatcher[GeneralCategory]("category", GeneralCategory)
             result = GeneralCategoryMatcher.parse_enum_values(category)
             if result.success:
                 self.categories = result.value
@@ -127,7 +139,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if age:
-            UnicodeAgeMatcher = FilterParameterMatcher[enum.UnicodeAge]("age", enum.UnicodeAge)
+            UnicodeAgeMatcher = FilterParameterMatcher[UnicodeAge]("age", UnicodeAge)
             result = UnicodeAgeMatcher.parse_enum_values(age)
             if result.success:
                 self.age_list = result.value
@@ -135,7 +147,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if script:
-            ScriptCodeMatcher = FilterParameterMatcher[enum.ScriptCode]("script", enum.ScriptCode)
+            ScriptCodeMatcher = FilterParameterMatcher[ScriptCode]("script", ScriptCode)
             result = ScriptCodeMatcher.parse_enum_values(script)
             if result.success:
                 self.scripts = result.value
@@ -143,7 +155,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if bidi_class:
-            BidiClassMatcher = FilterParameterMatcher[enum.BidirectionalClass]("bidi_class", enum.BidirectionalClass)
+            BidiClassMatcher = FilterParameterMatcher[BidirectionalClass]("bidi_class", BidirectionalClass)
             result = BidiClassMatcher.parse_enum_values(bidi_class)
             if result.success:
                 self.bidi_class_list = result.value
@@ -151,7 +163,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if decomp_type:
-            DecompTypeMatcher = FilterParameterMatcher[enum.DecompositionType]("decomp_type", enum.DecompositionType)
+            DecompTypeMatcher = FilterParameterMatcher[DecompositionType]("decomp_type", DecompositionType)
             result = DecompTypeMatcher.parse_enum_values(decomp_type)
             if result.success:
                 self.decomp_types = result.value
@@ -159,7 +171,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if line_break:
-            LineBreakMatcher = FilterParameterMatcher[enum.LineBreakType]("line_break", enum.LineBreakType)
+            LineBreakMatcher = FilterParameterMatcher[LineBreakType]("line_break", LineBreakType)
             result = LineBreakMatcher.parse_enum_values(line_break)
             if result.success:
                 self.line_break_types = result.value
@@ -167,9 +179,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if ccc:
-            CombiningClassMatcher = FilterParameterMatcher[enum.CombiningClassCategory](
-                "ccc", enum.CombiningClassCategory
-            )
+            CombiningClassMatcher = FilterParameterMatcher[CombiningClassCategory]("ccc", CombiningClassCategory)
             result = CombiningClassMatcher.parse_enum_values(ccc)
             if result.success:
                 self.ccc_list = result.value
@@ -177,7 +187,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if num_type:
-            NumericTypeMatcher = FilterParameterMatcher[enum.NumericType]("num_type", enum.NumericType)
+            NumericTypeMatcher = FilterParameterMatcher[NumericType]("num_type", NumericType)
             result = NumericTypeMatcher.parse_enum_values(num_type)
             if result.success:
                 self.num_types = result.value
@@ -185,7 +195,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if join_type:
-            JoiningTypeMatcher = FilterParameterMatcher[enum.JoiningType]("join_type", enum.JoiningType)
+            JoiningTypeMatcher = FilterParameterMatcher[JoiningType]("join_type", JoiningType)
             result = JoiningTypeMatcher.parse_enum_values(join_type)
             if result.success:
                 self.join_types = result.value
@@ -193,7 +203,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if flag:
-            CharFilterFlagMatcher = FilterParameterMatcher[enum.CharacterFilterFlags]("flag", enum.CharacterFilterFlags)
+            CharFilterFlagMatcher = FilterParameterMatcher[CharacterFilterFlags]("flag", CharacterFilterFlags)
             result = CharFilterFlagMatcher.parse_enum_values(flag)
             if result.success:
                 self.flags = result.value
@@ -201,7 +211,7 @@ class FilterParameters:
                 errors.append(result.error or "")
 
         if show_props:
-            PropertyGroupMatcher = FilterParameterMatcher[enum.CharPropertyGroup]("show_props", enum.CharPropertyGroup)
+            PropertyGroupMatcher = FilterParameterMatcher[CharPropertyGroup]("show_props", CharPropertyGroup)
             result = PropertyGroupMatcher.parse_enum_values(show_props)
             if result.success:
                 self.show_props = result.value

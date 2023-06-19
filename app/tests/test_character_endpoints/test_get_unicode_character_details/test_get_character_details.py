@@ -5,12 +5,12 @@ import pytest
 from fastapi.testclient import TestClient
 from humps import camelize
 
-import app.schemas.enums as enum
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
 from app.db.get_char_details import get_prop_groups
 from app.main import app
+from app.schemas.enums import CharPropertyGroup
 from app.tests.test_character_endpoints.test_get_unicode_character_details.data import (
     ALL_CHARACTER_PROPERTIES,
     ALL_PROP_GROUP_NAMES,
@@ -41,9 +41,7 @@ def test_get_character_details_default(char):
     if any(char.isascii() and not char.isprintable() for char in url):
         url = f"/v1/characters/{get_uri_encoded_value(char)}"
     prop_group = (
-        enum.CharPropertyGroup.MINIMUM
-        if not cached_data.character_is_unihan(ord(char))
-        else enum.CharPropertyGroup.CJK_MINIMUM
+        CharPropertyGroup.MINIMUM if not cached_data.character_is_unihan(ord(char)) else CharPropertyGroup.CJK_MINIMUM
     )
     response = client.get(url)
     assert response.status_code == 200
@@ -58,7 +56,7 @@ def test_get_character_details_show_props(char, prop_group):
         url = f"/v1/characters/{get_uri_encoded_value(char)}?show_props={prop_group}"
     response = client.get(url)
     assert response.status_code == 200
-    assert response.json() == [get_character_properties(char, enum.CharPropertyGroup.match_loosely(prop_group))]
+    assert response.json() == [get_character_properties(char, CharPropertyGroup.match_loosely(prop_group))]
 
 
 def test_invalid_prop_group_name():

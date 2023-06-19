@@ -2,7 +2,22 @@ from sqlalchemy import Column, Integer
 from sqlalchemy_utils import ChoiceType
 from sqlmodel import Field, Relationship
 
-import app.schemas.enums as enum
+from app.schemas.enums import (
+    BidirectionalBracketType,
+    BidirectionalClass,
+    CharacterFilterFlags,
+    CombiningClassCategory,
+    DecompositionType,
+    EastAsianWidthType,
+    GeneralCategory,
+    HangulSyllableType,
+    JoiningType,
+    LineBreakType,
+    NumericType,
+    ScriptCode,
+    TriadicLogic,
+    VerticalOrientationType,
+)
 from app.schemas.models.camel_model import CamelModel
 
 
@@ -12,44 +27,38 @@ class UnicodeCharacterBase(CamelModel):
     name: str = Field(index=True)
     age: str
     plane_number: int
-    general_category: enum.GeneralCategory = Field(
-        sa_column=Column(ChoiceType(enum.GeneralCategory, impl=Integer()), nullable=False)
+    general_category: GeneralCategory = Field(
+        sa_column=Column(ChoiceType(GeneralCategory, impl=Integer()), nullable=False)
     )
-    combining_class: enum.CombiningClassCategory = Field(
-        sa_column=Column(ChoiceType(enum.CombiningClassCategory, impl=Integer()), nullable=False)
+    combining_class: CombiningClassCategory = Field(
+        sa_column=Column(ChoiceType(CombiningClassCategory, impl=Integer()), nullable=False)
     )
-    bidirectional_class: enum.BidirectionalClass = Field(
-        sa_column=Column(ChoiceType(enum.BidirectionalClass, impl=Integer()), nullable=False)
+    bidirectional_class: BidirectionalClass = Field(
+        sa_column=Column(ChoiceType(BidirectionalClass, impl=Integer()), nullable=False)
     )
     bidirectional_is_mirrored: bool
     bidirectional_mirroring_glyph: str
     bidirectional_control: bool
-    paired_bracket_type: enum.BidirectionalBracketType = Field(
-        sa_column=Column(ChoiceType(enum.BidirectionalBracketType, impl=Integer()), nullable=False)
+    paired_bracket_type: BidirectionalBracketType = Field(
+        sa_column=Column(ChoiceType(BidirectionalBracketType, impl=Integer()), nullable=False)
     )
     paired_bracket_property: str
-    decomposition_type: enum.DecompositionType = Field(
-        sa_column=Column(ChoiceType(enum.DecompositionType, impl=Integer()), nullable=False)
+    decomposition_type: DecompositionType = Field(
+        sa_column=Column(ChoiceType(DecompositionType, impl=Integer()), nullable=False)
     )
-    NFC_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
-    NFD_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
-    NFKC_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
-    NFKD_QC: enum.TriadicLogic = Field(sa_column=Column(ChoiceType(enum.TriadicLogic, impl=Integer()), nullable=False))
-    numeric_type: enum.NumericType = Field(
-        sa_column=Column(ChoiceType(enum.NumericType, impl=Integer()), nullable=False)
-    )
+    NFC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
+    NFD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
+    NFKC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
+    NFKD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
+    numeric_type: NumericType = Field(sa_column=Column(ChoiceType(NumericType, impl=Integer()), nullable=False))
     numeric_value: str
     numeric_value_parsed: float | None
-    joining_type: enum.JoiningType = Field(
-        sa_column=Column(ChoiceType(enum.JoiningType, impl=Integer()), nullable=False)
-    )
+    joining_type: JoiningType = Field(sa_column=Column(ChoiceType(JoiningType, impl=Integer()), nullable=False))
     joining_group: str
     joining_control: bool
-    line_break: enum.LineBreakType = Field(
-        sa_column=Column(ChoiceType(enum.LineBreakType, impl=Integer()), nullable=False)
-    )
-    east_asian_width: enum.EastAsianWidthType = Field(
-        sa_column=Column(ChoiceType(enum.EastAsianWidthType, impl=Integer()), nullable=False)
+    line_break: LineBreakType = Field(sa_column=Column(ChoiceType(LineBreakType, impl=Integer()), nullable=False))
+    east_asian_width: EastAsianWidthType = Field(
+        sa_column=Column(ChoiceType(EastAsianWidthType, impl=Integer()), nullable=False)
     )
     uppercase: bool
     lowercase: bool
@@ -57,10 +66,10 @@ class UnicodeCharacterBase(CamelModel):
     simple_lowercase_mapping: str
     simple_titlecase_mapping: str
     simple_case_folding: str
-    script: enum.ScriptCode = Field(sa_column=Column(ChoiceType(enum.ScriptCode, impl=Integer()), nullable=False))
+    script: ScriptCode = Field(sa_column=Column(ChoiceType(ScriptCode, impl=Integer()), nullable=False))
     script_extensions: str
-    hangul_syllable_type: enum.HangulSyllableType = Field(
-        sa_column=Column(ChoiceType(enum.HangulSyllableType, impl=Integer()), nullable=False)
+    hangul_syllable_type: HangulSyllableType = Field(
+        sa_column=Column(ChoiceType(HangulSyllableType, impl=Integer()), nullable=False)
     )
     indic_syllabic_category: str
     indic_matra_category: str
@@ -85,8 +94,8 @@ class UnicodeCharacterBase(CamelModel):
     logical_order_exception: bool
     prepended_concatenation_mark: bool
     white_space: bool
-    vertical_orientation: enum.VerticalOrientationType = Field(
-        sa_column=Column(ChoiceType(enum.VerticalOrientationType, impl=Integer()), nullable=False)
+    vertical_orientation: VerticalOrientationType = Field(
+        sa_column=Column(ChoiceType(VerticalOrientationType, impl=Integer()), nullable=False)
     )
     regional_indicator: bool
     emoji: bool
@@ -238,62 +247,62 @@ class UnicodeCharacterResponse(CamelModel):
     extended_pictographic: bool = False
 
     @property
-    def flags(self) -> list[enum.CharacterFilterFlags]:
-        flags: list[enum.CharacterFilterFlags] = []
+    def flags(self) -> list[CharacterFilterFlags]:
+        flags: list[CharacterFilterFlags] = []
         if self.bidirectional_is_mirrored:
-            flags.append(enum.CharacterFilterFlags.MIRRORED)
+            flags.append(CharacterFilterFlags.MIRRORED)
         if self.bidirectional_control:
-            flags.append(enum.CharacterFilterFlags.BIDIRECTIONAL_CONTROL)
+            flags.append(CharacterFilterFlags.BIDIRECTIONAL_CONTROL)
         if self.joining_control:
-            flags.append(enum.CharacterFilterFlags.JOINING_CONTROL)
+            flags.append(CharacterFilterFlags.JOINING_CONTROL)
         if self.dash:
-            flags.append(enum.CharacterFilterFlags.DASH)
+            flags.append(CharacterFilterFlags.DASH)
         if self.hyphen:
-            flags.append(enum.CharacterFilterFlags.HYPHEN)
+            flags.append(CharacterFilterFlags.HYPHEN)
         if self.quotation_mark:
-            flags.append(enum.CharacterFilterFlags.QUOTATION_MARK)
+            flags.append(CharacterFilterFlags.QUOTATION_MARK)
         if self.terminal_punctuation:
-            flags.append(enum.CharacterFilterFlags.TERMINAL_PUNCTUATION)
+            flags.append(CharacterFilterFlags.TERMINAL_PUNCTUATION)
         if self.sentence_terminal:
-            flags.append(enum.CharacterFilterFlags.SENTENCE_TERMINAL)
+            flags.append(CharacterFilterFlags.SENTENCE_TERMINAL)
         if self.diacritic:
-            flags.append(enum.CharacterFilterFlags.DIACRITIC)
+            flags.append(CharacterFilterFlags.DIACRITIC)
         if self.extender:
-            flags.append(enum.CharacterFilterFlags.EXTENDER)
+            flags.append(CharacterFilterFlags.EXTENDER)
         if self.soft_dotted:
-            flags.append(enum.CharacterFilterFlags.SOFT_DOTTED)
+            flags.append(CharacterFilterFlags.SOFT_DOTTED)
         if self.alphabetic:
-            flags.append(enum.CharacterFilterFlags.ALPHABETIC)
+            flags.append(CharacterFilterFlags.ALPHABETIC)
         if self.math:
-            flags.append(enum.CharacterFilterFlags.MATHEMATICAL)
+            flags.append(CharacterFilterFlags.MATHEMATICAL)
         if self.hex_digit:
-            flags.append(enum.CharacterFilterFlags.HEX_DIGIT)
+            flags.append(CharacterFilterFlags.HEX_DIGIT)
         if self.ascii_hex_digit:
-            flags.append(enum.CharacterFilterFlags.ASCII_HEX_DIGIT)
+            flags.append(CharacterFilterFlags.ASCII_HEX_DIGIT)
         if self.default_ignorable_code_point:
-            flags.append(enum.CharacterFilterFlags.DEFAULT_IGNORABLE_CODE_POINT)
+            flags.append(CharacterFilterFlags.DEFAULT_IGNORABLE_CODE_POINT)
         if self.logical_order_exception:
-            flags.append(enum.CharacterFilterFlags.LOGICAL_ORDER_EXCEPTION)
+            flags.append(CharacterFilterFlags.LOGICAL_ORDER_EXCEPTION)
         if self.prepended_concatenation_mark:
-            flags.append(enum.CharacterFilterFlags.PREPENDED_CONCATENATION_MARK)
+            flags.append(CharacterFilterFlags.PREPENDED_CONCATENATION_MARK)
         if self.white_space:
-            flags.append(enum.CharacterFilterFlags.WHITE_SPACE)
+            flags.append(CharacterFilterFlags.WHITE_SPACE)
         if self.regional_indicator:
-            flags.append(enum.CharacterFilterFlags.REGIONAL_INDICATOR)
+            flags.append(CharacterFilterFlags.REGIONAL_INDICATOR)
         if self.emoji:
-            flags.append(enum.CharacterFilterFlags.EMOJI)
+            flags.append(CharacterFilterFlags.EMOJI)
         if self.emoji_presentation:
-            flags.append(enum.CharacterFilterFlags.EMOJI_PRESENTATION)
+            flags.append(CharacterFilterFlags.EMOJI_PRESENTATION)
         if self.emoji_modifier:
-            flags.append(enum.CharacterFilterFlags.EMOJI_MODIFIER)
+            flags.append(CharacterFilterFlags.EMOJI_MODIFIER)
         if self.emoji_modifier_base:
-            flags.append(enum.CharacterFilterFlags.EMOJI_MODIFIER_BASE)
+            flags.append(CharacterFilterFlags.EMOJI_MODIFIER_BASE)
         if self.emoji_component:
-            flags.append(enum.CharacterFilterFlags.EMOJI_COMPONENT)
+            flags.append(CharacterFilterFlags.EMOJI_COMPONENT)
         if self.extended_pictographic:
-            flags.append(enum.CharacterFilterFlags.EXTENDED_PICTOGRAPHIC)
+            flags.append(CharacterFilterFlags.EXTENDED_PICTOGRAPHIC)
 
-        return enum.CharacterFilterFlags.get_char_flags_from_int(sum(flags))
+        return CharacterFilterFlags.get_char_flags_from_int(sum(flags))
 
     @property
     def display_flags(self) -> list[str]:

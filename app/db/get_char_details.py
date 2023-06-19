@@ -6,42 +6,42 @@ from sqlalchemy import column, select
 from sqlalchemy.engine import Engine
 
 import app.db.models as db
-import app.schemas.enums as enum
 from app.data.cache import cached_data
 from app.db.character_props import CHARACTER_PROPERTY_GROUPS
+from app.schemas.enums import CharPropertyGroup
 
 
 def get_character_properties(
-    engine: Engine, codepoint: int, show_props: list[enum.CharPropertyGroup] | None
+    engine: Engine, codepoint: int, show_props: list[CharPropertyGroup] | None
 ) -> dict[str, Any]:
     prop_groups = get_prop_groups(codepoint, show_props)
     char_prop_dicts = [get_character_prop_group(engine, codepoint, group) for group in prop_groups]
     return reduce(operator.ior, char_prop_dicts, {})
 
 
-def get_prop_groups(codepoint: int, show_props: list[enum.CharPropertyGroup] | None) -> list[enum.CharPropertyGroup]:
+def get_prop_groups(codepoint: int, show_props: list[CharPropertyGroup] | None) -> list[CharPropertyGroup]:
     unihan = cached_data.character_is_unihan(codepoint)
     show_props = show_props or []
     if not unihan and any("CJK" in prop_group.name for prop_group in show_props):
         show_props = [prop_group for prop_group in show_props if "CJK" not in prop_group.name]
     if not show_props:
-        return [enum.CharPropertyGroup.MINIMUM] if not unihan else [enum.CharPropertyGroup.CJK_MINIMUM]
-    if enum.CharPropertyGroup.ALL in show_props:
+        return [CharPropertyGroup.MINIMUM] if not unihan else [CharPropertyGroup.CJK_MINIMUM]
+    if CharPropertyGroup.ALL in show_props:
         return (
-            enum.CharPropertyGroup.get_all_named_character_prop_groups()
+            CharPropertyGroup.get_all_named_character_prop_groups()
             if not unihan
-            else enum.CharPropertyGroup.get_all_unihan_character_prop_groups()
+            else CharPropertyGroup.get_all_unihan_character_prop_groups()
         )
-    if not unihan and enum.CharPropertyGroup.MINIMUM not in show_props:
-        return [enum.CharPropertyGroup.MINIMUM] + show_props
-    if unihan and enum.CharPropertyGroup.CJK_MINIMUM not in show_props:
-        show_props = [enum.CharPropertyGroup.CJK_MINIMUM] + show_props
-    if unihan and enum.CharPropertyGroup.MINIMUM in show_props:
-        return [prop_group for prop_group in show_props if prop_group != enum.CharPropertyGroup.MINIMUM]
+    if not unihan and CharPropertyGroup.MINIMUM not in show_props:
+        return [CharPropertyGroup.MINIMUM] + show_props
+    if unihan and CharPropertyGroup.CJK_MINIMUM not in show_props:
+        show_props = [CharPropertyGroup.CJK_MINIMUM] + show_props
+    if unihan and CharPropertyGroup.MINIMUM in show_props:
+        return [prop_group for prop_group in show_props if prop_group != CharPropertyGroup.MINIMUM]
     return show_props
 
 
-def get_character_prop_group(engine: Engine, codepoint: int, prop_group: enum.CharPropertyGroup) -> dict[str, Any]:
+def get_character_prop_group(engine: Engine, codepoint: int, prop_group: CharPropertyGroup) -> dict[str, Any]:
     columns = [
         column(prop_map["name_in"]) for prop_map in CHARACTER_PROPERTY_GROUPS[prop_group] if prop_map["db_column"]
     ]
