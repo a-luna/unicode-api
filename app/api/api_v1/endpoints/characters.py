@@ -43,9 +43,7 @@ def list_all_unicode_characters(
     return {
         "url": f"{settings.API_VERSION}/characters",
         "has_more": stop <= block.finish,
-        "data": [
-            get_character_details(db_ctx, codepoint, [CharPropertyGroup.MINIMUM]) for codepoint in range(start, stop)
-        ],
+        "data": [get_character_details(db_ctx, codepoint, []) for codepoint in range(start, stop)],
     }
 
 
