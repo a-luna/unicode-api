@@ -854,7 +854,7 @@ margin: 0 auto;
   padding: 0.5rem;
 }
 
-#unicode-block-names-table .filter-table-wrapper {
+.swagger-ui .parameters [data-param-name="block"] div.filter-table-wrapper {
   max-height: 300px;
 }
 

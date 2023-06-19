@@ -6,7 +6,6 @@ from zipfile import ZIP_DEFLATED, ZipFile
 from app.core.config import (
     BLOCKS_JSON,
     CHAR_NAME_MAP,
-    CHAR_UNIHAN_MAP,
     CHARACTERS_JSON,
     DB_FILE,
     DB_FOLDER,
@@ -73,9 +72,6 @@ def update_unicode_json_files(all_planes, all_blocks, all_chars):
     char_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["unihan"]}
     CHAR_NAME_MAP.write_text(json.dumps(char_name_map, indent=4))
 
-    char_no_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if char["unihan"]}
-    CHAR_UNIHAN_MAP.write_text(json.dumps(char_no_name_map, indent=4))
-
 
 def delete_character_json_file():
     if CHARACTERS_JSON.exists():
@@ -109,7 +105,6 @@ def backup_json_files():
         zip.write(PLANES_JSON, f"{PLANES_JSON.name}")
         zip.write(BLOCKS_JSON, f"{BLOCKS_JSON.name}")
         zip.write(CHAR_NAME_MAP, f"{CHAR_NAME_MAP.name}")
-        zip.write(CHAR_UNIHAN_MAP, f"{CHAR_UNIHAN_MAP.name}")
     return zip_file
 
 

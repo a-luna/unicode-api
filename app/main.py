@@ -51,7 +51,6 @@ def init_redis():
 @app.on_event("startup")
 def init_unicode_obj():
     _ = cached_data.unique_name_character_map
-    _ = cached_data.unihan_character_map
     _ = cached_data.blocks
     _ = cached_data.all_characters_block
     _ = cached_data.planes

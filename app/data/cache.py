@@ -6,8 +6,9 @@ from rapidfuzz import process
 
 import app.db.models as db
 import app.schemas.enums as enum
-from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, CHAR_UNIHAN_MAP, PLANES_JSON
+from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, PLANES_JSON
 from app.data.constants import (
+    ALL_CJK_IDEOGRAPH_BLOCK_IDS,
     ALL_CONTROL_CHARACTERS,
     C0_CONTROL_CHARACTERS,
     CJK_COMPATIBILITY_BLOCK_IDS,
@@ -32,11 +33,6 @@ class UnicodeDataCache:
     @property
     def unique_name_character_choices(self) -> dict[int, str]:
         return {codepoint: name.lower() for (codepoint, name) in self.unique_name_character_map.items()}
-
-    @cached_property
-    def unihan_character_map(self) -> dict[int, str]:
-        json_map = json.loads(CHAR_UNIHAN_MAP.read_text())
-        return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
     @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
@@ -106,16 +102,28 @@ class UnicodeDataCache:
         return set(range(0, MAX_CODEPOINT + 1))
 
     @property
-    def all_assigned_codepoints(self) -> set[int]:
-        return set(list(self.unique_name_character_map.keys()) + list(self.unihan_character_map.keys()))
-
-    @property
     def all_control_character_codepoints(self) -> set[int]:
         return set(ALL_CONTROL_CHARACTERS)
 
     @property
     def all_noncharacter_codepoints(self) -> set[int]:
         return set(NON_CHARACTER_CODEPOINTS)
+
+    @property
+    def all_named_characters(self):
+        return list(self.unique_name_character_map.keys())
+
+    @property
+    def all_cjk_ideograph_codepoints(self):
+        cjk_blocks = [self.get_unicode_block_by_id(block_id) for block_id in sorted(ALL_CJK_IDEOGRAPH_BLOCK_IDS)]
+        cjk_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in cjk_blocks]
+        return set(itertools.chain(*cjk_codepoints)) - self.all_noncharacter_codepoints
+
+    @property
+    def all_tangut_codepoints(self):
+        tangut_blocks = [self.get_unicode_block_by_id(block_id) for block_id in sorted(TANGUT_BLOCK_IDS)]
+        tangut_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in tangut_blocks]
+        return set(itertools.chain(*tangut_codepoints)) - self.all_noncharacter_codepoints
 
     @property
     def all_surrogate_codepoints(self) -> set[int]:
@@ -128,6 +136,16 @@ class UnicodeDataCache:
         pu_blocks = [self.get_unicode_block_by_id(block_id) for block_id in PRIVATE_USE_BLOCK_IDS]
         pu_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in pu_blocks]
         return set(itertools.chain(*pu_codepoints)) - self.all_noncharacter_codepoints
+
+    @property
+    def all_assigned_codepoints(self) -> set[int]:
+        return set(
+            list(self.all_named_characters)
+            + list(self.all_cjk_ideograph_codepoints)
+            + list(self.all_tangut_codepoints)
+            + list(self.all_surrogate_codepoints)
+            + list(self.all_private_use_codepoints)
+        )
 
     @property
     def all_reserved_codepoints(self) -> set[int]:
@@ -144,16 +162,8 @@ class UnicodeDataCache:
         # The "official" number of characters listed for each version of Unicode is the total number
         # of graphic and format characters (i.e., excluding private-use characters, control characters,
         # noncharacters and surrogate code points).
-        return len(
-            list(
-                self.all_codepoints_in_unicode_space
-                - self.all_control_character_codepoints
-                - self.all_noncharacter_codepoints
-                - self.all_surrogate_codepoints
-                - self.all_private_use_codepoints
-                - self.all_reserved_codepoints
-            )
-        )
+        # source: https://en.wikipedia.org/wiki/Unicode#cite_ref-25
+        return sum(plane.total_defined for plane in self.planes) - len(self.all_control_character_codepoints)
 
     def search_characters_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:
         score_cutoff = max(70, score_cutoff)
@@ -233,8 +243,14 @@ class UnicodeDataCache:
     def character_is_uniquely_named(self, codepoint: int) -> bool:
         return codepoint in self.unique_name_character_map
 
+    def character_is_cjk_ideograph(self, codepoint: int) -> bool:
+        return codepoint in self.all_cjk_ideograph_codepoints
+
+    def character_is_tangut(self, codepoint: int) -> bool:
+        return codepoint in self.all_tangut_codepoints
+
     def character_is_unihan(self, codepoint: int) -> bool:
-        return codepoint in self.unihan_character_map
+        return self.character_is_cjk_ideograph(codepoint) or self.character_is_tangut(codepoint)
 
     @cache
     def get_character_name(self, codepoint: int) -> str:
