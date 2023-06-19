@@ -7,7 +7,7 @@ from humps import camelize
 
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
-from app.db.character_props import CHARACTER_PROPERTY_GROUPS
+from app.db.character_props import PROPERTY_GROUPS
 from app.db.get_char_details import get_prop_groups
 from app.main import app
 from app.schemas.enums import CharPropertyGroup
@@ -30,7 +30,7 @@ def get_character_properties(char, prop_group):
 def get_prop_group(prop_group, prop_data):
     return {
         camelize(prop_details["name_out"]): prop_data[camelize(prop_details["name_out"])]
-        for prop_details in CHARACTER_PROPERTY_GROUPS[prop_group]
+        for prop_details in PROPERTY_GROUPS[prop_group]
         if camelize(prop_details["name_out"]) in prop_data
     }
 

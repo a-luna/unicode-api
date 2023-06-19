@@ -40,7 +40,7 @@ from app.schemas.enums import (
     VerticalOrientationType,
 )
 
-CHARACTER_PROPERTY_GROUPS = {
+PROPERTY_GROUPS = {
     CharPropertyGroup.MINIMUM: [
         {
             "name_in": "character",

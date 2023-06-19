@@ -8,7 +8,7 @@ from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, DB_FILE, PLANES_JSON
 from app.core.result import Result
 from app.data.constants import NULL_BLOCK, NULL_PLANE
 from app.data.scripts.util import finish_task, start_task, update_progress
-from app.db.character_props import CHARACTER_PROPERTY_GROUPS
+from app.db.character_props import PROPERTY_GROUPS
 from app.db.engine import engine
 from app.schemas.enums import (
     BidirectionalBracketType,
@@ -59,7 +59,7 @@ def generate_raw_sql_for_all_covering_indexes() -> list[str]:
 
 
 def generate_raw_sql_for_covering_index(prop_group: CharPropertyGroup) -> str:
-    columns = [prop["name_in"] for prop in CHARACTER_PROPERTY_GROUPS[prop_group] if prop["db_column"]]
+    columns = [prop["name_in"] for prop in PROPERTY_GROUPS[prop_group] if prop["db_column"]]
     table = "character" if "CJK" not in prop_group.name else "character_unihan"
     return f'CREATE INDEX ix_character_{prop_group.index_name} ON {table} ({", ".join(columns)})' if columns else ""
 

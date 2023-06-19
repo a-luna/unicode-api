@@ -7,7 +7,7 @@ from sqlalchemy.engine import Engine
 
 import app.db.models as db
 from app.data.cache import cached_data
-from app.db.character_props import CHARACTER_PROPERTY_GROUPS
+from app.db.character_props import PROPERTY_GROUPS
 from app.schemas.enums import CharPropertyGroup
 
 
@@ -42,14 +42,9 @@ def get_prop_groups(codepoint: int, show_props: list[CharPropertyGroup] | None) 
 
 
 def get_character_prop_group(engine: Engine, codepoint: int, prop_group: CharPropertyGroup) -> dict[str, Any]:
-    columns = [
-        column(prop_map["name_in"]) for prop_map in CHARACTER_PROPERTY_GROUPS[prop_group] if prop_map["db_column"]
-    ]
+    columns = [column(prop_map["name_in"]) for prop_map in PROPERTY_GROUPS[prop_group] if prop_map["db_column"]]
     char_props = get_prop_values_from_database(engine, codepoint, columns) if columns else {"codepoint_dec": codepoint}
-    return {
-        prop_map["name_out"]: prop_map["response_value"](char_props)
-        for prop_map in CHARACTER_PROPERTY_GROUPS[prop_group]
-    }
+    return {prop_map["name_out"]: prop_map["response_value"](char_props) for prop_map in PROPERTY_GROUPS[prop_group]}
 
 
 def get_prop_values_from_database(engine: Engine, codepoint: int, columns):
