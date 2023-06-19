@@ -102,7 +102,7 @@ class CharPropertyGroup(IntEnum):
 
     @classmethod
     def get_all_unihan_character_prop_groups(cls) -> list[CharPropertyGroup]:
-        return [prop_group for prop_group in cls if prop_group not in [cls.ALL, cls.NONE, cls.MINIMUM]]
+        return [prop_group for prop_group in cls if prop_group not in [cls.ALL, cls.NONE, cls.MINIMUM, cls.BASIC]]
 
     @classmethod
     def match_loosely(cls, name: str) -> CharPropertyGroup:

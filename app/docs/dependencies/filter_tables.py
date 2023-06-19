@@ -266,7 +266,13 @@ def create_table_listing_prop_group_names() -> str:
                     <th>Alias</th>
                 </tr>"""
     for pg in CharPropertyGroup:
-        if pg != CharPropertyGroup.NONE:
+        if pg not in [
+            CharPropertyGroup.NONE,
+            CharPropertyGroup.ALL,
+            CharPropertyGroup.MINIMUM,
+            CharPropertyGroup.CJK_MINIMUM,
+            CharPropertyGroup.CJK_BASIC,
+        ]:
             html += f"""
                     <tr>
                         <td>{get_prop_group_name_maybe_linked(pg)}</td>

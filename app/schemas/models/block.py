@@ -40,7 +40,7 @@ class UnicodeBlock(UnicodeBlockBase, table=True):
 
     plane: "UnicodePlane" = Relationship(back_populates="blocks")  # type: ignore
     characters: list["UnicodeCharacter"] = Relationship(back_populates="block")  # type: ignore
-    characters_no_name: list["UnicodeCharacterUnihan"] = Relationship(back_populates="block")  # type: ignore
+    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="block")  # type: ignore
 
     def as_response(self) -> "UnicodeBlockResponse":
         block_dict = self.dict(by_alias=True)

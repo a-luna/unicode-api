@@ -166,4 +166,36 @@ def get_character_details(
     response_dict = db_ctx.get_character_properties(codepoint, show_props)
     if score:
         response_dict["score"] = float(f"{score:.1f}")
+    if cached_data.character_is_unihan(codepoint):
+        response_dict = remove_null_value_properties(response_dict)
     return db.UnicodeCharacterResponse(**response_dict)
+
+
+def remove_null_value_properties(char_props: dict[str, Any]) -> dict[str, Any]:
+    nullable_cjk_properties = [
+        "ideo_frequency",
+        "ideo_grade_level",
+        "rs_count_unicode",
+        "rs_count_kangxi",
+        "total_strokes",
+        "traditional_variant",
+        "simplified_variant",
+        "z_variant",
+        "compatibility_variant",
+        "semantic_variant",
+        "specialized_semantic_variant",
+        "spoofing_variant",
+        "accounting_numeric",
+        "primary_numeric",
+        "other_numeric",
+        "hangul",
+        "cantonese",
+        "mandarin",
+        "japanese_kun",
+        "japanese_on",
+        "vietnamese",
+    ]
+    for prop_name in nullable_cjk_properties:
+        if prop_name in char_props and not char_props[prop_name]:
+            char_props.pop(prop_name)
+    return char_props

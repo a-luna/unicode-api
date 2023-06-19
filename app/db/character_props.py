@@ -40,97 +40,159 @@ from app.schemas.enums import (
     VerticalOrientationType,
 )
 
+MINIMUM_PROPERTIES = [
+    {
+        "name_in": "character",
+        "name_out": "character",
+        "char_property": "",
+        "db_required": False,
+        "db_column": False,
+        "response_value": lambda char: get_glyph_for_codepoint(char["codepoint_dec"]),
+    },
+    {
+        "name_in": "name",
+        "name_out": "name",
+        "char_property": "na",
+        "db_required": False,
+        "db_column": False,
+        "response_value": lambda char: cached_data.get_character_name(char["codepoint_dec"]),
+    },
+    {
+        "name_in": "codepoint",
+        "name_out": "codepoint",
+        "char_property": "cp",
+        "db_required": False,
+        "db_column": False,
+        "response_value": lambda char: get_codepoint_string(char["codepoint_dec"]),
+    },
+    {
+        "name_in": "uri_encoded",
+        "name_out": "uri_encoded",
+        "char_property": "",
+        "db_required": False,
+        "db_column": False,
+        "response_value": lambda char: get_uri_encoded_value(chr(char["codepoint_dec"])) or ""
+        if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
+        else "",
+    },
+]
+
+CJK_MINIMUM_PROPERTIES = (
+    MINIMUM_PROPERTIES[:2]
+    + [
+        {
+            "name_in": "description",
+            "name_out": "description",
+            "char_property": "kDefinition",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "description"),
+        }
+    ]
+    + MINIMUM_PROPERTIES[2:]
+)
+
+BASIC_PROPERTIES = [
+    {
+        "name_in": "block_id",
+        "name_out": "block",
+        "char_property": "",
+        "db_required": False,
+        "db_column": True,
+        "response_value": lambda char: get_block_name_containing_codepoint(char["codepoint_dec"]),
+    },
+    {
+        "name_in": "plane_number",
+        "name_out": "plane",
+        "char_property": "",
+        "db_required": False,
+        "db_column": True,
+        "response_value": lambda char: get_plane_abbreviation_containing_codepoint(char["codepoint_dec"]),
+    },
+    {
+        "name_in": "age",
+        "name_out": "age",
+        "char_property": "age",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: char["age"] if "age" in char else get_default_age(char["codepoint_dec"]),
+    },
+    {
+        "name_in": "general_category",
+        "name_out": "general_category",
+        "char_property": "gc",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: GeneralCategory(char["general_category"]).display_name
+        if "general_category" in char
+        else get_default_general_category_display_name(char["codepoint_dec"]),
+    },
+    {
+        "name_in": "combining_class",
+        "name_out": "combining_class",
+        "char_property": "ccc",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: CombiningClassCategory(char["combining_class"]).display_name
+        if "combining_class" in char
+        else CombiningClassCategory.NOT_REORDERED.display_name,
+    },
+    {
+        "name_in": "html_entities",
+        "name_out": "html_entities",
+        "char_property": "",
+        "db_required": False,
+        "db_column": False,
+        "response_value": lambda char: get_html_entities(char["codepoint_dec"]),
+    },
+]
+
+CJK_BASIC_PROPERTIES = BASIC_PROPERTIES + [
+    {
+        "name_in": "ideo_frequency",
+        "name_out": "ideo_frequency",
+        "char_property": "kFrequency",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: get_int_prop_value(char, "ideo_frequency"),
+    },
+    {
+        "name_in": "ideo_grade_level",
+        "name_out": "ideo_grade_level",
+        "char_property": "kGradeLevel",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: get_int_prop_value(char, "ideo_grade_level"),
+    },
+    {
+        "name_in": "rs_count_unicode",
+        "name_out": "rs_count_unicode",
+        "char_property": "kRSUnicode",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: get_string_prop_value(char, "rs_count_unicode"),
+    },
+    {
+        "name_in": "rs_count_kangxi",
+        "name_out": "rs_count_kangxi",
+        "char_property": "kRSKangXi",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: get_string_prop_value(char, "rs_count_kangxi"),
+    },
+    {
+        "name_in": "total_strokes",
+        "name_out": "total_strokes",
+        "char_property": "kTotalStrokes",
+        "db_required": True,
+        "db_column": True,
+        "response_value": lambda char: get_string_prop_value(char, "total_strokes"),
+    },
+]
+
 PROPERTY_GROUPS = {
-    CharPropertyGroup.MINIMUM: [
-        {
-            "name_in": "character",
-            "name_out": "character",
-            "char_property": "",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: get_glyph_for_codepoint(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "name",
-            "name_out": "name",
-            "char_property": "na",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: cached_data.get_character_name(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "codepoint",
-            "name_out": "codepoint",
-            "char_property": "cp",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: get_codepoint_string(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "uri_encoded",
-            "name_out": "uri_encoded",
-            "char_property": "",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: get_uri_encoded_value(chr(char["codepoint_dec"])) or ""
-            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
-        },
-    ],
-    CharPropertyGroup.BASIC: [
-        {
-            "name_in": "block_id",
-            "name_out": "block",
-            "char_property": "",
-            "db_required": False,
-            "db_column": True,
-            "response_value": lambda char: get_block_name_containing_codepoint(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "plane_number",
-            "name_out": "plane",
-            "char_property": "",
-            "db_required": False,
-            "db_column": True,
-            "response_value": lambda char: get_plane_abbreviation_containing_codepoint(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "age",
-            "name_out": "age",
-            "char_property": "age",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: char["age"] if "age" in char else get_default_age(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "general_category",
-            "name_out": "general_category",
-            "char_property": "gc",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: GeneralCategory(char["general_category"]).display_name
-            if "general_category" in char
-            else get_default_general_category_display_name(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "combining_class",
-            "name_out": "combining_class",
-            "char_property": "ccc",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: CombiningClassCategory(char["combining_class"]).display_name
-            if "combining_class" in char
-            else CombiningClassCategory.NOT_REORDERED.display_name,
-        },
-        {
-            "name_in": "html_entities",
-            "name_out": "html_entities",
-            "char_property": "",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: get_html_entities(char["codepoint_dec"]),
-        },
-    ],
+    CharPropertyGroup.MINIMUM: MINIMUM_PROPERTIES,
+    CharPropertyGroup.BASIC: BASIC_PROPERTIES,
     CharPropertyGroup.UTF8: [
         {
             "name_in": "utf8",
@@ -527,92 +589,8 @@ PROPERTY_GROUPS = {
             "response_value": lambda char: get_string_prop_value(char, "indic_positional_category"),
         },
     ],
-    CharPropertyGroup.CJK_MINIMUM: [
-        {
-            "name_in": "character",
-            "name_out": "character",
-            "char_property": "",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: get_glyph_for_codepoint(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "name",
-            "name_out": "name",
-            "char_property": "na",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: cached_data.get_character_name(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "description",
-            "name_out": "description",
-            "char_property": "kDefinition",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "description"),
-        },
-        {
-            "name_in": "codepoint",
-            "name_out": "codepoint",
-            "char_property": "cp",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: get_codepoint_string(char["codepoint_dec"]),
-        },
-        {
-            "name_in": "uri_encoded",
-            "name_out": "uri_encoded",
-            "char_property": "",
-            "db_required": False,
-            "db_column": False,
-            "response_value": lambda char: get_uri_encoded_value(chr(char["codepoint_dec"])) or ""
-            if not cached_data.codepoint_is_surrogate(char["codepoint_dec"])
-            else "",
-        },
-    ],
-    CharPropertyGroup.CJK_BASIC: [
-        {
-            "name_in": "ideo_frequency",
-            "name_out": "ideo_frequency",
-            "char_property": "kFrequency",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: get_int_prop_value(char, "ideo_frequency"),
-        },
-        {
-            "name_in": "ideo_grade_level",
-            "name_out": "ideo_grade_level",
-            "char_property": "kGradeLevel",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: get_int_prop_value(char, "ideo_grade_level"),
-        },
-        {
-            "name_in": "rs_count_unicode",
-            "name_out": "rs_count_unicode",
-            "char_property": "kRSUnicode",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "rs_count_unicode"),
-        },
-        {
-            "name_in": "rs_count_kangxi",
-            "name_out": "rs_count_kangxi",
-            "char_property": "kRSKangXi",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "rs_count_kangxi"),
-        },
-        {
-            "name_in": "total_strokes",
-            "name_out": "total_strokes",
-            "char_property": "kTotalStrokes",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "total_strokes"),
-        },
-    ],
+    CharPropertyGroup.CJK_MINIMUM: CJK_MINIMUM_PROPERTIES,
+    CharPropertyGroup.CJK_BASIC: CJK_BASIC_PROPERTIES,
     CharPropertyGroup.CJK_VARIANTS: [
         {
             "name_in": "traditional_variant",

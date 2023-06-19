@@ -119,8 +119,8 @@ class UnicodeCharacter(UnicodeCharacterBase, table=True):
 class UnicodeCharacterUnihan(UnicodeCharacterBase, table=True):
     __tablename__ = "character_unihan"  # type: ignore
 
-    block: "UnicodeBlock" = Relationship(back_populates="characters_no_name")  # type: ignore
-    plane: "UnicodePlane" = Relationship(back_populates="characters_no_name")  # type: ignore
+    block: "UnicodeBlock" = Relationship(back_populates="characters_unihan")  # type: ignore
+    plane: "UnicodePlane" = Relationship(back_populates="characters_unihan")  # type: ignore
 
     description: str | None
     ideo_frequency: int | None
@@ -158,6 +158,11 @@ class UnicodeCharacterResponse(CamelModel):
     general_category: str = ""
     combining_class: str = ""
     html_entities: list[str] = []
+    ideo_frequency: int | None = None
+    ideo_grade_level: int | None = None
+    rs_count_unicode: str | None = None
+    rs_count_kangxi: str | None = None
+    total_strokes: str | None = None
     score: float = 0.0
     utf8: str = ""
     utf8_hex_bytes: list[str] = []
@@ -199,12 +204,6 @@ class UnicodeCharacterResponse(CamelModel):
     indic_syllabic_category: str = ""
     indic_matra_category: str = ""
     indic_positional_category: str = ""
-    ideo_frequency: int | None = None
-    ideo_grade_level: int | None = None
-    description: str | None = None
-    rs_count_unicode: str | None = None
-    rs_count_kangxi: str | None = None
-    total_strokes: str | None = None
     traditional_variant: str | None = None
     simplified_variant: str | None = None
     z_variant: str | None = None

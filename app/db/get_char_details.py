@@ -32,12 +32,20 @@ def get_prop_groups(codepoint: int, show_props: list[CharPropertyGroup] | None) 
             if not unihan
             else CharPropertyGroup.get_all_unihan_character_prop_groups()
         )
-    if not unihan and CharPropertyGroup.MINIMUM not in show_props:
-        return [CharPropertyGroup.MINIMUM] + show_props
-    if unihan and CharPropertyGroup.CJK_MINIMUM not in show_props:
-        show_props = [CharPropertyGroup.CJK_MINIMUM] + show_props
-    if unihan and CharPropertyGroup.MINIMUM in show_props:
-        return [prop_group for prop_group in show_props if prop_group != CharPropertyGroup.MINIMUM]
+    if CharPropertyGroup.MINIMUM in show_props or CharPropertyGroup.CJK_MINIMUM in show_props:
+        show_props = [
+            prop_group
+            for prop_group in show_props
+            if prop_group not in [CharPropertyGroup.MINIMUM, CharPropertyGroup.CJK_MINIMUM]
+        ]
+        return show_props + [CharPropertyGroup.CJK_MINIMUM if unihan else CharPropertyGroup.MINIMUM]
+    if CharPropertyGroup.BASIC in show_props or CharPropertyGroup.CJK_BASIC in show_props:
+        show_props = [
+            prop_group
+            for prop_group in show_props
+            if prop_group not in [CharPropertyGroup.BASIC, CharPropertyGroup.CJK_BASIC]
+        ]
+        return show_props + [CharPropertyGroup.CJK_BASIC if unihan else CharPropertyGroup.BASIC]
     return show_props
 
 
