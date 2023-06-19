@@ -32,7 +32,7 @@ class UnicodeAge(StrEnum):
     V15_0 = "15.0"
 
     def __str__(self) -> str:
-        return self.name.replace("_", ".")[1:]
+        return self.name.replace("_", ".")[1:] if self != UnicodeAge.UNASSIGNED else "NONE"
 
     @property
     def code(self) -> str:

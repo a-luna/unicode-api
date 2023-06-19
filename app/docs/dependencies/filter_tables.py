@@ -316,7 +316,7 @@ def create_table_listing_enum_values(
     html += """
                 </tr>"""
     for e in enumClass:
-        if e.name != "NONE" and hasattr(e, column_1_attr):
+        if e.name != "NONE" and str(e) != "NONE" and hasattr(e, column_1_attr):
             html += f"""
                 <tr>
                     <td>{getattr(e, column_1_attr)}</td>"""
