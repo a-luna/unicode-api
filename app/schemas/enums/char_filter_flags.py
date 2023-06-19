@@ -53,13 +53,13 @@ class CharacterFilterFlags(IntFlag):
 
     @property
     def display_name(self) -> str:
-        (name, _, _) = CHAR_FLAG_MAP.get(int(self), ("", "", ""))
-        return f'Is_{name.replace("_", " ").title().replace("Ascii", "ASCII").replace(" ", "_")}'
+        flag = CHAR_FLAG_MAP.get(int(self), None)
+        return f'Is_{flag.name.replace("_", " ").title().replace("Ascii", "ASCII").replace(" ", "_")}' if flag else ""
 
     @property
     def short_alias(self) -> str:
-        (_, alias, _) = CHAR_FLAG_MAP.get(int(self), ("", "", ""))
-        return alias
+        flag = CHAR_FLAG_MAP.get(int(self), None)
+        return flag.alias if flag else ""
 
     @property
     def has_alias(self) -> bool:  # pragma: no cover
@@ -67,8 +67,8 @@ class CharacterFilterFlags(IntFlag):
 
     @property
     def db_column_name(self) -> str:
-        (_, _, db_column) = CHAR_FLAG_MAP.get(int(self), ("", "", ""))
-        return db_column
+        flag = CHAR_FLAG_MAP.get(int(self), None)
+        return flag.db_column if flag else ""
 
     @classmethod
     def get_char_flags_from_int(cls, char_flags) -> list[CharacterFilterFlags]:

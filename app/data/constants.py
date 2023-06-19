@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 MAX_CODEPOINT = 1114111
 
 CJK_UNIFIED_BLOCK_IDS = [119, 121, 316, 317, 318, 319, 320, 322, 323]
@@ -9,35 +11,37 @@ PRIVATE_USE_BLOCK_IDS = [153, 326, 327]
 ALL_CJK_IDEOGRAPH_BLOCK_IDS = CJK_UNIFIED_BLOCK_IDS + CJK_COMPATIBILITY_BLOCK_IDS
 GENERIC_NAME_BLOCK_IDS = ALL_CJK_IDEOGRAPH_BLOCK_IDS + TANGUT_BLOCK_IDS + SURROGATE_BLOCK_IDS + PRIVATE_USE_BLOCK_IDS
 
-CHAR_FLAG_MAP: dict[int, tuple[str, str, str]] = {
-    2**0: ("MIRRORED", "mirrored", "bidirectional_is_mirrored"),
-    2**1: ("BIDIRECTIONAL_CONTROL", "bidi_ctrl", "bidirectional_control"),
-    2**2: ("JOINING_CONTROL", "join_ctrl", "joining_control"),
-    2**3: ("UPPERCASE", "upper", "uppercase"),
-    2**4: ("LOWERCASE", "lower", "lowercase"),
-    2**5: ("DASH", "dash", "dash"),
-    2**6: ("HYPHEN", "hyphen", "hyphen"),
-    2**7: ("QUOTATION_MARK", "quote", "quotation_mark"),
-    2**8: ("TERMINAL_PUNCTUATION", "term_p", "terminal_punctuation"),
-    2**9: ("SENTENCE_TERMINAL", "s_term", "sentence_terminal"),
-    2**10: ("DIACRITIC", "diacritic", "diacritic"),
-    2**11: ("EXTENDER", "extender", "extender"),
-    2**12: ("SOFT_DOTTED", "s_dot", "soft_dotted"),
-    2**13: ("ALPHABETIC", "alpha", "alphabetic"),
-    2**14: ("MATHEMATICAL", "math", "math"),
-    2**15: ("HEX_DIGIT", "hex", "hex_digit"),
-    2**16: ("ASCII_HEX_DIGIT", "ascii_hex", "ascii_hex_digit"),
-    2**17: ("DEFAULT_IGNORABLE_CODE_POINT", "def_ignore", "default_ignorable_code_point"),
-    2**18: ("LOGICAL_ORDER_EXCEPTION", "logical_ord_ex", "logical_order_exception"),
-    2**19: ("PREPENDED_CONCATENATION_MARK", "pre_concat", "prepended_concatenation_mark"),
-    2**20: ("WHITE_SPACE", "white_space", "white_space"),
-    2**21: ("REGIONAL_INDICATOR", "reg_ind", "regional_indicator"),
-    2**22: ("EMOJI", "emoji", "emoji"),
-    2**23: ("EMOJI_PRESENTATION", "emoji_p", "emoji_presentation"),
-    2**24: ("EMOJI_MODIFIER", "emoji_m", "emoji_modifier"),
-    2**25: ("EMOJI_MODIFIER_BASE", "emoji_m_base", "emoji_modifier_base"),
-    2**26: ("EMOJI_COMPONENT", "emoji_c", "emoji_component"),
-    2**27: ("EXTENDED_PICTOGRAPHIC", "ext_pict", "extended_pictographic"),
+CharacterFlag = namedtuple("CharacterFlag", ["name", "alias", "db_column"])
+
+CHAR_FLAG_MAP: dict[int, CharacterFlag] = {
+    2**0: CharacterFlag("MIRRORED", "mirrored", "bidirectional_is_mirrored"),
+    2**1: CharacterFlag("BIDIRECTIONAL_CONTROL", "bidi_ctrl", "bidirectional_control"),
+    2**2: CharacterFlag("JOINING_CONTROL", "join_ctrl", "joining_control"),
+    2**3: CharacterFlag("UPPERCASE", "upper", "uppercase"),
+    2**4: CharacterFlag("LOWERCASE", "lower", "lowercase"),
+    2**5: CharacterFlag("DASH", "dash", "dash"),
+    2**6: CharacterFlag("HYPHEN", "hyphen", "hyphen"),
+    2**7: CharacterFlag("QUOTATION_MARK", "quote", "quotation_mark"),
+    2**8: CharacterFlag("TERMINAL_PUNCTUATION", "term_p", "terminal_punctuation"),
+    2**9: CharacterFlag("SENTENCE_TERMINAL", "s_term", "sentence_terminal"),
+    2**10: CharacterFlag("DIACRITIC", "diacritic", "diacritic"),
+    2**11: CharacterFlag("EXTENDER", "extender", "extender"),
+    2**12: CharacterFlag("SOFT_DOTTED", "s_dot", "soft_dotted"),
+    2**13: CharacterFlag("ALPHABETIC", "alpha", "alphabetic"),
+    2**14: CharacterFlag("MATHEMATICAL", "math", "math"),
+    2**15: CharacterFlag("HEX_DIGIT", "hex", "hex_digit"),
+    2**16: CharacterFlag("ASCII_HEX_DIGIT", "ascii_hex", "ascii_hex_digit"),
+    2**17: CharacterFlag("DEFAULT_IGNORABLE_CODE_POINT", "def_ignore", "default_ignorable_code_point"),
+    2**18: CharacterFlag("LOGICAL_ORDER_EXCEPTION", "logical_ord_ex", "logical_order_exception"),
+    2**19: CharacterFlag("PREPENDED_CONCATENATION_MARK", "pre_concat", "prepended_concatenation_mark"),
+    2**20: CharacterFlag("WHITE_SPACE", "white_space", "white_space"),
+    2**21: CharacterFlag("REGIONAL_INDICATOR", "reg_ind", "regional_indicator"),
+    2**22: CharacterFlag("EMOJI", "emoji", "emoji"),
+    2**23: CharacterFlag("EMOJI_PRESENTATION", "emoji_p", "emoji_presentation"),
+    2**24: CharacterFlag("EMOJI_MODIFIER", "emoji_m", "emoji_modifier"),
+    2**25: CharacterFlag("EMOJI_MODIFIER_BASE", "emoji_m_base", "emoji_modifier_base"),
+    2**26: CharacterFlag("EMOJI_COMPONENT", "emoji_c", "emoji_component"),
+    2**27: CharacterFlag("EXTENDED_PICTOGRAPHIC", "ext_pict", "extended_pictographic"),
 }
 
 NULL_BLOCK = {
