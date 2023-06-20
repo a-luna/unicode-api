@@ -727,6 +727,38 @@ PROPERTY_GROUPS = {
     ],
     CharPropertyGroup.FUNCTION_AND_GRAPHIC: [
         {
+            "name_in": "ideographic",
+            "name_out": "ideographic",
+            "char_property": "Ideo",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_bool_prop_value(char, "ideographic"),
+        },
+        {
+            "name_in": "unified_ideograph",
+            "name_out": "unified_ideograph",
+            "char_property": "UIdeo",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_bool_prop_value(char, "unified_ideograph"),
+        },
+        {
+            "name_in": "equivalent_unified_ideograph",
+            "name_out": "equivalent_unified_ideograph",
+            "char_property": "EqUIdeo",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_string_prop_value(char, "equivalent_unified_ideograph"),
+        },
+        {
+            "name_in": "radical",
+            "name_out": "radical",
+            "char_property": "Radical",
+            "db_required": True,
+            "db_column": True,
+            "response_value": lambda char: get_bool_prop_value(char, "radical"),
+        },
+        {
             "name_in": "dash",
             "name_out": "dash",
             "char_property": "Dash",

@@ -72,9 +72,9 @@ def parse_unicode_character_data_from_xml(
     parsed_blocks: list[dict[str, str | int]],
     parsed_planes: list[dict[str, str | int]],
 ) -> list[CharDetailsDict]:
-    spinner = start_task("Parsing Unicode character data from XML database file...")
+    spinner = start_task("")
+    spinner.stop_and_persist("Parsing Unicode character data from XML database file...")
     char_nodes = xml_doc.getElementsByTagName("char")
-    update_progress(spinner, "Parsing Unicode character data from XML database file...", 0, len(char_nodes))
     all_chars = [
         parse_character_details(char, parsed_blocks, parsed_planes, spinner, i, len(char_nodes))
         for (i, char) in enumerate(char_nodes, start=1)
@@ -139,10 +139,10 @@ def parse_character_details(
         "indic_syllabic_category": char_node.getAttribute("InSC"),
         "indic_matra_category": char_node.getAttribute("InMC") or "NA",
         "indic_positional_category": char_node.getAttribute("InPC"),
-        "ideographic": char_node.getAttribute("Ideo"),
-        "unified_ideograph": char_node.getAttribute("UIdeo"),
-        "radical": char_node.getAttribute("Radical"),
+        "ideographic": get_bool_prop_value(char_node, "Ideo"),
+        "unified_ideograph": get_bool_prop_value(char_node, "UIdeo"),
         "equivalent_unified_ideograph": char_node.getAttribute("EqUIdeo"),
+        "radical": get_bool_prop_value(char_node, "Radical"),
         "dash": YES_NO_MAP[char_node.getAttribute("Dash")],
         "hyphen": YES_NO_MAP[char_node.getAttribute("Hyphen")],
         "quotation_mark": YES_NO_MAP[char_node.getAttribute("QMark")],
@@ -304,7 +304,7 @@ def get_decomposition_mapping(decomposition_mapping: str, codepoint: int) -> str
 
 
 def parse_numeric_value(numeric_value: str, codepoint: str) -> int | float | None:
-    if numeric_value == "NaN":
+    if not numeric_value or numeric_value == "NaN":
         return None
     if "/" in numeric_value:
         [num, dom] = numeric_value.split("/", 1)
@@ -314,6 +314,12 @@ def parse_numeric_value(numeric_value: str, codepoint: str) -> int | float | Non
     except ValueError as ex:
         print(f"Error parsing numeric_value for codepoint {codepoint}: {repr(ex)}")
         return None
+
+
+def get_bool_prop_value(char_node: minidom.Element, prop_name: str) -> bool:
+    if (prop_value := char_node.getAttribute(prop_name)) != "":
+        return YES_NO_MAP[prop_value]
+    return False
 
 
 def count_defined_characters_per_block(all_chars, all_blocks):

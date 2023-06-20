@@ -77,7 +77,7 @@ class UnicodeCharacterBase(CamelModel):
     ideographic: bool | None = False
     unified_ideograph: bool | None = False
     radical: bool | None = False
-    equivalent_unified_ideograph: bool | None = False
+    equivalent_unified_ideograph: str | None = None
     dash: bool
     hyphen: bool
     quotation_mark: bool
@@ -204,6 +204,10 @@ class UnicodeCharacterResponse(CamelModel):
     indic_syllabic_category: str = ""
     indic_matra_category: str = ""
     indic_positional_category: str = ""
+    ideographic: bool | None = False
+    unified_ideograph: bool | None = False
+    radical: bool | None = False
+    equivalent_unified_ideograph: str | None = None
     traditional_variant: str | None = None
     simplified_variant: str | None = None
     z_variant: str | None = None

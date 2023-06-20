@@ -178,6 +178,7 @@ def remove_null_value_properties(char_props: dict[str, Any]) -> dict[str, Any]:
         "rs_count_unicode",
         "rs_count_kangxi",
         "total_strokes",
+        "equivalent_unified_ideograph",
         "traditional_variant",
         "simplified_variant",
         "z_variant",
