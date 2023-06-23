@@ -156,8 +156,14 @@ CHAR_NAME_FILTER_DESCRIPTION = """
     <li>This value is optional</li>
     <li class=\"alert\">This does not behave the same way that <strong><i>searching</i></strong> by <code>name</code> does for requests sent to the <code>/v1/characters/search</code> endpoint (i.e., fuzzy-searching is NOT performed)</li>
 </ul>
-
 <p>Filter Unicode characters by name. A character is considered a match if the official name of the character <strong>contains</strong> the value provided.</p>
+"""
+
+VERBOSE_DESCRIPTION = """
+<ul class="param-notes">
+    <li>This value is optional (default: <code>verbose=false</code>)</li>
+</ul>
+<p>Sending <code>verbose=true</code> makes the response include every property value for each character specified by the values sent for the <code>show_props</code> parameter. For more info, see the <a href="#verbosity">Verbosity section</a> of the docs.</p>
 """
 
 
@@ -343,3 +349,20 @@ ENDING_BEFORE_BLOCK_ID_DESCRIPTION = customize_ending_before_param_description(
 STARTING_AFTER_BLOCK_ID_DESCRIPTION = customize_starting_after_param_description(
     "blocks", "id", "140", BLOCK_ID_DESCRIPTION
 )
+
+
+def get_filter_param_description(param_name: str) -> str:
+    param_map = {
+        "bidi_class": get_description_and_values_table_for_bidi_class(),
+        "ccc": get_description_and_values_table_for_combining_class_category(),
+        "decomp_type": get_description_and_values_table_for_decomp_type(),
+        "flag": get_description_and_values_table_for_flags(),
+        "category": get_description_and_values_table_for_general_category(),
+        "join_type": get_description_and_values_table_for_joining_type(),
+        "line_break": get_description_and_values_table_for_line_break_type(),
+        "num_type": get_description_and_values_table_for_numeric_type(),
+        "show_props": get_description_and_values_table_for_property_group(),
+        "script": get_description_and_values_table_for_script_code(),
+        "age": get_description_and_values_table_for_unicode_age(),
+    }
+    return param_map.get(param_name, "")

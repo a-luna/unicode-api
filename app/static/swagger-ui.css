@@ -443,6 +443,7 @@ body > svg {
   font-size: 0.8rem;
 }
 
+.prop-group-ref,
 .swagger-ui details details > div.prop-group-ref   {
   font-weight: 700;
   font-style: italic;
@@ -996,6 +997,13 @@ margin: 0 auto;
 
 .swagger-ui .wrapper:nth-of-type(4) {
   display: none;
+}
+
+.cjk-only {
+  color: hsl(0, 100%, 50%);
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-style: italic;
 }
 
 /* END: MY CUSTOMIZATIONS */
@@ -9608,7 +9616,7 @@ textarea::placeholder {
 }
 .swagger-ui .parameters-col_description input[type="text"] {
   width: 100%;
-  max-width: 340px;
+  max-width: 282px;
 }
 .swagger-ui .parameters-col_description select {
   border-width: 1px;

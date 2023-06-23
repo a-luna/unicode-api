@@ -35,6 +35,11 @@ PROP_GROUP_MINIMUM = """
                 <dd>A unit of information used for the organization, control, or representation of textual data.</dd>
                 <dt><strong>name</strong></dt>
                 <dd>A unique string used to identify each character encoded in the Unicode standard.</dd>
+                <dt><strong>description</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
+                <dd>
+                    <p>An English definition for this character. Definitions are for modern written Chinese and are usually (but not always) the same as the definition in other Chinese dialects or non-Chinese languages.</p>
+                    <p class="prop-group-ref">More info: <a href="http://www.unicode.org/reports/tr38/#kDefinition" rel="noopener noreferrer" target="_blank">http://www.unicode.org/reports/tr38/#kDefinition</a></p>
+                </dd>
                 <dt><strong>codepoint</strong></dt>
                 <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
                 <dt><strong>uriEncoded</strong></dt>
@@ -45,8 +50,15 @@ PROP_GROUP_MINIMUM = """
 UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = "<p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>\n"
 
 UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2 = (
-    "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
-    + f'<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>\n'
+    "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> and <code>/v1/characters/filter</code> endpoints accept one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
+    + f'<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>'
+)
+
+VERBOSITY = (
+    "<p>The value of many of the properties that are defined for each character are only meaningful for specific blocks or a small subset of codepoints (e.g., the <code>hangul_syllable_type</code> property will have a <code>(Not Applicable) NA</code> value for all codepoints except those in the four blocks that contain characters from the Hangul writing system).</p>"
+    + "<p>By default, the <code>hangul_syllable_type</code> property will <strong>NOT</strong> be included with the response for any character that has this default value even if the user has submitted a request containing <code>show_props=hangul</code> or <code>show_props=all</code>. For actual Hangul characters, the property will be included in the response.</p>"
+    + "<p>These properties are removed to make the size of each response as small as possible. Knowing that the 🇺 (<code>U+1F1FA <span>REGIONAL INDICATOR SYMBOL LETTER U</span></code>) character has the value <code>hangul_syllable_type=NA</code> provides no real information about this character.</p>"
+    + "<p>However, if you wish to see every property value, include <code>verbose=true</code> with your request to the <code>/v1/characters/{string}</code> or <code>/v1/characters/filter</code> endpoints.</p>"
 )
 
 PROP_GROUP_BASIC = """
@@ -367,6 +379,23 @@ PROP_GROUP_INDIC = """
                 <dd>Used to identify the type of matra (vowel sign) associated with a character, such as a short or long vowel sign.</dd>
                 <dt><strong>indicPositionalCategory</strong></dt>
                 <dd>Used to identify the position of a character in a syllable, such as the initial, medial, or final position.</dd>
+            </dl>
+"""
+
+PROP_GROUP_CJK_BASIC = """
+            <div class="prop-group-ref cjk-prop-group">Reference: <a href="http://www.unicode.org/reports/tr38/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #38, "Unicode Han Database (Unihan)"</a></div>
+            <div>
+                <p></p>
+            </div>
+            <dl>
+                <dt><strong>character</strong></dt>
+                <dd>A unit of information used for the organization, control, or representation of textual data.</dd>
+                <dt><strong>name</strong></dt>
+                <dd>A unique string used to identify each character encoded in the Unicode standard.</dd>
+                <dt><strong>codepoint</strong></dt>
+                <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
+                <dt><strong>uriEncoded</strong></dt>
+                <dd>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>). A URI string must contain only a defined subset of characters from the standard 128 ASCII character set, any other characters must be replaced by an escape sequence representing the UTF-8 encoding of the character. For example, ∑ (<code>U+2211 <span>N-ARY SUMMATION</span></code>) is equal to <code>0xE2 0x88 0x91</code> in UTF-8 encoding. When used as part of a URI, this character must be escaped using the URI-escaped string <code>%E2%88%91</code>.</dd>
             </dl>
 """
 

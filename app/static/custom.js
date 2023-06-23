@@ -18,6 +18,7 @@ document.querySelector("html").style.background = svgUrls;
 PROP_GROUP_LINK_SELECTOR = '[data-param-name="show_props"] a[href*="#"]:not([href*="loose"])';
 LOOSE_MATCHING_LINK_SELECTOR = 'a[href$="#loose-matching"]';
 SEARCH_LINK_SELECTOR = 'a[href$="#search"]';
+VERBOSITY_LINK_SELECTOR = 'a[href$="#verbosity"]'
 BLOCK_DOC_LINK_SELECTOR = 'a[href="#the-unicodeblock-object"]';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -38,6 +39,7 @@ async function addClickHandlers(parent) {
   addBlockDocLinks(parent);
   addLinkClickHandlers(parent, LOOSE_MATCHING_LINK_SELECTOR);
   addLinkClickHandlers(parent, SEARCH_LINK_SELECTOR);
+  addLinkClickHandlers(parent, VERBOSITY_LINK_SELECTOR);
 }
 
 const addPropGroupClickHandlers = (parent) =>

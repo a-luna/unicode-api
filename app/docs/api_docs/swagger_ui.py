@@ -31,6 +31,7 @@ from app.docs.api_docs.content.character import (
     UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2,
     UNICODE_CHARACTER_PROP_GROUPS_INTRO,
     UNICODE_CHATACTER_OBJECT_INTRO,
+    VERBOSITY,
 )
 from app.docs.api_docs.content.intro import INTRODUCTION, LOOSE_MATCHING, PAGINATION, PROJECT_LINKS_SWAGGER_HTML, SEARCH
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
@@ -64,6 +65,8 @@ UNICODE_CHARACTERS_DOCS = f"""
 {create_details_element_for_swagger_ui('<h6 id="minimum">Property Group: Minimum</h6>', PROP_GROUP_MINIMUM, True)}
 {UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1}
 {UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2}
+        <h4 id="verbosity">Verbosity</h4>
+{VERBOSITY}
 {create_details_element_for_swagger_ui('<h6 id="basic">Property Group: Basic</h6>', PROP_GROUP_BASIC)}
 {create_details_element_for_swagger_ui('<h6 id="utf8">Property Group: UTF-8</h6>', PROP_GROUP_UTF8)}
 {create_details_element_for_swagger_ui('<h6 id="utf16">Property Group: UTF-16</h6>', PROP_GROUP_UTF16)}
