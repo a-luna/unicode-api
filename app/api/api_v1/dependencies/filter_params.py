@@ -10,17 +10,8 @@ from app.docs.dependencies.custom_parameters import (
     CHAR_NAME_FILTER_DESCRIPTION,
     PAGE_NUMBER_DESCRIPTION,
     PER_PAGE_DESCRIPTION,
-    get_description_and_values_table_for_bidi_class,
-    get_description_and_values_table_for_combining_class_category,
-    get_description_and_values_table_for_decomp_type,
-    get_description_and_values_table_for_flags,
-    get_description_and_values_table_for_general_category,
-    get_description_and_values_table_for_joining_type,
-    get_description_and_values_table_for_line_break_type,
-    get_description_and_values_table_for_numeric_type,
-    get_description_and_values_table_for_property_group,
-    get_description_and_values_table_for_script_code,
-    get_description_and_values_table_for_unicode_age,
+    VERBOSE_DESCRIPTION,
+    get_filter_param_description,
 )
 from app.schemas.enums import (
     BidirectionalClass,
@@ -73,31 +64,25 @@ class FilterParameters:
     def __init__(
         self,
         name: str | None = Query(default=None, description=CHAR_NAME_FILTER_DESCRIPTION),
-        category: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_general_category()),
-        age: list[str] | None = Query(default=None, description=get_description_and_values_table_for_unicode_age()),
-        script: list[str] | None = Query(default=None, description=get_description_and_values_table_for_script_code()),
-        bidi_class: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_bidi_class()),
-        decomp_type: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_decomp_type()),
-        line_break: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_line_break_type()),
-        ccc: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_combining_class_category()),
-        num_type: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_numeric_type()),
-        join_type: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_joining_type()),
-        flag: list[str] | None = Query(default=None, description=get_description_and_values_table_for_flags()),
-        show_props: list[str]
-        | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
+        category: list[str] | None = Query(default=None, description=get_filter_param_description("category")),
+        age: list[str] | None = Query(default=None, description=get_filter_param_description("age")),
+        script: list[str] | None = Query(default=None, description=get_filter_param_description("script")),
+        bidi_class: list[str] | None = Query(default=None, description=get_filter_param_description("bidi_class")),
+        decomp_type: list[str] | None = Query(default=None, description=get_filter_param_description("decomp_type")),
+        line_break: list[str] | None = Query(default=None, description=get_filter_param_description("line_break")),
+        ccc: list[str] | None = Query(default=None, description=get_filter_param_description("ccc")),
+        num_type: list[str] | None = Query(default=None, description=get_filter_param_description("num_type")),
+        join_type: list[str] | None = Query(default=None, description=get_filter_param_description("join_type")),
+        flag: list[str] | None = Query(default=None, description=get_filter_param_description("flag")),
+        show_props: list[str] | None = Query(default=None, description=get_filter_param_description("show_props")),
+        verbose: bool | None = Query(default=None, description=VERBOSE_DESCRIPTION),
         per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
         page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
     ):
         self.parse_all_enum_values(
             category, age, script, bidi_class, decomp_type, line_break, ccc, num_type, join_type, flag, show_props
         )
+        self.verbose = verbose or False
         self.name = name
         self.per_page = per_page or 10
         self.page = page or 1

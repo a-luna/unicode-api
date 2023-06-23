@@ -24,8 +24,10 @@ class DBSession:
         self.session = session
         self.engine = engine
 
-    def get_character_properties(self, codepoint: int, show_props: list[CharPropertyGroup] | None) -> dict[str, Any]:
-        return get_character_properties(self.engine, codepoint, show_props)
+    def get_character_properties(
+        self, codepoint: int, show_props: list[CharPropertyGroup] | None, verbose: bool
+    ) -> dict[str, Any]:
+        return get_character_properties(self.engine, codepoint, show_props, verbose)
 
     def filter_all_characters(self, filter_params: FilterParameters) -> list[int]:
         queries = [construct_filter_query(filter_params, table) for table in CHAR_TABLES]

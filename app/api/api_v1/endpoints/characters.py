@@ -20,6 +20,7 @@ from app.data.encoding import get_codepoint_string
 from app.docs.dependencies.custom_parameters import (
     UNICODE_CHAR_EXAMPLES,
     UNICODE_CHAR_STRING_DESCRIPTION,
+    VERBOSE_DESCRIPTION,
     get_description_and_values_table_for_property_group,
 )
 from app.schemas.enums import CharPropertyGroup
@@ -65,6 +66,7 @@ def search_unicode_characters_by_name(
         search_parameters.per_page,
         search_parameters.page,
         response_data,
+        False,
     )
 
 
@@ -73,10 +75,7 @@ def search_unicode_characters_by_name(
     response_model=db.PaginatedSearchResults[db.UnicodeCharacterResponse],
     response_model_exclude_unset=True,
 )
-def filter_unicode_characters(
-    db_ctx: DatabaseSession,
-    filter_parameters: FilterParameters = Depends(),
-):
+def filter_unicode_characters(db_ctx: DatabaseSession, filter_parameters: FilterParameters = Depends()):
     response_data = {"url": f"{settings.API_VERSION}/characters/filter"}
     codepoints = db_ctx.filter_all_characters(filter_parameters)
     filter_results = [(cp, None) for cp in codepoints]
@@ -87,6 +86,7 @@ def filter_unicode_characters(
         filter_parameters.per_page,
         filter_parameters.page,
         response_data,
+        filter_parameters.verbose,
     )
 
 
@@ -100,6 +100,7 @@ def get_unicode_character_details(
     string: str = Path(description=UNICODE_CHAR_STRING_DESCRIPTION, examples=UNICODE_CHAR_EXAMPLES),
     show_props: list[str]
     | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
+    verbose: bool | None = Query(default=None, description=VERBOSE_DESCRIPTION),
 ):
     if show_props:
         result = PropertyGroupMatcher.parse_enum_values(show_props)
@@ -108,7 +109,9 @@ def get_unicode_character_details(
         prop_groups = result.value
     else:
         prop_groups = None
-    return [get_character_details(db_ctx, ord(char), prop_groups) for char in string]
+    if not verbose:
+        verbose = False
+    return [get_character_details(db_ctx, ord(char), prop_groups, verbose=verbose) for char in string]
 
 
 def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQueryParamResolver) -> tuple[int, int]:
@@ -136,6 +139,7 @@ def get_paginated_character_list(
     per_page: int,
     page: int,
     response_data: dict[str, str],
+    verbose: bool,
 ):
     codepoints = [cp for (cp, _) in results]
     if codepoints:
@@ -146,7 +150,7 @@ def get_paginated_character_list(
         start = paginated.pop("start", 0)
         end = paginated.pop("end", 0)
         paginated["results"] = [
-            get_character_details(db_ctx, cp, show_props, score) for (cp, score) in results[start:end]
+            get_character_details(db_ctx, cp, show_props, score, verbose) for (cp, score) in results[start:end]
         ]
         return response_data | paginated
     return response_data | {
@@ -162,41 +166,9 @@ def get_character_details(
     codepoint: int,
     show_props: list[CharPropertyGroup] | None,
     score: float | None = None,
+    verbose: bool = False,
 ) -> db.UnicodeCharacterResponse:
-    response_dict = db_ctx.get_character_properties(codepoint, show_props)
+    response_dict = db_ctx.get_character_properties(codepoint, show_props, verbose)
     if score:
         response_dict["score"] = float(f"{score:.1f}")
-    if cached_data.character_is_unihan(codepoint):
-        response_dict = remove_null_value_properties(response_dict)
     return db.UnicodeCharacterResponse(**response_dict)
-
-
-def remove_null_value_properties(char_props: dict[str, Any]) -> dict[str, Any]:
-    nullable_cjk_properties = [
-        "ideo_frequency",
-        "ideo_grade_level",
-        "rs_count_unicode",
-        "rs_count_kangxi",
-        "total_strokes",
-        "equivalent_unified_ideograph",
-        "traditional_variant",
-        "simplified_variant",
-        "z_variant",
-        "compatibility_variant",
-        "semantic_variant",
-        "specialized_semantic_variant",
-        "spoofing_variant",
-        "accounting_numeric",
-        "primary_numeric",
-        "other_numeric",
-        "hangul",
-        "cantonese",
-        "mandarin",
-        "japanese_kun",
-        "japanese_on",
-        "vietnamese",
-    ]
-    for prop_name in nullable_cjk_properties:
-        if prop_name in char_props and not char_props[prop_name]:
-            char_props.pop(prop_name)
-    return char_props

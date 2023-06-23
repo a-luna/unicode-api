@@ -22,6 +22,7 @@ from app.data.constants import (
 )
 from app.data.encoding import get_codepoint_string
 from app.schemas.enums import UnassignedCharacterType
+from app.schemas.util import normalize_string_lm3
 
 
 class UnicodeDataCache:
@@ -186,6 +187,10 @@ class UnicodeDataCache:
         score_cutoff = max(70, score_cutoff)
         fuzzy_search_results = process.extract(query.lower(), self.block_name_choices, limit=len(self.blocks))
         return [(result, score) for (_, score, result) in fuzzy_search_results if score >= float(score_cutoff)]
+
+    def match_loosely_block_name(self, name: str) -> db.UnicodeBlock:
+        block_name_map = {normalize_string_lm3(b.name): b for b in self.blocks}
+        return block_name_map.get(normalize_string_lm3(name), db.UnicodeBlock(**NULL_BLOCK))
 
     def get_unicode_plane_by_number(self, plane_number: int) -> db.UnicodePlane:
         plane = self.plane_number_map.get(plane_number)
