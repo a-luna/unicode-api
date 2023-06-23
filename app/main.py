@@ -52,9 +52,8 @@ def init_redis():
 def init_unicode_obj():
     _ = cached_data.unique_name_character_map
     _ = cached_data.blocks
-    _ = cached_data.all_characters_block
     _ = cached_data.planes
-    _ = cached_data.all_characters_plane
+    _ = cached_data.all_unicode_versions
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)

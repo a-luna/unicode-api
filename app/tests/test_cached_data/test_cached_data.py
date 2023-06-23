@@ -11,3 +11,8 @@ def test_get_char_name_invalid_codepoint():
     codepoint = 1114112
     char_name = cached_data.get_character_name(codepoint)
     assert char_name == "Invalid Codepoint (U+110000)"
+
+
+def test_get_unicode_version():
+    version = "15.0"
+    assert cached_data.unicode_version == version

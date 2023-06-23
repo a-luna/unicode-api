@@ -3,6 +3,8 @@ import json
 from functools import cache, cached_property
 
 from rapidfuzz import process
+from sqlalchemy import distinct, select
+from sqlmodel import Session
 
 import app.db.models as db
 from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, PLANES_JSON
@@ -21,8 +23,10 @@ from app.data.constants import (
     TANGUT_BLOCK_IDS,
 )
 from app.data.encoding import get_codepoint_string
+from app.db.engine import engine
 from app.schemas.enums import UnassignedCharacterType
-from app.schemas.util import normalize_string_lm3
+
+CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 
 
 class UnicodeDataCache:
@@ -165,6 +169,19 @@ class UnicodeDataCache:
         # noncharacters and surrogate code points).
         # source: https://en.wikipedia.org/wiki/Unicode#cite_ref-25
         return sum(plane.total_defined for plane in self.planes) - len(self.all_control_character_codepoints)
+
+    @cached_property
+    def all_unicode_versions(self):
+        with Session(engine) as session:
+            versions = []
+            for query in [select(distinct(table.age)) for table in CHAR_TABLES]:
+                results = session.execute(query).scalars().all()
+                versions.extend(float(ver) for ver in results)
+            return [str(ver) for ver in sorted(list(set(versions)))]
+
+    @property
+    def unicode_version(self) -> str:
+        return self.all_unicode_versions[-1]
 
     def search_characters_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:
         score_cutoff = max(70, score_cutoff)

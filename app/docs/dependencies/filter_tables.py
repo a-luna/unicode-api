@@ -10,8 +10,8 @@ from app.schemas.enums import (
     LineBreakType,
     NumericType,
     ScriptCode,
-    UnicodeAge,
 )
+from app.schemas.enums.unicode_age import UnicodeAge
 
 GENERAL_CATEGORY_VALUES_TABLE = """
 <div class="filter-table-outer">
@@ -268,7 +268,6 @@ def create_table_listing_prop_group_names() -> str:
     for pg in CharPropertyGroup:
         if pg not in [
             CharPropertyGroup.NONE,
-            CharPropertyGroup.ALL,
             CharPropertyGroup.MINIMUM,
             CharPropertyGroup.CJK_MINIMUM,
             CharPropertyGroup.CJK_BASIC,
@@ -287,11 +286,7 @@ def create_table_listing_prop_group_names() -> str:
 
 
 def get_prop_group_name_maybe_linked(pg: CharPropertyGroup) -> str:
-    return (
-        f'<a href="#{slugify(pg.name)}">{pg}</a>'
-        if pg not in [CharPropertyGroup.ALL, CharPropertyGroup.NONE]
-        else pg.name
-    )
+    return f'<a href="#{slugify(pg.name)}">{pg}</a>' if pg != CharPropertyGroup.ALL else str(pg)
 
 
 def create_table_listing_enum_values(
@@ -338,7 +333,7 @@ PLANE_ABBREV_VALUES_TABLE = create_table_listing_unicode_plane_abbreviations()
 BLOCK_NAME_VALUES_TABLE = create_table_listing_unicode_block_names()
 PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
 UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
-    UnicodeAge, "age", column_1_text="Unicode Version Number", hide_column_2=True
+    UnicodeAge, "age", "Unicode Version Number", "value", hide_column_2=True
 )
 SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script", column_2_text="Script Name")
 BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(

@@ -24,8 +24,8 @@ from app.schemas.enums import (
     LineBreakType,
     NumericType,
     ScriptCode,
-    UnicodeAge,
 )
+from app.schemas.enums.unicode_age import UnicodeAge
 
 T = TypeVar("T")
 
@@ -104,7 +104,7 @@ class FilterParameters:
     ) -> None:
         errors: list[str] = []
         self.categories: list[GeneralCategory] | None = None
-        self.age_list: list[UnicodeAge] | None = None
+        self.age_list: list[str] | None = None
         self.scripts: list[ScriptCode] | None = None
         self.bidi_class_list: list[BidirectionalClass] | None = None
         self.decomp_types: list[DecompositionType] | None = None

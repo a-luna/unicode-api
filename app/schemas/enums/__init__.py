@@ -14,5 +14,4 @@ from app.schemas.enums.property_group import CharPropertyGroup
 from app.schemas.enums.script_code import ScriptCode
 from app.schemas.enums.triadic_logic import TriadicLogic
 from app.schemas.enums.unassigned_char_type import UnassignedCharacterType
-from app.schemas.enums.unicode_age import UnicodeAge
 from app.schemas.enums.vertical_orientation_type import VerticalOrientationType
