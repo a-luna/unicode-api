@@ -111,7 +111,9 @@ def assign_unicode_plane_to_each_block(all_planes, all_blocks):
 
 
 def get_unicode_plane_containing_block(all_planes, block):
-    found = [plane for plane in all_planes if plane.start_block_id <= block.id and block.id <= plane.finish_block_id]
+    found = [
+        plane for plane in all_planes if plane.start_dec <= block.start_dec and block.finish_dec <= plane.finish_dec
+    ]
     return found[0] if found else db.UnicodePlane(**NULL_PLANE)
 
 

@@ -42,7 +42,7 @@ def parse_block_details(id: int, block_node, parsed_planes: list[BlockOrPlaneDet
     finish = block_node.getAttribute("last-cp")
     start_dec = int(start, 16)
     finish_dec = int(finish, 16)
-    plane = get_unicode_plane_containing_block_id(id, parsed_planes)
+    plane = get_unicode_plane_containing_block_id(start_dec, finish_dec, parsed_planes)
     return {
         "id": id,
         "name": block_node.getAttribute("name"),
@@ -57,12 +57,12 @@ def parse_block_details(id: int, block_node, parsed_planes: list[BlockOrPlaneDet
 
 
 def get_unicode_plane_containing_block_id(
-    block_id: int, parsed_planes: list[BlockOrPlaneDetailsDict]
+    start_dec: int, finish_dec: int, parsed_planes: list[BlockOrPlaneDetailsDict]
 ) -> BlockOrPlaneDetailsDict:
     found = [
         plane
         for plane in parsed_planes
-        if int(plane["start_block_id"]) <= block_id and block_id <= int(plane["finish_block_id"])
+        if int(plane["start_dec"]) <= start_dec and finish_dec <= int(plane["finish_dec"])
     ]
     return found[0] if found else NULL_PLANE
 
@@ -95,7 +95,7 @@ def parse_character_details(
     codepoint = char_node.getAttribute("cp")
     codepoint_dec = int(codepoint, 16)
     block = get_unicode_block_containing_codepoint(codepoint_dec, parsed_blocks)
-    plane = get_unicode_plane_containing_block_id(int(block["id"]), parsed_planes)
+    plane = get_unicode_plane_containing_block_id(int(block["start_dec"]), int(block["finish_dec"]), parsed_planes)
     unihan = block["id"] in GENERIC_NAME_BLOCK_IDS
     parsed_char = {
         "character": chr(codepoint_dec),
