@@ -51,14 +51,10 @@ class UnicodeDataCache:
         return {block.id: block for block in self.blocks if block and block.id}
 
     @property
-    def block_name_map(self) -> dict[str, db.UnicodeBlock]:
-        return {block.name: block for block in self.blocks}
-
-    @property
     def block_name_choices(self) -> dict[int, str]:
         return {block.id: block.name.lower() for block in self.blocks if block and block.id}
 
-    @cached_property
+    @property
     def all_characters_block(self) -> db.UnicodeBlock:
         block = db.UnicodeBlock(
             id=0,
@@ -86,7 +82,7 @@ class UnicodeDataCache:
     def plane_abbreviation_map(self) -> dict[str, db.UnicodePlane]:
         return {plane.abbreviation: plane for plane in self.planes}
 
-    @cached_property
+    @property
     def all_characters_plane(self) -> db.UnicodePlane:
         return db.UnicodePlane(
             number=-1,
@@ -193,9 +189,6 @@ class UnicodeDataCache:
     def get_unicode_block_by_id(self, block_id: int) -> db.UnicodeBlock:
         return self.block_id_map.get(block_id, db.UnicodeBlock(**NULL_BLOCK))
 
-    def get_unicode_block_by_name(self, block_name: str) -> db.UnicodeBlock:
-        return self.block_name_map.get(block_name, db.UnicodeBlock(**NULL_BLOCK))
-
     def get_unicode_block_containing_codepoint(self, codepoint: int) -> db.UnicodeBlock:
         found = [block for block in self.blocks if block.start_dec <= codepoint and codepoint <= block.finish_dec]
         return found[0] if found else db.UnicodeBlock(**NULL_BLOCK)
@@ -204,10 +197,6 @@ class UnicodeDataCache:
         score_cutoff = max(70, score_cutoff)
         fuzzy_search_results = process.extract(query.lower(), self.block_name_choices, limit=len(self.blocks))
         return [(result, score) for (_, score, result) in fuzzy_search_results if score >= float(score_cutoff)]
-
-    def match_loosely_block_name(self, name: str) -> db.UnicodeBlock:
-        block_name_map = {normalize_string_lm3(b.name): b for b in self.blocks}
-        return block_name_map.get(normalize_string_lm3(name), db.UnicodeBlock(**NULL_BLOCK))
 
     def get_unicode_plane_by_number(self, plane_number: int) -> db.UnicodePlane:
         plane = self.plane_number_map.get(plane_number)
