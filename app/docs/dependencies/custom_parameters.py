@@ -163,7 +163,7 @@ VERBOSE_DESCRIPTION = """
 <ul class="param-notes">
     <li>This value is optional (default: <code>verbose=false</code>)</li>
 </ul>
-<p>Sending <code>verbose=true</code> makes the response include every property value for each character specified by the values sent for the <code>show_props</code> parameter. For more info, see the <a href="#verbosity">Verbosity section</a> of the docs.</p>
+<p>Sending <code>verbose=true</code> makes the response include every property value specified by the values sent for the <code>show_props</code> parameter. By default, properties are removed from the response if the value is irrelevent. For more info, see the <a href="#verbosity">Verbosity section</a> of the docs.</p>
 """
 
 
