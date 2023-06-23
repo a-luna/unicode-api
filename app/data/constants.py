@@ -42,6 +42,9 @@ CHAR_FLAG_MAP: dict[int, CharacterFlag] = {
     2**25: CharacterFlag("EMOJI_MODIFIER_BASE", "emoji_m_base", "emoji_modifier_base"),
     2**26: CharacterFlag("EMOJI_COMPONENT", "emoji_c", "emoji_component"),
     2**27: CharacterFlag("EXTENDED_PICTOGRAPHIC", "ext_pict", "extended_pictographic"),
+    2**28: CharacterFlag("IDEOGRAPHIC", "ideo", "ideographic"),
+    2**29: CharacterFlag("UNIFIED_IDEOGRAPH", "uideo", "unified_ideograph"),
+    2**30: CharacterFlag("RADICAL", "radical", "radical"),
 }
 
 NULL_BLOCK = {

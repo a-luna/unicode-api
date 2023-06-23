@@ -36,6 +36,9 @@ class CharacterFilterFlags(IntFlag):
     EMOJI_MODIFIER_BASE = auto()
     EMOJI_COMPONENT = auto()
     EXTENDED_PICTOGRAPHIC = auto()
+    IDEOGRAPHIC = auto()
+    UNIFIED_IDEOGRAPH = auto()
+    RADICAL = auto()
 
     def __str__(self) -> str:
         return self.display_name
@@ -52,9 +55,14 @@ class CharacterFilterFlags(IntFlag):
         return normalize_string_lm3(self.name)
 
     @property
+    def flag_name(self) -> str:
+        flag = CHAR_FLAG_MAP.get(int(self), None)
+        return flag.name.replace("_", " ").title().replace("Ascii", "ASCII").replace(" ", "_") if flag else ""
+
+    @property
     def display_name(self) -> str:
         flag = CHAR_FLAG_MAP.get(int(self), None)
-        return f'Is_{flag.name.replace("_", " ").title().replace("Ascii", "ASCII").replace(" ", "_")}' if flag else ""
+        return f"Is_{self.flag_name}" if flag and self.flag_name else ""
 
     @property
     def short_alias(self) -> str:
@@ -69,10 +77,6 @@ class CharacterFilterFlags(IntFlag):
     def db_column_name(self) -> str:
         flag = CHAR_FLAG_MAP.get(int(self), None)
         return flag.db_column if flag else ""
-
-    @classmethod
-    def get_char_flags_from_int(cls, char_flags) -> list[CharacterFilterFlags]:
-        return [flag for flag in cls if char_flags & flag == flag and flag != cls.NONE]
 
     @classmethod
     def match_loosely(cls, name: str) -> CharacterFilterFlags:

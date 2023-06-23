@@ -5,7 +5,6 @@ from sqlmodel import Field, Relationship
 from app.schemas.enums import (
     BidirectionalBracketType,
     BidirectionalClass,
-    CharacterFilterFlags,
     CombiningClassCategory,
     DecompositionType,
     EastAsianWidthType,
@@ -248,68 +247,6 @@ class UnicodeCharacterResponse(CamelModel):
     emoji_modifier_base: bool = False
     emoji_component: bool = False
     extended_pictographic: bool = False
-
-    @property
-    def flags(self) -> list[CharacterFilterFlags]:
-        flags: list[CharacterFilterFlags] = []
-        if self.bidirectional_is_mirrored:
-            flags.append(CharacterFilterFlags.MIRRORED)
-        if self.bidirectional_control:
-            flags.append(CharacterFilterFlags.BIDIRECTIONAL_CONTROL)
-        if self.joining_control:
-            flags.append(CharacterFilterFlags.JOINING_CONTROL)
-        if self.dash:
-            flags.append(CharacterFilterFlags.DASH)
-        if self.hyphen:
-            flags.append(CharacterFilterFlags.HYPHEN)
-        if self.quotation_mark:
-            flags.append(CharacterFilterFlags.QUOTATION_MARK)
-        if self.terminal_punctuation:
-            flags.append(CharacterFilterFlags.TERMINAL_PUNCTUATION)
-        if self.sentence_terminal:
-            flags.append(CharacterFilterFlags.SENTENCE_TERMINAL)
-        if self.diacritic:
-            flags.append(CharacterFilterFlags.DIACRITIC)
-        if self.extender:
-            flags.append(CharacterFilterFlags.EXTENDER)
-        if self.soft_dotted:
-            flags.append(CharacterFilterFlags.SOFT_DOTTED)
-        if self.alphabetic:
-            flags.append(CharacterFilterFlags.ALPHABETIC)
-        if self.math:
-            flags.append(CharacterFilterFlags.MATHEMATICAL)
-        if self.hex_digit:
-            flags.append(CharacterFilterFlags.HEX_DIGIT)
-        if self.ascii_hex_digit:
-            flags.append(CharacterFilterFlags.ASCII_HEX_DIGIT)
-        if self.default_ignorable_code_point:
-            flags.append(CharacterFilterFlags.DEFAULT_IGNORABLE_CODE_POINT)
-        if self.logical_order_exception:
-            flags.append(CharacterFilterFlags.LOGICAL_ORDER_EXCEPTION)
-        if self.prepended_concatenation_mark:
-            flags.append(CharacterFilterFlags.PREPENDED_CONCATENATION_MARK)
-        if self.white_space:
-            flags.append(CharacterFilterFlags.WHITE_SPACE)
-        if self.regional_indicator:
-            flags.append(CharacterFilterFlags.REGIONAL_INDICATOR)
-        if self.emoji:
-            flags.append(CharacterFilterFlags.EMOJI)
-        if self.emoji_presentation:
-            flags.append(CharacterFilterFlags.EMOJI_PRESENTATION)
-        if self.emoji_modifier:
-            flags.append(CharacterFilterFlags.EMOJI_MODIFIER)
-        if self.emoji_modifier_base:
-            flags.append(CharacterFilterFlags.EMOJI_MODIFIER_BASE)
-        if self.emoji_component:
-            flags.append(CharacterFilterFlags.EMOJI_COMPONENT)
-        if self.extended_pictographic:
-            flags.append(CharacterFilterFlags.EXTENDED_PICTOGRAPHIC)
-
-        return CharacterFilterFlags.get_char_flags_from_int(sum(flags))
-
-    @property
-    def display_flags(self) -> list[str]:
-        return [flag.display_name for flag in self.flags]
 
 
 class UnicodeCharacterResult(CamelModel):
