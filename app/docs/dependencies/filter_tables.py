@@ -223,7 +223,7 @@ def create_table_listing_unicode_block_names():
         html += f"""
                             <tr>
                                 <td><code>U+{block.start}...U+{block.finish}</code></td>
-                                <td class="block-name" style="color: var(--{block.plane.abbreviation.lower()}-text-color)">{block.name}</td>
+                                <td class="block-name" style="color: var(--{block.plane.abbreviation.lower()}-text-color)">{block.name.replace(" ", "_").replace("-", "_")}</td>
                             </tr>"""
     html += """
                         </tbody>
@@ -338,26 +338,26 @@ PLANE_ABBREV_VALUES_TABLE = create_table_listing_unicode_plane_abbreviations()
 BLOCK_NAME_VALUES_TABLE = create_table_listing_unicode_block_names()
 PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
 UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
-    UnicodeAge, "unicode-age", column_1_text="Unicode Version Number", hide_column_2=True
+    UnicodeAge, "age", column_1_text="Unicode Version Number", hide_column_2=True
 )
-SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script-code", column_2_text="Script Name")
+SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script", column_2_text="Script Name")
 BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
-    BidirectionalClass, "bidi-class", column_2_text="Bidirectional Class"
+    BidirectionalClass, "bidi_class", column_2_text="Bidirectional Class"
 )
 DECOMP_TYPE_VALUES_TABLE = create_table_listing_enum_values(
-    DecompositionType, "decomp-type", column_2_text="Decomposition Type"
+    DecompositionType, "decomp_type", column_2_text="Decomposition Type"
 )
 LINE_BREAK_TYPE_VALUES_TABLE = create_table_listing_enum_values(
-    LineBreakType, "line-break", column_2_text="Line Break Type"
+    LineBreakType, "line_break", column_2_text="Line Break Type"
 )
 CCC_VALUES_TABLE = create_table_listing_enum_values(
-    CombiningClassCategory, "combining-class", column_2_text="Combining Class Category"
+    CombiningClassCategory, "ccc", column_2_text="Combining Class Category"
 )
-NUMERIC_TYPES_TABLE = create_table_listing_enum_values(NumericType, "num-type", column_2_text="Numeric Type")
-JOINING_TYPES_TABLE = create_table_listing_enum_values(JoiningType, "join-type", column_2_text="Joining Type")
+NUMERIC_TYPES_TABLE = create_table_listing_enum_values(NumericType, "num_type", column_2_text="Numeric Type")
+JOINING_TYPES_TABLE = create_table_listing_enum_values(JoiningType, "join_type", column_2_text="Joining Type")
 CHAR_FLAGS_TABLE = create_table_listing_enum_values(
     CharacterFilterFlags,
-    "flags",
+    "flag",
     column_1_text="Flags (Boolean Properties)",
     column_1_attr="display_name",
     column_2_text="Alias",
