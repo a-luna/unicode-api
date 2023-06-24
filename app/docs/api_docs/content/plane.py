@@ -36,7 +36,7 @@ UNICODE_PLANE_OBJECT_PROPERTIES = f"""
                 <dd>
                     <p>The official name of a plane, according to the Unicode Standard. As of version 15.0.0, seven of the total 17 planes have official names (the official abbreviation for each plane if also given in parentheses):</p>
 {get_plane_name_list()}
-                    <p>The codepoints within Planes 4-13 (<code>U+40000</code>...<code>U+​DFFFF</code>) are unassigned, and th</p>
+                    <p>The codepoints within Planes 4-13 (<code>U+40000</code>...<code>U+​DFFFF</code>) are unassigned, and these planes currently have no official name/abbreviation.</p>
                 </dd>
                 <dt><strong>abbreviation</strong></dt>
                 <dd>An acronym that identifies the plane, the list in the previous definition contains the abbreviation for each plane along with the official name.</dd>
