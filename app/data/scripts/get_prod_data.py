@@ -15,7 +15,7 @@ def get_prod_data():
         return result
     config = result.value
 
-    pformat(config)
+    print(pformat(config))
 
     result = get_unicode_db(config)
     if result.failure:
