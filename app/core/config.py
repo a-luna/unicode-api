@@ -51,7 +51,7 @@ class UnicodeApiSettings(BaseSettings):
     BLOCKS_JSON: Path = JSON_FOLDER.joinpath("blocks.json")
     CHAR_NAME_MAP: Path = JSON_FOLDER.joinpath("char_name_map.json")
     JSON_ZIP_FILE: Path = JSON_FOLDER.joinpath("unicode_json.zip")
-    JSON_ZIP_URL: str = f"{HTTP_BUCKET_URL}/{JSON_ZIP_FILE.name}"
+    JSON_ZIP_URL: str = f"{HTTP_BUCKET_URL}/{UNICODE_VERSION}/{JSON_ZIP_FILE.name}"
     CSV_FOLDER: Path = DATA_FOLDER.joinpath("csv").joinpath(UNICODE_VERSION)
     PLANES_CSV: Path = CSV_FOLDER.joinpath("planes.csv")
     BLOCKS_CSV: Path = CSV_FOLDER.joinpath("blocks.csv")
