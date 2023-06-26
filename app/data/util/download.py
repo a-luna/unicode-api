@@ -3,6 +3,7 @@ from urllib.parse import urlsplit
 
 from requests import Response
 from requests import get as requests_get
+from requests import head as requests_head
 from requests.exceptions import ConnectionError, ConnectTimeout, HTTPError, RequestException, Timeout
 
 from app.core.result import Result
@@ -31,7 +32,7 @@ def download_file(url: str, dest_folder: Path) -> Result[Path]:
 def get_file_details(url: str, dest_folder: Path) -> tuple[Path, int]:
     dest_folder.mkdir(parents=True, exist_ok=True)
     dest_file_path = dest_folder.joinpath(Path(urlsplit(url).path).name)
-    r = requests_get.head(url)
+    r = requests_head(url)
     remote_file_size = int(r.headers.get("content-length", 0))
     return (dest_file_path, remote_file_size)
 
@@ -54,7 +55,7 @@ def download_file_in_chunks(
     url: str, dest_file_path: Path, local_file_size: int | None = None, fopen_mode: str = "wb"
 ) -> Result[Path]:
     resume_header = {"Range": f"bytes={local_file_size}-"} if local_file_size else None
-    r = requests_get.get(url, stream=True, headers=resume_header)
+    r = requests_get(url, stream=True, headers=resume_header)
     with open(dest_file_path, fopen_mode) as f:
         for chunk in r.iter_content(32 * CHUNK_SIZE):
             f.write(chunk)
