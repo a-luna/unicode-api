@@ -11,9 +11,9 @@ body {
 }
 
 :root {
-  --svg-bg: hsla(225, 30%, 69%, 0.498);
-  --svg-fg1: hsl(224, 30%, 73%);
-  --svg-fg2: hsl(225, 30%, 71%);
+  --svg-bg: hsla(0, 0%, 50%, 0.8);
+  --svg-fg1: hsla(209, 65%, 45%);
+  --svg-fg2: hsla(209, 65%, 42%);
   --page-bg-color: hsl(225, 15%, 90%);
   --page-header-bg-color: var(--page-bg-color);
   --api-description-bg-color: var(--page-bg-color);
@@ -2618,9 +2618,6 @@ textarea::placeholder {
 }
 .swagger-ui .cf:after {
   clear: both;
-}
-.swagger-ui .cf {
-  *zoom: 1;
 }
 .swagger-ui .cl {
   clear: left;

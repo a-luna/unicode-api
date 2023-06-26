@@ -153,9 +153,9 @@ def get_swagger_ui_html(
     </head>
     <body>
     <svg xmlns='http://www.w3.org/2000/svg' width='56' height='100'>
-      <rect width='56' height='100' fill='#98a4c87f'/>
-      <path d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='#a5b0cf' stroke-width='1'/>
-      <path d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='#9faacb' stroke-width='1'/>
+      <rect width='56' height='100' fill='#808080cc'/>
+      <path d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='#2875bd' stroke-width='1'/>
+      <path d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='#256db1' stroke-width='1'/>
     </svg>
     <div id="swagger-ui"></div>
     <script src={swagger_js_url!r}></script>
