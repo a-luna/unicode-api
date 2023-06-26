@@ -18,7 +18,9 @@ DB_ZIP_FILE_NAME = "unicode-api.db.zip"
 
 ROOT_FOLDER = Path(__file__).parent.parent.parent
 DOTENV_FILE = ROOT_FOLDER.joinpath(".env")
-dotenv = DotEnvFile(dotenv_filepath=DOTENV_FILE)
+
+if os.environ.get("ENV") == "DEV":
+    dotenv = DotEnvFile(dotenv_filepath=DOTENV_FILE)
 
 
 class UnicodeApiSettings(BaseSettings):
