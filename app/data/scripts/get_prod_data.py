@@ -1,4 +1,5 @@
 from pathlib import Path
+from pprint import pformat
 from zipfile import ZipFile
 
 from app.core.config import UnicodeApiSettings
@@ -8,10 +9,13 @@ from app.data.util import download_file
 
 
 def get_prod_data():
+    
     result = bootstrap_unicode_data()
     if result.failure or not result.value:
         return result
     config = result.value
+
+    pformat(config)
 
     result = get_unicode_db(config)
     if result.failure:
