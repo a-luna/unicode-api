@@ -1,3 +1,19 @@
+[project]
+name = "unicode-api"
+version = "15.0.0"
+description = "API that provides access to detailed information for all characters, blocks and planes in the Unicode Standard (Built using FastAPI)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Aaron Luna", email = "contact@aaronluna.dev"}
+]
+keywords = ["unicode", "unicode-api"]
+
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
 [tool.black]
 line-length = 120
 target-version = ['py310']
