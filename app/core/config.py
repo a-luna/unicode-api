@@ -22,9 +22,6 @@ DOTENV_FILE = ROOT_FOLDER.joinpath(".env")
 if os.environ.get("ENV") == "DEV":
     dotenv = DotEnvFile(dotenv_filepath=DOTENV_FILE)
 
-if os.environ.get("ENV") == "PROD":
-    os.environ["UNICODE_VERSION"] = "15.0.0"
-
 class UnicodeApiSettings(BaseSettings):
     ENV: str = os.environ.get("ENV", "DEV")
     UNICODE_VERSION: str = os.environ.get("UNICODE_VERSION", "")
