@@ -3,118 +3,122 @@ import os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from app.core.config import (
-    BLOCKS_JSON,
-    CHAR_NAME_MAP,
-    CHARACTERS_JSON,
-    DB_FILE,
-    DB_FOLDER,
-    JSON_FOLDER,
-    PLANES_JSON,
-    S3_BUCKET_URL,
-)
+from app.core.config import S3_BUCKET_URL, UnicodeApiSettings
 from app.core.result import Result
 from app.data.scripts import (
+    bootstrap_unicode_data,
     download_xml_unicode_database,
-    finish_task,
     parse_xml_unicode_database,
     populate_sqlite_database,
-    run_command,
-    start_task,
+    save_parsed_data_to_csv,
 )
+from app.data.util import finish_task, run_command, start_task
+
+CharDetailsDict = dict[str, bool | int | str]
+BlockOrPlaneDetailsDict = dict[str, int | str]
 
 
-def update_all_data(version: str):
-    result = get_xml_unicode_database(version)
+def update_all_data():
+    result = bootstrap_unicode_data()
     if result.failure or not result.value:
         return result
-    xml_file = result.value
+    config = result.value
 
-    result = parse_xml_unicode_database(xml_file)
+    result = get_xml_unicode_database(config)
+    if result.failure or not result.value:
+        return result
+
+    result = parse_xml_unicode_database(config)
     if result.failure or not result.value:
         return result
     (all_planes, all_blocks, all_chars) = result.value
-    update_unicode_json_files(all_planes, all_blocks, all_chars)
+    update_json_files(config, all_planes, all_blocks, all_chars)
 
-    result = populate_sqlite_database()
+    result = save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars)
+    if result.failure:
+        return result
+
+    result = populate_sqlite_database(config)
     if result.failure:
         return result
 
     if os.environ.get("ENV") == "PROD":
-        if xml_file.exists():
-            xml_file.unlink()
-        delete_character_json_file()
+        if config.XML_FILE.exists():
+            config.XML_FILE.unlink()
     else:
-        result = backup_db_and_json_files()
+        result = backup_db_and_json_files(config)
         if result.failure:
             return result
     return Result.Ok()
 
 
-def get_xml_unicode_database(version: str) -> Result[Path]:
-    spinner = start_task(f"Downloading Unicode XML Database v{version} from unicode.org...")
+def get_xml_unicode_database(config: UnicodeApiSettings) -> Result[Path]:
+    spinner = start_task(f"Downloading Unicode XML Database v{config.UNICODE_VERSION} from unicode.org...")
     spinner.stop_and_persist()
-    get_xml_result = download_xml_unicode_database(version)
+    get_xml_result = download_xml_unicode_database(config)
     if get_xml_result.failure or not get_xml_result.value:
         finish_task(spinner, False, "Download failed! Please check the internet connection.")
         return get_xml_result
     spinner.start()
-    finish_task(spinner, True, f"Successfully downloaded Unicode XML Database v{version}!")
+    finish_task(spinner, True, f"Successfully downloaded Unicode XML Database v{config.UNICODE_VERSION}!")
     xml_file = get_xml_result.value
     return Result.Ok(xml_file)
 
 
-def update_unicode_json_files(all_planes, all_blocks, all_chars):
-    PLANES_JSON.write_text(json.dumps(all_planes, indent=4))
-    BLOCKS_JSON.write_text(json.dumps(all_blocks, indent=4))
-    CHARACTERS_JSON.write_text(json.dumps(all_chars, indent=4))
+def update_json_files(
+    config: UnicodeApiSettings,
+    all_planes: list[BlockOrPlaneDetailsDict],
+    all_blocks: list[BlockOrPlaneDetailsDict],
+    all_chars: list[CharDetailsDict],
+):
+    spinner = start_task("Creating JSON files for parsed Unicode data...")
+    config.PLANES_JSON.write_text(json.dumps(all_planes, indent=4))
+    config.BLOCKS_JSON.write_text(json.dumps(all_blocks, indent=4))
+    char_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["_unihan"]}
+    config.CHAR_NAME_MAP.write_text(json.dumps(char_name_map, indent=4))
+    finish_task(spinner, True, "Successfully created JSON files for parsed Unicode data")
 
-    char_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["unihan"]}
-    CHAR_NAME_MAP.write_text(json.dumps(char_name_map, indent=4))
 
+def backup_db_and_json_files(config: UnicodeApiSettings):
+    spinner = start_task("Creating compressed backup files of SQLite DB and JSON files...")
+    backup_sqlite_db(config)
+    backup_json_files(config)
+    finish_task(spinner, True, "Successfully created compressed backup files of SQLite DB and JSON files!")
 
-def delete_character_json_file():
-    if CHARACTERS_JSON.exists():
-        CHARACTERS_JSON.unlink()
-
-
-def backup_db_and_json_files():
-    zip_file = backup_sqlite_db()
-    result = upload_zip_file_to_s3(zip_file)
+    spinner = start_task("")
+    spinner.stop_and_persist("Uploading backup files to S3 bucket...")
+    result = upload_zip_file_to_s3(config.DB_ZIP_FILE, config.UNICODE_VERSION)
     if result.failure:
         return result
-    zip_file = backup_json_files()
-    result = upload_zip_file_to_s3(zip_file)
+    config.DB_ZIP_FILE.unlink()
+
+    result = upload_zip_file_to_s3(config.JSON_ZIP_FILE, config.UNICODE_VERSION)
     if result.failure:
         return result
+    config.JSON_ZIP_FILE.unlink()
+    finish_task(spinner, True, "Successfully uploaded backup files to S3 bucket!")
     return Result.Ok()
 
 
-def backup_sqlite_db():
-    spinner = start_task("Creating compressed backup file of SQLite database...")
-    zip_file = DB_FOLDER.joinpath("unicode-api.db.zip")
+def backup_sqlite_db(config: UnicodeApiSettings):
+    with ZipFile(config.DB_ZIP_FILE, "w", ZIP_DEFLATED) as zip:
+        zip.write(config.DB_FILE, f"{config.DB_FILE.name}")
+
+
+def backup_json_files(config: UnicodeApiSettings):
+    zip_file = config.JSON_FOLDER.joinpath("unicode_json.zip")
     with ZipFile(zip_file, "w", ZIP_DEFLATED) as zip:
-        zip.write(DB_FILE, f"{DB_FILE. name}")
-    finish_task(spinner, True, "Successfully created compressed backup file of SQLite database!")
-    return zip_file
+        zip.write(config.PLANES_JSON, f"{config.PLANES_JSON.name}")
+        zip.write(config.BLOCKS_JSON, f"{config.BLOCKS_JSON.name}")
+        zip.write(config.CHAR_NAME_MAP, f"{config.CHAR_NAME_MAP.name}")
 
 
-def backup_json_files():
-    zip_file = JSON_FOLDER.joinpath("unicode_json.zip")
-    with ZipFile(zip_file, "w", ZIP_DEFLATED) as zip:
-        zip.write(PLANES_JSON, f"{PLANES_JSON.name}")
-        zip.write(BLOCKS_JSON, f"{BLOCKS_JSON.name}")
-        zip.write(CHAR_NAME_MAP, f"{CHAR_NAME_MAP.name}")
-    return zip_file
-
-
-def upload_zip_file_to_s3(zip_file: Path):
-    result = run_command(f"s3cmd put {zip_file} {S3_BUCKET_URL} -P")
+def upload_zip_file_to_s3(local_file: Path, unicode_version: str) -> Result:
+    result = run_command(f"s3cmd put {local_file} {S3_BUCKET_URL}/{unicode_version}/{local_file.name} -P")
     if result.failure:
         return result
-    zip_file.unlink()
     return Result.Ok()
 
 
 if __name__ == "__main__":
-    update_all_data("15.0.0")
+    update_all_data()

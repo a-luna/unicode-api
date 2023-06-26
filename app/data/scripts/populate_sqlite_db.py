@@ -1,48 +1,47 @@
-import json
+from pathlib import Path
+from typing import Type
 
+from halo import Halo
+from sqlalchemy.engine import Engine
+from sqlalchemy.exc import StatementError
 from sqlalchemy.sql import text
-from sqlmodel import Session, SQLModel
+from sqlmodel import Session, SQLModel, create_engine
 
 import app.db.models as db
-from app.core.config import BLOCKS_JSON, CHARACTERS_JSON, DB_FILE, PLANES_JSON
+from app.core.config import UnicodeApiSettings
 from app.core.result import Result
-from app.data.constants import NULL_BLOCK, NULL_PLANE
-from app.data.scripts.util import finish_task, start_task, update_progress
+from app.data.util import finish_task, start_task, update_progress
 from app.db.character_props import PROPERTY_GROUPS
-from app.db.engine import engine
-from app.schemas.enums import (
-    BidirectionalBracketType,
-    BidirectionalClass,
-    CharPropertyGroup,
-    DecompositionType,
-    EastAsianWidthType,
-    GeneralCategory,
-    HangulSyllableType,
-    JoiningType,
-    LineBreakType,
-    NumericType,
-    ScriptCode,
-    TriadicLogic,
-    VerticalOrientationType,
-)
+from app.schemas.enums import CharPropertyGroup
+
+BATCH_SIZE = 10000
 
 
-def populate_sqlite_database():
-    create_db_and_tables()
-    all_planes, all_blocks = parse_unicode_planes_and_blocks_from_json()
-    all_chars = parse_unicode_characters_from_json()
-    all_blocks = assign_unicode_plane_to_each_block(all_planes, all_blocks)
-    all_chars = assign_unicode_block_and_plane_to_each_character(all_planes, all_blocks, all_chars)
-
+def populate_sqlite_database(config: UnicodeApiSettings) -> Result:
+    table_csv_file_map: dict[
+        Type[db.UnicodePlane] | Type[db.UnicodeBlock] | Type[db.UnicodeCharacter] | Type[db.UnicodeCharacterUnihan],
+        Path,
+    ] = {
+        db.UnicodePlane: config.PLANES_CSV,
+        db.UnicodeBlock: config.BLOCKS_CSV,
+        db.UnicodeCharacter: config.NAMED_CHARS_CSV,
+        db.UnicodeCharacterUnihan: config.UNIHAN_CHARS_CSV,
+    }
+    engine = create_engine(str(config.DB_URL), echo=False, connect_args={"check_same_thread": False})
     with Session(engine) as session:
-        add_unicode_data_to_database(all_planes, all_blocks, all_chars, session)
-        commit_database_session(session)
+        create_db_and_tables(config, engine)
+        for table, csv_file in table_csv_file_map.items():
+            spinner = start_task(f"Adding parsed {table.__tablename__} data to database...")
+            import_data_from_csv_file(spinner, session, csv_file, table)
+            finish_task(spinner, True, f"Successfully added parsed {table.__tablename__} data to database")
+    engine.dispose()
     return Result.Ok()
 
 
-def create_db_and_tables():
-    if DB_FILE.exists():
-        DB_FILE.unlink()
+def create_db_and_tables(config: UnicodeApiSettings, engine: Engine) -> None:
+    if config.DB_FILE.exists():
+        config.DB_FILE.unlink()
+
     SQLModel.metadata.create_all(engine)
     with engine.connect() as con:
         for create_index_sql in generate_raw_sql_for_all_covering_indexes():
@@ -64,89 +63,46 @@ def generate_raw_sql_for_covering_index(prop_group: CharPropertyGroup) -> str:
     return f'CREATE INDEX ix_character_{prop_group.index_name} ON {table} ({", ".join(columns)})' if columns else ""
 
 
-def parse_unicode_planes_and_blocks_from_json():
-    spinner = start_task("Parsing Unicode plane and block data from JSON...")
-    all_planes = [db.UnicodePlane(**plane) for plane in json.loads(PLANES_JSON.read_text())]
-    all_blocks = [db.UnicodeBlock(**block) for block in json.loads(BLOCKS_JSON.read_text())]
-    finish_task(spinner, True, "Successfully parsed plane and block data!")
-    return (all_planes, all_blocks)
+def import_data_from_csv_file(
+    spinner: Halo,
+    session: Session,
+    csv_file: Path,
+    table: Type[db.UnicodePlane] | Type[db.UnicodeBlock] | Type[db.UnicodeCharacter] | Type[db.UnicodeCharacterUnihan],
+) -> None:
+    csv_rows = csv_file.read_text().split("\n")
+    column_names = [col.strip() for col in csv_rows.pop(0).split(",")]
+    batch, total_rows, row_count = [], len(csv_rows), 0
+    first_row_skipped = False
+    with open(csv_file) as csv:
+        while True:
+            csv_row = csv.readline()
+            if not csv_row:
+                break
+            if not first_row_skipped:
+                first_row_skipped = True
+                continue
+            csv_values = [val.strip().replace(";", ",") for val in csv_row.split(",")]
+            batch.append(table(**dict(zip(column_names, csv_values))))  # type: ignore
+            if len(batch) < BATCH_SIZE:
+                continue
+            row_count += len(batch)
+            perform_batch_insert(session, batch)
+            update_progress(spinner, f"Adding parsed {table.__tablename__} data to database", row_count, total_rows)
+        if batch:
+            row_count += len(batch)
+            perform_batch_insert(session, batch)
+            update_progress(spinner, f"Adding parsed {table.__tablename__} data to database", row_count, total_rows)
 
 
-def parse_unicode_characters_from_json():
-    spinner = start_task("Parsing Unicode character data from JSON...")
-    all_char_dicts = [update_char_dict_enum_values(char) for char in json.loads(CHARACTERS_JSON.read_text())]
-    all_named_chars = [db.UnicodeCharacter(**char_dict) for char_dict in all_char_dicts if not char_dict["unihan"]]
-    all_unihan_chars = [db.UnicodeCharacterUnihan(**char_dict) for char_dict in all_char_dicts if char_dict["unihan"]]
-    finish_task(spinner, True, "Successfully parsed character data!")
-    return all_named_chars + all_unihan_chars
-
-
-def update_char_dict_enum_values(char_dict):
-    char_dict["general_category"] = GeneralCategory.from_code(char_dict["general_category"])
-    char_dict["bidirectional_class"] = BidirectionalClass.from_code(char_dict["bidirectional_class"])
-    char_dict["paired_bracket_type"] = BidirectionalBracketType.from_code(char_dict["paired_bracket_type"])
-    char_dict["decomposition_type"] = DecompositionType.from_code(char_dict["decomposition_type"])
-    char_dict["NFC_QC"] = TriadicLogic.from_code(char_dict["NFC_QC"])
-    char_dict["NFD_QC"] = TriadicLogic.from_code(char_dict["NFD_QC"])
-    char_dict["NFKC_QC"] = TriadicLogic.from_code(char_dict["NFKC_QC"])
-    char_dict["NFKD_QC"] = TriadicLogic.from_code(char_dict["NFKD_QC"])
-    char_dict["numeric_type"] = NumericType.from_code(char_dict["numeric_type"])
-    char_dict["joining_type"] = JoiningType.from_code(char_dict["joining_type"])
-    char_dict["line_break"] = LineBreakType.from_code(char_dict["line_break"])
-    char_dict["east_asian_width"] = EastAsianWidthType.from_code(char_dict["east_asian_width"])
-    char_dict["script"] = ScriptCode.from_code(char_dict["script"])
-    char_dict["hangul_syllable_type"] = HangulSyllableType.from_code(char_dict["hangul_syllable_type"])
-    char_dict["vertical_orientation"] = VerticalOrientationType.from_code(char_dict["vertical_orientation"])
-    return char_dict
-
-
-def assign_unicode_plane_to_each_block(all_planes, all_blocks):
-    spinner = start_task("Assigning Unicode plane to each block...")
-    update_progress(spinner, "Assigning Unicode planes to each block...", 0, len(all_blocks))
-    for i, block in enumerate(all_blocks, start=1):
-        block.plane = get_unicode_plane_containing_block(all_planes, block)
-        update_progress(spinner, "Assigning Unicode planes to each block...", i, len(all_blocks))
-    finish_task(spinner, True, "Successfully assigned a Unicode plane to all blocks!")
-    return all_blocks
-
-
-def get_unicode_plane_containing_block(all_planes, block):
-    found = [
-        plane for plane in all_planes if plane.start_dec <= block.start_dec and block.finish_dec <= plane.finish_dec
-    ]
-    return found[0] if found else db.UnicodePlane(**NULL_PLANE)
-
-
-def assign_unicode_block_and_plane_to_each_character(all_planes, all_blocks, all_chars):
-    spinner = start_task("Assigning Unicode block and plane to each character...")
-    for i, char in enumerate(all_chars, start=1):
-        char.block = get_unicode_block_containing_codepoint(all_blocks, char.codepoint_dec)
-        char.plane = get_unicode_plane_containing_block(all_planes, char.block)
-        update_progress(spinner, "Assigning Unicode block and plane to each character...", i, len(all_chars))
-    finish_task(spinner, True, "Successfully assigned a Unicode block and plane to all characters!")
-    return all_chars
-
-
-def get_unicode_block_containing_codepoint(all_blocks, codepoint):
-    found = [block for block in all_blocks if block.start_dec <= codepoint and codepoint <= block.finish_dec]
-    return found[0] if found else db.UnicodeBlock(**NULL_BLOCK)
-
-
-def add_unicode_data_to_database(all_planes, all_blocks, all_chars, session):
-    spinner = start_task("Adding Unicode data to database session...")
-    for plane in all_planes:
-        session.add(plane)
-    session.commit()
-    for block in all_blocks:
-        session.add(block)
-    session.commit()
-    for i, char in enumerate(all_chars, start=1):
-        session.add(char)
-        update_progress(spinner, "Adding Unicode characters to database session...", i, len(all_chars))
-    finish_task(spinner, True, "Successfully added all characters to database session!!")
-
-
-def commit_database_session(session):
-    spinner = start_task("Committing all data from this session to the database...")
-    session.commit()
-    finish_task(spinner, True, "Successfully committed all data!")
+def perform_batch_insert(
+    session: Session,
+    batch: list[
+        Type[db.UnicodePlane] | Type[db.UnicodeBlock] | Type[db.UnicodeCharacter] | Type[db.UnicodeCharacterUnihan]
+    ],
+):
+    try:
+        session.add_all(batch)
+        session.commit()
+        batch.clear()
+    except StatementError as ex:
+        print(f"Error! {repr(ex)}")

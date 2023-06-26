@@ -50,7 +50,7 @@ CHAR_FLAG_MAP: dict[int, CharacterFlag] = {
 NULL_BLOCK = {
     "id": 0,
     "name": "None",
-    "plane_number": -1,
+    "plane_id": -1,
     "start": "",
     "start_dec": 0,
     "finish": "",

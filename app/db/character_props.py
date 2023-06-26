@@ -102,7 +102,7 @@ BASIC_PROPERTIES = [
         "response_value": lambda char: get_block_name_containing_codepoint(char["codepoint_dec"]),
     },
     {
-        "name_in": "plane_number",
+        "name_in": "plane_id",
         "name_out": "plane",
         "char_property": "",
         "db_required": False,

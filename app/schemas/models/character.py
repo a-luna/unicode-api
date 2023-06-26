@@ -75,8 +75,8 @@ class UnicodeCharacterBase(CamelModel):
     indic_positional_category: str
     ideographic: bool | None = False
     unified_ideograph: bool | None = False
-    radical: bool | None = False
     equivalent_unified_ideograph: str | None = None
+    radical: bool | None = False
     dash: bool
     hyphen: bool
     quotation_mark: bool

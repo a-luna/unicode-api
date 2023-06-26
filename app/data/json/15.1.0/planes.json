@@ -1,5 +1,6 @@
 [
     {
+        "id": 1,
         "number": 0,
         "name": "Basic Multilingual Plane",
         "abbreviation": "BMP",
@@ -10,9 +11,10 @@
         "start_block_id": 1,
         "finish_block_id": 164,
         "total_allocated": 65536,
-        "total_defined": 55634
+        "total_defined": 55639
     },
     {
+        "id": 2,
         "number": 1,
         "name": "Supplementary Multilingual Plane",
         "abbreviation": "SMP",
@@ -26,6 +28,7 @@
         "total_defined": 23276
     },
     {
+        "id": 3,
         "number": 2,
         "name": "Supplementary Ideographic Plane",
         "abbreviation": "SIP",
@@ -34,11 +37,12 @@
         "finish": "2FFFF",
         "finish_dec": 196607,
         "start_block_id": 316,
-        "finish_block_id": 321,
+        "finish_block_id": 322,
         "total_allocated": 65536,
-        "total_defined": 60873
+        "total_defined": 61476
     },
     {
+        "id": 4,
         "number": 3,
         "name": "Tertiary Ideographic Plane",
         "abbreviation": "TIP",
@@ -46,12 +50,13 @@
         "start_dec": 196608,
         "finish": "3FFFF",
         "finish_dec": 262143,
-        "start_block_id": 322,
-        "finish_block_id": 323,
+        "start_block_id": 323,
+        "finish_block_id": 324,
         "total_allocated": 65536,
         "total_defined": 9131
     },
     {
+        "id": 5,
         "number": 14,
         "name": "Supplementary Special-purpose Plane",
         "abbreviation": "SSP",
@@ -59,12 +64,13 @@
         "start_dec": 917504,
         "finish": "EFFFF",
         "finish_dec": 983039,
-        "start_block_id": 324,
-        "finish_block_id": 325,
+        "start_block_id": 325,
+        "finish_block_id": 326,
         "total_allocated": 65536,
         "total_defined": 337
     },
     {
+        "id": 6,
         "number": 15,
         "name": "Supplementary Private Use Area-A",
         "abbreviation": "SPUA-A",
@@ -72,12 +78,13 @@
         "start_dec": 983040,
         "finish": "FFFFF",
         "finish_dec": 1048575,
-        "start_block_id": 326,
-        "finish_block_id": 326,
+        "start_block_id": 327,
+        "finish_block_id": 327,
         "total_allocated": 65536,
         "total_defined": 0
     },
     {
+        "id": 7,
         "number": 16,
         "name": "Supplementary Private Use Area-B",
         "abbreviation": "SPUA-B",
@@ -85,8 +92,8 @@
         "start_dec": 1048576,
         "finish": "10FFFF",
         "finish_dec": 1114111,
-        "start_block_id": 327,
-        "finish_block_id": 327,
+        "start_block_id": 328,
+        "finish_block_id": 328,
         "total_allocated": 65536,
         "total_defined": 0
     }

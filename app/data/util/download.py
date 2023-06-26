@@ -1,80 +1,37 @@
-import subprocess
-import sys
 from pathlib import Path
-from random import randint
 from urllib.parse import urlsplit
 
-import requests
-from halo import Halo
+from requests import Response
+from requests import get as requests_get
+from requests.exceptions import ConnectionError, ConnectTimeout, HTTPError, RequestException, Timeout
 
 from app.core.result import Result
+from app.data.util.retry import RetryLimitExceededError, retry
 
 CHUNK_SIZE = 1024
-
-
-def start_task(message: str, clear_screen: bool = False) -> Halo:
-    if clear_screen:
-        subprocess.run(["clear"])
-    spinner = Halo(color="cyan", spinner=f"dots{randint(2, 9)}")
-    spinner.text = message
-    spinner.start()
-    return spinner
-
-
-def update_progress(spinner: Halo, message: str, current: int, total: int) -> None:
-    percent = current / float(total)
-    spinner.text = f"{message} ({current}/{total}) {percent:.0%}..."
-
-
-def finish_task(spinner: Halo, success: bool, message: str):
-    if success:
-        spinner.succeed(message)
-    else:
-        spinner.fail(f"Errror! {message}")
-
-
-def run_command(command: str, cwd: Path | None = None, shell: bool = True, text: bool = True) -> Result:
-    try:
-        subprocess.check_call(
-            command,
-            stdout=sys.stdout,
-            stderr=subprocess.STDOUT,
-            cwd=cwd,
-            shell=shell,
-            text=text,
-        )
-        return Result.Ok()
-    except subprocess.CalledProcessError as e:
-        error = (
-            f"An error occurred while executing the command below:\n"
-            f"\tCommand: {e.cmd} (return code = {e.returncode})"
-        )
-        if e.stderr:
-            error += f"\n\tError: {e.stderr}"
-        return Result.Fail(error)
 
 
 def download_file(url: str, dest_folder: Path) -> Result[Path]:
     (dest_file_path, remote_file_size) = get_file_details(url, dest_folder)
     if not remote_file_size:
         return initiate_download(url, dest_file_path)
-    download_result = (
+    result = (
         initiate_download(url, dest_file_path)
         if not dest_file_path.exists()
         else resume_download(url, dest_file_path, remote_file_size)
     )
-    if download_result.error:
-        return download_result
-    verify_result = verify_download(dest_file_path, remote_file_size)
-    if verify_result.failure:
-        return verify_result
+    if result.error:
+        return result
+    result = verify_download(dest_file_path, remote_file_size)
+    if result.failure:
+        return Result.Fail(result.error if result.error else "")
     return Result.Ok(dest_file_path)
 
 
 def get_file_details(url: str, dest_folder: Path) -> tuple[Path, int]:
     dest_folder.mkdir(parents=True, exist_ok=True)
     dest_file_path = dest_folder.joinpath(Path(urlsplit(url).path).name)
-    r = requests.head(url)
+    r = requests_get.head(url)
     remote_file_size = int(r.headers.get("content-length", 0))
     return (dest_file_path, remote_file_size)
 
@@ -97,14 +54,14 @@ def download_file_in_chunks(
     url: str, dest_file_path: Path, local_file_size: int | None = None, fopen_mode: str = "wb"
 ) -> Result[Path]:
     resume_header = {"Range": f"bytes={local_file_size}-"} if local_file_size else None
-    r = requests.get(url, stream=True, headers=resume_header)
+    r = requests_get.get(url, stream=True, headers=resume_header)
     with open(dest_file_path, fopen_mode) as f:
         for chunk in r.iter_content(32 * CHUNK_SIZE):
             f.write(chunk)
     return Result.Ok(dest_file_path)
 
 
-def verify_download(dest_file_path: Path, remote_file_size: int) -> Result:
+def verify_download(dest_file_path: Path, remote_file_size: int) -> Result[Response]:
     local_file_size = dest_file_path.stat().st_size
     if local_file_size == remote_file_size:
         return Result.Ok()
@@ -115,3 +72,17 @@ def verify_download(dest_file_path: Path, remote_file_size: int) -> Result:
         f"Received File Size: {local_file_size:,} bytes"
     )
     return Result.Fail(error)
+
+
+def request_url_with_retries(url: str) -> Result[Response]:
+    @retry(max_attempts=5, delay=5, exceptions=(ConnectionError, ConnectTimeout, HTTPError, Timeout, RequestException))
+    def request_url(url: str) -> Response:
+        response = requests_get(url, timeout=(5, 10))
+        response.raise_for_status()
+        return response
+
+    try:
+        response = request_url(url)
+        return Result.Ok(response)
+    except RetryLimitExceededError as e:
+        return Result.Fail(repr(e))

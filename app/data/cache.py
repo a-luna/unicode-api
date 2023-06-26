@@ -1,5 +1,6 @@
 import itertools
 import json
+import os
 from functools import cache, cached_property
 
 from rapidfuzz import process
@@ -7,7 +8,7 @@ from sqlalchemy import distinct, select
 from sqlmodel import Session
 
 import app.db.models as db
-from app.core.config import BLOCKS_JSON, CHAR_NAME_MAP, PLANES_JSON
+from app.core.config import settings
 from app.data.constants import (
     ALL_CJK_IDEOGRAPH_BLOCK_IDS,
     ALL_CONTROL_CHARACTERS,
@@ -32,7 +33,7 @@ CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 class UnicodeDataCache:
     @cached_property
     def unique_name_character_map(self) -> dict[int, str]:
-        json_map = json.loads(CHAR_NAME_MAP.read_text())
+        json_map = json.loads(settings.CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
     @property
@@ -41,7 +42,7 @@ class UnicodeDataCache:
 
     @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
-        blocks = [db.UnicodeBlock(**block) for block in json.loads(BLOCKS_JSON.read_text())]
+        blocks = [db.UnicodeBlock(**block) for block in json.loads(settings.BLOCKS_JSON.read_text())]
         for block in blocks:
             block.plane = self.get_unicode_plane_containing_block_id(block.id if block.id else 0)
         return blocks
@@ -71,8 +72,10 @@ class UnicodeDataCache:
         return block
 
     @cached_property
-    def planes(self) -> list[db.UnicodePlane]:
-        return [db.UnicodePlane(**plane) for plane in json.loads(PLANES_JSON.read_text())]
+    def planes(self) -> list[db.UnicodePlane]:  # flake8: noqa
+        if settings.PLANES_JSON.exists():
+            return [db.UnicodePlane(**plane) for plane in json.loads(settings.PLANES_JSON.read_text())]
+        return [db.UnicodePlane(**NULL_PLANE)]
 
     @property
     def plane_number_map(self) -> dict[int, db.UnicodePlane]:

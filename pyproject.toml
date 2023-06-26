@@ -61,6 +61,7 @@ norecursedirs = [
 omit = [
     "app/core/result.py",
     "app/data/scripts/*",
+    "app/data/util/*",
     "app/docs/*",
     "app/tests/*",
     "app/main.py",

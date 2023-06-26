@@ -1,26 +1,27 @@
 import json
-from pathlib import Path
-from xml.dom import minidom
 
-from app.core.config import PLANES_JSON
+from lxml import etree
+from lxml.etree import _Element, _ElementTree
+
+from app.core.config import UnicodeApiSettings
 from app.core.result import Result
 from app.data.constants import GENERIC_NAME_BLOCK_IDS, NULL_BLOCK, NULL_PLANE
 from app.data.encoding import get_codepoint_string
-from app.data.scripts.util import finish_task, start_task, update_progress
+from app.data.util import finish_task, start_task, update_progress
 
-YES_NO_MAP = {"Y": True, "N": False}
-
+YES_NO_MAP = {"Y": 1, "N": 0}
 CharDetailsDict = dict[str, bool | int | str]
 BlockOrPlaneDetailsDict = dict[str, int | str]
 AllParsedUnicodeData = tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict], list[CharDetailsDict]]
 
 
-def parse_xml_unicode_database(xml_file: Path) -> Result[AllParsedUnicodeData]:
+def parse_xml_unicode_database(config: UnicodeApiSettings) -> Result[AllParsedUnicodeData]:
     spinner = start_task("Parsing Unicode XML database...")
-    unicode_xml = minidom.parse(str(xml_file))  # nosec
+    unicode_xml = etree.parse(str(config.XML_FILE), parser=None)  # nosec
     spinner.text = "Parsing Unicode plane and block data from XML database file..."
-    all_planes: list[BlockOrPlaneDetailsDict] = json.loads(PLANES_JSON.read_text())
+    all_planes: list[BlockOrPlaneDetailsDict] = json.loads(config.PLANES_JSON.read_text())
     all_blocks: list[BlockOrPlaneDetailsDict] = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
+    (all_planes, all_blocks) = get_block_range_for_each_plane(all_planes, all_blocks)
     finish_task(spinner, True, "Successfully parsed Unicode plane and block data from XML database file!")
     all_chars: list[CharDetailsDict] = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
     spinner = start_task("Counting number of defined characters in each block and plane...")
@@ -31,22 +32,23 @@ def parse_xml_unicode_database(xml_file: Path) -> Result[AllParsedUnicodeData]:
 
 
 def parse_unicode_block_data_from_xml(
-    xml_doc: minidom.Document, parsed_planes: list[BlockOrPlaneDetailsDict]
+    xml: _ElementTree, parsed_planes: list[BlockOrPlaneDetailsDict]
 ) -> list[BlockOrPlaneDetailsDict]:
-    all_blocks = xml_doc.getElementsByTagName("block")
+    all_blocks = xml.findall(".//block", {None: "http://www.unicode.org/ns/2003/ucd/1.0"})
     return [parse_block_details(id, block, parsed_planes) for id, block in enumerate(all_blocks, start=1)]
 
 
-def parse_block_details(id: int, block_node, parsed_planes: list[BlockOrPlaneDetailsDict]):
-    start = block_node.getAttribute("first-cp")
-    finish = block_node.getAttribute("last-cp")
+def parse_block_details(id: int, block_node: _Element, parsed_planes: list[BlockOrPlaneDetailsDict]):
+    start = block_node.get("first-cp", "0")
+    finish = block_node.get("last-cp", "0")
     start_dec = int(start, 16)
     finish_dec = int(finish, 16)
     plane = get_unicode_plane_containing_block_id(start_dec, finish_dec, parsed_planes)
     return {
         "id": id,
-        "name": block_node.getAttribute("name"),
+        "name": block_node.get("name", ""),
         "plane_number": plane["number"],
+        "plane_id": plane["id"],
         "start": f"{start_dec:04X}",
         "start_dec": start_dec,
         "finish": f"{finish_dec:04X}",
@@ -67,132 +69,144 @@ def get_unicode_plane_containing_block_id(
     return found[0] if found else NULL_PLANE
 
 
+def get_block_range_for_each_plane(
+    parsed_planes: list[BlockOrPlaneDetailsDict], parsed_blocks: list[BlockOrPlaneDetailsDict]
+) -> tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict]]:
+    for plane in parsed_planes:
+        blocks_in_plane = [block for block in parsed_blocks if block["plane_id"] == plane["id"]]
+        block_ids = sorted(list(set(block["id"] for block in blocks_in_plane)))
+        plane["start_block_id"] = block_ids[0]
+        plane["finish_block_id"] = block_ids[-1]
+    return (parsed_planes, parsed_blocks)
+
+
 def parse_unicode_character_data_from_xml(
-    xml_doc: minidom.Document,
-    parsed_blocks: list[dict[str, str | int]],
-    parsed_planes: list[dict[str, str | int]],
+    xml: _ElementTree,
+    parsed_blocks: list[BlockOrPlaneDetailsDict],
+    parsed_planes: list[BlockOrPlaneDetailsDict],
 ) -> list[CharDetailsDict]:
     spinner = start_task("")
     spinner.stop_and_persist("Parsing Unicode character data from XML database file...")
-    char_nodes = xml_doc.getElementsByTagName("char")
+    char_nodes = xml.findall(".//char", {None: "http://www.unicode.org/ns/2003/ucd/1.0"})
     all_chars = [
         parse_character_details(char, parsed_blocks, parsed_planes, spinner, i, len(char_nodes))
         for (i, char) in enumerate(char_nodes, start=1)
-        if "cp" in char.attributes  # type: ignore
+        if "cp" in char.keys()  # type: ignore
     ]
     finish_task(spinner, True, "Successfully parsed Unicode character data from XML database file!")
     return all_chars
 
 
 def parse_character_details(
-    char_node: minidom.Element,
-    parsed_blocks: list[dict[str, str | int]],
-    parsed_planes: list[dict[str, str | int]],
+    char_node: _Element,
+    parsed_blocks: list[BlockOrPlaneDetailsDict],
+    parsed_planes: list[BlockOrPlaneDetailsDict],
     spinner,
     count,
     total,
 ) -> CharDetailsDict:
-    codepoint = char_node.getAttribute("cp")
+    codepoint = char_node.get("cp", "0")
     codepoint_dec = int(codepoint, 16)
     block = get_unicode_block_containing_codepoint(codepoint_dec, parsed_blocks)
-    plane = get_unicode_plane_containing_block_id(int(block["start_dec"]), int(block["finish_dec"]), parsed_planes)
+    plane = [plane for plane in parsed_planes if plane["id"] == block["plane_id"]][0]
     unihan = block["id"] in GENERIC_NAME_BLOCK_IDS
     parsed_char = {
         "character": chr(codepoint_dec),
-        "name": get_character_name(char_node, codepoint, codepoint_dec, parsed_blocks),
+        "name": get_character_name(char_node, codepoint, codepoint_dec, block),
         "codepoint": codepoint,
         "codepoint_dec": codepoint_dec,
         "block_id": block["id"],
+        "plane_id": plane["id"],
         "plane_number": plane["number"],
-        "unihan": unihan,
-        "age": char_node.getAttribute("age"),
-        "general_category": char_node.getAttribute("gc"),
-        "combining_class": int(char_node.getAttribute("ccc")),
-        "bidirectional_class": char_node.getAttribute("bc"),
-        "bidirectional_is_mirrored": YES_NO_MAP[char_node.getAttribute("Bidi_M")],
-        "bidirectional_mirroring_glyph": get_mapped_codepoint(char_node.getAttribute("bmg"), codepoint),
-        "bidirectional_control": YES_NO_MAP[char_node.getAttribute("Bidi_C")],
-        "paired_bracket_type": char_node.getAttribute("bpt"),
-        "paired_bracket_property": get_mapped_codepoint(char_node.getAttribute("bpb"), codepoint),
-        "decomposition_type": char_node.getAttribute("dt"),
-        "NFC_QC": char_node.getAttribute("NFC_QC"),
-        "NFD_QC": char_node.getAttribute("NFD_QC"),
-        "NFKC_QC": char_node.getAttribute("NFKC_QC"),
-        "NFKD_QC": char_node.getAttribute("NFKD_QC"),
-        "numeric_type": char_node.getAttribute("nt"),
-        "numeric_value": char_node.getAttribute("nv"),
-        "numeric_value_parsed": parse_numeric_value(char_node.getAttribute("nv"), codepoint),
-        "joining_type": char_node.getAttribute("jt"),
-        "joining_group": char_node.getAttribute("jg"),
-        "joining_control": YES_NO_MAP[char_node.getAttribute("Join_C")],
-        "line_break": char_node.getAttribute("lb"),
-        "east_asian_width": char_node.getAttribute("ea"),
-        "uppercase": YES_NO_MAP[char_node.getAttribute("Upper")],
-        "lowercase": YES_NO_MAP[char_node.getAttribute("Lower")],
-        "simple_uppercase_mapping": get_mapped_codepoint(char_node.getAttribute("suc"), codepoint),
-        "simple_lowercase_mapping": get_mapped_codepoint(char_node.getAttribute("slc"), codepoint),
-        "simple_titlecase_mapping": get_mapped_codepoint(char_node.getAttribute("stc"), codepoint),
-        "simple_case_folding": get_mapped_codepoint(char_node.getAttribute("scf"), codepoint),
-        "script": char_node.getAttribute("sc"),
-        "script_extensions": char_node.getAttribute("scx"),
-        "hangul_syllable_type": char_node.getAttribute("hst"),
-        "indic_syllabic_category": char_node.getAttribute("InSC"),
-        "indic_matra_category": char_node.getAttribute("InMC") or "NA",
-        "indic_positional_category": char_node.getAttribute("InPC"),
+        "_unihan": unihan,
+        "age": char_node.get("age", "0"),
+        "general_category": char_node.get("gc", "0"),
+        "combining_class": int(char_node.get("ccc", "0")),
+        "bidirectional_class": char_node.get("bc", "0"),
+        "bidirectional_is_mirrored": YES_NO_MAP[char_node.get("Bidi_M", "N")],
+        "bidirectional_mirroring_glyph": get_mapped_codepoint(char_node.get("bmg", ""), codepoint),
+        "bidirectional_control": YES_NO_MAP[char_node.get("Bidi_C", "N")],
+        "paired_bracket_type": char_node.get("bpt", ""),
+        "paired_bracket_property": get_mapped_codepoint(char_node.get("bpb", ""), codepoint),
+        "decomposition_type": char_node.get("dt", ""),
+        "NFC_QC": char_node.get("NFC_QC", ""),
+        "NFD_QC": char_node.get("NFD_QC", ""),
+        "NFKC_QC": char_node.get("NFKC_QC", ""),
+        "NFKD_QC": char_node.get("NFKD_QC", ""),
+        "numeric_type": char_node.get("nt", ""),
+        "numeric_value": char_node.get("nv", ""),
+        "numeric_value_parsed": parse_numeric_value(char_node.get("nv", ""), codepoint),
+        "joining_type": char_node.get("jt", ""),
+        "joining_group": char_node.get("jg", ""),
+        "joining_control": YES_NO_MAP[char_node.get("Join_C", "N")],
+        "line_break": char_node.get("lb", ""),
+        "east_asian_width": char_node.get("ea", ""),
+        "uppercase": YES_NO_MAP[char_node.get("Upper", "N")],
+        "lowercase": YES_NO_MAP[char_node.get("Lower", "N")],
+        "simple_uppercase_mapping": get_mapped_codepoint(char_node.get("suc", ""), codepoint),
+        "simple_lowercase_mapping": get_mapped_codepoint(char_node.get("slc", ""), codepoint),
+        "simple_titlecase_mapping": get_mapped_codepoint(char_node.get("stc", ""), codepoint),
+        "simple_case_folding": get_mapped_codepoint(char_node.get("scf", ""), codepoint),
+        "script": char_node.get("sc", ""),
+        "script_extensions": char_node.get("scx", ""),
+        "hangul_syllable_type": char_node.get("hst", ""),
+        "indic_syllabic_category": char_node.get("InSC", ""),
+        "indic_matra_category": char_node.get("InMC", "") or "NA",
+        "indic_positional_category": char_node.get("InPC", ""),
         "ideographic": get_bool_prop_value(char_node, "Ideo"),
         "unified_ideograph": get_bool_prop_value(char_node, "UIdeo"),
-        "equivalent_unified_ideograph": char_node.getAttribute("EqUIdeo"),
+        "equivalent_unified_ideograph": char_node.get("EqUIdeo", ""),
         "radical": get_bool_prop_value(char_node, "Radical"),
-        "dash": YES_NO_MAP[char_node.getAttribute("Dash")],
-        "hyphen": YES_NO_MAP[char_node.getAttribute("Hyphen")],
-        "quotation_mark": YES_NO_MAP[char_node.getAttribute("QMark")],
-        "terminal_punctuation": YES_NO_MAP[char_node.getAttribute("Term")],
-        "sentence_terminal": YES_NO_MAP[char_node.getAttribute("STerm")],
-        "diacritic": YES_NO_MAP[char_node.getAttribute("Dia")],
-        "extender": YES_NO_MAP[char_node.getAttribute("Ext")],
-        "soft_dotted": YES_NO_MAP[char_node.getAttribute("SD")],
-        "alphabetic": YES_NO_MAP[char_node.getAttribute("Alpha")],
-        "math": YES_NO_MAP[char_node.getAttribute("Math")],
-        "hex_digit": YES_NO_MAP[char_node.getAttribute("Hex")],
-        "ascii_hex_digit": YES_NO_MAP[char_node.getAttribute("AHex")],
-        "default_ignorable_code_point": YES_NO_MAP[char_node.getAttribute("DI")],
-        "logical_order_exception": YES_NO_MAP[char_node.getAttribute("LOE")],
-        "prepended_concatenation_mark": YES_NO_MAP[char_node.getAttribute("PCM")],
-        "white_space": YES_NO_MAP[char_node.getAttribute("WSpace")],
-        "vertical_orientation": char_node.getAttribute("vo"),
-        "regional_indicator": YES_NO_MAP[char_node.getAttribute("RI")],
-        "emoji": YES_NO_MAP[char_node.getAttribute("Emoji")],
-        "emoji_presentation": YES_NO_MAP[char_node.getAttribute("EPres")],
-        "emoji_modifier": YES_NO_MAP[char_node.getAttribute("EMod")],
-        "emoji_modifier_base": YES_NO_MAP[char_node.getAttribute("EBase")],
-        "emoji_component": YES_NO_MAP[char_node.getAttribute("EComp")],
-        "extended_pictographic": YES_NO_MAP[char_node.getAttribute("ExtPict")],
+        "dash": YES_NO_MAP[char_node.get("Dash", "N")],
+        "hyphen": YES_NO_MAP[char_node.get("Hyphen", "N")],
+        "quotation_mark": YES_NO_MAP[char_node.get("QMark", "N")],
+        "terminal_punctuation": YES_NO_MAP[char_node.get("Term", "N")],
+        "sentence_terminal": YES_NO_MAP[char_node.get("STerm", "N")],
+        "diacritic": YES_NO_MAP[char_node.get("Dia", "N")],
+        "extender": YES_NO_MAP[char_node.get("Ext", "N")],
+        "soft_dotted": YES_NO_MAP[char_node.get("SD", "N")],
+        "alphabetic": YES_NO_MAP[char_node.get("Alpha", "N")],
+        "math": YES_NO_MAP[char_node.get("Math", "N")],
+        "hex_digit": YES_NO_MAP[char_node.get("Hex", "N")],
+        "ascii_hex_digit": YES_NO_MAP[char_node.get("AHex", "N")],
+        "default_ignorable_code_point": YES_NO_MAP[char_node.get("DI", "N")],
+        "logical_order_exception": YES_NO_MAP[char_node.get("LOE", "N")],
+        "prepended_concatenation_mark": YES_NO_MAP[char_node.get("PCM", "N")],
+        "white_space": YES_NO_MAP[char_node.get("WSpace", "N")],
+        "vertical_orientation": char_node.get("vo", ""),
+        "regional_indicator": YES_NO_MAP[char_node.get("RI", "N")],
+        "emoji": YES_NO_MAP[char_node.get("Emoji", "N")],
+        "emoji_presentation": YES_NO_MAP[char_node.get("EPres", "N")],
+        "emoji_modifier": YES_NO_MAP[char_node.get("EMod", "N")],
+        "emoji_modifier_base": YES_NO_MAP[char_node.get("EBase", "N")],
+        "emoji_component": YES_NO_MAP[char_node.get("EComp", "N")],
+        "extended_pictographic": YES_NO_MAP[char_node.get("ExtPict", "N")],
     }
 
     if unihan:
         unihan_props = {
-            "description": char_node.getAttribute("kDefinition"),
-            "ideo_frequency": parse_numeric_value(char_node.getAttribute("kFrequency"), codepoint),
-            "ideo_grade_level": parse_numeric_value(char_node.getAttribute("kGradeLevel"), codepoint),
-            "rs_count_unicode": char_node.getAttribute("kRSUnicode"),
-            "rs_count_kangxi": char_node.getAttribute("kRSKangXi"),
-            "total_strokes": parse_numeric_value(char_node.getAttribute("kTotalStrokes"), codepoint),
-            "traditional_variant": char_node.getAttribute("kTraditionalVariant"),
-            "simplified_variant": char_node.getAttribute("kSimplifiedVariant"),
-            "z_variant": char_node.getAttribute("kZVariant"),
-            "compatibility_variant": char_node.getAttribute("kCompatibilityVariant"),
-            "semantic_variant": char_node.getAttribute("kSemanticVariant"),
-            "specialized_semantic_variant": char_node.getAttribute("kSpecializedSemanticVariant"),
-            "spoofing_variant": char_node.getAttribute("kSpoofingVariant"),
-            "accounting_numeric": char_node.getAttribute("kAccountingNumeric"),
-            "primary_numeric": char_node.getAttribute("kPrimaryNumeric"),
-            "other_numeric": char_node.getAttribute("kOtherNumeric"),
-            "hangul": char_node.getAttribute("kHangul"),
-            "cantonese": char_node.getAttribute("kCantonese"),
-            "mandarin": char_node.getAttribute("kMandarin"),
-            "japanese_kun": char_node.getAttribute("kJapaneseKun"),
-            "japanese_on": char_node.getAttribute("kJapaneseOn"),
-            "vietnamese": char_node.getAttribute("kVietnamese"),
+            "description": char_node.get("kDefinition", ""),
+            "ideo_frequency": parse_numeric_value(char_node.get("kFrequency", ""), codepoint),
+            "ideo_grade_level": parse_numeric_value(char_node.get("kGradeLevel", ""), codepoint),
+            "rs_count_unicode": char_node.get("kRSUnicode", ""),
+            "rs_count_kangxi": char_node.get("kRSKangXi", ""),
+            "total_strokes": parse_numeric_value(char_node.get("kTotalStrokes", ""), codepoint),
+            "traditional_variant": char_node.get("kTraditionalVariant", ""),
+            "simplified_variant": char_node.get("kSimplifiedVariant", ""),
+            "z_variant": char_node.get("kZVariant", ""),
+            "compatibility_variant": char_node.get("kCompatibilityVariant", ""),
+            "semantic_variant": char_node.get("kSemanticVariant", ""),
+            "specialized_semantic_variant": char_node.get("kSpecializedSemanticVariant", ""),
+            "spoofing_variant": char_node.get("kSpoofingVariant", ""),
+            "accounting_numeric": char_node.get("kAccountingNumeric", ""),
+            "primary_numeric": char_node.get("kPrimaryNumeric", ""),
+            "other_numeric": char_node.get("kOtherNumeric", ""),
+            "hangul": char_node.get("kHangul", ""),
+            "cantonese": char_node.get("kCantonese", ""),
+            "mandarin": char_node.get("kMandarin", ""),
+            "japanese_kun": char_node.get("kJapaneseKun", ""),
+            "japanese_on": char_node.get("kJapaneseOn", ""),
+            "vietnamese": char_node.get("kVietnamese", ""),
         }
         parsed_char |= unihan_props
 
@@ -201,8 +215,8 @@ def parse_character_details(
 
 
 def get_unicode_block_containing_codepoint(
-    codepoint: int, parsed_blocks: list[dict[str, str | int]]
-) -> dict[str, str | int]:
+    codepoint: int, parsed_blocks: list[BlockOrPlaneDetailsDict]
+) -> BlockOrPlaneDetailsDict:
     found = [
         block
         for block in parsed_blocks
@@ -211,8 +225,8 @@ def get_unicode_block_containing_codepoint(
     return found[0] if found else NULL_BLOCK
 
 
-def get_character_name(char_node, codepoint, codepoint_dec, block) -> str:
-    name = char_node.getAttribute("na")
+def get_character_name(char_node: _Element, codepoint: str, codepoint_dec: int, block: BlockOrPlaneDetailsDict) -> str:
+    name = char_node.get("na", "")
     return (
         f'Undefined Codepoint ({get_codepoint_string(codepoint_dec)}) (Reserved for {block["name"]})'
         if not codepoint
@@ -316,25 +330,27 @@ def parse_numeric_value(numeric_value: str, codepoint: str) -> int | float | Non
         return None
 
 
-def get_bool_prop_value(char_node: minidom.Element, prop_name: str) -> bool:
-    if (prop_value := char_node.getAttribute(prop_name)) != "":
+def get_bool_prop_value(char_node: _Element, prop_name: str) -> int:
+    if prop_value := char_node.get(prop_name, "N"):
         return YES_NO_MAP[prop_value]
-    return False
+    return 0
 
 
-def count_defined_characters_per_block(all_chars, all_blocks):
-    char_map = {char["codepoint_dec"]: char for char in all_chars}
+def count_defined_characters_per_block(all_chars: list[CharDetailsDict], all_blocks: list[BlockOrPlaneDetailsDict]):
+    char_map = {int(char["codepoint_dec"]): char for char in all_chars}
     for block in all_blocks:
-        block["total_allocated"] = block["finish_dec"] - block["start_dec"] + 1
-        block["total_defined"] = count_characters_in_range(char_map, block["start_dec"], block["finish_dec"])
+        block["total_allocated"] = int(block["finish_dec"]) - int(block["start_dec"]) + 1
+        block["total_defined"] = count_characters_in_range(char_map, int(block["start_dec"]), int(block["finish_dec"]))
 
 
-def count_characters_in_range(char_map: dict[int, dict[str, str | int]], start: int, finish: int) -> int:
+def count_characters_in_range(char_map: dict[int, BlockOrPlaneDetailsDict], start: int, finish: int) -> int:
     chars_in_block = [char_map.get(codepoint) for codepoint in range(start, finish + 1) if codepoint in char_map]
     return len(chars_in_block)
 
 
-def count_defined_characters_per_plane(all_blocks, all_planes):
+def count_defined_characters_per_plane(
+    all_blocks: list[BlockOrPlaneDetailsDict], all_planes: list[BlockOrPlaneDetailsDict]
+):
     for plane in all_planes:
-        plane["total_allocated"] = plane["finish_dec"] - plane["start_dec"] + 1
-        plane["total_defined"] = sum(b["total_defined"] for b in all_blocks if b["plane_number"] == plane["number"])
+        plane["total_allocated"] = int(plane["finish_dec"]) - int(plane["start_dec"]) + 1
+        plane["total_defined"] = sum(int(b["total_defined"]) for b in all_blocks if b["plane_id"] == plane["id"])
