@@ -22,7 +22,7 @@ def bootstrap_unicode_data() -> Result[UnicodeApiSettings]:
         os.environ["UNICODE_VERSION"] = versions[-1]
     config = UnicodeApiSettings()
     init_data_folders(config)
-    if os.environ.get("ENV") != "PROD":
+    if os.environ.get("ENV") == "DEV":
         create_planes_json(config)
     return Result.Ok(config)
 
@@ -48,7 +48,7 @@ def parse_all_unicode_version_numbers(page_source: str) -> Result[list[str]]:
         major = groups.get("major", "")
         minor = groups.get("minor", "")
         patch = groups.get("patch", "")
-        versions.append(f"{major}.{minor}" if not patch else f"{major}.{minor}.{patch}")
+        versions.append(f"{major}.{minor}{f'.{patch}' if patch else ''}")
     return (
         Result.Ok(versions)
         if versions

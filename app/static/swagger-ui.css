@@ -14,13 +14,13 @@ body {
   --svg-bg: hsla(0, 0%, 50%, 0.8);
   --svg-fg1: hsla(209, 65%, 45%);
   --svg-fg2: hsla(209, 65%, 42%);
-  --page-bg-color: hsl(225, 15%, 90%);
+  --page-bg-color: hsl(225, 25%, 90%);
   --page-header-bg-color: var(--page-bg-color);
   --api-description-bg-color: var(--page-bg-color);
-  --header-bg-color: hsla(225, 30%, 85%);
-  --header-hover-bg-color: hsla(225, 30%, 80%);
-  --base-text-color: hsl(225, 10%, 20%);
-  --darker-text-color: hsl(225, 50%, 10%);
+  --header-bg-color: hsla(225, 35%, 85%);
+  --header-hover-bg-color: hsla(225, 35%, 80%);
+  --base-text-color: hsl(225, 5%, 20%);
+  --darker-text-color: hsl(225, 45%, 10%);
   --link-color: hsl(15, 100%, 43%);
   --link-hover-color: hsl(15, 82%, 38%);
   --header-code-color: hsl(210, 99%, 40%);
@@ -35,21 +35,21 @@ body {
 
   --code-color: var(--get-color-darker);
 
-  --details-header-bg-color: hsl(225, 30%, 85%);
-  --details-header-hover-bg-color: hsl(225, 30%, 80%);
+  --details-header-bg-color: hsl(225, 35%, 85%);
+  --details-header-hover-bg-color: hsl(225, 35%, 80%);
   --details-header-text-color: var(--base-text-color);
 
-  --dl-bg-color: hsl(225, 30%, 87%);
-  --dl-border-color: hsl(225, 30%, 30%);
+  --dl-bg-color: hsl(225, 35%, 87%);
+  --dl-border-color: hsl(225, 35%, 30%);
   --dt-text-color: var(--darker-text-color);
   --dd-text-color: var(--base-text-color);
 
-  --inner-details-header-bg-color: hsl(225, 35%, 80%);
-  --inner-details-header-hover-bg-color: hsl(225, 35%, 75%);
+  --inner-details-header-bg-color: hsl(225, 40%, 80%);
+  --inner-details-header-hover-bg-color: hsl(225, 40%, 75%);
   --inner-details-header-text-color: var(--base-text-color);
 
-  --inner-dl-bg-color: hsl(225, 35%, 83%);
-  --inner-dl-border-color: hsl(225, 35%, 20%);
+  --inner-dl-bg-color: hsl(225, 40%, 83%);
+  --inner-dl-border-color: hsl(225, 40%, 20%);
 
   --params-details-header-bg-color: hsl(210, 30%, 40%);
   --params-details-header-hover-bg-color: hsl(210, 30%, 35%);
@@ -97,7 +97,7 @@ body {
   --input-text-invalid-fg-color: hsl(0, 0%, 0%);
   --input-text-invalid-border-color: hsl(0, 94%, 61%);
 
-  --api-version-badge-bg-color: hsl(220, 9%, 53%);
+  --api-version-badge-bg-color: hsla(209, 65%, 45%);
   --api-version-badge-text-color: hsl(0, 0%, 100%);
 
   --oas-version-badge-bg-color: hsl(110, 100%, 30%);
@@ -156,6 +156,24 @@ body > svg {
 
 .swagger-ui .information-container.wrapper {
   margin: 0 0 2rem 0;
+  border: 1px solid var(--dl-border-color);
+  border-radius: 6px;
+}
+
+.swagger-ui .info hgroup.main  {
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+}
+
+.swagger-ui .info > div {
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+
+}
+
+.swagger-ui .wrapper:nth-of-type(3) {
+  border: 1px solid var(--dl-border-color);
+  border-radius: 6px;
 }
 
 .swagger-ui .api-principles {
@@ -8153,7 +8171,6 @@ textarea::placeholder {
   max-width: 1460px;
   margin: 0 auto;
   box-sizing: border-box;
-  border: 1px solid var(--darker-text-color);
 }
 .swagger-ui .wrapper:nth-of-type(3) {
   padding-top: 0.5rem;
