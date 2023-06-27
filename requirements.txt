@@ -1,4 +1,4 @@
-fastapi==0.98.0
+fastapi==0.97.0
 fastapi-redis-cache==0.2.5
 fastapi-utils==0.2.1
 halo==0.0.31

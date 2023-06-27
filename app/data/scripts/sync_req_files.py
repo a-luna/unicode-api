@@ -20,4 +20,4 @@ def parse_lock_file() -> dict[str, str]:
 def update_requirements(req_file: Path, pinned_versions: dict[str, str]):
     package_names = [s.split("==", maxsplit=1)[0] for s in req_file.read_text().splitlines() if s]
     updated_versions = {package: pinned_versions.get(package) for package in package_names if package in pinned_versions}
-    REQ_BASE.write_text("\n".join([f"{name}=={ver}" for name, ver in updated_versions.items()]))
+    req_file.write_text("\n".join([f"{name}=={ver}" for name, ver in updated_versions.items()]))
