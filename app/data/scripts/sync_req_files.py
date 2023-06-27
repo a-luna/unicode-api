@@ -2,9 +2,10 @@ from pathlib import Path
 
 from app.core.config import ROOT_FOLDER
 
-REQ_BASE = ROOT_FOLDER.joinpath('requirements.txt')
-REQ_DEV = ROOT_FOLDER.joinpath('requirements-dev.txt')
-REQ_LOCK = ROOT_FOLDER.joinpath('requirements-lock.txt')
+REQ_BASE = ROOT_FOLDER.joinpath("requirements.txt")
+REQ_DEV = ROOT_FOLDER.joinpath("requirements-dev.txt")
+REQ_LOCK = ROOT_FOLDER.joinpath("requirements-lock.txt")
+
 
 def sync_requirements_files():
     pinned_versions = parse_lock_file()
@@ -19,5 +20,5 @@ def parse_lock_file() -> dict[str, str]:
 
 def update_requirements(req_file: Path, pinned_versions: dict[str, str]):
     package_names = [s.split("==", maxsplit=1)[0] for s in req_file.read_text().splitlines() if s]
-    updated_versions = {package: pinned_versions.get(package) for package in package_names if package in pinned_versions}
+    updated_versions = {p: pinned_versions.get(p) for p in package_names if p in pinned_versions}
     req_file.write_text("\n".join([f"{name}=={ver}" for name, ver in updated_versions.items()]))
