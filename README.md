@@ -152,6 +152,11 @@
                 <dd>A unit of information used for the organization, control, or representation of textual data.</dd>
                 <dt><strong>name</strong></dt>
                 <dd>A unique string used to identify each character encoded in the Unicode standard.</dd>
+                <dt><strong>description</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
+                <dd>
+                    <p>An English definition for this character. Definitions are for modern written Chinese and are usually (but not always) the same as the definition in other Chinese dialects or non-Chinese languages.</p>
+                    <p class="prop-group-ref">More info: <a href="http://www.unicode.org/reports/tr38/#kDefinition" rel="noopener noreferrer" target="_blank">http://www.unicode.org/reports/tr38/#kDefinition</a></p>
+                </dd>
                 <dt><strong>codepoint</strong></dt>
                 <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
                 <dt><strong>uriEncoded</strong></dt>
@@ -160,8 +165,7 @@
 		</details>
 		<br />
 <p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>
-		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> endpoint accepts one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="https://unicode-api.aaronluna.dev/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>
-		<details>
+		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> and <code>/v1/characters/filter</code> endpoints accept one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="http://localhost:3507/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>		<details>
             <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -405,9 +409,9 @@
                 </dd>
                 <dt><strong>numericValue</strong></dt>
                 <dd>
-                    <p>If the character has the property value <code><strong>numericValue=Decimal</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9).</p>
-                    <p>If the character has the property value <code><strong>numericValue=Digit</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9). This covers digits that need special handling, such as the compatibility superscript digits. Starting with Unicode 6.3.0, no newly encoded numeric characters will be given <code><strong>numericValue=Digit</code></strong>, nor will existing characters with <code><strong>numericValue=Decimal</code></strong> be changed to <code><strong>numericValue=Digit</code></strong>. The distinction between those two types is not considered useful.</p>
-                    <p>If the character has the property value <code><strong>numericValue=Numeric</code></strong>, then the <code>numericValue</code> of that character is represented with a positive or negative integer or rational number. This includes fractions such as, for example, "1/5" for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>).</p>
+                    <p>If the character has the property value <code><strong>numericType=Decimal</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9).</p>
+                    <p>If the character has the property value <code><strong>numericType=Digit</code></strong>, then the <code>numericValue</code> of that digit is represented with an integer value (limited to the range 0..9). This covers digits that need special handling, such as the compatibility superscript digits. Starting with Unicode 6.3.0, no newly encoded numeric characters will be given <code><strong>numericValue=Digit</code></strong>, nor will existing characters with <code><strong>numericValue=Decimal</code></strong> be changed to <code><strong>numericValue=Digit</code></strong>. The distinction between those two types is not considered useful.</p>
+                    <p>If the character has the property value <code><strong>numericType=Numeric</code></strong>, then the <code>numericValue</code> of that character is represented with a positive or negative integer or rational number. This includes fractions such as, for example, "1/5" for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>).</p>
                 </dd>
                 <dt><strong>numericValueParsed</strong></dt>
                 <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is a floating point version of the <strong>numericValue</strong> property (which is a string value). For example, <code>0.2</code> for ⅕ (<code>U+2155 <span>VULGAR FRACTION ONE FIFTH</span></code>)
@@ -547,9 +551,9 @@
             </summary>
             <dl>
                 <dt><strong>uppercase</strong></dt>
-                <dd>The uppercase form of the character.</dd>
+                <dd>Boolean value that indicates whether the character is an uppercase letter.</dd>
                 <dt><strong>lowercase</strong></dt>
-                <dd>The lowercase form of the character.</dd>
+                <dd>Boolean value that indicates whether the character is a lowercase letter.</dd>
                 <dt><strong>simpleUppercaseMapping</strong></dt>
                 <dd>The uppercase form of the character, if expressible as a single character.</dd>
                 <dt><strong>simpleLowercaseMapping</strong></dt>
@@ -817,7 +821,7 @@
 							<li style="list-style-type: '15.'"><span>Supplementary Private Use Area-A (SPUA-A)</span></li>
 							<li style="list-style-type: '16.'"><span>Supplementary Private Use Area-B (SPUA-B)</span></li>
 						</ol>
-                    <p>The codepoints within Planes 4-13 (<code>U+40000</code>...<code>U+​DFFFF</code>) are unassigned, and th</p>
+                    <p>The codepoints within Planes 4-13 (<code>U+40000</code>...<code>U+​DFFFF</code>) are unassigned, and these planes currently have no official name/abbreviation.</p>
                 </dd>
                 <dt><strong>abbreviation</strong></dt>
                 <dd>An acronym that identifies the plane, the list in the previous definition contains the abbreviation for each plane along with the official name.</dd>
