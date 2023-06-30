@@ -14,18 +14,18 @@ REQUEST_EXCEPTIONS = (ConnectionError, ConnectTimeout, HTTPError, Timeout, Reque
 
 
 def download_file(url: str, dest_folder: Path) -> Result[Path]:
-    (dest_file_path, remote_file_size) = get_file_details(url, dest_folder)
+    (dest_file_path, remote_file_size) = _get_file_details(url, dest_folder)
     if not remote_file_size:
-        return initiate_download(url, dest_file_path)
+        return _initiate_download(url, dest_file_path)
     result = (
-        initiate_download(url, dest_file_path)
+        _initiate_download(url, dest_file_path)
         if not dest_file_path.exists()
-        else resume_download(url, dest_file_path, remote_file_size)
+        else _resume_download(url, dest_file_path, remote_file_size)
     )
-    return verify_download(dest_file_path, remote_file_size) if result.success else result
+    return _verify_download(dest_file_path, remote_file_size) if result.success else result
 
 
-def get_file_details(url: str, dest_folder: Path) -> tuple[Path, int]:
+def _get_file_details(url: str, dest_folder: Path) -> tuple[Path, int]:
     dest_folder.mkdir(parents=True, exist_ok=True)
     dest_file_path = dest_folder.joinpath(Path(urlsplit(url).path).name)
     r = requests_head(url)
@@ -33,21 +33,21 @@ def get_file_details(url: str, dest_folder: Path) -> tuple[Path, int]:
     return (dest_file_path, remote_file_size)
 
 
-def initiate_download(url: str, dest_file_path: Path) -> Result[Path]:
+def _initiate_download(url: str, dest_file_path: Path) -> Result[Path]:
     print(f"{dest_file_path.name!r} does not exist. Downloading...")
-    return download_file_in_chunks(url, dest_file_path)
+    return _download_file_in_chunks(url, dest_file_path)
 
 
-def resume_download(url: str, dest_file_path: Path, remote_file_size: int) -> Result[Path]:
+def _resume_download(url: str, dest_file_path: Path, remote_file_size: int) -> Result[Path]:
     local_file_size = dest_file_path.stat().st_size
     if local_file_size == remote_file_size:
         print(f"{dest_file_path.name!r} is complete. Skipping...")
         return Result.Ok(dest_file_path)
     print(f"{dest_file_path.name!r} is incomplete. Resuming...")
-    return download_file_in_chunks(url, dest_file_path, local_file_size, fopen_mode="ab")
+    return _download_file_in_chunks(url, dest_file_path, local_file_size, fopen_mode="ab")
 
 
-def download_file_in_chunks(
+def _download_file_in_chunks(
     url: str, dest_file_path: Path, local_file_size: int | None = None, fopen_mode: str = "wb"
 ) -> Result[Path]:
     resume_header = {"Range": f"bytes={local_file_size}-"} if local_file_size else None
@@ -66,7 +66,7 @@ def download_file_in_chunks(
         return Result.Fail(error)
 
 
-def verify_download(dest_file_path: Path, remote_file_size: int) -> Result[Path]:
+def _verify_download(dest_file_path: Path, remote_file_size: int) -> Result[Path]:
     local_file_size = dest_file_path.stat().st_size
     if local_file_size == remote_file_size:
         return Result.Ok(dest_file_path)
@@ -89,5 +89,6 @@ def request_url_with_retries(url: str) -> Result[Response]:
     try:
         response = request_url(url)
         return Result.Ok(response)
-    except RetryLimitExceededError as e:
-        return Result.Fail(repr(e))
+    except RetryLimitExceededError as ex:
+        error = f"Error! {__name__} occurred while requesting URL:\n" f"\tURL: {url}\n" f"\tError: {repr(ex)}"
+        return Result.Fail(error)

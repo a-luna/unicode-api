@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from data.util.command import run_command
-
 from app.core.config import ROOT_FOLDER
+from app.data.util.command import run_command
 
 REQ_BASE = ROOT_FOLDER.joinpath("requirements.txt")
 REQ_DEV = ROOT_FOLDER.joinpath("requirements-dev.txt")
