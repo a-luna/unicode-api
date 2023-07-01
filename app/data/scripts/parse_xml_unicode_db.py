@@ -74,9 +74,10 @@ def get_block_range_for_each_plane(
 ) -> tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict]]:
     for plane in parsed_planes:
         blocks_in_plane = [block for block in parsed_blocks if block["plane_id"] == plane["id"]]
-        block_ids = sorted(list(set(block["id"] for block in blocks_in_plane)))
-        plane["start_block_id"] = block_ids[0]
-        plane["finish_block_id"] = block_ids[-1]
+        block_ids = sorted(list(set(block["id"] for block in blocks_in_plane if block and "id" in block)))
+        if block_ids:
+            plane["start_block_id"] = block_ids[0]
+            plane["finish_block_id"] = block_ids[-1]
     return (parsed_planes, parsed_blocks)
 
 
