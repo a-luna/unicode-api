@@ -75,9 +75,9 @@ coverage.xml
 docs/_build/
 
 # Unicode data files
-characters.json
-char_name_map.json
-char_no_name_map.json
-ucd.all.flat.xml
+app/data/csv/**/*
+app/data/db/**/*
+app/data/json/**/*
+app/data/xml/**/*
 
 .ruff_cache
