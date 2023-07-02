@@ -160,7 +160,11 @@
                 <dt><strong>codepoint</strong></dt>
                 <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
                 <dt><strong>uriEncoded</strong></dt>
-                <dd>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>). A URI string must contain only a defined subset of characters from the standard 128 ASCII character set, any other characters must be replaced by an escape sequence representing the UTF-8 encoding of the character. For example, ∑ (<code>U+2211 <span>N-ARY SUMMATION</span></code>) is equal to <code>0xE2 0x88 0x91</code> in UTF-8 encoding. When used as part of a URI, this character must be escaped using the URI-escaped string <code>%E2%88%91</code>.</dd>
+                <dd>
+                    <p>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>).</p>
+                    <p>A URI string must contain only a defined subset of characters from the standard 128 ASCII character set, any other characters must be replaced by an escape sequence representing the UTF-8 encoding of the character.</p>
+                    <p>For example, ∑ (<code>U+2211 <span>N-ARY SUMMATION</span></code>) in UTF-8 encoding is <code>0xE2 0x88 0x91</code>. To include this character in a URI, each UTF-8 byte is prefixed with the <code>%</code> character to produce the URI-encoded string: <code>%E2%88%91</code>.</p>
+                </dd>
             </dl>
 		</details>
 		<br />
