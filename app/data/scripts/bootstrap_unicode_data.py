@@ -8,18 +8,25 @@ from app.core.config import UnicodeApiSettings
 from app.core.result import Result
 from app.data.util import request_url_with_retries
 
+MINIMUM_UNICODE_VERSION = 5.1
 UNICODE_DIR_LINKS_XPATH = "//tr/td[2]/a/@href"
 SEMVER_REGEX = re.compile(r"^(?P<major>(?:[1-9]\d*))\.(?P<minor>(?:[0-9]\d*))(?:\.(?P<patch>(?:[0-9]\d*)))?")
 UNICODE_PUBLIC_DIR_URL = "https://www.unicode.org/Public/"
 
 
 def bootstrap_unicode_data() -> Result[UnicodeApiSettings]:
+    result = get_all_unicode_versions()
+    if result.failure or not result.value:
+        return Result.Fail(result.error if result.error else "")
+    versions = result.value
+
     if not os.environ.get("UNICODE_VERSION"):
-        result = get_all_unicode_versions()
-        if result.failure or not result.value:
-            return Result.Fail(result.error if result.error else "")
-        versions = result.value
         os.environ["UNICODE_VERSION"] = versions[-1]
+
+    result = check_min_version(versions)
+    if result.failure:
+        return result
+
     config = UnicodeApiSettings()
     init_data_folders(config)
     if os.environ.get("ENV") == "DEV":
@@ -41,19 +48,51 @@ def parse_all_unicode_version_numbers(page_source: str) -> Result[list[str]]:
     versions = []
     page_content = html.fromstring(page_source, base_url=UNICODE_PUBLIC_DIR_URL)
     for link in page_content.xpath(UNICODE_DIR_LINKS_XPATH):
-        match = SEMVER_REGEX.match(link)
-        if not match:
+        result = parse_semver_string(link)
+        if result.failure or not result.value:
             continue
-        groups = match.groupdict()
-        major = groups.get("major", "")
-        minor = groups.get("minor", "")
-        patch = groups.get("patch", "")
+        (major, minor, patch) = result.value
         versions.append(f"{major}.{minor}{f'.{patch}' if patch else ''}")
     return (
         Result.Ok(versions)
         if versions
         else Result.Fail("Error! Failed to parse Unicode version numbers from unicode.org")
     )
+
+
+def parse_semver_string(input: str) -> Result[tuple[int, int, int]]:
+    match = SEMVER_REGEX.match(input)
+    if not match:
+        return Result.Fail(f"'{input}' is not a valid semantic version")
+    groups = match.groupdict()
+    major = groups.get("major") or "0"
+    minor = groups.get("minor") or "0"
+    patch = groups.get("patch") or "0"
+    return Result.Ok((int(major), int(minor), int(patch)))
+
+
+def check_min_version(all_versions: list[str]) -> Result:
+    check_version = os.environ.get("UNICODE_VERSION", "0")
+    result = parse_semver_string(check_version)
+    if result.failure or not result.value:
+        return result
+    (major, minor, patch) = result.value
+    if float(f"{major}.{minor}") >= MINIMUM_UNICODE_VERSION:
+        return Result.Ok()
+    error = (
+        "This script parses the XML representation of the Unicode Character Database, which has been distributed "
+        f"as part of the Unicode Standard since version {MINIMUM_UNICODE_VERSION}.0. The XML representation does "
+        "not exist for the version of the Unicode Standard specified by the UNICODE_VERSION environment variable "
+        f"(v{major}.{minor}{f'.{patch}' if patch else ''}). Please update the value of UNICODE_VERSION to any of the "
+        f"following versions which include the required UCD XML files: "
+        f"{', '.join(get_allowed_unicode_versions(all_versions))}"
+    )
+    return Result.Fail(error)
+
+
+def get_allowed_unicode_versions(all_versions: list[str]) -> list[str]:
+    parsed = sorted(float(f"{v}") for v in all_versions)
+    return [f"{v}.0" for v in parsed if v > 5.0]
 
 
 def init_data_folders(config: UnicodeApiSettings) -> None:
