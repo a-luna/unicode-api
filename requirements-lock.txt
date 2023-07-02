@@ -49,7 +49,7 @@ pprintpp==0.4.0
 prompt-toolkit==3.0.38
 ptyprocess==0.7.0
 pure-eval==0.2.2
-pydantic==1.10.9
+pydantic==1.10.10
 Pygments==2.15.1
 pyhumps==3.8.0
 pyproject-api==1.5.2
@@ -63,7 +63,7 @@ pytest-random-order==1.1.0
 pytest-sugar==0.9.7
 python-dateutil==2.8.2
 python-dotenv==1.0.0
-pyupgrade==3.7.0
+pyupgrade==3.8.0
 rapidfuzz==3.1.1
 redis==4.6.0
 requests==2.31.0
@@ -86,7 +86,7 @@ toml==0.10.2
 tomli==2.0.1
 tox==4.6.3
 traitlets==5.9.0
-typing_extensions==4.6.3
+typing_extensions==4.7.0
 urllib3==2.0.3
 uvicorn==0.22.0
 virtualenv==20.23.1

@@ -10,7 +10,7 @@ pytest-dotenv==0.5.2
 pytest-mock==3.11.1
 pytest-random-order==1.1.0
 pytest-sugar==0.9.7
-pyupgrade==3.7.0
+pyupgrade==3.8.0
 ruff==0.0.275
 snoop==0.4.3
 tox==4.6.3
