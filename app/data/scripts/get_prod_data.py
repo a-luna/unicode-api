@@ -8,7 +8,6 @@ from app.data.util import download_file
 
 
 def get_prod_data():
-    
     result = bootstrap_unicode_data()
     if result.failure or not result.value:
         return result
@@ -71,8 +70,8 @@ def extract_unicode_json(config: UnicodeApiSettings) -> Result[list[Path]]:
         extracted_files = list(config.JSON_FOLDER.glob("*.json"))
         if not extracted_files:
             return Result.Fail(f"Error occurred extracting Unicode DB from {config.JSON_ZIP_FILE.name}!")
-        if len(extracted_files) != 4:
-            error = f"{len(extracted_files)} files were extracted from {config.JSON_ZIP_FILE.name}, expected 4:\n"
+        if len(extracted_files) != 3:
+            error = f"{len(extracted_files)} files were extracted from {config.JSON_ZIP_FILE.name}, expected 3:\n"
             for i, file in enumerate(extracted_files, start=1):
                 error += f"\tFile #{i}: {file.name}"
             return Result.Fail(error)
