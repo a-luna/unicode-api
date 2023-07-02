@@ -1,5 +1,9 @@
 /* BEGIN: MY CUSTOMIZATIONS */
 
+html {
+  background-color: #808080cc;
+}
+
 body {
   display: flex;
   margin: 1rem 0;
@@ -158,6 +162,10 @@ body > svg {
   margin: 0 0 2rem 0;
   border: 1px solid var(--dl-border-color);
   border-radius: 6px;
+}
+
+.swagger-ui .info {
+  background-color: var(--page-bg-color);
 }
 
 .swagger-ui .info hgroup.main  {
@@ -9768,9 +9776,9 @@ textarea::placeholder {
   margin: 0;
   padding: 0;
 }
-.swagger-ui .info > div {
+/* .swagger-ui .info > div {
   background-color: var(--api-description-bg-color);
-}
+} */
 .swagger-ui .info.failed-config {
   max-width: 880px;
   margin-left: auto;
@@ -9780,7 +9788,7 @@ textarea::placeholder {
 .swagger-ui .info hgroup.main {
   margin: 0;
   padding: 1rem 1.5rem ;
-  background-color: var(--page-header-bg-color);
+  /* background-color: var(--page-header-bg-color); */
 }
 .swagger-ui .info hgroup.main a {
   font-size: 12px;
