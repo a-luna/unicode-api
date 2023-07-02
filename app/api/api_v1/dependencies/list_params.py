@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import HTTPException, Query
 
@@ -36,19 +37,13 @@ def get_decimal_number_from_hex_codepoint(codepoint: str) -> int:
 class ListParameters:
     def __init__(
         self,
-        limit: int = Query(default=None, ge=1, le=100, description=LIMIT_DESCRIPTION),
-        starting_after: str
-        | None = Query(
-            default=None,
-            description=STARTING_AFTER_CODEPOINT_DESCRIPTION,
-            examples=CODEPOINT_EXAMPLES,
-        ),
-        ending_before: str
-        | None = Query(
-            default=None,
-            description=ENDING_BEFORE_CODEPOINT_DESCRIPTION,
-            examples=CODEPOINT_EXAMPLES,
-        ),
+        limit: Annotated[int | None, Query(ge=1, le=100, description=LIMIT_DESCRIPTION)] = None,
+        starting_after: Annotated[
+            str | None, Query(description=STARTING_AFTER_CODEPOINT_DESCRIPTION, examples=CODEPOINT_EXAMPLES)
+        ] = None,
+        ending_before: Annotated[
+            str | None, Query(description=ENDING_BEFORE_CODEPOINT_DESCRIPTION, examples=CODEPOINT_EXAMPLES)
+        ] = None,
     ):
         if ending_before and starting_after:
             raise HTTPException(
@@ -68,21 +63,13 @@ class ListParameters:
 class ListParametersDecimal:
     def __init__(
         self,
-        limit: int = Query(default=None, ge=1, le=100, description=LIMIT_DESCRIPTION),
-        starting_after: int
-        | None = Query(
-            default=None,
-            ge=1,
-            le=len(cached_data.blocks),
-            description=STARTING_AFTER_BLOCK_ID_DESCRIPTION,
-        ),
-        ending_before: int
-        | None = Query(
-            default=None,
-            ge=1,
-            le=len(cached_data.blocks),
-            description=ENDING_BEFORE_BLOCK_ID_DESCRIPTION,
-        ),
+        limit: Annotated[int | None, Query(ge=1, le=100, description=LIMIT_DESCRIPTION)] = None,
+        starting_after: Annotated[
+            int | None, Query(ge=1, le=len(cached_data.blocks), description=STARTING_AFTER_BLOCK_ID_DESCRIPTION)
+        ] = None,
+        ending_before: Annotated[
+            int | None, Query(ge=1, le=len(cached_data.blocks), description=ENDING_BEFORE_BLOCK_ID_DESCRIPTION)
+        ] = None,
     ):
         if ending_before and starting_after:
             raise HTTPException(

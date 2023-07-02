@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import HTTPException, Path, Query
 
@@ -11,7 +12,7 @@ from app.schemas.enums.block_name import UnicodeBlockName
 class UnicodeBlockQueryParamResolver:
     def __init__(
         self,
-        block: str | None = Query(default=None, description=CHAR_SEARCH_BLOCK_NAME_DESCRIPTION),
+        block: Annotated[str | None, Query(description=CHAR_SEARCH_BLOCK_NAME_DESCRIPTION)] = None,
     ):
         self.block = loose_match_string_with_unicode_block_name(block) if block else cached_data.all_characters_block
         self.name = self.block.name
@@ -22,7 +23,7 @@ class UnicodeBlockQueryParamResolver:
 class UnicodeBlockPathParamResolver:
     def __init__(
         self,
-        name: str = Path(default=..., description=BLOCK_NAME_DESCRIPTION),
+        name: Annotated[str, Path(description=BLOCK_NAME_DESCRIPTION)],
     ):
         self.block = loose_match_string_with_unicode_block_name(name)
         self.name = self.block.name

@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import HTTPException, Query
 
@@ -9,7 +10,7 @@ from app.docs.dependencies.custom_parameters import PLANE_NAME_DESCRIPTION
 class UnicodePlaneResolver:
     def __init__(
         self,
-        plane: str | None = Query(default=None, description=PLANE_NAME_DESCRIPTION),
+        plane: Annotated[str | None, Query(description=PLANE_NAME_DESCRIPTION)] = None,
     ):
         self.plane = cached_data.get_unicode_plane_by_abbreviation(plane) if plane else cached_data.all_characters_plane
         if self.plane.name != "None":

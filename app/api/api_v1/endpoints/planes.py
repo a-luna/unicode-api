@@ -1,3 +1,4 @@
+from typing import Annotated
 from fastapi import APIRouter, Path
 
 import app.db.models as db
@@ -23,6 +24,6 @@ def list_all_unicode_planes():
     response_model=db.UnicodePlaneResponse,
     response_model_exclude_unset=True,
 )
-def get_unicode_plane_details(number: int = Path(ge=0, le=16)):
+def get_unicode_plane_details(number: Annotated[int, Path(ge=0, le=16)]):
     plane = cached_data.get_unicode_plane_by_number(number)
     return db.UnicodePlane.responsify(plane)

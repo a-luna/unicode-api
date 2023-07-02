@@ -26,7 +26,6 @@ from app.docs.dependencies.custom_parameters import (
 from app.schemas.enums import CharPropertyGroup
 
 PropertyGroupMatcher = FilterParameterMatcher[CharPropertyGroup]("show_props", CharPropertyGroup)
-DatabaseSession = Annotated[DBSession, Depends(get_session)]
 router = APIRouter()
 
 
@@ -36,9 +35,9 @@ router = APIRouter()
     response_model_exclude_unset=True,
 )
 def list_all_unicode_characters(
-    db_ctx: DatabaseSession,
-    list_params: ListParameters = Depends(),
-    block: UnicodeBlockQueryParamResolver = Depends(),
+    db_ctx: Annotated[DBSession, Depends(get_session)],
+    list_params: Annotated[ListParameters, Depends()],
+    block: Annotated[UnicodeBlockQueryParamResolver, Depends()],
 ):
     (start, stop) = get_char_list_endpoints(list_params, block)
     return {
@@ -54,8 +53,8 @@ def list_all_unicode_characters(
     response_model_exclude_unset=True,
 )
 def search_unicode_characters_by_name(
-    db_ctx: DatabaseSession,
-    search_parameters: CharacterSearchParameters = Depends(),
+    db_ctx: Annotated[DBSession, Depends(get_session)],
+    search_parameters: Annotated[CharacterSearchParameters, Depends()],
 ):
     response_data = {"url": f"{settings.API_VERSION}/characters/search", "query": search_parameters.name}
     search_results = cached_data.search_characters_by_name(search_parameters.name, search_parameters.min_score)
@@ -75,7 +74,9 @@ def search_unicode_characters_by_name(
     response_model=db.PaginatedSearchResults[db.UnicodeCharacterResponse],
     response_model_exclude_unset=True,
 )
-def filter_unicode_characters(db_ctx: DatabaseSession, filter_parameters: FilterParameters = Depends()):
+def filter_unicode_characters(
+    db_ctx: Annotated[DBSession, Depends(get_session)], filter_parameters: Annotated[FilterParameters, Depends()]
+):
     response_data = {"url": f"{settings.API_VERSION}/characters/filter"}
     codepoints = db_ctx.filter_all_characters(filter_parameters)
     filter_results = [(cp, None) for cp in codepoints]
@@ -96,11 +97,12 @@ def filter_unicode_characters(db_ctx: DatabaseSession, filter_parameters: Filter
     response_model_exclude_unset=True,
 )
 def get_unicode_character_details(
-    db_ctx: DatabaseSession,
-    string: str = Path(description=UNICODE_CHAR_STRING_DESCRIPTION, examples=UNICODE_CHAR_EXAMPLES),
-    show_props: list[str]
-    | None = Query(default=None, description=get_description_and_values_table_for_property_group()),
-    verbose: bool | None = Query(default=None, description=VERBOSE_DESCRIPTION),
+    db_ctx: Annotated[DBSession, Depends(get_session)],
+    string: Annotated[str, Path(description=UNICODE_CHAR_STRING_DESCRIPTION, examples=UNICODE_CHAR_EXAMPLES)],
+    show_props: Annotated[
+        list[str] | None, Query(description=get_description_and_values_table_for_property_group())
+    ] = None,
+    verbose: Annotated[bool | None, Query(description=VERBOSE_DESCRIPTION)] = None,
 ):
     if show_props:
         result = PropertyGroupMatcher.parse_enum_values(show_props)

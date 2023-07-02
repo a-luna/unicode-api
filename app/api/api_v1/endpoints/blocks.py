@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -17,7 +18,9 @@ router = APIRouter()
 
 
 @router.get("", response_model=db.PaginatedList[db.UnicodeBlockResponse], response_model_exclude_unset=True)
-def list_all_unicode_blocks(list_params: ListParametersDecimal = Depends(), plane: UnicodePlaneResolver = Depends()):
+def list_all_unicode_blocks(
+    list_params: Annotated[ListParametersDecimal, Depends()], plane: Annotated[UnicodePlaneResolver, Depends()]
+):
     (start, stop) = get_block_list_endpoints(list_params, plane)
     return {
         "url": f"{settings.API_VERSION}/blocks",
@@ -32,7 +35,7 @@ def list_all_unicode_blocks(list_params: ListParametersDecimal = Depends(), plan
     response_model_exclude_unset=True,
 )
 def search_unicode_blocks_by_name(
-    search_params: BlockSearchParameters = Depends(),
+    search_params: Annotated[BlockSearchParameters, Depends()],
 ):
     params = {
         "url": f"{settings.API_VERSION}/blocks/search",
@@ -65,7 +68,7 @@ def search_unicode_blocks_by_name(
     response_model=db.UnicodeBlockResponse,
     response_model_exclude_unset=True,
 )
-def get_unicode_block_details(name: UnicodeBlockPathParamResolver = Depends()):
+def get_unicode_block_details(name: Annotated[UnicodeBlockPathParamResolver, Depends()]):
     return name.block.as_response()
 
 

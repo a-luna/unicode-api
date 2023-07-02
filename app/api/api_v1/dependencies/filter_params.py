@@ -1,7 +1,5 @@
-from __future__ import annotations
-
 from http import HTTPStatus
-from typing import Generic, Type, TypeVar
+from typing import Annotated, Generic, Type, TypeVar
 
 from fastapi import HTTPException, Query
 
@@ -63,21 +61,21 @@ class FilterParameterMatcher(Generic[T]):
 class FilterParameters:
     def __init__(
         self,
-        name: str | None = Query(default=None, description=CHAR_NAME_FILTER_DESCRIPTION),
-        category: list[str] | None = Query(default=None, description=get_filter_param_description("category")),
-        age: list[str] | None = Query(default=None, description=get_filter_param_description("age")),
-        script: list[str] | None = Query(default=None, description=get_filter_param_description("script")),
-        bidi_class: list[str] | None = Query(default=None, description=get_filter_param_description("bidi_class")),
-        decomp_type: list[str] | None = Query(default=None, description=get_filter_param_description("decomp_type")),
-        line_break: list[str] | None = Query(default=None, description=get_filter_param_description("line_break")),
-        ccc: list[str] | None = Query(default=None, description=get_filter_param_description("ccc")),
-        num_type: list[str] | None = Query(default=None, description=get_filter_param_description("num_type")),
-        join_type: list[str] | None = Query(default=None, description=get_filter_param_description("join_type")),
-        flag: list[str] | None = Query(default=None, description=get_filter_param_description("flag")),
-        show_props: list[str] | None = Query(default=None, description=get_filter_param_description("show_props")),
-        verbose: bool | None = Query(default=None, description=VERBOSE_DESCRIPTION),
-        per_page: int | None = Query(default=None, ge=1, le=100, description=PER_PAGE_DESCRIPTION),
-        page: int | None = Query(default=None, ge=1, description=PAGE_NUMBER_DESCRIPTION),
+        name: Annotated[str | None, Query(description=CHAR_NAME_FILTER_DESCRIPTION)] = None,
+        category: Annotated[list[str] | None, Query(description=get_filter_param_description("category"))] = None,
+        age: Annotated[list[str] | None, Query(description=get_filter_param_description("age"))] = None,
+        script: Annotated[list[str] | None, Query(description=get_filter_param_description("script"))] = None,
+        bidi_class: Annotated[list[str] | None, Query(description=get_filter_param_description("bidi_class"))] = None,
+        decomp_type: Annotated[list[str] | None, Query(description=get_filter_param_description("decomp_type"))] = None,
+        line_break: Annotated[list[str] | None, Query(description=get_filter_param_description("line_break"))] = None,
+        ccc: Annotated[list[str] | None, Query(description=get_filter_param_description("ccc"))] = None,
+        num_type: Annotated[list[str] | None, Query(description=get_filter_param_description("num_type"))] = None,
+        join_type: Annotated[list[str] | None, Query(description=get_filter_param_description("join_type"))] = None,
+        flag: Annotated[list[str] | None, Query(description=get_filter_param_description("flag"))] = None,
+        show_props: Annotated[list[str] | None, Query(description=get_filter_param_description("show_props"))] = None,
+        verbose: Annotated[bool | None, Query(description=VERBOSE_DESCRIPTION)] = None,
+        per_page: Annotated[int | None, Query(ge=1, le=100, description=PER_PAGE_DESCRIPTION)] = None,
+        page: Annotated[int | None, Query(ge=1, description=PAGE_NUMBER_DESCRIPTION)] = None,
     ):
         self.parse_all_enum_values(
             category, age, script, bidi_class, decomp_type, line_break, ccc, num_type, join_type, flag, show_props
