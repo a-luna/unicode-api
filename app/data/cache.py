@@ -1,6 +1,5 @@
 import itertools
 import json
-import os
 from functools import cache, cached_property
 
 from rapidfuzz import process
@@ -72,10 +71,8 @@ class UnicodeDataCache:
         return block
 
     @cached_property
-    def planes(self) -> list[db.UnicodePlane]:  # flake8: noqa
-        if settings.PLANES_JSON.exists():
-            return [db.UnicodePlane(**plane) for plane in json.loads(settings.PLANES_JSON.read_text())]
-        return [db.UnicodePlane(**NULL_PLANE)]
+    def planes(self) -> list[db.UnicodePlane]:
+        return [db.UnicodePlane(**plane) for plane in json.loads(settings.PLANES_JSON.read_text())]
 
     @property
     def plane_number_map(self) -> dict[int, db.UnicodePlane]:
