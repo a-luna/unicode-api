@@ -2,11 +2,10 @@ from typing import Any
 
 from app.data.cache import cached_data
 from app.data.constants import (
-    ALL_CJK_IDEOGRAPH_BLOCK_IDS,
     DEFAULT_BC_AL_CODEPOINTS,
     DEFAULT_BC_ET_CODEPOINTS,
     DEFAULT_BC_R_CODEPOINTS,
-    DEFAULT_VO_U_BLOCK_IDS,
+    DEFAULT_VO_U_BLOCK_NAMES,
     DEFAULT_VO_U_PLANE_NUMBERS,
 )
 from app.data.encoding import (
@@ -39,6 +38,7 @@ from app.schemas.enums import (
     TriadicLogic,
     VerticalOrientationType,
 )
+from app.schemas.enums.block_name import UnicodeBlockName
 
 MINIMUM_PROPERTIES = [
     {
@@ -1016,7 +1016,7 @@ def get_default_general_category_display_name(codepoint: int) -> str:
         GeneralCategory.SURROGATE
         if cached_data.codepoint_is_surrogate(codepoint)
         else GeneralCategory.PRIVATE_USE
-        if cached_data.codepoint_is_private_use
+        if cached_data.codepoint_is_private_use(codepoint)
         else GeneralCategory.UNASSIGNED
     )
     return general_category.display_name
@@ -1041,7 +1041,7 @@ def get_default_eaw_display_name(codepoint: int) -> str:
         EastAsianWidthType.EAST_ASIAN_AMBIGUOUS
         if cached_data.codepoint_is_private_use
         else EastAsianWidthType.EAST_ASIAN_WIDE
-        if block.id in ALL_CJK_IDEOGRAPH_BLOCK_IDS
+        if block.id in cached_data.all_cjk_ideograph_block_ids
         else EastAsianWidthType.NEUTRAL_NOT_EAST_ASIAN
     )
     return eaw.display_name
@@ -1051,10 +1051,16 @@ def get_default_vo_display_name(codepoint: int) -> str:
     block = cached_data.get_unicode_block_containing_codepoint(codepoint)
     vo_type = (
         VerticalOrientationType.UPRIGHT
-        if block.plane and block.plane.number in DEFAULT_VO_U_PLANE_NUMBERS or block.id in DEFAULT_VO_U_BLOCK_IDS
+        if block.plane
+        and block.plane.number in DEFAULT_VO_U_PLANE_NUMBERS
+        or block.id in get_default_vert_orient_upright_block_ids()
         else VerticalOrientationType.ROTATED
     )
     return vo_type.display_name
+
+
+def get_default_vert_orient_upright_block_ids() -> set[int]:
+    return set(UnicodeBlockName.match_loosely(block_name) for block_name in DEFAULT_VO_U_BLOCK_NAMES)
 
 
 def get_script_extensions(value: str) -> list[str]:

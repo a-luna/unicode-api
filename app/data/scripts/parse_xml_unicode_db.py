@@ -5,7 +5,7 @@ from lxml.etree import _Element, _ElementTree
 
 from app.core.config import UnicodeApiSettings
 from app.core.result import Result
-from app.data.constants import GENERIC_NAME_BLOCK_IDS, NULL_BLOCK, NULL_PLANE
+from app.data.constants import NULL_BLOCK, NULL_PLANE
 from app.data.encoding import get_codepoint_string
 from app.data.util import finish_task, start_task, update_progress
 
@@ -110,7 +110,7 @@ def parse_character_details(
     codepoint_dec = int(codepoint, 16)
     block = get_unicode_block_containing_codepoint(codepoint_dec, parsed_blocks)
     plane = [plane for plane in parsed_planes if plane["id"] == block["plane_id"]][0]
-    unihan = block["id"] in GENERIC_NAME_BLOCK_IDS
+    unihan = char_is_unihan(str(block["name"]))
     parsed_char = {
         "character": chr(codepoint_dec),
         "name": get_character_name(char_node, codepoint, codepoint_dec, block),
@@ -224,6 +224,16 @@ def get_unicode_block_containing_codepoint(
         if int(block["start_dec"]) <= codepoint and codepoint <= int(block["finish_dec"])
     ]
     return found[0] if found else NULL_BLOCK
+
+
+def char_is_unihan(block_name: str) -> bool:
+    return (
+        True
+        if "cjk unified ideographs" in block_name.lower()
+        or "cjk compatibility ideographs" in block_name.lower()
+        or ("tangut" in block_name.lower() and "component" not in block_name.lower())
+        else False
+    )
 
 
 def get_character_name(char_node: _Element, codepoint: str, codepoint_dec: int, block: BlockOrPlaneDetailsDict) -> str:

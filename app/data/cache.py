@@ -9,18 +9,12 @@ from sqlmodel import Session
 import app.db.models as db
 from app.core.config import settings
 from app.data.constants import (
-    ALL_CJK_IDEOGRAPH_BLOCK_IDS,
     ALL_CONTROL_CHARACTERS,
     C0_CONTROL_CHARACTERS,
-    CJK_COMPATIBILITY_BLOCK_IDS,
-    CJK_UNIFIED_BLOCK_IDS,
     MAX_CODEPOINT,
     NON_CHARACTER_CODEPOINTS,
     NULL_BLOCK,
     NULL_PLANE,
-    PRIVATE_USE_BLOCK_IDS,
-    SURROGATE_BLOCK_IDS,
-    TANGUT_BLOCK_IDS,
 )
 from app.data.encoding import get_codepoint_string
 from app.db.engine import engine
@@ -70,6 +64,34 @@ class UnicodeDataCache:
         block.plane = self.all_characters_plane
         return block
 
+    @property
+    def cjk_unified_ideograph_block_ids(self) -> set[int]:
+        return set(b.id for b in self.blocks if "cjk unified ideographs" in b.name.lower() and b.id)
+
+    @property
+    def cjk_compatibility_block_ids(self) -> set[int]:
+        return set(b.id for b in self.blocks if "cjk compatibility ideographs" in b.name.lower() and b.id)
+
+    @property
+    def tangut_character_block_ids(self) -> set[int]:
+        return set(
+            b.id for b in self.blocks if "tangut" in b.name.lower() and "component" not in b.name.lower() and b.id
+        )
+
+    @property
+    def surrogate_block_ids(self) -> set[int]:
+        return set(b.id for b in self.blocks if "surrogate" in b.name.lower() and b.id)
+
+    @property
+    def private_use_block_ids(self) -> set[int]:
+        return set(
+            b.id for b in self.blocks if "private use" in b.name.lower() and "surrogate" not in b.name.lower() and b.id
+        )
+
+    @property
+    def all_cjk_ideograph_block_ids(self) -> set[int]:
+        return set(list(self.cjk_unified_ideograph_block_ids) + list(self.cjk_compatibility_block_ids))
+
     @cached_property
     def planes(self) -> list[db.UnicodePlane]:
         return [db.UnicodePlane(**plane) for plane in json.loads(settings.PLANES_JSON.read_text())]
@@ -111,30 +133,30 @@ class UnicodeDataCache:
         return set(NON_CHARACTER_CODEPOINTS)
 
     @property
-    def all_named_characters(self):
-        return list(self.unique_name_character_map.keys())
+    def all_named_characters(self) -> set[int]:
+        return set(self.unique_name_character_map.keys())
 
     @property
     def all_cjk_ideograph_codepoints(self):
-        cjk_blocks = [self.get_unicode_block_by_id(block_id) for block_id in sorted(ALL_CJK_IDEOGRAPH_BLOCK_IDS)]
+        cjk_blocks = [self.get_unicode_block_by_id(block_id) for block_id in sorted(self.all_cjk_ideograph_block_ids)]
         cjk_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in cjk_blocks]
         return set(itertools.chain(*cjk_codepoints)) - self.all_noncharacter_codepoints
 
     @property
     def all_tangut_codepoints(self):
-        tangut_blocks = [self.get_unicode_block_by_id(block_id) for block_id in sorted(TANGUT_BLOCK_IDS)]
+        tangut_blocks = [self.get_unicode_block_by_id(block_id) for block_id in self.tangut_character_block_ids]
         tangut_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in tangut_blocks]
         return set(itertools.chain(*tangut_codepoints)) - self.all_noncharacter_codepoints
 
     @property
     def all_surrogate_codepoints(self) -> set[int]:
-        su_blocks = [self.get_unicode_block_by_id(block_id) for block_id in SURROGATE_BLOCK_IDS]
+        su_blocks = [self.get_unicode_block_by_id(block_id) for block_id in self.surrogate_block_ids]
         su_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in su_blocks]
         return set(itertools.chain(*su_codepoints)) - self.all_noncharacter_codepoints
 
     @property
     def all_private_use_codepoints(self) -> set[int]:
-        pu_blocks = [self.get_unicode_block_by_id(block_id) for block_id in PRIVATE_USE_BLOCK_IDS]
+        pu_blocks = [self.get_unicode_block_by_id(block_id) for block_id in self.private_use_block_ids]
         pu_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in pu_blocks]
         return set(itertools.chain(*pu_codepoints)) - self.all_noncharacter_codepoints
 
@@ -280,11 +302,11 @@ class UnicodeDataCache:
         block = self.get_unicode_block_containing_codepoint(codepoint)
         return (
             f"CJK UNIFIED IDEOGRAPH-{codepoint:04X}"
-            if block.id in CJK_UNIFIED_BLOCK_IDS
+            if block.id in self.cjk_unified_ideograph_block_ids
             else f"CJK COMPATIBILITY IDEOGRAPH-{codepoint:04X}"
-            if block.id in CJK_COMPATIBILITY_BLOCK_IDS
+            if block.id in self.cjk_compatibility_block_ids
             else f"TANGUT IDEOGRAPH-{codepoint:04X}"
-            if block.id in TANGUT_BLOCK_IDS
+            if block.id in self.tangut_character_block_ids
             else ""
         )
 
