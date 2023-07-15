@@ -18,7 +18,6 @@ from app.core.config import settings
 from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
 from app.docs.dependencies.custom_parameters import (
-    UNICODE_CHAR_EXAMPLES,
     UNICODE_CHAR_STRING_DESCRIPTION,
     VERBOSE_DESCRIPTION,
     get_description_and_values_table_for_property_group,
@@ -98,7 +97,7 @@ def filter_unicode_characters(
 )
 def get_unicode_character_details(
     db_ctx: Annotated[DBSession, Depends(get_session)],
-    string: Annotated[str, Path(description=UNICODE_CHAR_STRING_DESCRIPTION, examples=UNICODE_CHAR_EXAMPLES)],
+    string: Annotated[str, Path(description=UNICODE_CHAR_STRING_DESCRIPTION)],
     show_props: Annotated[
         list[str] | None, Query(description=get_description_and_values_table_for_property_group())
     ] = None,

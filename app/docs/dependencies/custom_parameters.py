@@ -1,6 +1,8 @@
 import re
 
 from app.core.config import settings
+from app.data.cache import cached_data
+from app.data.encoding import get_uri_encoded_value
 from app.docs.dependencies import (
     BIDI_CLASS_VALUES_TABLE,
     BLOCK_NAME_VALUES_TABLE,
@@ -28,17 +30,35 @@ LIMIT_DESCRIPTION = """
 """
 
 CODEPOINT_HEX_DESCRIPTION = """
-<p>The <code>codepoint</code> property must be expressed as a hexadecimal value within range <code>0000...10FFFF</code>, optionally prefixed by <strong>U+</strong> or <strong>0x</strong>.</p>
+<p>The <code>codepoint</code> property must be expressed as a hexadecimal value within range <code>0000...10FFFF</code>, optionally prefixed by <code>U+</code> or <code>0x</code>.</p>
 """
 
-BLOCK_ID_DESCRIPTION = "The <code>id</code> property is an integer value within range <strong>1...327</strong>"
+BLOCK_ID_DESCRIPTION = (
+    f"The <code>id</code> property is an integer value within range <strong>1...{len(cached_data.blocks)}</strong>"
+)
 
-CODEPOINT_EXAMPLES = {
-    "Default (No Value)": {"summary": "No Value (This value is optional)", "value": ""},
-    "Codepoint (Standard Prefix)": {"summary": "With 'U+' Prefix", "value": "U+11FC0"},
-    "Codepoint (No Prefix)": {"summary": "Without Prefix", "value": "11FC0"},
-    "Codepoint (Hex Prefix)": {"summary": "With '0x' Prefix", "value": "0x11FC0"},
-}
+CODEPOINT_EXAMPLES = """
+<details>
+    <summary>
+        <div>
+            <span>Examples: Character Codepoint Values</span>
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
+                    <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
+                </svg>
+            </div>
+        </div>
+    </summary>
+    <dl class="param-examples">
+        <dt><code>11FC0</code></dt>
+        <dd>Codepoint without prefix</dd>
+        <dt><code>0x11FC0</code></dt>
+        <dd>Codepoint with 'U+' prefix</dd>
+        <dt><code>U+11FC0</code></dt>
+        <dd>Codepoint with '0x' prefix</dd>
+    </dl>
+</details>
+"""
 
 CODEPOINT_INVALID_ERROR = (
     "'Code point must be a hexadecimal value within range `0x00 - 0x10FFFF`, optionally prefixed by 'U+' or '0x'. "
@@ -47,12 +67,32 @@ CODEPOINT_INVALID_ERROR = (
     "minimum length of four digits."
 )
 
-UNICODE_CHAR_STRING_DESCRIPTION = f"""
-<p>A string containing Unicode characters, which can be expressed either directly (unencoded) or as a URI-encoded string. If you are unsure which format to use, please see the <strong>Examples</strong> below.</p>
-<details>
+UNICODE_CHAR_NORMAL_EXAMPLES = """
+<details id="normal-char-examples">
     <summary>
         <div>
-            <span>Examples with URI-Encoded Characters<sup>1</sup></span>
+            <span>Examples: Using Characters Directly</span>
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
+                    <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
+                </svg>
+            </div>
+        </div>
+    </summary>
+    <dl class="param-examples">
+        <dt><span>𛱠</span></dt>
+        <dd>Copy and paste the character into the text box below.</dd>
+        <dt><span>🏃🏿‍♀️</span></dt>
+        <dd>Copy and paste the character into the text box below.</dd>
+    </dl>
+</details>
+"""
+
+UNICODE_CHAR_URI_EXAMPLES = f"""
+<details id="uri-char-examples">
+    <summary>
+        <div>
+            <span>Examples: Using URI-Encoded Value of Character</span>
             <div>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
                     <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
@@ -62,9 +102,9 @@ UNICODE_CHAR_STRING_DESCRIPTION = f"""
     </summary>
     <dl class="param-examples">
         <dt><span>Ⱒ</span><sup>2</sup></dt>
-        <dd><a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2" rel="noopener noreferrer" target="_blank">%E2%B0%A2</a></dd>
+        <dd><a href="{settings.API_ROOT}/v1/characters/{get_uri_encoded_value('Ⱒ')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('Ⱒ')}</a><sup>1</sup></dd>
         <dt><span>👨‍🌾 </span><sup>3</sup></dt>
-        <dd><a href="{settings.API_ROOT}/v1/characters/%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE" rel="noopener noreferrer" target="_blank">%F0%9F%91%A8%E2%80%8D%F0%9F%8C%BE</a></dd>
+        <dd><a href="{settings.API_ROOT}/v1/characters/{get_uri_encoded_value('👨‍🌾')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('👨‍🌾')}</a><sup>1</sup></dd>
     </dl>
     <div class="footnotes">
         <sup>1</sup>
@@ -77,10 +117,11 @@ UNICODE_CHAR_STRING_DESCRIPTION = f"""
 </details>
 """
 
-UNICODE_CHAR_EXAMPLES = {
-    "Character": {"summary": "Unencoded Character", "value": "𛱠"},
-    "Emoji": {"summary": "Unencoded Emoji", "value": "🏃🏿‍♀️"},
-}
+UNICODE_CHAR_STRING_DESCRIPTION = f"""
+<p>A string containing Unicode characters, which can be expressed either directly (unencoded) or as a URI-encoded string. If you are unsure which format to use, please see the <strong>Examples</strong> below.</p>
+{UNICODE_CHAR_NORMAL_EXAMPLES}
+{UNICODE_CHAR_URI_EXAMPLES}
+"""
 
 BLOCK_NAME_DESCRIPTION = f"""
 <ul class="param-notes">
@@ -336,12 +377,22 @@ def customize_starting_after_param_description(
 """
 
 
-ENDING_BEFORE_CODEPOINT_DESCRIPTION = customize_ending_before_param_description(
+ENDING_BEFORE_CODEPOINT_DESCRIPTION_1 = customize_ending_before_param_description(
     "characters", "codepoint", "U+0431", CODEPOINT_HEX_DESCRIPTION
 )
-STARTING_AFTER_CODEPOINT_DESCRIPTION = customize_starting_after_param_description(
+STARTING_AFTER_CODEPOINT_DESCRIPTION_1 = customize_starting_after_param_description(
     "characters", "codepoint", "U+0409", CODEPOINT_HEX_DESCRIPTION
 )
+
+ENDING_BEFORE_CODEPOINT_DESCRIPTION = f"""
+{ENDING_BEFORE_CODEPOINT_DESCRIPTION_1}
+{CODEPOINT_EXAMPLES}
+"""
+
+STARTING_AFTER_CODEPOINT_DESCRIPTION = f"""
+{STARTING_AFTER_CODEPOINT_DESCRIPTION_1}
+{CODEPOINT_EXAMPLES}
+"""
 
 ENDING_BEFORE_BLOCK_ID_DESCRIPTION = customize_ending_before_param_description(
     "blocks", "id", "10", BLOCK_ID_DESCRIPTION
