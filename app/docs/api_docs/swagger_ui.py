@@ -123,8 +123,8 @@ def get_swagger_ui_html(
     *,
     openapi_url: str,
     title: str,
-    swagger_js_url: str = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui-bundle.js",
-    swagger_css_url: str = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@4/swagger-ui.css",
+    swagger_js_url: str = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js",
+    swagger_css_url: str = "https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css",
     swagger_favicon_url: str = "https://fastapi.tiangolo.com/img/favicon.png",
     oauth2_redirect_url: Optional[str] = None,
     init_oauth: Optional[Dict[str, Any]] = None,
@@ -139,8 +139,8 @@ def get_swagger_ui_html(
     <!DOCTYPE html>
     <html>
     <head>
-    <link type="text/css" rel="stylesheet" href={swagger_css_url!r}>
-    <link rel="shortcut icon" href={swagger_favicon_url!r}>
+    <link type="text/css" rel="stylesheet" href="{swagger_css_url}">
+    <link rel="shortcut icon" href="{swagger_favicon_url}">
     """
 
     if os.environ.get("ENV", "DEV") == "PROD":
@@ -157,19 +157,21 @@ def get_swagger_ui_html(
       <path d='M28 66L0 50L0 16L28 0L56 16L56 50L28 66L28 100' fill='none' stroke='#2875bd' stroke-width='1'/>
       <path d='M28 0L28 34L0 50L0 84L28 100L56 84L56 50L28 34' fill='none' stroke='#256db1' stroke-width='1'/>
     </svg>
-    <div id="swagger-ui"></div>
-    <script src={swagger_js_url!r}></script>
+    <div id="swagger-ui">
+    </div>
+    <script src="{swagger_js_url}"></script>
     <script defer src={custom_js_url!r}></script>
+    <!-- `SwaggerUIBundle` is now available on the page -->
     <script>
     const ui = SwaggerUIBundle({{
-        url: {openapi_url!r},
+        url: '{openapi_url}',
     """
 
     for key, value in current_swagger_ui_parameters.items():
         html += f"{json.dumps(key)}: {json.dumps(jsonable_encoder(value))},\n"
 
     if oauth2_redirect_url:
-        html += f"oauth2RedirectUrl: window.location.origin + {oauth2_redirect_url!r},"
+        html += f"oauth2RedirectUrl: window.location.origin + '{oauth2_redirect_url}',"
 
     html += """
     presets: [
