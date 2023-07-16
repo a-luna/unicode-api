@@ -5,7 +5,8 @@ halo==0.0.31
 httpx==0.24.1
 lxml==4.9.3
 pydantic==1.10.10
-pyhumps==3.8.0
+pyhumps==3.8.
+python-dateutil==2.8.2
 redis==4.6.0
 rapidfuzz==3.1.1
 requests==2.31.0
