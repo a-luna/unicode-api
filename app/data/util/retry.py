@@ -1,9 +1,7 @@
-"""decorators.log_call"""
 from functools import wraps
 from time import sleep
 from typing import Callable, ParamSpec, Type, TypeVar
 
-DT_NAIVE = "%m/%d/%Y %I:%M:%S %p"
 T = TypeVar("T")
 P = ParamSpec("P")
 
