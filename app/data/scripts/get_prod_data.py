@@ -3,7 +3,7 @@ from zipfile import ZipFile
 
 from app.core.config import UnicodeApiSettings
 from app.core.result import Result
-from app.data.scripts import bootstrap_unicode_data
+from app.data.scripts.bootstrap_unicode_data import bootstrap_unicode_data
 from app.data.util import download_file
 
 
