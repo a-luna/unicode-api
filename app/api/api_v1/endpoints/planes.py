@@ -1,4 +1,5 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Path
 
 import app.db.models as db

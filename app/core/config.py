@@ -32,6 +32,9 @@ class UnicodeApiSettings(BaseSettings):
     REDIS_URL: str = (
         DEFAULT_REDIS_URL if os.environ.get("ENV") == "DEV" else os.environ.get("REDIS_URL", DEFAULT_REDIS_URL)
     )
+    RATE_LIMIT_PERIOD_MINUTES = os.environ.get("RATE_LIMIT_PERIOD_MINUTES", 1)
+    RATE_LIMIT_PER_PERIOD = os.environ.get("RATE_LIMIT_PER_PERIOD", 100)
+    RATE_LIMIT_BURST = os.environ.get("RATE_LIMIT_BURST", 10)
     SERVER_NAME: str = "unicode-api.aaronluna.dev"
     SERVER_HOST: str = "https://unicode-api.aaronluna.dev"
     CACHE_HEADER: str = "X-UnicodeAPI-Cache"

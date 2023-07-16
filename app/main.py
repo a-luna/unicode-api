@@ -1,20 +1,26 @@
+import os
+import re
+from datetime import timedelta
 from http import HTTPStatus
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi_redis_cache import FastApiRedisCache
 from fastapi_utils.openapi import simplify_operation_ids
 from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
 from app.core.config import settings
+from app.core.redis_client import redis
+from app.core.util import get_duration_from_timestamp
 from app.data.cache import cached_data
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 
 APP_FOLDER = Path(__file__).parent
 STATIC_FOLDER = APP_FOLDER.joinpath("static")
+RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|planes")
 
 
 app = FastAPI(
@@ -40,20 +46,35 @@ app.mount("/static", StaticFiles(directory=str(STATIC_FOLDER)), name="static")
 
 
 @app.on_event("startup")
-def init_redis():
-    redis_cache = FastApiRedisCache()
-    redis_cache.init(
-        host_url=settings.REDIS_URL,
-        response_header=settings.CACHE_HEADER,
-    )
-
-
-@app.on_event("startup")
 def init_unicode_obj():
     _ = cached_data.unique_name_character_map
     _ = cached_data.blocks
     _ = cached_data.planes
     _ = cached_data.all_unicode_versions
+
+
+@app.middleware("http")
+async def apply_rate_limiting(request: Request, call_next):
+    if not RATE_LIMIT_ROUTE_REGEX.search(request.url.path):
+        return await call_next(request)
+
+    client_ip = request.client.host if request.client else ""
+    rate = int(os.environ.get("RATE_LIMIT_PER_PERIOD", "0"))
+    period = int(os.environ.get("RATE_LIMIT_PERIOD_MINUTES", "0"))
+    plural = "s" if period > 1 else ""
+    burst = int(os.environ.get("RATE_LIMIT_BURST", "0"))
+    rate_limit_exceeded, timestamp = redis.rate_limit_exceeded(
+        client_ip, rate=rate, period=timedelta(minutes=period), burst=burst
+    )
+    if not rate_limit_exceeded:
+        response = await call_next(request)
+        return response
+    limit_duration = get_duration_from_timestamp(timestamp)
+    error = (
+        f"API rate limit of {rate} requests in {period} minute{plural} exceeded, "
+        f"please wait {limit_duration} before submitting another request"
+    )
+    return JSONResponse(content=error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
