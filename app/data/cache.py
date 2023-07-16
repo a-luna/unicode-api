@@ -35,6 +35,8 @@ class UnicodeDataCache:
 
     @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
+        if not settings.BLOCKS_JSON.exists():
+            return []
         blocks = [db.UnicodeBlock(**block) for block in json.loads(settings.BLOCKS_JSON.read_text())]
         for block in blocks:
             block.plane = self.get_unicode_plane_containing_block_id(block.id if block.id else 0)
