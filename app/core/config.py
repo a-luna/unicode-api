@@ -7,7 +7,6 @@ from app.core.dotenv_file import DotEnvFile
 
 HTTP_BUCKET_URL = "https://unicode-api.us-southeast-1.linodeobjects.com"
 S3_BUCKET_URL = "s3://unicode-api"
-DEFAULT_REDIS_URL = "redis://127.0.0.1:6379"
 DEV_API_ROOT = "http://localhost:3507"
 PROP_API_ROOT = "https://unicode-api.aaronluna.dev"
 
@@ -29,12 +28,13 @@ class UnicodeApiSettings(BaseSettings):
     UNICODE_VERSION: str = os.environ.get("UNICODE_VERSION", "")
     PROJECT_NAME: str = "Unicode API"
     API_VERSION: str = "/v1"
-    REDIS_URL: str = (
-        DEFAULT_REDIS_URL if os.environ.get("ENV") == "DEV" else os.environ.get("REDIS_URL", DEFAULT_REDIS_URL)
-    )
-    RATE_LIMIT_PERIOD_MINUTES = os.environ.get("RATE_LIMIT_PERIOD_MINUTES", 1)
-    RATE_LIMIT_PER_PERIOD = os.environ.get("RATE_LIMIT_PER_PERIOD", 100)
-    RATE_LIMIT_BURST = os.environ.get("RATE_LIMIT_BURST", 10)
+    REDIS_PW: str = os.environ.get("REDIS_PW", "")
+    REDIS_HOST: str = os.environ.get("REDIS_HOST", "")
+    REDIS_PORT: int = int(os.environ.get("REDIS_PORT", ""))
+    REDIS_DB: int = int(os.environ.get("REDIS_DB", "0"))
+    RATE_LIMIT_PERIOD_MINUTES: int = int(os.environ.get("RATE_LIMIT_PERIOD_MINUTES", "1"))
+    RATE_LIMIT_PER_PERIOD: int = int(os.environ.get("RATE_LIMIT_PER_PERIOD", "100"))
+    RATE_LIMIT_BURST: int = int(os.environ.get("RATE_LIMIT_BURST", "10"))
     SERVER_NAME: str = "unicode-api.aaronluna.dev"
     SERVER_HOST: str = "https://unicode-api.aaronluna.dev"
     CACHE_HEADER: str = "X-UnicodeAPI-Cache"

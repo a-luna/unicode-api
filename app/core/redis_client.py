@@ -2,9 +2,10 @@ import os
 from datetime import datetime, timedelta
 
 from fakeredis import FakeRedis
-from redis import from_url as get_redis_client_from_url
 from redis.client import Redis
 from redis.exceptions import LockError
+
+from app.core.config import settings
 
 MAX_ATTEMPTS = 10
 
@@ -12,9 +13,7 @@ MAX_ATTEMPTS = 10
 class RedisClient:
     failed_attempts = 0
 
-    def __init__(self, db: int = 1):
-        self.host_url = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379")
-        self.db = db
+    def __init__(self):
         self.connected = False
         self._client = FakeRedis()
 
@@ -29,7 +28,9 @@ class RedisClient:
             self.connected = True
             print("ENV=TEST, using FakeRedis client")
             return self._client
-        client = get_redis_client_from_url(self.host_url, db=self.db)
+        client = Redis(
+            host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB, password=settings.REDIS_PW
+        )
         if not client.ping():  # pragma: no cover
             self.failed_attempts += 1
             if self.failed_attempts < MAX_ATTEMPTS:
