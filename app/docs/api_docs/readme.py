@@ -26,6 +26,7 @@ from app.docs.api_docs.content.character import (
     UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2,
     UNICODE_CHARACTER_PROP_GROUPS_INTRO,
     UNICODE_CHATACTER_OBJECT_INTRO,
+    VERBOSITY,
 )
 from app.docs.api_docs.content.intro import INTRODUCTION, LOOSE_MATCHING, PAGINATION, PROJECT_LINKS_README, SEARCH
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
@@ -65,6 +66,8 @@ UNICODE_CHARACTER_PROP_GROUPS_README = (
     + UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1
     + "\t\t"
     + UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2
+    + '\n\t\t<h4 id="verbosity">Verbosity</h4>\n'
+    + f"\t\t{VERBOSITY}\n"
     + f'{create_details_element_readme("<strong>Basic</strong>", PROP_GROUP_BASIC)}'
     + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>UTF-8</strong>", PROP_GROUP_UTF8)}'

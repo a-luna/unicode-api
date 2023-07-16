@@ -30,6 +30,9 @@
 					<li>
 						<a href="#unicodecharacter-property-groups"><code>UnicodeCharacter</code> Property Groups</a>
 					</li>
+					<li>
+						<a href="#verbosity">Verbosity</a>
+					</li>
 				</ul>
 			</li>
 			<li>
@@ -169,7 +172,10 @@
 		</details>
 		<br />
 <p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>
-		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> and <code>/v1/characters/filter</code> endpoints accept one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="http://localhost:3507/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>		<details>
+		<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> and <code>/v1/characters/filter</code> endpoints accept one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="http://localhost:3507/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>
+		<h4 id="verbosity">Verbosity</h4>
+		<p>The value of many of the properties that are defined for each character are only meaningful for specific blocks or a small subset of codepoints (e.g., the <code>hangul_syllable_type</code> property will have a <code>(Not Applicable) NA</code> value for all codepoints except those in the four blocks that contain characters from the Hangul writing system).</p><p>By default, the <code>hangul_syllable_type</code> property will <strong>NOT</strong> be included with the response for any character that has this default value even if the user has submitted a request containing <code>show_props=hangul</code> or <code>show_props=all</code>. For actual Hangul characters, the property will be included in the response.</p><p>These properties are removed to make the size of each response as small as possible. Knowing that the 🇺 (<code>U+1F1FA <span>REGIONAL INDICATOR SYMBOL LETTER U</span></code>) character has the value <code>hangul_syllable_type=NA</code> provides no real information about this character.</p><p>However, if you wish to see every property value, include <code>verbose=true</code> with your request to the <code>/v1/characters/{string}</code> or <code>/v1/characters/filter</code> endpoints.</p>
+		<details>
             <summary style="list-style: none; align-items: center">
                 <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                     <div style="height: 16px; transition: transform 0.3s ease-in">
