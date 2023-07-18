@@ -11,6 +11,7 @@ from app.data.constants import (
 from app.data.encoding import (
     get_codepoint_string,
     get_html_entities,
+    get_mapped_codepoint,
     get_uri_encoded_value,
     get_utf8_dec_bytes,
     get_utf8_hex_bytes,
@@ -996,10 +997,6 @@ def get_int_prop_value(char_props: dict[str, Any], prop_name: str) -> int:
     if prop_value := char_props.get(prop_name, 0):
         return int(prop_value)
     return 0
-
-
-def get_mapped_codepoint(codepoint_hex: str) -> str:
-    return f"{chr(int(codepoint_hex, 16))} (U+{int(codepoint_hex, 16):04X})" if codepoint_hex else ""
 
 
 def get_char_and_unicode_hex_value(char_props: dict[str, Any], prop_name: str) -> str:

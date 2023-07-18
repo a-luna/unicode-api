@@ -7,6 +7,7 @@ from sqlalchemy.engine import Engine
 
 import app.db.models as db
 from app.data.cache import cached_data
+from app.data.encoding import get_mapped_codepoint
 from app.db.character_props import PROPERTY_GROUPS
 from app.schemas.enums import CharacterFilterFlags, CharPropertyGroup
 
@@ -23,20 +24,21 @@ def get_character_properties(
 def get_prop_groups(codepoint: int, show_props: list[CharPropertyGroup] | None) -> list[CharPropertyGroup]:
     unihan = cached_data.character_is_unihan(codepoint)
     show_props = show_props or []
-    show_props = [
-        prop_group
-        for prop_group in show_props
-        if prop_group not in [CharPropertyGroup.MINIMUM, CharPropertyGroup.CJK_MINIMUM]
-    ]
-    show_props += [CharPropertyGroup.CJK_MINIMUM if unihan else CharPropertyGroup.MINIMUM]
-    if not unihan and any("CJK" in prop_group.name for prop_group in show_props):
-        show_props = [prop_group for prop_group in show_props if "CJK" not in prop_group.name]
+    # If all property groups are requested, return appropriate property groups for non-unihan/unihan
     if CharPropertyGroup.ALL in show_props:
         return (
             CharPropertyGroup.get_all_named_character_prop_groups()
             if not unihan
             else CharPropertyGroup.get_all_unihan_character_prop_groups()
         )
+    # else, ensure that the Minimum property group appropriate for non-unihan/unihan is included
+    show_props = [
+        prop_group
+        for prop_group in show_props
+        if prop_group not in [CharPropertyGroup.MINIMUM, CharPropertyGroup.CJK_MINIMUM]
+    ]
+    show_props += [CharPropertyGroup.MINIMUM] if not unihan else [CharPropertyGroup.CJK_MINIMUM]
+    # if Basic property group is requested, ensure property group appropriate for non-unihan/unihan is included
     if CharPropertyGroup.BASIC in show_props or CharPropertyGroup.CJK_BASIC in show_props:
         show_props = [
             prop_group
@@ -44,6 +46,9 @@ def get_prop_groups(codepoint: int, show_props: list[CharPropertyGroup] | None) 
             if prop_group not in [CharPropertyGroup.BASIC, CharPropertyGroup.CJK_BASIC]
         ]
         return show_props + [CharPropertyGroup.CJK_BASIC if unihan else CharPropertyGroup.BASIC]
+    # then, if character is non-unihan, ensure that any unihan-specific property groups are not included
+    if not unihan and any("CJK" in prop_group.name for prop_group in show_props):
+        show_props = [prop_group for prop_group in show_props if "CJK" not in prop_group.name]
     return show_props
 
 
@@ -70,11 +75,14 @@ def trim_irrelevent_values(codepoint: int, response_dict: dict[str, Any]) -> dic
 
 
 def get_prop_names_with_irrelevant_values(codepoint: int, char_props: dict[str, Any]) -> list[str]:
-    remove_props = []
+    remove_props = (
+        get_unset_flag_properties(char_props)
+        + remove_irrelevant_casing_properties(char_props, codepoint)
+        + remove_irrelevant_indic_properties(char_props)
+        + get_all_other_properties_with_irrelevant_values(char_props, codepoint)
+    )
     if cached_data.character_is_unihan(codepoint):
         remove_props.extend(get_unihan_properties_with_null_values(char_props))
-    remove_props.extend(get_unset_flag_properties(char_props))
-    remove_props.extend(get_all_other_properties_with_irrelevant_values(char_props))
     return list(set(remove_props))
 
 
@@ -102,22 +110,55 @@ def get_unihan_properties_with_null_values(char_props: dict[str, Any]) -> list[s
         "japanese_on",
         "vietnamese",
     ]
-    remove_props = []
-    for prop_name in unihan_properties:
-        if prop_name in char_props and not char_props[prop_name]:
-            remove_props.append(prop_name)
-    return remove_props
+    return [prop_name for prop_name in unihan_properties if prop_name in char_props and not char_props[prop_name]]
 
 
 def get_unset_flag_properties(char_props: dict[str, Any]) -> list[str]:
+    return [
+        flag.db_column_name
+        for flag in CharacterFilterFlags
+        if flag.db_column_name in char_props and not char_props[flag.db_column_name]
+    ]
+
+
+def remove_irrelevant_casing_properties(char_props: dict[str, Any], codepoint: int) -> list[str]:
     remove_props = []
-    for flag in CharacterFilterFlags:
-        if flag.db_column_name in char_props and not char_props[flag.db_column_name]:
-            remove_props.append(flag.db_column_name)
+    if "uppercase" in char_props and not char_props["uppercase"]:
+        remove_props.append("uppercase")
+    if "lowercase" in char_props and not char_props["lowercase"]:
+        remove_props.append("lowercase")
+
+    other_casing_props = [
+        "simple_uppercase_mapping",
+        "simple_lowercase_mapping",
+        "simple_titlecase_mapping",
+        "simple_case_folding",
+    ]
+    remove_props.extend(
+        prop_name
+        for prop_name in other_casing_props
+        if prop_name in char_props and char_props[prop_name] == get_mapped_codepoint(f"{codepoint:04X}")
+    )
     return remove_props
 
 
-def get_all_other_properties_with_irrelevant_values(char_props: dict[str, Any]) -> list[str]:
+def remove_irrelevant_indic_properties(char_props: dict[str, Any]) -> list[str]:
+    indic_properties = [
+        "indic_syllabic_category",
+        "indic_matra_category",
+        "indic_positional_category",
+    ]
+    if all(prop_name in char_props for prop_name in indic_properties):
+        if (
+            "Other" in char_props["indic_syllabic_category"]
+            and "NA" in char_props["indic_matra_category"]
+            and "NA" in char_props["indic_positional_category"]
+        ):
+            return indic_properties
+    return []
+
+
+def get_all_other_properties_with_irrelevant_values(char_props: dict[str, Any], codepoint: int) -> list[str]:
     remove_props = []
     if "description" in char_props and not char_props["description"]:
         remove_props.append("description")
@@ -153,44 +194,4 @@ def get_all_other_properties_with_irrelevant_values(char_props: dict[str, Any]) 
     if "equivalent_unified_ideograph" in char_props and not char_props["equivalent_unified_ideograph"]:
         remove_props.append("equivalent_unified_ideograph")
 
-    remove_props.extend(remove_irrelevant_casing_properties(char_props))
-    remove_props.extend(remove_irrelevant_indic_properties(char_props))
     return remove_props
-
-
-def remove_irrelevant_casing_properties(char_props: dict[str, Any]) -> list[str]:
-    casing_flag_props = [
-        "uppercase",
-        "lowercase",
-    ]
-    casing_str_properties = [
-        "simple_uppercase_mapping",
-        "simple_lowercase_mapping",
-        "simple_titlecase_mapping",
-        "simple_case_folding",
-    ]
-    casing_properties = casing_flag_props + casing_str_properties
-    if all(prop_name in char_props for prop_name in casing_properties):
-        if (
-            not char_props["uppercase"]
-            and not char_props["lowercase"]
-            and all(char_props[casing_str_properties[0]] == char_props[x] for x in casing_str_properties)
-        ):
-            return casing_str_properties
-    return []
-
-
-def remove_irrelevant_indic_properties(char_props: dict[str, Any]) -> list[str]:
-    indic_properties = [
-        "indic_syllabic_category",
-        "indic_matra_category",
-        "indic_positional_category",
-    ]
-    if all(prop_name in char_props for prop_name in indic_properties):
-        if (
-            "Other" in char_props["indic_syllabic_category"]
-            and "NA" in char_props["indic_matra_category"]
-            and "NA" in char_props["indic_positional_category"]
-        ):
-            return indic_properties
-    return []
