@@ -25,7 +25,7 @@ def get_decimal_number_from_hex_codepoint(codepoint: str, starting_after: bool =
     codepoint_dec = int(groups.get("codepoint_prefix", "0") or groups.get("codepoint", "0"), 16)
     lower_limit = 0 if starting_after else 1
     upper_limit = MAX_CODEPOINT if starting_after else MAX_CODEPOINT + 1
-    if codepoint_dec >= lower_limit and codepoint_dec <= upper_limit:
+    if codepoint_dec in range(lower_limit, upper_limit + 1):
         return codepoint_dec
     raise HTTPException(
         status_code=int(HTTPStatus.BAD_REQUEST),

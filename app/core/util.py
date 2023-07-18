@@ -1,41 +1,5 @@
 import time
-from datetime import date, datetime, timedelta, timezone, tzinfo
-from typing import Generator
-
-from dateutil import tz
-
-DATE_ONLY_2 = "%m/%d/%Y"
-DT_AWARE = "%m/%d/%Y %I:%M:%S %p %z"
-DT_STR_FORMAT_ALL = "%Y-%m-%d %H:%M:%S.%f %Z%z"
-DT_NAIVE = "%m/%d/%Y %I:%M:%S %p"
-
-TIME_ZONE_LA = tz.gettz("America/Los_Angeles")
-TIME_ZONE_NEW_YORK = tz.gettz("America/New_York")
-TIME_SPAN_ONE_DAY = timedelta(days=1)
-
-
-def get_date_range(start: datetime, end: datetime, inc=TIME_SPAN_ONE_DAY) -> Generator[datetime, None, None]:
-    if start > end:
-        error = f"Start date ({start.strftime(DATE_ONLY_2)}) must be BEFORE end date ({end.strftime(DATE_ONLY_2)})"
-        raise ValueError(error)
-    current = start
-    while current <= end:
-        yield current
-        current += inc
-
-
-def utc_now() -> datetime:
-    """Current UTC date and time with the microsecond value normalized to zero."""
-    return datetime.now(timezone.utc).replace(microsecond=0)
-
-
-def localized_dt_string(dt: datetime, use_tz: tzinfo | None = None) -> str:
-    """Convert datetime value to a string, localized for the specified timezone."""
-    if not dt.tzinfo and not use_tz:
-        return dt.strftime(DT_NAIVE)
-    if not dt.tzinfo:
-        return dt.replace(tzinfo=use_tz).strftime(DT_AWARE)
-    return dt.astimezone(use_tz).strftime(DT_AWARE) if use_tz else dt.strftime(DT_AWARE)
+from datetime import datetime, timedelta, timezone, tzinfo
 
 
 def make_tzaware(dt: datetime, use_tz: tzinfo | None = None, localize: bool = True) -> datetime:
@@ -54,14 +18,6 @@ def get_local_utcoffset() -> timezone:
 def dtaware_fromtimestamp(timestamp: float, use_tz: tzinfo | None = None) -> datetime:
     """Time-zone aware datetime object from UNIX timestamp."""
     return make_tzaware(datetime.fromtimestamp(timestamp), use_tz, True)
-
-
-def today_str() -> str:
-    return date.today().strftime(DATE_ONLY_2)
-
-
-def current_year() -> int:
-    return datetime.now().year
 
 
 def format_timedelta_str(td: timedelta, precise: bool = True) -> str:

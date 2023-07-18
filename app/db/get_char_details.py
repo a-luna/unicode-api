@@ -137,7 +137,8 @@ def remove_irrelevant_casing_properties(char_props: dict[str, Any], codepoint: i
     remove_props.extend(
         prop_name
         for prop_name in other_casing_props
-        if prop_name in char_props and char_props[prop_name] == get_mapped_codepoint(f"{codepoint:04X}")
+        if prop_name in char_props
+        and (char_props[prop_name] == get_mapped_codepoint(f"{codepoint:04X}") or char_props[prop_name] == "")
     )
     return remove_props
 
