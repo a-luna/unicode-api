@@ -1,4 +1,3 @@
-import os
 from datetime import datetime, timedelta
 
 from fakeredis import FakeRedis
@@ -24,14 +23,10 @@ class RedisClient:
     def get_redis_client(self) -> Redis:
         if self.connected and self._client:
             return self._client
-        if os.environ.get("ENV", "DEV") == "TEST":  # pragma: no cover
-            self.connected = True
-            print("ENV=TEST, using FakeRedis client")
-            return self._client
         client = Redis(
             host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB, password=settings.REDIS_PW
         )
-        if not client.ping():  # pragma: no cover
+        if not client.ping():
             self.failed_attempts += 1
             if self.failed_attempts < MAX_ATTEMPTS:
                 print("Redis server did not respond to PING message.")

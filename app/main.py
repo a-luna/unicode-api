@@ -55,7 +55,7 @@ def init_unicode_obj():
 
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
-    if not RATE_LIMIT_ROUTE_REGEX.search(request.url.path):
+    if testing(request) or not RATE_LIMIT_ROUTE_REGEX.search(request.url.path):
         return await call_next(request)
 
     client_ip = request.client.host if request.client else ""
@@ -75,6 +75,13 @@ async def apply_rate_limiting(request: Request, call_next):
         f"please wait {limit_duration} before submitting another request"
     )
     return JSONResponse(content=error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
+
+
+def testing(request: Request) -> bool:
+    return (
+        os.environ.get("TEST_HEADER") in request.headers
+        and request.headers[os.environ.get("TEST_HEADER", "")] == "true"
+    )
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)

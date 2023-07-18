@@ -2,14 +2,12 @@ import operator
 from functools import reduce
 
 import pytest
-from fastapi.testclient import TestClient
 from humps import camelize
 
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import PROPERTY_GROUPS
 from app.db.get_char_details import get_prop_groups
-from app.main import app
 from app.schemas.enums import CharPropertyGroup
 from app.tests.test_character_endpoints.test_get_unicode_character_details.data import (
     ALL_PROP_GROUP_NAMES,
@@ -17,8 +15,6 @@ from app.tests.test_character_endpoints.test_get_unicode_character_details.data 
     INVALID_PROP_GROUP_NAMES,
     VERBOSE_CHARACTER_PROPERTIES,
 )
-
-client = TestClient(app)
 
 
 def get_character_properties(char, prop_group, verbose=False):
@@ -37,7 +33,7 @@ def get_prop_group(char, prop_group, verbose):
 
 
 @pytest.mark.parametrize("char", CHARACTER_PROPERTIES.keys())
-def test_get_character_details_default(char):
+def test_get_character_details_default(char, client):
     url = f"/v1/characters/{char}"
     if any(char.isascii() and not char.isprintable() for char in url):
         url = f"/v1/characters/{get_uri_encoded_value(char)}"
@@ -52,7 +48,7 @@ def test_get_character_details_default(char):
 @pytest.mark.parametrize("q_verbose, verbose", [("&verbose=true", True), ("&verbose=false", False), ("", None)])
 @pytest.mark.parametrize("char", CHARACTER_PROPERTIES.keys())
 @pytest.mark.parametrize("prop_group", ALL_PROP_GROUP_NAMES)
-def test_get_character_details_show_props(q_verbose, verbose, char, prop_group):
+def test_get_character_details_show_props(q_verbose, verbose, char, prop_group, client):
     url = f"/v1/characters/{char}?show_props={prop_group}{q_verbose}"
     if any(char.isascii() and not char.isprintable() for char in url):
         url = f"/v1/characters/{get_uri_encoded_value(char)}?show_props={prop_group}{q_verbose}"
@@ -61,7 +57,7 @@ def test_get_character_details_show_props(q_verbose, verbose, char, prop_group):
     assert response.json() == [get_character_properties(char, CharPropertyGroup.match_loosely(prop_group), verbose)]
 
 
-def test_invalid_prop_group_name():
+def test_invalid_prop_group_name(client):
     response = client.get("/v1/characters/%F0%9B%B1%A0?show_props=foo&show_props=bar&show_props=baz")
     assert response.status_code == 400
     assert response.json() == INVALID_PROP_GROUP_NAMES
