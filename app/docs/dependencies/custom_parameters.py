@@ -218,7 +218,7 @@ def get_description_and_values_table_for_block_name() -> str:
         + "<p>Filter characters by Unicode block. Sending multiple values will return all characters that match any of the specified blocks (e.g., sending <code>block=Cyrillic</code> and <code>block=Cyrillic_Supplement</code> will return characters that are assigned to <strong>either</strong> of the two blocks.</p>"
         + "<p>A list of the official names for all Unicode blocks is given below:</p>"
         + f"{BLOCK_NAME_NO_LEGEND_TABLE}"
-        + "<p>>To add a filter setting for <code>block</code>, click the button below and enter a value from the <strong>Block Name</strong> column in the table above.</p>"
+        + "<p>To add a filter setting for <code>block</code>, click the button below and enter a value from the <strong>Block Name</strong> column in the table above.</p>"
     )
 
 
