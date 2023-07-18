@@ -206,10 +206,11 @@ def create_table_listing_unicode_plane_abbreviations():
     return html
 
 
-def create_table_listing_unicode_block_names():
+def create_table_listing_unicode_block_names(has_legend: bool = True):
     html = """          <div class="filter-table-outer">
                 <div class="filter-table-wrapper">"""
-    html += create_block_name_color_legend()
+    if has_legend:
+        html += create_block_name_color_legend()
     html += """
                     <table id="block-name-values">
                         <thead>
@@ -331,6 +332,7 @@ def create_table_listing_enum_values(
 
 PLANE_ABBREV_VALUES_TABLE = create_table_listing_unicode_plane_abbreviations()
 BLOCK_NAME_VALUES_TABLE = create_table_listing_unicode_block_names()
+BLOCK_NAME_NO_LEGEND_TABLE = create_table_listing_unicode_block_names(has_legend=False)
 PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
 UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
     UnicodeAge, "age", "Unicode Version Number", "value", hide_column_2=True

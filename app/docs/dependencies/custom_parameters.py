@@ -5,6 +5,7 @@ from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.docs.dependencies import (
     BIDI_CLASS_VALUES_TABLE,
+    BLOCK_NAME_NO_LEGEND_TABLE,
     BLOCK_NAME_VALUES_TABLE,
     CCC_VALUES_TABLE,
     CHAR_FLAGS_TABLE,
@@ -208,6 +209,19 @@ VERBOSE_DESCRIPTION = """
 """
 
 
+def get_description_and_values_table_for_block_name() -> str:
+    return (
+        '<ul class="param-notes">'
+        + "<li>This value is optional</li>"
+        + '<li class="loose-match">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>'
+        + "</ul>"
+        + "<p>Filter characters by Unicode block. Sending multiple values will return all characters that match any of the specified blocks (e.g., sending <code>block=Cyrillic</code> and <code>block=Cyrillic_Supplement</code> will return characters that are assigned to <strong>either</strong> of the two blocks.</p>"
+        + "<p>A list of the official names for all Unicode blocks is given below:</p>"
+        + f"{BLOCK_NAME_NO_LEGEND_TABLE}"
+        + "<p>>To add a filter setting for <code>block</code>, click the button below and enter a value from the <strong>Block Name</strong> column in the table above.</p>"
+    )
+
+
 def get_description_and_values_table_for_property_group() -> str:
     return (
         '<ul class="param-notes">'
@@ -226,7 +240,7 @@ def get_description_and_values_table_for_unicode_age() -> str:
         '<ul class="param-notes">'
         + "<li>This value is optional</li>"
         + "</ul>"
-        + "<p>Filter Unicode characters by <strong>Age</strong> (i.e., the version of the Unicode Standard in which the character was originally assigned to a codepoint). Sending multiple values will return all characters that match any of the selected Unicode versions (e.g., sending <code>age=2.0</code> and <code>age=5.0</code> will return all characters that were assigned to a codepoint in <strong>either</strong> version 2.0 or 5.0.<p>"
+        + "<p>Filter Unicode characters by <strong>Age</strong> (i.e., the version of the Unicode Standard in which the character was originally assigned to a codepoint). Sending multiple values will return all characters that match any of the selected Unicode versions (e.g., sending <code>age=2.0</code> and <code>age=5.0</code> will return all characters that were assigned to a codepoint in <strong>either</strong> version 2.0 or 5.0).<p>"
         + "<p>Version numbers for all releases of the Unicode Standard are shown in the table below:</p>"
         + f"{UNICODE_AGE_VALUES_TABLE}"
         + "<p>To add a filter setting for <code>age</code>, click the button below and enter a value from the list of Unicode version numbers.</p>"
@@ -405,6 +419,7 @@ STARTING_AFTER_BLOCK_ID_DESCRIPTION = customize_starting_after_param_description
 def get_filter_param_description(param_name: str) -> str:
     param_map = {
         "bidi_class": get_description_and_values_table_for_bidi_class(),
+        "block": get_description_and_values_table_for_block_name(),
         "ccc": get_description_and_values_table_for_combining_class_category(),
         "decomp_type": get_description_and_values_table_for_decomp_type(),
         "flag": get_description_and_values_table_for_flags(),

@@ -40,6 +40,8 @@ def construct_filter_query(
     query = select(column("codepoint_dec")).select_from(table)
     if filter_params.name:
         query = query.where(column("name").contains(filter_params.name.upper()))
+    if filter_params.blocks:
+        query = query.where(column("block_id").in_(filter_params.blocks))
     if filter_params.categories:
         query = query.where(column("general_category").in_(filter_params.categories))
     if filter_params.age_list:

@@ -23,6 +23,7 @@ from app.schemas.enums import (
     NumericType,
     ScriptCode,
 )
+from app.schemas.enums.block_name import UnicodeBlockName
 from app.schemas.enums.unicode_age import UnicodeAge
 
 T = TypeVar("T")
@@ -62,6 +63,7 @@ class FilterParameters:
     def __init__(
         self,
         name: Annotated[str | None, Query(description=CHAR_NAME_FILTER_DESCRIPTION)] = None,
+        block: Annotated[list[str] | None, Query(description=get_filter_param_description("block"))] = None,
         category: Annotated[list[str] | None, Query(description=get_filter_param_description("category"))] = None,
         age: Annotated[list[str] | None, Query(description=get_filter_param_description("age"))] = None,
         script: Annotated[list[str] | None, Query(description=get_filter_param_description("script"))] = None,
@@ -78,7 +80,18 @@ class FilterParameters:
         page: Annotated[int | None, Query(ge=1, description=PAGE_NUMBER_DESCRIPTION)] = None,
     ):
         self.parse_all_enum_values(
-            category, age, script, bidi_class, decomp_type, line_break, ccc, num_type, join_type, flag, show_props
+            block,
+            category,
+            age,
+            script,
+            bidi_class,
+            decomp_type,
+            line_break,
+            ccc,
+            num_type,
+            join_type,
+            flag,
+            show_props,
         )
         self.verbose = verbose or False
         self.name = name
@@ -88,6 +101,7 @@ class FilterParameters:
     # @snoop
     def parse_all_enum_values(
         self,
+        block: list[str] | None,
         category: list[str] | None,
         age: list[str] | None,
         script: list[str] | None,
@@ -101,6 +115,7 @@ class FilterParameters:
         show_props: list[str] | None,
     ) -> None:
         errors: list[str] = []
+        self.blocks: list[int] | None = None
         self.categories: list[GeneralCategory] | None = None
         self.age_list: list[str] | None = None
         self.scripts: list[ScriptCode] | None = None
@@ -112,6 +127,14 @@ class FilterParameters:
         self.join_types: list[JoiningType] | None = None
         self.flags: list[CharacterFilterFlags] | None = None
         self.show_props: list[CharPropertyGroup] | None = None
+
+        if block:
+            UnicodeBlockNameMatcher = FilterParameterMatcher[UnicodeBlockName]("age", UnicodeBlockName)
+            result = UnicodeBlockNameMatcher.parse_enum_values(block)
+            if result.success:
+                self.blocks = result.value
+            else:
+                errors.append(result.error or "")
 
         if category:
             GeneralCategoryMatcher = FilterParameterMatcher[GeneralCategory]("category", GeneralCategory)
