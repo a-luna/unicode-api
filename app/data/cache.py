@@ -35,7 +35,7 @@ class UnicodeDataCache:
 
     @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
-        if not settings.BLOCKS_JSON.exists():
+        if not settings.BLOCKS_JSON.exists():  # pragma: no cover
             return []
         blocks = [db.UnicodeBlock(**block) for block in json.loads(settings.BLOCKS_JSON.read_text())]
         for block in blocks:
@@ -278,14 +278,14 @@ class UnicodeDataCache:
     def character_is_uniquely_named(self, codepoint: int) -> bool:
         return codepoint in self.unique_name_character_map
 
-    def character_is_cjk_ideograph(self, codepoint: int) -> bool:
+    def character_is_unihan(self, codepoint: int) -> bool:
         return codepoint in self.all_cjk_ideograph_codepoints
 
     def character_is_tangut(self, codepoint: int) -> bool:
         return codepoint in self.all_tangut_codepoints
 
-    def character_is_unihan(self, codepoint: int) -> bool:
-        return self.character_is_cjk_ideograph(codepoint) or self.character_is_tangut(codepoint)
+    def character_is_generically_named(self, codepoint: int) -> bool:
+        return self.character_is_unihan(codepoint) or self.character_is_tangut(codepoint)
 
     @cache
     def get_character_name(self, codepoint: int) -> str:
@@ -293,7 +293,7 @@ class UnicodeDataCache:
             self.get_unique_name_for_codepoint(codepoint)
             if self.character_is_uniquely_named(codepoint)
             else self.get_generic_name_for_codepoint(codepoint)
-            if self.character_is_unihan(codepoint)
+            if self.character_is_generically_named(codepoint)
             else self.get_label_for_unassigned_codepoint(codepoint)
         )
 

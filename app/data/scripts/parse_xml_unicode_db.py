@@ -229,9 +229,7 @@ def get_unicode_block_containing_codepoint(
 def char_is_unihan(block_name: str) -> bool:
     return (
         True
-        if "cjk unified ideographs" in block_name.lower()
-        or "cjk compatibility ideographs" in block_name.lower()
-        or ("tangut" in block_name.lower() and "component" not in block_name.lower())
+        if "cjk unified ideographs" in block_name.lower() or "cjk compatibility ideographs" in block_name.lower()
         else False
     )
 
