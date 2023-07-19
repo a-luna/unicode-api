@@ -9,13 +9,18 @@ REQ_LOCK = ROOT_FOLDER.joinpath("requirements-lock.txt")
 
 
 def sync_requirements_files():
+    result = create_lock_file()
+    if result.failure:
+        print(result.error)
+        return 1
     pinned_versions = parse_lock_file(REQ_LOCK)
     update_requirements(REQ_BASE, pinned_versions)
     update_requirements(REQ_DEV, pinned_versions)
+    return 0
 
 
 def create_lock_file():
-    run_command(f"pip freeze > {REQ_LOCK}")
+    return run_command(f"pip freeze > {REQ_LOCK}")
 
 
 def parse_lock_file(req_file: Path) -> dict[str, str]:
@@ -27,3 +32,7 @@ def update_requirements(req_file: Path, pinned_versions: dict[str, str]):
     requirements = parse_lock_file(req_file)
     updated_versions = {p: pinned_versions.get(p) for p in requirements.keys() if p in pinned_versions}
     req_file.write_text("\n".join([f"{name}=={ver}" for name, ver in updated_versions.items()]))
+
+
+if __name__ == "__main__":
+    sync_requirements_files()
