@@ -1,11 +1,10 @@
-fakeredis==2.16.0
+fakeredis==2.17.0
 fastapi==0.100.0
 fastapi-utils==0.2.1
 halo==0.0.31
 httpx==0.24.1
 lxml==4.9.3
 pydantic==1.10.10
-pyhumps==3.8.
 python-dateutil==2.8.2
 redis==4.6.0
 rapidfuzz==3.1.1
