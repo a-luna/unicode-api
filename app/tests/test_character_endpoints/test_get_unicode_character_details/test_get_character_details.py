@@ -2,13 +2,13 @@ import operator
 from functools import reduce
 
 import pytest
-from humps import camelize
 
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import PROPERTY_GROUPS
 from app.db.get_char_details import get_prop_groups
 from app.schemas.enums import CharPropertyGroup
+from app.schemas.util import to_lower_camel
 from app.tests.test_character_endpoints.test_get_unicode_character_details.data import (
     ALL_PROP_GROUP_NAMES,
     CHARACTER_PROPERTIES,
@@ -26,9 +26,9 @@ def get_character_properties(char, prop_group, verbose=False):
 def get_prop_group(char, prop_group, verbose):
     prop_data = CHARACTER_PROPERTIES[char] if not verbose else VERBOSE_CHARACTER_PROPERTIES[char]
     return {
-        camelize(prop_details["name_out"]): prop_data[camelize(prop_details["name_out"])]
+        to_lower_camel(prop_details["name_out"]): prop_data[to_lower_camel(prop_details["name_out"])]
         for prop_details in PROPERTY_GROUPS[prop_group]
-        if camelize(prop_details["name_out"]) in prop_data
+        if to_lower_camel(prop_details["name_out"]) in prop_data
     }
 
 
