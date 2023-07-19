@@ -65,10 +65,7 @@ async def apply_rate_limiting(request: Request, call_next):
 
 
 def testing(request: Request) -> bool:
-    return (
-        os.environ.get("TEST_HEADER") in request.headers
-        and request.headers[os.environ.get("TEST_HEADER", "")] == "true"
-    )
+    return request.headers.get(os.environ.get("TEST_HEADER", ""), "") == "true"
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
