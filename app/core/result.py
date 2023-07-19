@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Generic, Iterable, TypeVar
+from typing import Callable, Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -42,7 +42,7 @@ class Result(Generic[T]):
         return func(self, *args, **kwargs)
 
     @staticmethod
-    def Fail(error_message: str) -> Result:
+    def Fail(error_message: str) -> Result[T]:
         """Create a Result object for a failed operation."""
         return Result(False, value=None, error=error_message)
 
@@ -50,14 +50,3 @@ class Result(Generic[T]):
     def Ok(value: T | None = None) -> Result[T]:
         """Create a Result object for a successful operation."""
         return Result(True, value=value, error=None)
-
-    @staticmethod
-    def Combine(results: Iterable[Result]) -> Result:
-        """Return a Result object based on the outcome of a list of Results."""
-        return (
-            Result.Ok([result.value or None for result in results])
-            if all(result.success for result in results)
-            else Result.Fail(
-                "\n".join([s for s in [result.error or "" if result.failure else "" for result in results] if s])
-            )
-        )
