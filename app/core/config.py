@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from pydantic import BaseSettings
@@ -32,8 +33,8 @@ class UnicodeApiSettings(BaseSettings):
     REDIS_HOST: str = os.environ.get("REDIS_HOST", "")
     REDIS_PORT: int = int(os.environ.get("REDIS_PORT", ""))
     REDIS_DB: int = int(os.environ.get("REDIS_DB", "0"))
-    RATE_LIMIT_PERIOD_MINUTES: int = int(os.environ.get("RATE_LIMIT_PERIOD_MINUTES", "1"))
-    RATE_LIMIT_PER_PERIOD: int = int(os.environ.get("RATE_LIMIT_PER_PERIOD", "100"))
+    RATE_LIMIT_PER_PERIOD: int = int(os.environ.get("RATE_LIMIT_PER_PERIOD", "1"))
+    RATE_LIMIT_PERIOD_SECONDS: timedelta = timedelta(seconds=int(os.environ.get("RATE_LIMIT_PERIOD_SECONDS", "100")))
     RATE_LIMIT_BURST: int = int(os.environ.get("RATE_LIMIT_BURST", "10"))
     SERVER_NAME: str = "unicode-api.aaronluna.dev"
     SERVER_HOST: str = "https://unicode-api.aaronluna.dev"

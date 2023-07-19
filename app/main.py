@@ -1,6 +1,5 @@
 import os
 import re
-from datetime import timedelta
 from http import HTTPStatus
 from pathlib import Path
 
@@ -14,7 +13,6 @@ from starlette.responses import FileResponse, RedirectResponse
 from app.api.api_v1.api import router
 from app.core.config import settings
 from app.core.redis_client import redis
-from app.core.util import get_duration_from_timestamp
 from app.data.cache import cached_data
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 
@@ -59,22 +57,11 @@ async def apply_rate_limiting(request: Request, call_next):
         return await call_next(request)
 
     client_ip = request.client.host if request.client else ""
-    rate = int(os.environ.get("RATE_LIMIT_PER_PERIOD", "0"))
-    period = int(os.environ.get("RATE_LIMIT_PERIOD_MINUTES", "0"))
-    plural = "s" if period > 1 else ""
-    burst = int(os.environ.get("RATE_LIMIT_BURST", "0"))
-    rate_limit_exceeded, timestamp = redis.rate_limit_exceeded(
-        client_ip, rate=rate, period=timedelta(minutes=period), burst=burst
-    )
-    if not rate_limit_exceeded:
+    result = redis.rate_limit_exceeded(client_ip)
+    if result.success:
         response = await call_next(request)
         return response
-    limit_duration = get_duration_from_timestamp(timestamp)
-    error = (
-        f"API rate limit of {rate} requests in {period} minute{plural} exceeded, "
-        f"please wait {limit_duration} before submitting another request"
-    )
-    return JSONResponse(content=error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
+    return JSONResponse(content=result.error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
 
 
 def testing(request: Request) -> bool:
