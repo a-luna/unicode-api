@@ -161,12 +161,12 @@ body>svg {
 
 .swagger-ui .information-container.wrapper {
     margin: 0 0 2rem 0;
-    border: 1px solid var(--dl-border-color);
-    border-radius: 6px;
 }
 
 .swagger-ui .info {
     background-color: var(--page-bg-color);
+    border-radius: 6px;
+    border: 1px solid var(--dl-border-color);
 }
 
 .swagger-ui .info hgroup.main {

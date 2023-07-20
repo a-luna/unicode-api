@@ -10,6 +10,8 @@ from app.docs.api_docs.content.character import (
     PROP_GROUP_BASIC,
     PROP_GROUP_BIDIRECTIONALITY,
     PROP_GROUP_CASE,
+    PROP_GROUP_CJK_NUMERIC,
+    PROP_GROUP_CJK_READINGS,
     PROP_GROUP_CJK_VARIANTS,
     PROP_GROUP_DECOMPOSITION,
     PROP_GROUP_EAW,
@@ -118,6 +120,10 @@ UNICODE_CHARACTER_PROP_GROUPS_README = (
     + f'{create_details_element_readme("<strong>Indic</strong>", PROP_GROUP_INDIC)}'
     + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>CJK Variants</strong>", PROP_GROUP_CJK_VARIANTS)}'
+    + "\t\t<br />\n"
+    + f'{create_details_element_readme("<strong>CJK Numeric</strong>", PROP_GROUP_CJK_NUMERIC)}'
+    + "\t\t<br />\n"
+    + f'{create_details_element_readme("<strong>CJK Readings</strong>", PROP_GROUP_CJK_READINGS)}'
     + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Function and Graphic</strong>", PROP_GROUP_F_AND_G)}'
     + "\t\t<br />\n"

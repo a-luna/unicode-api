@@ -431,36 +431,53 @@ PROP_GROUP_CJK_VARIANTS = """
 PROP_GROUP_CJK_NUMERIC = """
             <div class="prop-group-ref cjk-prop-group">Reference: <a href="https://www.unicode.org/reports/tr38/#N1024D" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #38, "Unicode Han Database (Unihan), Section 3.8 Numeric Values"</a></div>
             <div>
-                <p></p>
+                <p>There are three fields, <code>accountingNumeric</code>, <code>otherNumeric</code>, and <code>primaryNumeric</code> to indicate the numerical values an ideograph may have. Traditionally, ideographs were used both for numbers and words, and so many ideographs have (or can have) numeric values. The various kinds of numeric values are specified by these three fields.</p>
+                <p>The three numeric-value fields should have no overlap; that is, characters with a <code>accountingNumeric</code> value should not have a <code>otherNumeric</code> or </code>primaryNumeric</code> value as well.</p>
             </div>
             <dl>
                 <dt><strong>accountingNumeric</strong></dt>
-                <dd></dd>
+                <dd>
+                    <p>The value of the character when used as an accounting numeral to prevent fraud. A numeral such as 十 (ten) is easily transformed into 千 (thousand) by adding a single stroke, so monetary documents often use an accounting form of the numeral, such as 拾 (ten), instead of the more common—and simpler—form.</p>
+                    <p>Characters with this property will have a single, well-defined value, which a native reader can reasonably be expected to understand.</p>
+                </dd>
                 <dt><strong>primaryNumeric</strong></dt>
-                <dd></dd>
+                <dd>
+                    <p>The value of the character when used as a numeral. Characters which have this property have numeric values that are common, and always convey the same numeric value.</p>
+                    <p>For example, 千 always means “thousand.” A native reader is expected to understand the numeric value for these characters.</p>
+                </dd>
                 <dt><strong>otherNumeric</strong></dt>
-                <dd></dd>
+                <dd>
+                    <p>One or more values of the character when used as a numeral. Characters with this property are rarely used for writing numbers, or have non-standard or multiple values depending on the region.</p>
+                    <p>For example, 㠪 is a rare character whose meaning, “five,” would not be recognized by most native readers. An English-language equivalent is “gross,” whose numeric value, “one hundred forty-four,” is not universally understood by native readers.</p>
+                </dd>
             </dl>
 """
 
 PROP_GROUP_CJK_READINGS = """
             <div class="prop-group-ref cjk-prop-group">Reference: <a href="https://www.unicode.org/reports/tr38/#N1019C" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #38, "Unicode Han Database (Unihan), Section 3.4 Readings"</a></div>
             <div>
-                <p></p>
+                <p>The properties in this group include the pronunciations for a given character in Mandarin, Cantonese, Japanese, Sino-Japanese, Korean, and Vietnamese.</p>
+                <p>Any attempt at providing a reading or set of readings for a character is bound to be fraught with difficulty, because the readings will vary over time and from place to place, even within a language. Mandarin is the official language of both the PRC and Taiwan (with some differences between the two) and is the primary language over much of northern and central China, with vast differences from place to place. Even Cantonese, the modern language covered by the Unihan database with the least geographical range, is spoken throughout Guangdong Province and in much of neighboring Guangxi Zhuang Autonomous Region, and covers four large urban centers (Guangzhou, Shenzhen, Macao, and Hong Kong). There are therefore distinct regional variations in pronunciation and vocabulary.</p>
+                <p>Indeed, even the same speaker will pronounce the same word differently depending on the speaker or even the social context. This is particularly true for languages such as Cantonese, where there has been comparatively little government effort to standardize the language.</p>
+                <p>Add to this the fact that in none of these languages—the various forms of Chinese, Japanese, Korean, Vietnamese—is the syllable the fundamental unit of the language. As in the West, it’s the word, and the pronunciation of a character is tied to the word of which it is a part. In Chinese (followed by Vietnamese and Korean), the rule is one ideograph/one syllable, with most words written using multiple ideographs. In most cases, an ideograph has only one reading (or only one important reading), but there are numerous exceptions.</p>
+                <p>In Japanese, the situation is enormously more complex. Japanese has two pronunciation systems, one derived from Chinese (the on pronunciation, or Sino-Japanese), and the other from Japanese (the kun pronunciation).</p>
+                <p>The on readings derive from Chinese loan-words. They depend on factors such as when (and from which part of China) the loan-word was borrowed, and changes to Japanese since then. On readings can therefore have little obvious relationship to modern Chinese readings, and the same Chinese reading for a given kanji can be reflected in multiple on readings in Japanese. Contrary to Chinese practice, on readings may be polysyllabic.</p>
+                <p>Kun readings, on the other hand, derive from native Japanese words for which either existing kanji were adopted or new kanji coined.</p>
+                <p>The net result is that multiple readings are the rule for Japanese kanji. These multiple readings may bear no relationship to one another and are highly context-sensitive. Even a native Japanese reader may not know the correct pronunciation of a proper noun if it is written only in kanji.</p>
             </div>
             <dl>
-                <dt><strong>hangul</strong></dt>
-                <dd></dd>
-                <dt><strong>cantonese</strong></dt>
-                <dd></dd>
                 <dt><strong>mandarin</strong></dt>
-                <dd></dd>
+                <dd>The most customary pīnyīn reading for this character. When there are two values, then the first is preferred for zh-Hans (CN) and the second is preferred for zh-Hant (TW). When there is only one value, it is appropriate for both.</dd>
+                <dt><strong>cantonese</strong></dt>
+                <dd>The most customary jyutping (Cantonese) reading for this character.</dd>
                 <dt><strong>japaneseKun</strong></dt>
-                <dd></dd>
+                <dd>The Japanese pronunciation(s) of this character in the Hepburn romanization.</dd>
                 <dt><strong>japaneseOn</strong></dt>
-                <dd></dd>
+                <dd>The Sino-Japanese pronunciation(s) of this character.</dd>
+                <dt><strong>hangul</strong></dt>
+                <dd>The modern Korean pronunciation(s) for this character in Hangul</dd>
                 <dt><strong>vietnamese</strong></dt>
-                <dd></dd>
+                <dd>The character's pronunciation(s) in Quốc ngữ.</dd>
             </dl>
 """
 
