@@ -5,6 +5,7 @@ from app.docs.api_docs.content.character import (
     PROP_GROUP_BASIC,
     PROP_GROUP_BIDIRECTIONALITY,
     PROP_GROUP_CASE,
+    PROP_GROUP_CJK_VARIANTS,
     PROP_GROUP_DECOMPOSITION,
     PROP_GROUP_EAW,
     PROP_GROUP_EMOJI,
@@ -24,6 +25,7 @@ from app.docs.api_docs.content.character import (
     UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2,
     UNICODE_CHARACTER_PROP_GROUPS_INTRO,
     UNICODE_CHATACTER_OBJECT_INTRO,
+    VERBOSITY,
 )
 from app.docs.api_docs.content.intro import (
     INTRODUCTION,

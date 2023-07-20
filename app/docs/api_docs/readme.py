@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import re
+from dataclasses import dataclass
 
 from app.core.config import ROOT_FOLDER
 from app.docs.api_docs.content.block import BLOCK_ENDPOINTS, UNICODE_BLOCK_OBJECT_INTRO, UNICODE_BLOCK_OBJECT_PROPERTIES
@@ -7,6 +10,7 @@ from app.docs.api_docs.content.character import (
     PROP_GROUP_BASIC,
     PROP_GROUP_BIDIRECTIONALITY,
     PROP_GROUP_CASE,
+    PROP_GROUP_CJK_VARIANTS,
     PROP_GROUP_DECOMPOSITION,
     PROP_GROUP_EAW,
     PROP_GROUP_EMOJI,
@@ -32,8 +36,23 @@ from app.docs.api_docs.content.intro import INTRODUCTION, LOOSE_MATCHING, PAGINA
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
 from app.docs.util import slugify
 
-HtmlHeading = dict[str, int | str]
+
+@dataclass
+class HtmlHeading:
+    level: int
+    slug: str
+    text: str
+    index: int
+
+
 HeadingMap = dict[int, list[HtmlHeading]]
+
+
+@dataclass
+class TocSection:
+    heading: HtmlHeading
+    children: list[TocSection]
+
 
 HEADING_ELEMENT_REGEX = re.compile(
     r'h(?P<level>2|3|4|5|6) id="(?P<slug>[0-9a-z-_]+)">(?P<text>.+)<\/(?:h2|h3|h4|h5|h6)>'
@@ -98,6 +117,8 @@ UNICODE_CHARACTER_PROP_GROUPS_README = (
     + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Indic</strong>", PROP_GROUP_INDIC)}'
     + "\t\t<br />\n"
+    + f'{create_details_element_readme("<strong>CJK Variants</strong>", PROP_GROUP_CJK_VARIANTS)}'
+    + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Function and Graphic</strong>", PROP_GROUP_F_AND_G)}'
     + "\t\t<br />\n"
     + f'{create_details_element_readme("<strong>Emoji</strong>", PROP_GROUP_EMOJI)}'
@@ -132,16 +153,6 @@ def update_readme():
     ROOT_FOLDER.joinpath("README.md").write_text(readme_api_docs)
 
 
-def create_toc_for_readme():
-    html = get_api_docs_for_readme()
-    toc = create_toc_section(2, 0, len(html), create_html_heading_map(html))
-    html = '<ul class="toc">\n'
-    for section in toc:
-        html += create_toc_section_html(section, 0)
-    html += "</ul>\n"
-    return html
-
-
 def get_api_docs_for_readme():
     return (
         create_readme_section(2, "Introduction", INTRODUCTION)
@@ -156,45 +167,49 @@ def get_api_docs_for_readme():
     )
 
 
-def create_html_heading_map(html) -> HeadingMap:
-    heading_elements = []
-    for match in HEADING_ELEMENT_REGEX.finditer(html):
-        match_dict = match.groupdict()
-        heading_elements.append(
-            {
-                "level": int(match_dict["level"]),
-                "slug": match_dict["slug"],
-                "text": match_dict["text"],
-                "index": match.start(),
-            }
+def create_toc_for_readme() -> str:
+    html = get_api_docs_for_readme()
+    toc = create_toc_section(2, 0, len(html), create_html_heading_map(html))
+    html = '<ul class="toc">\n'
+    for section in toc:
+        html += create_toc_section_html(section, 0)
+    html += "</ul>\n"
+    return html
+
+
+def create_html_heading_map(html: str) -> HeadingMap:
+    heading_elements = [
+        HtmlHeading(
+            level=int(match.groupdict()["level"]),
+            slug=match.groupdict()["slug"],
+            text=match.groupdict()["text"],
+            index=match.start(),
         )
-    return {
-        heading_level: [h for h in heading_elements if h["level"] == heading_level] for heading_level in range(2, 7)
-    }
+        for match in HEADING_ELEMENT_REGEX.finditer(html)
+    ]
+    return {heading_level: [h for h in heading_elements if h.level == heading_level] for heading_level in range(2, 7)}
 
 
-def create_toc_section(level: int, section_start: int, section_end: int, heading_map: HeadingMap):
-    level_map = [h for h in heading_map[level] if (int(h["index"]) >= section_start and section_end > int(h["index"]))]
+def create_toc_section(level: int, section_start: int, section_end: int, heading_map: HeadingMap) -> list[TocSection]:
+    level_map = [h for h in heading_map[level] if (h.index >= section_start and section_end > h.index)]
     if not level_map or not len(level_map):
         return []
-    toc = []
+    toc: list[TocSection] = []
     for i, heading in enumerate(level_map):
         if i < len(level_map) - 1:
-            end = (int(level_map[i + 1]["index"]) or 0) - 1
+            end = (level_map[i + 1].index or 0) - 1
         else:
             end = section_end
-        toc.append(
-            {"heading": heading, "children": create_toc_section(level + 1, int(heading["index"]), end, heading_map)}
-        )
+        toc.append(TocSection(heading=heading, children=create_toc_section(level + 1, heading.index, end, heading_map)))
     return toc
 
 
-def create_toc_section_html(section, indent_count):
+def create_toc_section_html(section: TocSection, indent_count: int) -> str:
     html = ("\t" * (indent_count + 1)) + "<li>\n"
-    html += ("\t" * (indent_count + 2)) + f'<a href="#{section["heading"]["slug"]}">{section["heading"]["text"]}</a>\n'
-    if section["children"]:
+    html += ("\t" * (indent_count + 2)) + f'<a href="#{section.heading.slug}">{section.heading.text}</a>\n'
+    if section.children:
         html += ("\t" * (indent_count + 2)) + "<ul>\n"
-        for sub_toc in section["children"]:
+        for sub_toc in section.children:
             html += create_toc_section_html(sub_toc, indent_count + 2)
         html += ("\t" * (indent_count + 2)) + "</ul>\n"
     html += ("\t" * (indent_count + 1)) + "</li>\n"

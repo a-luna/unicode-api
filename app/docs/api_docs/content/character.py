@@ -79,6 +79,20 @@ PROP_GROUP_BASIC = """
                 <dd>Specifies, with a numeric code, which sequences of combining marks are to be considered canonically equivalent and which are not. This is used in the Canonical Ordering Algorithm and in normalization. For more info, please see <a href="https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#page=11" rel="noopener noreferrer" target="_blank">Unicode Standard Section 4.3</a>.</dd>
                 <dt><strong>htmlEntities</strong></dt>
                 <dd>A string begining with an ampersand (&) character and ending with a semicolon (;). Entities are used to display reserved characters (e.g., '<' in an HTML document) or invisible characters (e.g., non-breaking spaces). For more info, please see the <a href="https://developer.mozilla.org/en-US/docs/Glossary/Entity" rel="noopener noreferrer" target="_blank">MDN entry for HTML Entities</a>.</dd>
+                <dt><strong>ideoFrequency</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
+                <dd>A rough frequency measurement for the character based on analysis of traditional Chinese USENET postings; characters with a kFrequency of 1 are the most common, those with a kFrequency of 2 are less common, and so on, through a kFrequency of 5.</dd>
+                <dt><strong>ideoGradeLevel</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
+                <dd>The primary grade in the Hong Kong school system by which a student is expected to know the character; this data is derived from <cite>朗文初級中文詞典, Hong Kong: Longman, 2001</cite>.</dd>
+                <dt><strong>rsCountUnicode</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
+                <dd>
+                    <p>The standard radical-stroke count for this character in the form “radical.additional strokes”. The radical is indicated by a number in the range (1..214) inclusive. An apostrophe (') after the radical indicates a simplified version of the given radical. The “additional strokes” value is the residual stroke-count, the count of all strokes remaining after eliminating all strokes associated with the radical.</p>
+                    <p>This field is also used for additional radical-stroke indices where either a character may be reasonably classified under more than one radical, or alternate stroke count algorithms may provide different stroke counts.</p>
+                    <p>The residual stroke count may be negative. This is because some characters (for example, U+225A9, U+29C0A) are constructed by removing strokes from a standard radical.</p>
+                </dd>
+                <dt><strong>rsCountKangxi</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
+                <dd>The Kangxi radical-stroke count for this character consistent with the value of the character in the<cite>《康熙字典》Kangxi Dictionary</cite> in the form “radical.additional strokes”.</dd>
+                <dt><strong>totalStrokes</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
+                <dd>The total number of strokes in the character (including the radical). When there are two values, then the first is preferred for zh-Hans (CN) and the second is preferred for zh-Hant (TW). When there is only one value, it is appropriate for both</dd>
             </dl>
 """
 
@@ -386,20 +400,67 @@ PROP_GROUP_INDIC = """
             </dl>
 """
 
-PROP_GROUP_CJK_BASIC = """
-            <div class="prop-group-ref cjk-prop-group">Reference: <a href="http://www.unicode.org/reports/tr38/" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #38, "Unicode Han Database (Unihan)"</a></div>
+PROP_GROUP_CJK_VARIANTS = """
+            <div class="prop-group-ref cjk-prop-group">Reference: <a href="https://www.unicode.org/reports/tr38/#N10211" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #38, "Unicode Han Database (Unihan), Section 3.7 Variants"</a></div>
+            <div>
+                <p>Although Unicode encodes characters and not glyphs, the line between the two can sometimes be hard to draw, particularly in East Asia. There, thousands of years worth of writing have produced thousands of pairs which can be used more-or-less interchangeably.</p>
+                <p>To deal with this situation, the Unicode Standard has adopted a three-dimensional model for determining the relationship between ideographs, and has formal rules for when two forms may be unified. Both are described in some detail in the Unicode Standard. Briefly, however, the three-dimensional model uses the x-axis to represent meaning, and the y-axis to represent abstract shape. The z-axis is used for stylistic variations.</p>
+                <p>The <code>traditionalVariant</code> and <code>simplifiedVariant</code> fields are used in character-by-character conversions between simplified and traditional Chinese (SC and TC, respectively).</p>
+                <p>Two variation fields, <code>semanticVariant</code> and <code>specializedSemanticVariant</code>, are used to mark cases where two characters have identical and overlapping meanings, respectively.</p>
+                <p>The <code>spoofingVariant</code> field is used to denote a special class of variant, a spoofing variant. Spoofing variants are potentially used in bad faith to direct users to unexpected URLs, evade email filters, or otherwise deceive end-users.</p>
+                <p>For more information on CJK variants, please see <a href="https://www.unicode.org/reports/tr38/#N10211" rel="noopener noreferrer" target="_blank">UAX #38, Section 3.7</a>.</p>
+            </div>
+            <dl>
+                <dt><strong>traditionalVariant</strong></dt>
+                <dd>The Unicode value(s) for the traditional Chinese variant(s) for this character.</dd>
+                <dt><strong>simplifiedVariant</strong></dt>
+                <dd>The Unicode value(s) for the simplified Chinese variant(s) for this character.</dd>
+                <dt><strong>zVariant</strong></dt>
+                <dd>The z-variants for the character, if any. Z-variants are instances where the same abstract shape has been encoded multiple times, either in error or because of source separation. Z-variant pairs also have identical semantics.</dd>
+                <dt><strong>compatibilityVariant</strong></dt>
+                <dd>The canonical Decomposition_Mapping value for the ideograph</dd>
+                <dt><strong>semanticVariant</strong></dt>
+                <dd>The Unicode value for a semantic variant for this character. A semantic variant is an x- or y-variant with similar or identical meaning which can generally be used in place of the indicated character.</dd>
+                <dt><strong>specializedSemanticVariant</strong></dt>
+                <dd>The Unicode value for a specialized semantic variant for this character. The syntax is the same as for the kSemanticVariant field. A specialized semantic variant is an x- or y-variant with similar or identical meaning only in certain contexts.</dd>
+                <dt><strong>spoofingVariant</strong></dt>
+                <dd>The spoofing variants for the character, if any. Spoofing variants include character pairs which look similar, particularly at small point sizes, which are not already z-variants or compatibility variants.</dd>
+            </dl>
+"""
+
+PROP_GROUP_CJK_NUMERIC = """
+            <div class="prop-group-ref cjk-prop-group">Reference: <a href="https://www.unicode.org/reports/tr38/#N1024D" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #38, "Unicode Han Database (Unihan), Section 3.8 Numeric Values"</a></div>
             <div>
                 <p></p>
             </div>
             <dl>
-                <dt><strong>character</strong></dt>
-                <dd>A unit of information used for the organization, control, or representation of textual data.</dd>
-                <dt><strong>name</strong></dt>
-                <dd>A unique string used to identify each character encoded in the Unicode standard.</dd>
-                <dt><strong>codepoint</strong></dt>
-                <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
-                <dt><strong>uriEncoded</strong></dt>
-                <dd>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>). A URI string must contain only a defined subset of characters from the standard 128 ASCII character set, any other characters must be replaced by an escape sequence representing the UTF-8 encoding of the character. For example, ∑ (<code>U+2211 <span>N-ARY SUMMATION</span></code>) is equal to <code>0xE2 0x88 0x91</code> in UTF-8 encoding. When used as part of a URI, this character must be escaped using the URI-escaped string <code>%E2%88%91</code>.</dd>
+                <dt><strong>accountingNumeric</strong></dt>
+                <dd></dd>
+                <dt><strong>primaryNumeric</strong></dt>
+                <dd></dd>
+                <dt><strong>otherNumeric</strong></dt>
+                <dd></dd>
+            </dl>
+"""
+
+PROP_GROUP_CJK_READINGS = """
+            <div class="prop-group-ref cjk-prop-group">Reference: <a href="https://www.unicode.org/reports/tr38/#N1019C" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #38, "Unicode Han Database (Unihan), Section 3.4 Readings"</a></div>
+            <div>
+                <p></p>
+            </div>
+            <dl>
+                <dt><strong>hangul</strong></dt>
+                <dd></dd>
+                <dt><strong>cantonese</strong></dt>
+                <dd></dd>
+                <dt><strong>mandarin</strong></dt>
+                <dd></dd>
+                <dt><strong>japaneseKun</strong></dt>
+                <dd></dd>
+                <dt><strong>japaneseOn</strong></dt>
+                <dd></dd>
+                <dt><strong>vietnamese</strong></dt>
+                <dd></dd>
             </dl>
 """
 

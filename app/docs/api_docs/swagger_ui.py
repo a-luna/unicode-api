@@ -12,6 +12,7 @@ from app.docs.api_docs.content.character import (
     PROP_GROUP_BASIC,
     PROP_GROUP_BIDIRECTIONALITY,
     PROP_GROUP_CASE,
+    PROP_GROUP_CJK_VARIANTS,
     PROP_GROUP_DECOMPOSITION,
     PROP_GROUP_EAW,
     PROP_GROUP_EMOJI,
@@ -82,6 +83,7 @@ UNICODE_CHARACTERS_DOCS = f"""
 {create_details_element_for_swagger_ui('<h6 id="script">Property Group: Script</h6>', PROP_GROUP_SCRIPT)}
 {create_details_element_for_swagger_ui('<h6 id="hangul">Property Group: Hangul</h6>', PROP_GROUP_HANGUL)}
 {create_details_element_for_swagger_ui('<h6 id="indic">Property Group: Indic</h6>', PROP_GROUP_INDIC)}
+{create_details_element_for_swagger_ui('<h6 id="cjk-variants">Property Group: CJK Variants</h6>', PROP_GROUP_CJK_VARIANTS)}
 {create_details_element_for_swagger_ui('<h6 id="function-and-graphic">Property Group: Function and Graphic</h6>', PROP_GROUP_F_AND_G)}
 {create_details_element_for_swagger_ui('<h6 id="emoji">Property Group: Emoji</h6>', PROP_GROUP_EMOJI)}</div>
 """
