@@ -3,6 +3,7 @@ fastapi==0.100.0
 fastapi-utils==0.2.1
 halo==0.0.31
 httpx==0.24.1
+lupa==1.14.1
 lxml==4.9.3
 pydantic==1.10.10
 python-dateutil==2.8.2
