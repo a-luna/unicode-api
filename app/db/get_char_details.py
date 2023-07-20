@@ -45,7 +45,7 @@ def get_prop_groups(codepoint: int, show_props: list[CharPropertyGroup] | None) 
             for prop_group in show_props
             if prop_group not in [CharPropertyGroup.BASIC, CharPropertyGroup.CJK_BASIC]
         ]
-        return show_props + [CharPropertyGroup.CJK_BASIC if unihan else CharPropertyGroup.BASIC]
+        show_props += [CharPropertyGroup.BASIC] if not unihan else [CharPropertyGroup.CJK_BASIC]
     # then, if character is non-unihan, ensure that any unihan-specific property groups are not included
     if not unihan and any("CJK" in prop_group.name for prop_group in show_props):
         show_props = [prop_group for prop_group in show_props if "CJK" not in prop_group.name]
