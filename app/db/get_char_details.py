@@ -7,7 +7,7 @@ from sqlalchemy.engine import Engine
 
 import app.db.models as db
 from app.data.cache import cached_data
-from app.data.encoding import get_mapped_codepoint
+from app.data.encoding import get_mapped_codepoint_from_int
 from app.db.character_props import PROPERTY_GROUPS
 from app.schemas.enums import CharacterFilterFlags, CharPropertyGroup
 
@@ -87,12 +87,7 @@ def get_prop_names_with_irrelevant_values(codepoint: int, char_props: dict[str, 
 
 
 def get_unihan_properties_with_null_values(char_props: dict[str, Any]) -> list[str]:
-    unihan_properties = [
-        "ideo_frequency",
-        "ideo_grade_level",
-        "rs_count_unicode",
-        "rs_count_kangxi",
-        "total_strokes",
+    unihan_list_properties = [
         "traditional_variant",
         "simplified_variant",
         "z_variant",
@@ -100,6 +95,17 @@ def get_unihan_properties_with_null_values(char_props: dict[str, Any]) -> list[s
         "semantic_variant",
         "specialized_semantic_variant",
         "spoofing_variant",
+    ]
+    remove_list_props = [
+        prop_name for prop_name in unihan_list_properties if prop_name in char_props and char_props[prop_name] == [""]
+    ]
+
+    unihan_properties = [
+        "ideo_frequency",
+        "ideo_grade_level",
+        "rs_count_unicode",
+        "rs_count_kangxi",
+        "total_strokes",
         "accounting_numeric",
         "primary_numeric",
         "other_numeric",
@@ -110,7 +116,10 @@ def get_unihan_properties_with_null_values(char_props: dict[str, Any]) -> list[s
         "japanese_on",
         "vietnamese",
     ]
-    return [prop_name for prop_name in unihan_properties if prop_name in char_props and not char_props[prop_name]]
+    remove_props = [
+        prop_name for prop_name in unihan_properties if prop_name in char_props and not char_props[prop_name]
+    ]
+    return remove_list_props + remove_props
 
 
 def get_unset_flag_properties(char_props: dict[str, Any]) -> list[str]:
@@ -138,7 +147,7 @@ def remove_irrelevant_casing_properties(char_props: dict[str, Any], codepoint: i
         prop_name
         for prop_name in other_casing_props
         if prop_name in char_props
-        and (char_props[prop_name] == get_mapped_codepoint(f"{codepoint:04X}") or char_props[prop_name] == "")
+        and (char_props[prop_name] == get_mapped_codepoint_from_int(codepoint) or char_props[prop_name] == "")
     )
     return remove_props
 

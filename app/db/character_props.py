@@ -2,6 +2,7 @@ from typing import Any
 
 from app.data.cache import cached_data
 from app.data.constants import (
+    CODEPOINT_WITH_PREFIX_REGEX,
     DEFAULT_BC_AL_CODEPOINTS,
     DEFAULT_BC_ET_CODEPOINTS,
     DEFAULT_BC_R_CODEPOINTS,
@@ -11,7 +12,8 @@ from app.data.constants import (
 from app.data.encoding import (
     get_codepoint_string,
     get_html_entities,
-    get_mapped_codepoint,
+    get_mapped_codepoint_from_hex,
+    get_mapped_codepoint_from_int,
     get_uri_encoded_value,
     get_utf8_dec_bytes,
     get_utf8_hex_bytes,
@@ -315,9 +317,8 @@ PROPERTY_GROUPS = {
             "char_property": "bmg",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_mapped_codepoint(char["bidirectional_mirroring_glyph"])
-            if "bidirectional_mirroring_glyph" in char and cached_data.codepoint_is_assigned(char["codepoint_dec"])
-            else get_mapped_codepoint(f'{char["codepoint_dec"]:04X}'),
+            "response_value": lambda char: get_char_and_unicode_hex_value(char, "bidirectional_mirroring_glyph")
+            or get_mapped_codepoint_from_int(char["codepoint_dec"]),
         },
         {
             "name_in": "bidirectional_control",
@@ -599,7 +600,7 @@ PROPERTY_GROUPS = {
             "char_property": "kTraditionalVariant",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "traditional_variant"),
+            "response_value": lambda char: get_list_of_mapped_codepoints(char["traditional_variant"]),
         },
         {
             "name_in": "simplified_variant",
@@ -607,7 +608,7 @@ PROPERTY_GROUPS = {
             "char_property": "kSimplifiedVariant",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "simplified_variant"),
+            "response_value": lambda char: get_list_of_mapped_codepoints(char["simplified_variant"]),
         },
         {
             "name_in": "z_variant",
@@ -615,7 +616,7 @@ PROPERTY_GROUPS = {
             "char_property": "kZVariant",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "z_variant"),
+            "response_value": lambda char: get_list_of_mapped_codepoints(char["z_variant"]),
         },
         {
             "name_in": "compatibility_variant",
@@ -623,7 +624,7 @@ PROPERTY_GROUPS = {
             "char_property": "kCompatibilityVariant",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "compatibility_variant"),
+            "response_value": lambda char: get_list_of_mapped_codepoints(char["compatibility_variant"]),
         },
         {
             "name_in": "semantic_variant",
@@ -631,7 +632,7 @@ PROPERTY_GROUPS = {
             "char_property": "kSemanticVariant",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "semantic_variant"),
+            "response_value": lambda char: get_list_of_mapped_codepoints(char["semantic_variant"]),
         },
         {
             "name_in": "specialized_semantic_variant",
@@ -639,7 +640,7 @@ PROPERTY_GROUPS = {
             "char_property": "kSpecializedSemanticVariant",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "specialized_semantic_variant"),
+            "response_value": lambda char: get_list_of_mapped_codepoints(char["specialized_semantic_variant"]),
         },
         {
             "name_in": "spoofing_variant",
@@ -647,7 +648,7 @@ PROPERTY_GROUPS = {
             "char_property": "kSpoofingVariant",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "spoofing_variant"),
+            "response_value": lambda char: get_list_of_mapped_codepoints(char["spoofing_variant"]),
         },
     ],
     CharPropertyGroup.CJK_NUMERIC: [
@@ -1000,7 +1001,18 @@ def get_int_prop_value(char_props: dict[str, Any], prop_name: str) -> int:
 
 
 def get_char_and_unicode_hex_value(char_props: dict[str, Any], prop_name: str) -> str:
-    return get_mapped_codepoint(get_string_prop_value(char_props, prop_name))
+    prop_value = get_string_prop_value(char_props, prop_name)
+    return (
+        get_mapped_codepoint_from_hex(prop_value)
+        if prop_value and cached_data.codepoint_is_assigned(char_props["codepoint_dec"])
+        else ""
+    )
+
+
+def get_list_of_mapped_codepoints(input: str) -> list[str]:
+    if not input:
+        return [""]
+    return [get_mapped_codepoint_from_hex(codepoint) for codepoint in CODEPOINT_WITH_PREFIX_REGEX.findall(input)]
 
 
 def get_default_age(codepoint: int) -> str:

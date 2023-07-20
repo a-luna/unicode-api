@@ -1,6 +1,11 @@
+import re
 from collections import namedtuple
 
 MAX_CODEPOINT = 1114111
+
+ASCII_HEX = "0123456789ABCDEFabcdef"
+
+CODEPOINT_WITH_PREFIX_REGEX = re.compile(r"(?:U\+([A-Fa-f0-9]{4,6}))")
 
 CharacterFlag = namedtuple("CharacterFlag", ["name", "alias", "db_column"])
 
