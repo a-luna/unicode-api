@@ -135,6 +135,26 @@ FILTER_BY_CHAR_FLAG = {
     ],
 }
 
+FILTER_BY_BLOCK_NAME = {
+    "url": "/v1/characters/filter",
+    "hasMore": True,
+    "currentPage": 1,
+    "nextPage": 2,
+    "totalResults": 14,
+    "results": [
+        {"character": "𐆐", "name": "ROMAN SEXTANS SIGN", "codepoint": "U+10190", "uriEncoded": "%F0%90%86%90"},
+        {"character": "𐆑", "name": "ROMAN UNCIA SIGN", "codepoint": "U+10191", "uriEncoded": "%F0%90%86%91"},
+        {"character": "𐆒", "name": "ROMAN SEMUNCIA SIGN", "codepoint": "U+10192", "uriEncoded": "%F0%90%86%92"},
+        {"character": "𐆓", "name": "ROMAN SEXTULA SIGN", "codepoint": "U+10193", "uriEncoded": "%F0%90%86%93"},
+        {"character": "𐆔", "name": "ROMAN DIMIDIA SEXTULA SIGN", "codepoint": "U+10194", "uriEncoded": "%F0%90%86%94"},
+        {"character": "𐆕", "name": "ROMAN SILIQUA SIGN", "codepoint": "U+10195", "uriEncoded": "%F0%90%86%95"},
+        {"character": "𐆖", "name": "ROMAN DENARIUS SIGN", "codepoint": "U+10196", "uriEncoded": "%F0%90%86%96"},
+        {"character": "𐆗", "name": "ROMAN QUINARIUS SIGN", "codepoint": "U+10197", "uriEncoded": "%F0%90%86%97"},
+        {"character": "𐆘", "name": "ROMAN SESTERTIUS SIGN", "codepoint": "U+10198", "uriEncoded": "%F0%90%86%98"},
+        {"character": "𐆙", "name": "ROMAN DUPONDIUS SIGN", "codepoint": "U+10199", "uriEncoded": "%F0%90%86%99"},
+    ],
+}
+
 INVALID_FILTER_PARAM_VALUES = {
-    "detail": "Invalid values were provided for the following 11 parameters:\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'ccc' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
+    "detail": "Invalid values were provided for the following 12 parameters:\n\n1 value provided for the 'block' parameter is invalid: ['xxx']\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'ccc' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }

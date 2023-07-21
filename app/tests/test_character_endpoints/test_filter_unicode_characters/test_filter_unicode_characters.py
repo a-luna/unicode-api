@@ -1,5 +1,6 @@
 from app.tests.test_character_endpoints.test_filter_unicode_characters.data import (
     FILTER_BY_BIDIRECTIONAL_CLASS,
+    FILTER_BY_BLOCK_NAME,
     FILTER_BY_CCC,
     FILTER_BY_CHAR_FLAG,
     FILTER_BY_DECOMPOSITION_TYPE,
@@ -68,6 +69,12 @@ def test_filter_by_char_flags(client):
     assert response.json() == FILTER_BY_CHAR_FLAG
 
 
+def test_filter_by_block_name(client):
+    response = client.get("/v1/characters/filter?block=Ancient_Symbols")
+    assert response.status_code == 200
+    assert response.json() == FILTER_BY_BLOCK_NAME
+
+
 def test_no_characters_match_filter_settings(client):
     response = client.get("/v1/characters/filter?name=test&script=copt&show_props=all")
     assert response.status_code == 200
@@ -94,6 +101,7 @@ def test_invalid_filter_param_values(client):
         "&num_type=dd"
         "&join_type=j"
         "&flag=special&flag=basic"
+        "&block=xxx"
     )
     assert response.status_code == 400
     assert response.json() == INVALID_FILTER_PARAM_VALUES
