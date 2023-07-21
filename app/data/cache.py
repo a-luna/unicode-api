@@ -10,6 +10,7 @@ import app.db.models as db
 from app.core.config import settings
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,
+    ALL_UNICODE_CODEPOINTS,
     C0_CONTROL_CHARACTERS,
     MAX_CODEPOINT,
     NON_CHARACTER_CODEPOINTS,
@@ -124,7 +125,7 @@ class UnicodeDataCache:
 
     @property
     def all_codepoints_in_unicode_space(self) -> set[int]:
-        return set(range(0, MAX_CODEPOINT + 1))
+        return set(ALL_UNICODE_CODEPOINTS)
 
     @property
     def all_control_character_codepoints(self) -> set[int]:
@@ -253,9 +254,6 @@ class UnicodeDataCache:
     def get_unicode_plane_containing_block_id(self, block_id: int) -> db.UnicodePlane:
         found = [p for p in self.planes if p.start_block_id <= block_id and block_id <= p.finish_block_id]
         return found[0] if found else db.UnicodePlane(**NULL_PLANE)
-
-    def codepoint_is_in_unicode_range(self, codepoint: int) -> bool:
-        return codepoint in self.all_codepoints_in_unicode_space
 
     def codepoint_is_assigned(self, codepoint: int) -> bool:
         return codepoint in self.all_assigned_codepoints

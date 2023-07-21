@@ -3,6 +3,8 @@ from collections import namedtuple
 
 MAX_CODEPOINT = 1114111
 
+ALL_UNICODE_CODEPOINTS = range(0, MAX_CODEPOINT + 1)
+
 ASCII_HEX = "0123456789ABCDEFabcdef"
 
 CODEPOINT_WITH_PREFIX_REGEX = re.compile(r"(?:U\+([A-Fa-f0-9]{4,6}))")

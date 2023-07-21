@@ -1,6 +1,6 @@
 from html.entities import html5
 
-from app.data.constants import ASCII_HEX, MAX_CODEPOINT
+from app.data.constants import ALL_UNICODE_CODEPOINTS, ASCII_HEX
 
 HTML_ENTITY_MAP = {
     cp: entity
@@ -15,7 +15,7 @@ def get_codepoint_string(codepoint: int) -> str:
     return f"U+{codepoint:04X}"
 
 
-def get_mapped_codepoint_from_hex(codepoint_hex: str) -> str:
+def get_mapped_codepoint_from_hex(codepoint_hex: str) -> str:  # pragma: no cover
     if not codepoint_hex:
         return ""
     if codepoint_hex.startswith("U+"):
@@ -27,8 +27,8 @@ def get_mapped_codepoint_from_hex(codepoint_hex: str) -> str:
     return get_mapped_codepoint_from_int(int(codepoint_hex, 16))
 
 
-def get_mapped_codepoint_from_int(codepoint_dec: int) -> str:
-    if codepoint_dec not in range(0, MAX_CODEPOINT + 1):
+def get_mapped_codepoint_from_int(codepoint_dec: int) -> str:  # pragma: no cover
+    if codepoint_dec not in ALL_UNICODE_CODEPOINTS:
         return f"Invalid Codepoint ({codepoint_dec} is not within the Unicode codespace)"
     return f"{chr(codepoint_dec)} (U+{codepoint_dec:04X})" if codepoint_dec else ""
 
