@@ -129,7 +129,7 @@ class FilterParameters:
         self.show_props: list[CharPropertyGroup] | None = None
 
         if block:
-            UnicodeBlockNameMatcher = FilterParameterMatcher[UnicodeBlockName]("age", UnicodeBlockName)
+            UnicodeBlockNameMatcher = FilterParameterMatcher[UnicodeBlockName]("block", UnicodeBlockName)
             result = UnicodeBlockNameMatcher.parse_enum_values(block)
             if result.success:
                 self.blocks = result.value
