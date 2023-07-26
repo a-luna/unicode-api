@@ -35,6 +35,7 @@ app.add_middleware(
         "http://localhost:3500",
         "http://10.0.1.74:3500",
         "https://base64-demo.netlify.app",
+        "https://base64.aaronluna.dev/",
     ],
     allow_credentials=True,
     allow_methods=["GET"],
