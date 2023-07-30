@@ -102,6 +102,9 @@ class FilterParameters:
     @property
     def settings(self) -> list[str]:
         filter_settings = []
+        if self.name:
+            filter_settings.append(f"name: {self.name}")
+
         if self.blocks:
             block_names = [cached_data.get_unicode_block_by_id(block_id).name for block_id in self.blocks]
             filter_settings.append(f"block: {', '.join(block_names)}")
