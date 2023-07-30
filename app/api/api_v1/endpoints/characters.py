@@ -76,7 +76,7 @@ def search_unicode_characters_by_name(
 def filter_unicode_characters(
     db_ctx: Annotated[DBSession, Depends(get_session)], filter_parameters: Annotated[FilterParameters, Depends()]
 ):
-    response_data = {"url": f"{settings.API_VERSION}/characters/filter"}
+    response_data = {"url": f"{settings.API_VERSION}/characters/filter", "filter_settings": filter_parameters.settings}
     codepoints = db_ctx.filter_all_characters(filter_parameters)
     filter_results = [(cp, None) for cp in codepoints]
     return get_paginated_character_list(

@@ -4,6 +4,7 @@ from typing import Annotated, Generic, Type, TypeVar
 from fastapi import HTTPException, Query
 
 from app.core.result import Result
+from app.data.cache import cached_data
 from app.docs.dependencies.custom_parameters import (
     CHAR_NAME_FILTER_DESCRIPTION,
     PAGE_NUMBER_DESCRIPTION,
@@ -98,7 +99,54 @@ class FilterParameters:
         self.per_page = per_page or 10
         self.page = page or 1
 
-    # @snoop
+    @property
+    def settings(self) -> list[str]:
+        filter_settings = []
+        if self.blocks:
+            block_names = [cached_data.get_unicode_block_by_id(block_id).name for block_id in self.blocks]
+            filter_settings.append(f"block: {', '.join(block_names)}")
+
+        if self.categories:
+            categories = [str(cat) for cat in self.categories]
+            filter_settings.append(f"category: {', '.join(categories)}")
+
+        if self.age_list:
+            filter_settings.append(f"version: {', '.join(self.age_list)}")
+
+        if self.scripts:
+            scripts = [str(script) for script in self.scripts]
+            filter_settings.append(f"script: {', '.join(scripts)}")
+
+        if self.bidi_class_list:
+            bidi_class_list = [str(bidi_class) for bidi_class in self.bidi_class_list]
+            filter_settings.append(f"bidi_class: {', '.join(bidi_class_list)}")
+
+        if self.decomp_types:
+            decomp_types = [str(decomp) for decomp in self.decomp_types]
+            filter_settings.append(f"decomp_type: {', '.join(decomp_types)}")
+
+        if self.line_break_types:
+            line_break_types = [str(lb) for lb in self.line_break_types]
+            filter_settings.append(f"line_break: {', '.join(line_break_types)}")
+
+        if self.ccc_list:
+            ccc_list = [str(ccc) for ccc in self.ccc_list]
+            filter_settings.append(f"ccc: {', '.join(ccc_list)}")
+
+        if self.num_types:
+            num_types = [str(num_type) for num_type in self.num_types]
+            filter_settings.append(f"num_type: {', '.join(num_types)}")
+
+        if self.join_types:
+            join_types = [str(join_type) for join_type in self.join_types]
+            filter_settings.append(f"join_type: {', '.join(join_types)}")
+
+        if self.flags:
+            flags = [flag.display_name.replace("_", " ") for flag in self.flags]
+            filter_settings.append(f"flag: {', '.join(flags)}")
+
+        return filter_settings
+
     def parse_all_enum_values(
         self,
         block: list[str] | None,
