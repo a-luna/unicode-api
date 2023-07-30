@@ -10,6 +10,7 @@ from app.api.api_v1.dependencies.filter_params import FilterParameters
 from app.db.engine import engine
 from app.db.get_char_details import get_character_properties
 from app.schemas.enums import CharPropertyGroup
+from app.schemas.util import flatten_list2d
 
 CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 
@@ -43,7 +44,8 @@ def construct_filter_query(
     if filter_params.blocks:
         query = query.where(column("block_id").in_(filter_params.blocks))
     if filter_params.categories:
-        query = query.where(column("general_category").in_(filter_params.categories))
+        filtered_categories = flatten_list2d([cat.values for cat in filter_params.categories])
+        query = query.where(column("general_category").in_(filtered_categories))
     if filter_params.age_list:
         query = query.where(column("age").in_(filter_params.age_list))
     if filter_params.scripts:

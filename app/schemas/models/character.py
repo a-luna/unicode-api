@@ -8,7 +8,6 @@ from app.schemas.enums import (
     CombiningClassCategory,
     DecompositionType,
     EastAsianWidthType,
-    GeneralCategory,
     HangulSyllableType,
     JoiningType,
     LineBreakType,
@@ -26,9 +25,7 @@ class UnicodeCharacterBase(CamelModel):
     name: str = Field(index=True)
     age: str
     plane_number: int
-    general_category: GeneralCategory = Field(
-        sa_column=Column(ChoiceType(GeneralCategory, impl=Integer()), nullable=False)
-    )
+    general_category: str
     combining_class: CombiningClassCategory = Field(
         sa_column=Column(ChoiceType(CombiningClassCategory, impl=Integer()), nullable=False)
     )

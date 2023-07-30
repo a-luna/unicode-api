@@ -1,27 +1,27 @@
 from __future__ import annotations
 
-from enum import IntEnum, auto
+from enum import IntFlag, auto
 
 from app.schemas.util import normalize_string_lm3
 
 
-class GeneralCategory(IntEnum):
+class GeneralCategory(IntFlag):
     NONE = 0
     UPPERCASE_LETTER = auto()
     LOWERCASE_LETTER = auto()
     TITLECASE_LETTER = auto()
-    CASED_LETTER = auto()
+    CASED_LETTER = UPPERCASE_LETTER | LOWERCASE_LETTER | TITLECASE_LETTER
     MODIFIER_LETTER = auto()
     OTHER_LETTER = auto()
-    LETTER = auto()
+    LETTER = UPPERCASE_LETTER | LOWERCASE_LETTER | TITLECASE_LETTER | MODIFIER_LETTER | OTHER_LETTER
     NONSPACING_MARK = auto()
     SPACING_MARK = auto()
     ENCLOSING_MARK = auto()
-    MARK = auto()
+    MARK = NONSPACING_MARK | SPACING_MARK | ENCLOSING_MARK
     DECIMAL_NUMBER = auto()
     LETTER_NUMBER = auto()
     OTHER_NUMBER = auto()
-    NUMBER = auto()
+    NUMBER = DECIMAL_NUMBER | LETTER_NUMBER | OTHER_NUMBER
     CONNECTOR_PUNCTUATION = auto()
     DASH_PUNCTUATION = auto()
     OPEN_PUNCTUATION = auto()
@@ -29,22 +29,30 @@ class GeneralCategory(IntEnum):
     INITIAL_PUNCTUATION = auto()
     FINAL_PUNCTUATION = auto()
     OTHER_PUNCTUATION = auto()
-    PUNCTUATION = auto()
+    PUNCTUATION = (
+        CONNECTOR_PUNCTUATION
+        | DASH_PUNCTUATION
+        | OPEN_PUNCTUATION
+        | CLOSE_PUNCTUATION
+        | INITIAL_PUNCTUATION
+        | FINAL_PUNCTUATION
+        | OTHER_PUNCTUATION
+    )
     MATH_SYMBOL = auto()
     CURRENCY_SYMBOL = auto()
     MODIFIER_SYMBOL = auto()
     OTHER_SYMBOL = auto()
-    SYMBOL = auto()
+    SYMBOL = MATH_SYMBOL | CURRENCY_SYMBOL | MODIFIER_SYMBOL | OTHER_SYMBOL
     SPACE_SEPARATOR = auto()
     LINE_SEPARATOR = auto()
     PARAGRAPH_SEPARATOR = auto()
-    SEPARATOR = auto()
+    SEPARATOR = SPACE_SEPARATOR | LINE_SEPARATOR | PARAGRAPH_SEPARATOR
     CONTROL = auto()
     FORMAT = auto()
     SURROGATE = auto()
     PRIVATE_USE = auto()
     UNASSIGNED = auto()
-    OTHER = auto()
+    OTHER = CONTROL | FORMAT | SURROGATE | PRIVATE_USE | UNASSIGNED
 
     def __str__(self):
         return self.name.replace("_", " ").title()
@@ -144,6 +152,11 @@ class GeneralCategory(IntEnum):
             "C": cls.OTHER,
         }
         return code_map.get(code, cls.NONE)
+
+    @property
+    def values(self) -> list[str]:
+        values = [cat for cat in GeneralCategory if int(self) & cat == cat if cat not in [GeneralCategory.NONE, self]]
+        return [v.code for v in values] if values else [self.code]
 
     @classmethod
     def match_loosely(cls, name: str) -> GeneralCategory:

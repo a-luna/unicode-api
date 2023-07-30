@@ -50,7 +50,7 @@ def save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars):
 
 
 def update_char_dict_enum_values(char_dict):
-    char_dict["general_category"] = GeneralCategory.from_code(char_dict["general_category"]).value
+    char_dict["general_category"] = GeneralCategory.from_code(char_dict["general_category"]).code
     char_dict["bidirectional_class"] = BidirectionalClass.from_code(char_dict["bidirectional_class"]).value
     char_dict["paired_bracket_type"] = BidirectionalBracketType.from_code(char_dict["paired_bracket_type"]).value
     char_dict["decomposition_type"] = DecompositionType.from_code(char_dict["decomposition_type"]).value

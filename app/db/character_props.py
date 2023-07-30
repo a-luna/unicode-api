@@ -126,7 +126,7 @@ BASIC_PROPERTIES = [
         "char_property": "gc",
         "db_required": True,
         "db_column": True,
-        "response_value": lambda char: GeneralCategory(char["general_category"]).display_name
+        "response_value": lambda char: GeneralCategory.from_code(char["general_category"]).display_name
         if "general_category" in char
         else get_default_general_category_display_name(char["codepoint_dec"]),
     },

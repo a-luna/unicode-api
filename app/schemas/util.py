@@ -1,3 +1,4 @@
+import itertools
 import re
 
 UNDERSCORE_RE = re.compile(r"(?<=[^\-_])[\-_]+[^\-_]")
@@ -18,3 +19,7 @@ def to_lower_camel(input):
     if len(s) != 0 and not s[:2].isupper():  # pragma: no cover
         s = s[0].lower() + s[1:]
     return UNDERSCORE_RE.sub(lambda m: m.group(0)[-1].upper(), s)
+
+
+def flatten_list2d(list2d):
+    return list(itertools.chain(*list2d))
