@@ -1099,10 +1099,9 @@ VERBOSE_CHARACTER_PROPERTIES = {
 
 
 def get_all_prop_names():
-    prop_names = {cls.normalized for cls in CharPropertyGroup if cls != CharPropertyGroup.NONE}
-    prop_aliases = {cls.short_alias for cls in CharPropertyGroup if cls != CharPropertyGroup.NONE}
-    prop_names.update(prop_aliases)
-    return list(prop_names)
+    prop_names = [prop_group.normalized for prop_group in CharPropertyGroup if prop_group != CharPropertyGroup.NONE]
+    prop_aliases = [prop_group.short_alias for prop_group in CharPropertyGroup if prop_group.has_alias]
+    return list(set(prop_names + prop_aliases))
 
 
 ALL_PROP_GROUP_NAMES = get_all_prop_names()

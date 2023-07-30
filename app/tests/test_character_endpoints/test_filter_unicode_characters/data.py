@@ -1,6 +1,10 @@
 FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["name: spiritus", "category: Nonspacing Mark", "script: Coptic"],
+    "filterSettings": [
+        "name: spiritus",
+        "category: Nonspacing Mark",
+        "script: Coptic",
+    ],
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 2,
@@ -14,7 +18,10 @@ INVALID_PAGE_NUMBER = {"detail": "Request for page #2 is invalid since there is 
 
 NO_CHARS_MATCH_SETTINGS = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["name: test", "script: Coptic"],
+    "filterSettings": [
+        "name: test",
+        "script: Coptic",
+    ],
     "hasMore": False,
     "currentPage": 0,
     "totalResults": 0,
@@ -40,7 +47,10 @@ FILTER_BY_UNICODE_AGE = {
 
 FILTER_BY_BIDIRECTIONAL_CLASS = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["name: dong", "bidi_class: European Terminator"],
+    "filterSettings": [
+        "name: dong",
+        "bidi_class: European Terminator",
+    ],
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 1,
@@ -49,7 +59,10 @@ FILTER_BY_BIDIRECTIONAL_CLASS = {
 
 FILTER_BY_DECOMPOSITION_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["name: seven", "decomp_type: Encircled Form"],
+    "filterSettings": [
+        "name: seven",
+        "decomp_type: Encircled Form",
+    ],
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 6,
@@ -95,7 +108,10 @@ FILTER_BY_CCC = {
 
 FILTER_BY_NUMERIC_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["script: Kharoshthi", "num_type: Digit"],
+    "filterSettings": [
+        "script: Kharoshthi",
+        "num_type: Digit",
+    ],
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 4,
@@ -169,6 +185,68 @@ FILTER_BY_BLOCK_NAME = {
     ],
 }
 
+FILTER_BY_COMBINED_CATEGORY = {
+    "url": "/v1/characters/filter",
+    "filterSettings": [
+        "block: Basic Latin",
+        "category: Punctuation",
+    ],
+    "hasMore": True,
+    "currentPage": 1,
+    "nextPage": 2,
+    "totalResults": 23,
+    "results": [
+        {"character": "!", "name": "EXCLAMATION MARK", "codepoint": "U+0021", "uriEncoded": "%21"},
+        {"character": '"', "name": "QUOTATION MARK", "codepoint": "U+0022", "uriEncoded": "%22"},
+        {"character": "#", "name": "NUMBER SIGN", "codepoint": "U+0023", "uriEncoded": "%23"},
+        {"character": "%", "name": "PERCENT SIGN", "codepoint": "U+0025", "uriEncoded": "%25"},
+        {"character": "&", "name": "AMPERSAND", "codepoint": "U+0026", "uriEncoded": "%26"},
+        {"character": "'", "name": "APOSTROPHE", "codepoint": "U+0027", "uriEncoded": "%27"},
+        {"character": "(", "name": "LEFT PARENTHESIS", "codepoint": "U+0028", "uriEncoded": "%28"},
+        {"character": ")", "name": "RIGHT PARENTHESIS", "codepoint": "U+0029", "uriEncoded": "%29"},
+        {"character": "*", "name": "ASTERISK", "codepoint": "U+002A", "uriEncoded": "%2A"},
+        {"character": ",", "name": "COMMA", "codepoint": "U+002C", "uriEncoded": "%2C"},
+    ],
+}
+
+FILTER_BY_SEPARATE_CATEGORIES = {
+    "url": "/v1/characters/filter",
+    "filterSettings": [
+        "block: Basic Latin",
+        "category: Connector Punctuation, Dash Punctuation, Open Punctuation, Close Punctuation, Initial Punctuation, Final Punctuation, Other Punctuation",
+    ],
+    "hasMore": True,
+    "currentPage": 1,
+    "nextPage": 2,
+    "totalResults": 23,
+    "results": [
+        {"character": "!", "name": "EXCLAMATION MARK", "codepoint": "U+0021", "uriEncoded": "%21"},
+        {"character": '"', "name": "QUOTATION MARK", "codepoint": "U+0022", "uriEncoded": "%22"},
+        {"character": "#", "name": "NUMBER SIGN", "codepoint": "U+0023", "uriEncoded": "%23"},
+        {"character": "%", "name": "PERCENT SIGN", "codepoint": "U+0025", "uriEncoded": "%25"},
+        {"character": "&", "name": "AMPERSAND", "codepoint": "U+0026", "uriEncoded": "%26"},
+        {"character": "'", "name": "APOSTROPHE", "codepoint": "U+0027", "uriEncoded": "%27"},
+        {"character": "(", "name": "LEFT PARENTHESIS", "codepoint": "U+0028", "uriEncoded": "%28"},
+        {"character": ")", "name": "RIGHT PARENTHESIS", "codepoint": "U+0029", "uriEncoded": "%29"},
+        {"character": "*", "name": "ASTERISK", "codepoint": "U+002A", "uriEncoded": "%2A"},
+        {"character": ",", "name": "COMMA", "codepoint": "U+002C", "uriEncoded": "%2C"},
+    ],
+}
+
 INVALID_FILTER_PARAM_VALUES = {
-    "detail": "Invalid values were provided for the following 12 parameters:\n\n1 value provided for the 'block' parameter is invalid: ['xxx']\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'ccc' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
+    "detail": (
+        "Invalid values were provided for the following 12 parameters:\n\n"
+        "1 value provided for the 'block' parameter is invalid: ['xxx']\n\n"
+        "2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n"
+        "2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n"
+        "2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n"
+        "2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n"
+        "1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n"
+        "1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n"
+        "1 value provided for the 'ccc' parameter is invalid: ['300']\n\n"
+        "1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n"
+        "1 value provided for the 'join_type' parameter is invalid: ['j']\n\n"
+        "2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n"
+        "2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
+    )
 }
