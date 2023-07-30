@@ -1,3 +1,4 @@
+import logging.config
 import os
 import re
 from http import HTTPStatus
@@ -50,23 +51,27 @@ def init_unicode_obj():
     _ = cached_data.blocks
     _ = cached_data.planes
     _ = cached_data.all_unicode_versions
+    logging.config.dictConfig(settings.LOGGING_CONFIG)
 
 
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
     if testing(request) or not RATE_LIMIT_ROUTE_REGEX.search(request.url.path):
         return await call_next(request)
-
     client_ip = request.client.host if request.client else ""
     result = redis.rate_limit_exceeded(client_ip)
     if result.success:
-        response = await call_next(request)
-        return response
+        return await call_next(request)
     return JSONResponse(content=result.error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
 
 
 def testing(request: Request) -> bool:
-    return request.headers.get(os.environ.get("TEST_HEADER", ""), "") == "true"
+    test_header = os.environ.get("TEST_HEADER", "").lower()
+    return (
+        test_header in request.headers or test_header in request.headers.get("access-control-request-headers", [])
+        if test_header
+        else False
+    )
 
 
 @app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)

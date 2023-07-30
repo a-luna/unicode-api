@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+from typing import Any, Dict
 
 from pydantic import BaseSettings
 
@@ -23,6 +24,29 @@ DOTENV_FILE = ROOT_FOLDER.joinpath(".env")
 if os.environ.get("ENV", "") != "PROD":  # pragma: no cover
     dotenv = DotEnvFile(dotenv_filepath=DOTENV_FILE)
 
+LOGGING_CONFIG: Dict[str, Any] = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "()": "app.core.logging.DefaultFormatter",
+            "fmt": "%(levelprefix)s %(message)s",
+            "use_colors": True,
+        },
+    },
+    "handlers": {
+        "default": {
+            "formatter": "default",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stderr",
+        },
+    },
+    "loggers": {
+        "app.api": {"handlers": ["default"], "level": "INFO", "propagate": False},
+        "app.api.error": {"level": "INFO"},
+    },
+}
+
 
 class UnicodeApiSettings(BaseSettings):
     ENV: str = os.environ.get("ENV", "DEV")
@@ -40,6 +64,7 @@ class UnicodeApiSettings(BaseSettings):
     SERVER_HOST: str = "https://unicode-api.aaronluna.dev"
     CACHE_HEADER: str = "X-UnicodeAPI-Cache"
     API_ROOT = DEV_API_ROOT if os.environ.get("ENV") == "DEV" else PROP_API_ROOT
+    LOGGING_CONFIG: Dict[str, Any] = LOGGING_CONFIG
 
     ROOT_FOLDER: Path = ROOT_FOLDER
     APP_FOLDER: Path = ROOT_FOLDER.joinpath("app")

@@ -10,6 +10,6 @@ from app.main import app
 def client(request):
     with TestClient(app) as client:
         headers = {}
-        headers[os.environ.get("TEST_HEADER")] = "true"
+        headers[os.environ.get("TEST_HEADER", "").lower()] = "true"
         client.headers = headers
         yield client
