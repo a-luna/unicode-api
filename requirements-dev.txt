@@ -11,6 +11,6 @@ pytest-mock==3.11.1
 pytest-random-order==1.1.0
 pytest-sugar==0.9.7
 pyupgrade==3.9.0
-ruff==0.0.278
+ruff==0.0.280
 snoop==0.4.3
 tox==4.6.4
