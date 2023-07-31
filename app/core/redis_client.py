@@ -68,7 +68,9 @@ class RedisClient:
                 if allowed_at < arrived_at:
                     new_tat = max(tat, arrived_at) + emission_interval
                     self.client.set(key, new_tat)
+                    self.logger.info(f"Request allowed for IP: {key}")
                     return Result.Ok()
+                self.logger.info(f"Rate limit exceeded for IP: {key}")
                 return Result.Fail(self._get_limit_exceeded_error_message(allowed_at))
         except LockError:  # pragma: no cover
             return Result.Fail(self._get_limit_exceeded_error_message(allowed_at))
