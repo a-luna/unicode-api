@@ -37,6 +37,7 @@ app.add_middleware(
         "http://10.0.1.74:3500",
         "https://base64-demo.netlify.app",
         "https://base64.aaronluna.dev/",
+        "http://172.17.0.1",
     ],
     allow_credentials=True,
     allow_methods=["GET"],
@@ -51,7 +52,12 @@ def init_unicode_obj():
     _ = cached_data.blocks
     _ = cached_data.planes
     _ = cached_data.all_unicode_versions
+
+
+@app.on_event("startup")
+def init_redis_client():
     logging.config.dictConfig(settings.LOGGING_CONFIG)
+    redis.get_redis_client()
 
 
 @app.middleware("http")
