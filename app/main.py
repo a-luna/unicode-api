@@ -5,6 +5,7 @@ from http import HTTPStatus
 from pathlib import Path
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi_utils.openapi import simplify_operation_ids
@@ -29,19 +30,18 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
 )
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=[
-#         "http://localhost:3500",
-#         "http://10.0.1.74:3500",
-#         "https://base64-demo.netlify.app",
-#         "https://base64.aaronluna.dev/",
-#         "http://172.17.0.1",
-#     ],
-#     allow_credentials=True,
-#     allow_methods=["GET"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3500",
+        "http://10.0.1.74:3500",
+        "https://base64.aaronluna.dev/",
+        "http://172.17.0.1",
+    ],
+    allow_credentials=True,
+    allow_methods=["GET", "OPTIONS"],
+    allow_headers=["X-UnicodeAPI-Test"],
+)
 app.mount("/static", StaticFiles(directory=str(STATIC_FOLDER)), name="static")
 
 
