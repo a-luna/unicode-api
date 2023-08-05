@@ -32,3 +32,4 @@ jobs:
           git_remote_url: 'ssh://dokku@${{ secrets.DOKKU_HOST }}:22/unicode-api'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           deploy_docker_image: ghcr.io/${{ github.repository_owner }}/unicode-api:${{ github.sha }}
+          git_push_flags: '--force'
