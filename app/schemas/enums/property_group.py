@@ -68,6 +68,7 @@ class CharPropertyGroup(IntEnum):
             "DECOMPOSITION": "decomp",
             "QUICK_CHECK": "qc",
             "NUMERIC": "num",
+            "JOINING": "join",
             "LINEBREAK": "lb",
             "EAST_ASIAN_WIDTH": "eaw",
             "FUNCTION_AND_GRAPHIC": "function",
