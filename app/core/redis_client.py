@@ -3,6 +3,7 @@ import time
 from datetime import datetime, timedelta
 
 from fakeredis import FakeRedis
+from redis import from_url
 from redis.client import Redis
 from redis.exceptions import LockError
 
@@ -18,14 +19,22 @@ class RedisClient:
         self.logger = logging.getLogger("app.api.error")
         self.connected: bool = False
         self.failed_attempts: int = 0
-        self.host_url: str = settings.REDIS_HOST
-        self.host_port: int = settings.REDIS_PORT
+        self.redis_host: str = settings.REDIS_HOST
+        self.redis_host_port: int = settings.REDIS_PORT
         self.redis_db: int = settings.REDIS_DB
         self.redis_pw: str = settings.REDIS_PW
         self.rate_limit: int = settings.RATE_LIMIT_PER_PERIOD
         self.rate_limit_period: timedelta = settings.RATE_LIMIT_PERIOD_SECONDS
         self.rate_limit_burst: int = settings.RATE_LIMIT_BURST
         self._client: Redis = FakeRedis()
+
+    @property
+    def redis_url(self) -> str:
+        return (
+            f"redis://:{self.redis_pw}@{self.redis_host}:{self.redis_host_port}/{self.redis_db}"
+            if self.redis_pw
+            else f"redis://{self.redis_host}:{self.redis_host_port}/{self.redis_db}"
+        )
 
     @property
     def client(self) -> Redis:
@@ -39,7 +48,7 @@ class RedisClient:
         if self.connected or self.failed_to_connect:
             return self._client
         while not self.connected and self.failed_attempts < MAX_ATTEMPTS:
-            client = Redis(host=self.host_url, port=self.host_port, db=self.redis_db, password=self.redis_pw)
+            client = from_url(self.redis_url)
             if client.ping():
                 self._client = client
                 self.connected = True
