@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from fakeredis import FakeRedis
 from redis import from_url
 from redis.client import Redis
-from redis.exceptions import LockError
+from redis.exceptions import ConnectionError, LockError
 
 from app.core.config import settings
 from app.core.result import Result
@@ -40,30 +40,31 @@ class RedisClient:
     def client(self) -> Redis:
         return self.get_redis_client()
 
-    @property
-    def failed_to_connect(self):
-        return not self.connected and self.failed_attempts >= MAX_ATTEMPTS
-
     def get_redis_client(self) -> Redis:
-        if self.connected or self.failed_to_connect:
-            return self._client
         while not self.connected and self.failed_attempts < MAX_ATTEMPTS:
-            client = from_url(self.redis_url)
-            if client.ping():
-                self._client = client
-                self.connected = True
-                self.logger.info("Successfully connected to Redis server.")
-            else:
-                self.failed_attempts += 1
-                if self.failed_attempts < MAX_ATTEMPTS:
-                    self.logger.info(
-                        "Redis server did not respond to ping, retrying... "
-                        f"(attempt {self.failed_attempts}/{MAX_ATTEMPTS})."
-                    )
-                    time.sleep(3)
+            try:
+                client = from_url(self.redis_url)
+                if client.ping():
+                    self._client = client
+                    self.connected = True
+                    self.logger.info("Successfully connected to Redis server.")
                 else:
-                    self.logger.info("Failed to connect to Redis server.")
+                    self.handle_connect_attempt_failed()
+            except ConnectionError:
+                self.handle_connect_attempt_failed()
         return self._client
+
+    def handle_connect_attempt_failed(self):
+        self.failed_attempts += 1
+        if self.failed_attempts < MAX_ATTEMPTS:
+            self.logger.info(
+                "Redis server did not respond to ping, retrying... " f"(attempt {self.failed_attempts}/{MAX_ATTEMPTS})."
+            )
+            time.sleep(3)
+        else:
+            self._client = FakeRedis()
+            self.connected = False
+            self.logger.info(f"Failed to connect to Redis server (attempt {self.failed_attempts}/{MAX_ATTEMPTS}).")
 
     def rate_limit_exceeded(self, key: str) -> Result:
         allowed_at: float = 0.0
