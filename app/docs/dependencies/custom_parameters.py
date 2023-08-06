@@ -20,6 +20,7 @@ from app.docs.dependencies import (
 )
 
 CODEPOINT_REGEX = re.compile(r"(?:U\+(?P<codepoint_prefix>[A-Fa-f0-9]{4,6}))|(?:(0x)?(?P<codepoint>[A-Fa-f0-9]{2,6}))")
+CODEPOINT_WITHOUT_ZERO_PADDING_REGEX = re.compile(r"^U\+(?P<codepoint_prefix>[A-Fa-f0-9]{1,3})$")
 MIN_SEARCH_RESULT_SCORE = 70
 
 LIMIT_DESCRIPTION = """
