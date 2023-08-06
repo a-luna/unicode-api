@@ -11,13 +11,13 @@ from app.core.config import settings
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,
     ALL_UNICODE_CODEPOINTS,
+    ASCII_HEX,
     C0_CONTROL_CHARACTERS,
     MAX_CODEPOINT,
     NON_CHARACTER_CODEPOINTS,
     NULL_BLOCK,
     NULL_PLANE,
 )
-from app.data.encoding import get_codepoint_string
 from app.db.engine import engine
 from app.schemas.enums import UnassignedCharacterType
 
@@ -202,7 +202,7 @@ class UnicodeDataCache:
 
     @property
     def unicode_version(self) -> str:
-        return self.all_unicode_versions[-1]
+        return settings.UNICODE_VERSION
 
     def search_characters_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:
         score_cutoff = max(70, score_cutoff)
@@ -310,7 +310,7 @@ class UnicodeDataCache:
     def get_label_for_unassigned_codepoint(self, codepoint: int) -> str:
         if (char_type := self.get_unassigned_character_type(codepoint)) != UnassignedCharacterType.INVALID:
             return f"<{char_type}-{codepoint:04X}>"
-        return f"Invalid Codepoint ({get_codepoint_string(codepoint)})"
+        return f"Invalid Codepoint (U+{codepoint:04X})"
 
     def get_unassigned_character_type(self, codepoint: int) -> UnassignedCharacterType:
         return (
@@ -323,6 +323,24 @@ class UnicodeDataCache:
             else UnassignedCharacterType.RESERVED
             if self.codepoint_is_reserved(codepoint)
             else UnassignedCharacterType.INVALID
+        )
+
+    def get_mapped_codepoint_from_hex(self, codepoint_hex: str) -> str:  # pragma: no cover
+        if not codepoint_hex:
+            return ""
+        if codepoint_hex.startswith(("U+", "0x")):
+            codepoint_hex = codepoint_hex[2:]
+        if any(char not in ASCII_HEX for char in codepoint_hex):
+            return f"Invalid Codepoint ({codepoint_hex} is not a valid hex value)"
+        return self.get_mapped_codepoint_from_int(int(codepoint_hex, 16))
+
+    def get_mapped_codepoint_from_int(self, codepoint_dec: int) -> str:  # pragma: no cover
+        if codepoint_dec not in ALL_UNICODE_CODEPOINTS:
+            return f"Invalid Codepoint ({codepoint_dec} is not within the Unicode codespace)"
+        return (
+            f"{chr(codepoint_dec)} (U+{codepoint_dec:04X} {cached_data.get_character_name(codepoint_dec)})"
+            if codepoint_dec
+            else ""
         )
 
 

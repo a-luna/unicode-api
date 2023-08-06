@@ -12,8 +12,6 @@ from app.data.constants import (
 from app.data.encoding import (
     get_codepoint_string,
     get_html_entities,
-    get_mapped_codepoint_from_hex,
-    get_mapped_codepoint_from_int,
     get_uri_encoded_value,
     get_utf8_dec_bytes,
     get_utf8_hex_bytes,
@@ -318,7 +316,7 @@ PROPERTY_GROUPS = {
             "db_required": True,
             "db_column": True,
             "response_value": lambda char: get_char_and_unicode_hex_value(char, "bidirectional_mirroring_glyph")
-            or get_mapped_codepoint_from_int(char["codepoint_dec"]),
+            or cached_data.get_mapped_codepoint_from_int(char["codepoint_dec"]),
         },
         {
             "name_in": "bidirectional_control",
@@ -1003,7 +1001,7 @@ def get_int_prop_value(char_props: dict[str, Any], prop_name: str) -> int:
 def get_char_and_unicode_hex_value(char_props: dict[str, Any], prop_name: str) -> str:
     prop_value = get_string_prop_value(char_props, prop_name)
     return (
-        get_mapped_codepoint_from_hex(prop_value)
+        cached_data.get_mapped_codepoint_from_hex(prop_value)
         if prop_value and cached_data.codepoint_is_assigned(char_props["codepoint_dec"])
         else ""
     )
@@ -1012,7 +1010,9 @@ def get_char_and_unicode_hex_value(char_props: dict[str, Any], prop_name: str) -
 def get_list_of_mapped_codepoints(input: str) -> list[str]:
     if not input:
         return [""]
-    return [get_mapped_codepoint_from_hex(codepoint) for codepoint in CODEPOINT_WITH_PREFIX_REGEX.findall(input)]
+    return [
+        cached_data.get_mapped_codepoint_from_hex(codepoint) for codepoint in CODEPOINT_WITH_PREFIX_REGEX.findall(input)
+    ]
 
 
 def get_default_age(codepoint: int) -> str:

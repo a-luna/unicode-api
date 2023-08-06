@@ -7,7 +7,6 @@ from sqlalchemy.engine import Engine
 
 import app.db.models as db
 from app.data.cache import cached_data
-from app.data.encoding import get_mapped_codepoint_from_int
 from app.db.character_props import PROPERTY_GROUPS
 from app.schemas.enums import CharacterFilterFlags, CharPropertyGroup
 
@@ -147,7 +146,9 @@ def remove_irrelevant_casing_properties(char_props: dict[str, Any], codepoint: i
         prop_name
         for prop_name in other_casing_props
         if prop_name in char_props
-        and (char_props[prop_name] == get_mapped_codepoint_from_int(codepoint) or char_props[prop_name] == "")
+        and (
+            char_props[prop_name] == cached_data.get_mapped_codepoint_from_int(codepoint) or char_props[prop_name] == ""
+        )
     )
     return remove_props
 
