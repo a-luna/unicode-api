@@ -41,7 +41,10 @@ PROP_GROUP_MINIMUM = """
                     <p class="prop-group-ref">More info: <a href="http://www.unicode.org/reports/tr38/#kDefinition" rel="noopener noreferrer" target="_blank">http://www.unicode.org/reports/tr38/#kDefinition</a></p>
                 </dd>
                 <dt><strong>codepoint</strong></dt>
-                <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
+                <dd>
+                    <p>In character encoding terminology, a codepoint is a numerical value that maps to a specific character. Code points usually represent a single grapheme—usually a letter, digit, punctuation mark, or whitespace—but sometimes represent symbols, control characters, or formatting. The set of all possible code points within a given encoding/character set make up that encoding's codespace.</p>
+                    <p>For example, the character encoding scheme ASCII comprises 128 code points in the range <code>00-7F</code>, Extended ASCII comprises 256 code points in the range <code>00-FF</code>, and Unicode comprises 1,114,112 code points in the range <code>0000-10FFFF</code>. The Unicode code space is divided into seventeen planes (the basic multilingual plane, and 16 supplementary planes), each with 65,536 (= 2<sup>16</sup>) code points. Thus the total size of the Unicode code space is 17 × 65,536 = 1,114,112.</p>
+                </dd>
                 <dt><strong>uriEncoded</strong></dt>
                 <dd>
                     <p>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>).</p>
