@@ -26,13 +26,13 @@ CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 
 class UnicodeDataCache:
     @cached_property
-    def unique_name_character_map(self) -> dict[int, str]:
+    def non_unihan_character_name_map(self) -> dict[int, str]:
         json_map = json.loads(settings.CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
     @property
-    def unique_name_character_choices(self) -> dict[int, str]:
-        return {codepoint: name.lower() for (codepoint, name) in self.unique_name_character_map.items()}
+    def non_unihan_character_name_choices(self) -> dict[int, str]:
+        return {codepoint: name.lower() for (codepoint, name) in self.non_unihan_character_name_map.items()}
 
     @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
@@ -136,8 +136,8 @@ class UnicodeDataCache:
         return set(NON_CHARACTER_CODEPOINTS)
 
     @property
-    def all_named_characters(self) -> set[int]:
-        return set(self.unique_name_character_map.keys())
+    def all_non_unihan_codepoints(self) -> set[int]:
+        return set(self.non_unihan_character_name_map.keys())
 
     @property
     def all_cjk_ideograph_codepoints(self):
@@ -166,7 +166,7 @@ class UnicodeDataCache:
     @property
     def all_assigned_codepoints(self) -> set[int]:
         return set(
-            list(self.all_named_characters)
+            list(self.all_non_unihan_codepoints)
             + list(self.all_cjk_ideograph_codepoints)
             + list(self.all_tangut_codepoints)
             + list(self.all_surrogate_codepoints)
@@ -207,7 +207,7 @@ class UnicodeDataCache:
     def search_characters_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:
         score_cutoff = max(70, score_cutoff)
         fuzzy_search_results = process.extract(
-            query.lower(), self.unique_name_character_choices, limit=len(self.unique_name_character_map)
+            query.lower(), self.non_unihan_character_name_choices, limit=len(self.non_unihan_character_name_map)
         )
         return [(result, score) for (_, score, result) in fuzzy_search_results if score >= float(score_cutoff)]
 
@@ -273,8 +273,8 @@ class UnicodeDataCache:
     def codepoint_is_ascii_control_character(self, codepoint: int) -> bool:
         return codepoint in C0_CONTROL_CHARACTERS
 
-    def character_is_uniquely_named(self, codepoint: int) -> bool:
-        return codepoint in self.unique_name_character_map
+    def character_is_non_unihan(self, codepoint: int) -> bool:
+        return codepoint in self.non_unihan_character_name_map
 
     def character_is_unihan(self, codepoint: int) -> bool:
         return codepoint in self.all_cjk_ideograph_codepoints
@@ -282,21 +282,18 @@ class UnicodeDataCache:
     def character_is_tangut(self, codepoint: int) -> bool:
         return codepoint in self.all_tangut_codepoints
 
-    def character_is_generically_named(self, codepoint: int) -> bool:
-        return self.character_is_unihan(codepoint) or self.character_is_tangut(codepoint)
-
     @cache
     def get_character_name(self, codepoint: int) -> str:
         return (
-            self.get_unique_name_for_codepoint(codepoint)
-            if self.character_is_uniquely_named(codepoint)
+            self.get_name_for_non_unihan_character(codepoint)
+            if self.character_is_non_unihan(codepoint)
             else self.get_generic_name_for_codepoint(codepoint)
-            if self.character_is_generically_named(codepoint)
+            if self.character_is_unihan(codepoint) or self.character_is_tangut(codepoint)
             else self.get_label_for_unassigned_codepoint(codepoint)
         )
 
-    def get_unique_name_for_codepoint(self, codepoint: int) -> str:
-        return self.unique_name_character_map.get(codepoint, "")
+    def get_name_for_non_unihan_character(self, codepoint: int) -> str:
+        return self.non_unihan_character_name_map.get(codepoint, "")
 
     def get_generic_name_for_codepoint(self, codepoint: int) -> str:
         block = self.get_unicode_block_containing_codepoint(codepoint)

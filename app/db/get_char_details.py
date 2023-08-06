@@ -27,7 +27,7 @@ def get_prop_groups(codepoint: int, show_props: list[CharPropertyGroup] | None) 
     # If all property groups are requested, return appropriate property groups for non-unihan/unihan
     if CharPropertyGroup.ALL in show_props:
         return (
-            CharPropertyGroup.get_all_named_character_prop_groups()
+            CharPropertyGroup.get_all_non_unihan_character_prop_groups()
             if not unihan
             else CharPropertyGroup.get_all_unihan_character_prop_groups()
         )
@@ -60,7 +60,7 @@ def get_prop_values(engine: Engine, codepoint: int, prop_group: CharPropertyGrou
 
 def get_prop_values_from_database(engine: Engine, codepoint: int, columns):
     char_props = {"codepoint_dec": codepoint}
-    table = db.UnicodeCharacter if cached_data.character_is_uniquely_named(codepoint) else db.UnicodeCharacterUnihan
+    table = db.UnicodeCharacter if cached_data.character_is_non_unihan(codepoint) else db.UnicodeCharacterUnihan
     query = select(columns).select_from(table).where(column("codepoint_dec") == codepoint)
     with engine.connect() as con:
         for row in con.execute(query):

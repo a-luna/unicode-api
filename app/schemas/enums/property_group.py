@@ -84,7 +84,7 @@ class CharPropertyGroup(IntEnum):
         return self.normalized != self.short_alias
 
     @classmethod
-    def get_all_named_character_prop_groups(cls) -> list[CharPropertyGroup]:
+    def get_all_non_unihan_character_prop_groups(cls) -> list[CharPropertyGroup]:
         return [
             prop_group
             for prop_group in cls

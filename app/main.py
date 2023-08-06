@@ -47,7 +47,7 @@ app.mount("/static", StaticFiles(directory=str(STATIC_FOLDER)), name="static")
 
 @app.on_event("startup")
 def init_unicode_obj():
-    _ = cached_data.unique_name_character_map
+    _ = cached_data.non_unihan_character_name_map
     _ = cached_data.blocks
     _ = cached_data.planes
     _ = cached_data.all_unicode_versions
