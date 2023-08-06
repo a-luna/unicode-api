@@ -124,9 +124,14 @@ UNICODE_CHAR_STRING_DESCRIPTION = f"""
 {UNICODE_CHAR_URI_EXAMPLES}
 """
 
+CODEPOINT_PATH_PARAM_DESSCRIPTION = f"""
+<p>The codepoint of a Unicode character. This value must be expressed as a hexadecimal value within range <code>0000...10FFFF</code>, optionally prefixed by <code>U+</code> or <code>0x</code>.</p>
+<p>For example, <code>72</code>, <code>U+0072</code>, <code>0x72</code> and <code>0x0072</code> are valid ways to express the same code point. It is important to note that <code>U+72</code> IS NOT valid because codepoints prefixed with <code>U+</code> MUST be left-padded with zeroes to a minimum length of four digits. For more information, see the examples below:</p>
+{CODEPOINT_EXAMPLES}
+"""
+
 BLOCK_NAME_DESCRIPTION = f"""
 <ul class="param-notes">
-    <li>This value is optional</li>
     <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
 </ul>
 <p>The name of a Unicode block. If the value provided matches the name of a Unicode block according to the loose-matching rule, the response will contain a <a href="#the-unicodeblock-object"><code>UnicodeBlock</code> object</a> for the specified block.</p>
