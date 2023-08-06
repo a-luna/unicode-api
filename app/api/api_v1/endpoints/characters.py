@@ -13,6 +13,7 @@ from app.api.api_v1.dependencies import (
     get_session,
 )
 from app.api.api_v1.dependencies.filter_params import FilterParameterMatcher
+from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.config import settings
 from app.data.cache import cached_data
@@ -160,16 +161,3 @@ def get_paginated_character_list(
         "has_more": False,
         "results": [],
     }
-
-
-def get_character_details(
-    db_ctx: DBSession,
-    codepoint: int,
-    show_props: list[CharPropertyGroup] | None,
-    score: float | None = None,
-    verbose: bool = False,
-) -> db.UnicodeCharacterResponse:
-    response_dict = db_ctx.get_character_properties(codepoint, show_props, verbose)
-    if score:
-        response_dict["score"] = float(f"{score:.1f}")
-    return db.UnicodeCharacterResponse(**response_dict)
