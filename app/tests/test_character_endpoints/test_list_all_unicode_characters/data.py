@@ -153,7 +153,7 @@ BOTH_START_AFTER_END_BEFORE_INVALID = {
 }
 
 INVALID_CODEPOINT_STRING_1 = {
-    "detail": "'Code point must be a hexadecimal value within range `0x00 - 0x10FFFF`, optionally prefixed by 'U+' or '0x'. For example, '72', 'U+0072, '0x72' and '0x0072' are valid ways to express the same code point. It is important to note that 'U+72' IS NOT valid because codepoints prefixed with 'U+' MUST be left-padded with zeroes to a minimum length of four digits."
+    "detail": "The value provided (U+49) is invalid because Unicode codepoint values prefixed with 'U+' must contain at least 4 hexadecimal digits. The correct way to request the character assigned to codepoint 0x49 is with the value 'U+0049', which adds the necessary leading zeros."
 }
 
 INVALID_CODEPOINT_STRING_2 = {

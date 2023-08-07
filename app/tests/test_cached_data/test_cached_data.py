@@ -14,5 +14,5 @@ def test_get_char_name_invalid_codepoint():
 
 
 def test_get_unicode_version():
-    version = "15.0"
+    version = "15.0.0"
     assert cached_data.unicode_version == version
