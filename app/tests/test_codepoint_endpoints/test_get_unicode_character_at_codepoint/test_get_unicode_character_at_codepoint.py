@@ -5,6 +5,7 @@ from app.tests.test_codepoint_endpoints.test_get_unicode_character_at_codepoint.
     INVALID_HEX_DIGIT_1,
     INVALID_HEX_DIGIT_2,
     INVALID_LEADING_ZEROS,
+    INVALID_OUT_OF_RANGE,
     INVALID_PROP_NAME,
 )
 
@@ -34,7 +35,7 @@ def test_get_character_at_codepoint_invalid_single_hex_digit(client):
 
 
 def test_get_character_at_codepoint_invalid_multiple_hex_digits(client):
-    response = client.get("v1/codepoints/0x24LZ")
+    response = client.get("v1/codepoints/maccaroni")
     assert response.status_code == 400
     assert response.json() == INVALID_HEX_DIGIT_2
 
@@ -43,6 +44,24 @@ def test_get_character_at_codepoint_invalid_leading_zeros(client):
     response = client.get("v1/codepoints/U+72")
     assert response.status_code == 400
     assert response.json() == INVALID_LEADING_ZEROS
+
+
+def test_get_character_at_codepoint_invalid_out_of_range_1(client):
+    response = client.get("v1/codepoints/U+1234567")
+    assert response.status_code == 400
+    assert response.json() == INVALID_OUT_OF_RANGE
+
+
+def test_get_character_at_codepoint_invalid_out_of_range_2(client):
+    response = client.get("v1/codepoints/0x1234567")
+    assert response.status_code == 400
+    assert response.json() == INVALID_OUT_OF_RANGE
+
+
+def test_get_character_at_codepoint_invalid_out_of_range_3(client):
+    response = client.get("v1/codepoints/1234567")
+    assert response.status_code == 400
+    assert response.json() == INVALID_OUT_OF_RANGE
 
 
 def test_get_character_at_codepoint_invalid_prop_group(client):

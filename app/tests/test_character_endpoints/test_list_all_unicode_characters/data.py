@@ -157,7 +157,7 @@ INVALID_CODEPOINT_STRING_1 = {
 }
 
 INVALID_CODEPOINT_STRING_2 = {
-    "detail": "Codepoint U+110000 is not within the range of Unicode characters (U+0000 to U+10FFFF)."
+    "detail": "U+110000 is not within the range of valid codepoints for Unicode characters (U+0000 to U+10FFFF)."
 }
 
 INVALID_BLOCK_NAME = {

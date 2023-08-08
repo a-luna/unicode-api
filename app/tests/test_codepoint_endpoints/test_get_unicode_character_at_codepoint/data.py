@@ -51,9 +51,20 @@ CODEPOINT_24AF_WITH_PREFIX_2 = {
     "verticalOrientation": "Upright (U)",
 }
 
-INVALID_HEX_DIGIT_1 = {"detail": "The value provided (0x24AZ) contains 1 invalid hexadecimal character: [Z]."}
-INVALID_HEX_DIGIT_2 = {"detail": "The value provided (0x24LZ) contains 2 invalid hexadecimal characters: [L, Z]."}
+INVALID_HEX_DIGIT_1 = {
+    "detail": "The value provided (0x24AZ) contains 1 invalid hexadecimal character: [Z]. The codepoint value must be expressed as a hexadecimal value within range 0000...10FFFF, optionally prefixed by 'U+'' or '0x'."
+}
+
+INVALID_HEX_DIGIT_2 = {
+    "detail": "The value provided (maccaroni) contains 5 invalid hexadecimal characters: [i, m, n, o, r]. The codepoint value must be expressed as a hexadecimal value within range 0000...10FFFF, optionally prefixed by 'U+'' or '0x'."
+}
+
 INVALID_LEADING_ZEROS = {
     "detail": "The value provided (U+72) is invalid because Unicode codepoint values prefixed with 'U+' must contain at least 4 hexadecimal digits. The correct way to request the character assigned to codepoint 0x72 is with the value 'U+0072', which adds the necessary leading zeros."
 }
+
+INVALID_OUT_OF_RANGE = {
+    "detail": "U+1234567 is not within the range of valid codepoints for Unicode characters (U+0000 to U+10FFFF)."
+}
+
 INVALID_PROP_NAME = {"detail": "1 value provided for the 'show_props' parameter is invalid: ['max']"}
