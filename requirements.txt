@@ -1,5 +1,5 @@
 fakeredis==2.17.0
-fastapi==0.100.1
+fastapi==0.101.0
 fastapi-utils==0.2.1
 halo==0.0.31
 httpx==0.24.1
@@ -8,7 +8,7 @@ lxml==4.9.3
 pydantic==1.10.10
 python-dateutil==2.8.2
 redis==4.6.0
-rapidfuzz==3.1.2
+rapidfuzz==3.2.0
 requests==2.31.0
 SQLAlchemy==1.4.41
 SQLAlchemy-Utils==0.41.1
