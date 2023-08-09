@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query
 
 import app.db.models as db
 from app.api.api_v1.dependencies.db_session import DBSession, get_session
-from app.api.api_v1.dependencies.filter_params import FilterParameterMatcher
+from app.api.api_v1.dependencies.filter_param_matcher import FilterParameterMatcher
 from app.api.api_v1.dependencies.util import get_decimal_number_from_hex_codepoint
 from app.api.api_v1.endpoints.util import get_character_details
 from app.docs.dependencies.custom_parameters import (

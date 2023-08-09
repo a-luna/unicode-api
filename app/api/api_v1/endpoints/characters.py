@@ -12,7 +12,7 @@ from app.api.api_v1.dependencies import (
     UnicodeBlockQueryParamResolver,
     get_session,
 )
-from app.api.api_v1.dependencies.filter_params import FilterParameterMatcher
+from app.api.api_v1.dependencies.filter_param_matcher import FilterParameterMatcher
 from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.config import settings

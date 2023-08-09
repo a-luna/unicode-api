@@ -1,9 +1,9 @@
 from http import HTTPStatus
-from typing import Annotated, Generic, Type, TypeVar
+from typing import Annotated
 
 from fastapi import HTTPException, Query
 
-from app.core.result import Result
+from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matcher
 from app.data.cache import cached_data
 from app.docs.dependencies.custom_parameters import (
     CHAR_NAME_FILTER_DESCRIPTION,
@@ -26,38 +26,6 @@ from app.schemas.enums import (
 )
 from app.schemas.enums.block_name import UnicodeBlockName
 from app.schemas.enums.unicode_age import UnicodeAge
-
-T = TypeVar("T")
-
-
-class FilterParameterMatcher(Generic[T]):
-    param_name: str
-    param_type: Type[T]
-
-    def __init__(self, param_name, param_type):
-        self.param_name = param_name
-        self.param_type = param_type
-
-    def parse_enum_values(self, values: list[str]) -> Result[list[T]]:
-        if hasattr(self.param_type, "match_loosely"):
-            match_loosely = getattr(self.param_type, "match_loosely")
-            results = {str_val: match_loosely(str_val) for str_val in values}
-            invalid_results = [str_val for str_val, did_parse in results.items() if not did_parse]
-            return (
-                Result.Ok(list(results.values()))
-                if not invalid_results
-                else Result.Fail(self.get_error_report(invalid_results))
-            )
-        return Result.Fail(
-            f"Filter parameter type {self.param_type} does not contain a classmethod named match_loosely!"
-        )  # pragma: no cover
-
-    def get_error_report(self, invalid_results: list[str]) -> str:
-        plural = len(invalid_results) > 1
-        return (
-            f'{len(invalid_results)} value{"s" if plural else ""} provided for the {self.param_name!r} parameter '
-            f'{"are" if plural else "is"} invalid: {invalid_results}'
-        )
 
 
 class FilterParameters:
@@ -100,7 +68,7 @@ class FilterParameters:
         self.page = page or 1
 
     @property
-    def settings(self) -> list[str]:
+    def settings(self) -> list[str]:  # noqa: C901
         filter_settings = []
         if self.name:
             filter_settings.append(f"name: {self.name}")
@@ -150,7 +118,7 @@ class FilterParameters:
 
         return filter_settings
 
-    def parse_all_enum_values(
+    def parse_all_enum_values(  # noqa: C901
         self,
         block: list[str] | None,
         category: list[str] | None,
@@ -180,96 +148,84 @@ class FilterParameters:
         self.show_props: list[CharPropertyGroup] | None = None
 
         if block:
-            UnicodeBlockNameMatcher = FilterParameterMatcher[UnicodeBlockName]("block", UnicodeBlockName)
-            result = UnicodeBlockNameMatcher.parse_enum_values(block)
+            result = filter_param_matcher[UnicodeBlockName].parse_enum_values(block)
             if result.success:
                 self.blocks = result.value
             else:
                 errors.append(result.error or "")
 
         if category:
-            GeneralCategoryMatcher = FilterParameterMatcher[GeneralCategory]("category", GeneralCategory)
-            result = GeneralCategoryMatcher.parse_enum_values(category)
+            result = filter_param_matcher[GeneralCategory].parse_enum_values(category)
             if result.success:
                 self.categories = result.value
             else:
                 errors.append(result.error or "")
 
         if age:
-            UnicodeAgeMatcher = FilterParameterMatcher[UnicodeAge]("age", UnicodeAge)
-            result = UnicodeAgeMatcher.parse_enum_values(age)
+            result = filter_param_matcher[UnicodeAge].parse_enum_values(age)
             if result.success:
                 self.age_list = result.value
             else:
                 errors.append(result.error or "")
 
         if script:
-            ScriptCodeMatcher = FilterParameterMatcher[ScriptCode]("script", ScriptCode)
-            result = ScriptCodeMatcher.parse_enum_values(script)
+            result = filter_param_matcher[ScriptCode].parse_enum_values(script)
             if result.success:
                 self.scripts = result.value
             else:
                 errors.append(result.error or "")
 
         if bidi_class:
-            BidiClassMatcher = FilterParameterMatcher[BidirectionalClass]("bidi_class", BidirectionalClass)
-            result = BidiClassMatcher.parse_enum_values(bidi_class)
+            result = filter_param_matcher[BidirectionalClass].parse_enum_values(bidi_class)
             if result.success:
                 self.bidi_class_list = result.value
             else:
                 errors.append(result.error or "")
 
         if decomp_type:
-            DecompTypeMatcher = FilterParameterMatcher[DecompositionType]("decomp_type", DecompositionType)
-            result = DecompTypeMatcher.parse_enum_values(decomp_type)
+            result = filter_param_matcher[DecompositionType].parse_enum_values(decomp_type)
             if result.success:
                 self.decomp_types = result.value
             else:
                 errors.append(result.error or "")
 
         if line_break:
-            LineBreakMatcher = FilterParameterMatcher[LineBreakType]("line_break", LineBreakType)
-            result = LineBreakMatcher.parse_enum_values(line_break)
+            result = filter_param_matcher[LineBreakType].parse_enum_values(line_break)
             if result.success:
                 self.line_break_types = result.value
             else:
                 errors.append(result.error or "")
 
         if ccc:
-            CombiningClassMatcher = FilterParameterMatcher[CombiningClassCategory]("ccc", CombiningClassCategory)
-            result = CombiningClassMatcher.parse_enum_values(ccc)
+            result = filter_param_matcher[CombiningClassCategory].parse_enum_values(ccc)
             if result.success:
                 self.ccc_list = result.value
             else:
                 errors.append(result.error or "")
 
         if num_type:
-            NumericTypeMatcher = FilterParameterMatcher[NumericType]("num_type", NumericType)
-            result = NumericTypeMatcher.parse_enum_values(num_type)
+            result = filter_param_matcher[NumericType].parse_enum_values(num_type)
             if result.success:
                 self.num_types = result.value
             else:
                 errors.append(result.error or "")
 
         if join_type:
-            JoiningTypeMatcher = FilterParameterMatcher[JoiningType]("join_type", JoiningType)
-            result = JoiningTypeMatcher.parse_enum_values(join_type)
+            result = filter_param_matcher[JoiningType].parse_enum_values(join_type)
             if result.success:
                 self.join_types = result.value
             else:
                 errors.append(result.error or "")
 
         if flag:
-            CharFilterFlagMatcher = FilterParameterMatcher[CharacterFilterFlags]("flag", CharacterFilterFlags)
-            result = CharFilterFlagMatcher.parse_enum_values(flag)
+            result = filter_param_matcher[CharacterFilterFlags].parse_enum_values(flag)
             if result.success:
                 self.flags = result.value
             else:
                 errors.append(result.error or "")
 
         if show_props:
-            PropertyGroupMatcher = FilterParameterMatcher[CharPropertyGroup]("show_props", CharPropertyGroup)
-            result = PropertyGroupMatcher.parse_enum_values(show_props)
+            result = filter_param_matcher[CharPropertyGroup].parse_enum_values(show_props)
             if result.success:
                 self.show_props = result.value
             else:
