@@ -4,7 +4,7 @@ from app.schemas.enums.property_group import CharPropertyGroup
 
 
 def get_character_details(
-    db_ctx: DBSession,  # noqa: F821
+    db_ctx: DBSession,
     codepoint: int,
     show_props: list[CharPropertyGroup] | None,
     score: float | None = None,

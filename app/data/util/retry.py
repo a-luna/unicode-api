@@ -25,8 +25,8 @@ def retry(
     """Retry the wrapped function when an exception is raised until max_attempts have failed."""
 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
-        @wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+        @wraps(func)  # type: ignore  # noqa: PGH003
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:  # type: ignore  # noqa: PGH003
             for remaining in reversed(range(max_attempts)):
                 try:
                     return func(*args, **kwargs)

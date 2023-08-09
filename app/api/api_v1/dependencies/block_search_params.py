@@ -1,4 +1,5 @@
 from typing import Annotated
+
 from fastapi import Query
 
 from app.docs.dependencies.custom_parameters import (

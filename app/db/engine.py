@@ -1,6 +1,4 @@
 # flake8: noqa
-import os
-
 import app.db.models as db
 from sqlalchemy import event
 from sqlmodel import create_engine

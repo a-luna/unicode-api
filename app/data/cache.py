@@ -69,27 +69,25 @@ class UnicodeDataCache:
 
     @property
     def cjk_unified_ideograph_block_ids(self) -> set[int]:
-        return set(b.id for b in self.blocks if "cjk unified ideographs" in b.name.lower() and b.id)
+        return {b.id for b in self.blocks if "cjk unified ideographs" in b.name.lower() and b.id}
 
     @property
     def cjk_compatibility_block_ids(self) -> set[int]:
-        return set(b.id for b in self.blocks if "cjk compatibility ideographs" in b.name.lower() and b.id)
+        return {b.id for b in self.blocks if "cjk compatibility ideographs" in b.name.lower() and b.id}
 
     @property
     def tangut_character_block_ids(self) -> set[int]:
-        return set(
-            b.id for b in self.blocks if "tangut" in b.name.lower() and "component" not in b.name.lower() and b.id
-        )
+        return {b.id for b in self.blocks if "tangut" in b.name.lower() and "component" not in b.name.lower() and b.id}
 
     @property
     def surrogate_block_ids(self) -> set[int]:
-        return set(b.id for b in self.blocks if "surrogate" in b.name.lower() and b.id)
+        return {b.id for b in self.blocks if "surrogate" in b.name.lower() and b.id}
 
     @property
     def private_use_block_ids(self) -> set[int]:
-        return set(
+        return {
             b.id for b in self.blocks if "private use" in b.name.lower() and "surrogate" not in b.name.lower() and b.id
-        )
+        }
 
     @property
     def all_cjk_ideograph_block_ids(self) -> set[int]:
@@ -198,7 +196,7 @@ class UnicodeDataCache:
             for query in [select(distinct(table.age)) for table in CHAR_TABLES]:
                 results = session.execute(query).scalars().all()
                 versions.extend(float(ver) for ver in results)
-            return [str(ver) for ver in sorted(list(set(versions)))]
+            return [str(ver) for ver in sorted(set(versions))]
 
     @property
     def unicode_version(self) -> str:

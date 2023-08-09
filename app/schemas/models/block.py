@@ -32,15 +32,15 @@ class UnicodeBlockResult(UnicodeBlockResponse):
 
 
 class UnicodeBlock(UnicodeBlockBase, table=True):
-    __tablename__ = "block"  # type: ignore
+    __tablename__ = "block"  # type: ignore  # noqa: PGH003
 
     id: int | None = Field(default=None, primary_key=True)
     start_dec: int
     finish_dec: int
 
-    plane: "UnicodePlane" = Relationship(back_populates="blocks")  # type: ignore
-    characters: list["UnicodeCharacter"] = Relationship(back_populates="block")  # type: ignore
-    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="block")  # type: ignore
+    plane: "UnicodePlane" = Relationship(back_populates="blocks")  # type: ignore  # noqa: PGH003
+    characters: list["UnicodeCharacter"] = Relationship(back_populates="block")  # type: ignore  # noqa: PGH003
+    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="block")  # type: ignore  # noqa: PGH003, E501
 
     def as_response(self) -> "UnicodeBlockResponse":
         block_dict = self.dict(by_alias=True)

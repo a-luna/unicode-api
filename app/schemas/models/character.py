@@ -106,17 +106,17 @@ class UnicodeCharacterBase(CamelModel):
 
 
 class UnicodeCharacter(UnicodeCharacterBase, table=True):
-    __tablename__ = "character"  # type: ignore
+    __tablename__ = "character"  # type: ignore  # noqa: PGH003
 
-    block: "UnicodeBlock" = Relationship(back_populates="characters")  # type: ignore
-    plane: "UnicodePlane" = Relationship(back_populates="characters")  # type: ignore
+    block: "UnicodeBlock" = Relationship(back_populates="characters")  # type: ignore  # noqa: PGH003
+    plane: "UnicodePlane" = Relationship(back_populates="characters")  # type: ignore  # noqa: PGH003
 
 
 class UnicodeCharacterUnihan(UnicodeCharacterBase, table=True):
-    __tablename__ = "character_unihan"  # type: ignore
+    __tablename__ = "character_unihan"  # type: ignore  # noqa: PGH003
 
-    block: "UnicodeBlock" = Relationship(back_populates="characters_unihan")  # type: ignore
-    plane: "UnicodePlane" = Relationship(back_populates="characters_unihan")  # type: ignore
+    block: "UnicodeBlock" = Relationship(back_populates="characters_unihan")  # type: ignore  # noqa: PGH003
+    plane: "UnicodePlane" = Relationship(back_populates="characters_unihan")  # type: ignore  # noqa: PGH003
 
     description: str | None
     ideo_frequency: int | None

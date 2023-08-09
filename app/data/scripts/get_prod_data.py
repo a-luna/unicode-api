@@ -9,7 +9,7 @@ from app.data.util import download_file
 
 def get_prod_data() -> Result:
     result = bootstrap_unicode_data()
-    if result.failure:
+    if result.failure or not result.value:
         return result
     config = result.value
 

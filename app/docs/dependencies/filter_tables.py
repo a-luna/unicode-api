@@ -291,7 +291,7 @@ def get_prop_group_name_maybe_linked(pg: CharPropertyGroup) -> str:
 
 
 def create_table_listing_enum_values(
-    enumClass,
+    enum_class,
     filter_param,
     column_1_text="Code",
     column_1_attr="code",
@@ -311,7 +311,7 @@ def create_table_listing_enum_values(
                     <th>{column_2_text}</th>"""
     html += """
                 </tr>"""
-    for e in enumClass:
+    for e in enum_class:
         if e.name != "NONE" and str(e) != "NONE" and hasattr(e, column_1_attr):
             html += f"""
                 <tr>

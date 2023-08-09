@@ -1,12 +1,8 @@
 from html.entities import html5
 
-HTML_ENTITY_MAP = {
-    cp: entity
-    for (cp, entity) in sorted(
-        [(ord(uni_char), entity) for (entity, uni_char) in html5.items() if len(uni_char) == 1],
-        key=lambda x: x[0],
-    )
-}
+HTML_ENTITY_MAP = dict(
+    sorted([(ord(uni_char), entity) for (entity, uni_char) in html5.items() if len(uni_char) == 1], key=lambda x: x[0])
+)
 
 
 def get_codepoint_string(codepoint: int) -> str:

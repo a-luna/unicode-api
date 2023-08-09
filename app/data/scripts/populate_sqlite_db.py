@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Type
 
 from halo import Halo
 from sqlalchemy.engine import Engine
@@ -19,7 +18,7 @@ BATCH_SIZE = 10000
 
 def populate_sqlite_database(config: UnicodeApiSettings) -> Result:
     table_csv_file_map: dict[
-        Type[db.UnicodePlane] | Type[db.UnicodeBlock] | Type[db.UnicodeCharacter] | Type[db.UnicodeCharacterUnihan],
+        type[db.UnicodePlane] | type[db.UnicodeBlock] | type[db.UnicodeCharacter] | type[db.UnicodeCharacterUnihan],
         Path,
     ] = {
         db.UnicodePlane: config.PLANES_CSV,
@@ -67,13 +66,13 @@ def import_data_from_csv_file(
     spinner: Halo,
     session: Session,
     csv_file: Path,
-    table: Type[db.UnicodePlane] | Type[db.UnicodeBlock] | Type[db.UnicodeCharacter] | Type[db.UnicodeCharacterUnihan],
+    table: type[db.UnicodePlane] | type[db.UnicodeBlock] | type[db.UnicodeCharacter] | type[db.UnicodeCharacterUnihan],
 ) -> None:
     csv_rows = csv_file.read_text().split("\n")
     column_names = [col.strip() for col in csv_rows.pop(0).split(",")]
     batch, total_rows, row_count = [], len(csv_rows), 0
     first_row_skipped = False
-    with open(csv_file) as csv:
+    with Path(csv_file).open() as csv:
         while True:
             csv_row = csv.readline()
             if not csv_row:
@@ -82,7 +81,7 @@ def import_data_from_csv_file(
                 first_row_skipped = True
                 continue
             csv_values = [val.strip().replace(";", ",") for val in csv_row.split(",")]
-            batch.append(table(**dict(zip(column_names, csv_values))))  # type: ignore
+            batch.append(table(**dict(zip(column_names, csv_values))))  # type: ignore  # noqa: PGH003
             if len(batch) < BATCH_SIZE:
                 continue
             row_count += len(batch)
@@ -97,7 +96,7 @@ def import_data_from_csv_file(
 def perform_batch_insert(
     session: Session,
     batch: list[
-        Type[db.UnicodePlane] | Type[db.UnicodeBlock] | Type[db.UnicodeCharacter] | Type[db.UnicodeCharacterUnihan]
+        type[db.UnicodePlane] | type[db.UnicodeBlock] | type[db.UnicodeCharacter] | type[db.UnicodeCharacterUnihan]
     ],
 ):
     try:

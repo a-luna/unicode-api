@@ -35,7 +35,7 @@ class DBSession:
         return apply_filter(self.session, queries)
 
 
-def construct_filter_query(
+def construct_filter_query(  # noqa: C901
     filter_params: FilterParameters, table: db.UnicodeCharacter | db.UnicodeCharacterUnihan
 ) -> Select:
     query = select(column("codepoint_dec")).select_from(table)

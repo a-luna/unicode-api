@@ -1,7 +1,7 @@
 import logging
 import sys
 from copy import copy
-from typing import Literal, Optional
+from typing import Literal
 
 import click
 
@@ -28,10 +28,10 @@ class ColourizedFormatter(logging.Formatter):
 
     def __init__(
         self,
-        fmt: Optional[str] = None,
-        datefmt: Optional[str] = None,
+        fmt: str | None = None,
+        datefmt: str | None = None,
         style: Literal["%", "{", "$"] = "%",
-        use_colors: Optional[bool] = None,
+        use_colors: str | None = None,
     ):
         if use_colors in (True, False):
             self.use_colors = use_colors
@@ -49,7 +49,7 @@ class ColourizedFormatter(logging.Formatter):
     def should_use_colors(self) -> bool:
         return True  # pragma: no cover
 
-    def formatMessage(self, record: logging.LogRecord) -> str:
+    def formatMessage(self, record: logging.LogRecord) -> str:  # noqa: N802
         recordcopy = copy(record)
         levelname = recordcopy.levelname
         seperator = " " * (8 - len(recordcopy.levelname))

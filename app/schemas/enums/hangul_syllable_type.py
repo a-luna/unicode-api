@@ -1,4 +1,4 @@
-from enum import auto, IntEnum
+from enum import IntEnum, auto
 
 
 class HangulSyllableType(IntEnum):

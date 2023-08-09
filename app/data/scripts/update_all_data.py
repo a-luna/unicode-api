@@ -31,7 +31,7 @@ def update_all_data():
     result = parse_xml_unicode_database(config)
     if result.failure:
         return result
-    (all_planes, all_blocks, all_chars) = result.value
+    (all_planes, all_blocks, all_chars) = result.value or ([], [], [])
     update_json_files(config, all_planes, all_blocks, all_chars)
 
     result = save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars)

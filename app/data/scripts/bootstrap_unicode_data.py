@@ -51,7 +51,7 @@ def parse_all_unicode_version_numbers(page_source: str) -> Result[list[str]]:
         result = parse_semver_string(link)
         if result.failure:
             continue
-        (major, minor, patch) = result.value
+        (major, minor, patch) = result.value or (0, 0, 0)
         versions.append(f"{major}.{minor}{f'.{patch}' if patch else ''}")
     return (
         Result.Ok(versions)
@@ -76,7 +76,7 @@ def check_min_version(all_versions: list[str]) -> Result:
     result = parse_semver_string(check_version)
     if result.failure:
         return result
-    (major, minor, patch) = result.value
+    (major, minor, patch) = result.value or (0, 0, 0)
     if float(f"{major}.{minor}") >= MINIMUM_UNICODE_VERSION:
         return Result.Ok()
     error = (

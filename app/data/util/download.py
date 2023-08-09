@@ -53,7 +53,7 @@ def _download_file_in_chunks(
     resume_header = {"Range": f"bytes={local_file_size}-"} if local_file_size else None
     try:
         r = requests_get(url, stream=True, headers=resume_header)
-        with open(dest_file_path, fopen_mode) as f:
+        with Path(dest_file_path).open(fopen_mode) as f:
             for chunk in r.iter_content(32 * CHUNK_SIZE):
                 f.write(chunk)
         return Result.Ok(dest_file_path)

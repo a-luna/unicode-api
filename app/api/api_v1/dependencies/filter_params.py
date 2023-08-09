@@ -150,88 +150,88 @@ class FilterParameters:
         if block:
             result = filter_param_matcher[UnicodeBlockName].parse_enum_values(block)
             if result.success:
-                self.blocks = result.value
+                self.blocks = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if category:
             result = filter_param_matcher[GeneralCategory].parse_enum_values(category)
             if result.success:
-                self.categories = result.value
+                self.categories = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if age:
             result = filter_param_matcher[UnicodeAge].parse_enum_values(age)
             if result.success:
-                self.age_list = result.value
+                self.age_list = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if script:
             result = filter_param_matcher[ScriptCode].parse_enum_values(script)
             if result.success:
-                self.scripts = result.value
+                self.scripts = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if bidi_class:
             result = filter_param_matcher[BidirectionalClass].parse_enum_values(bidi_class)
             if result.success:
-                self.bidi_class_list = result.value
+                self.bidi_class_list = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if decomp_type:
             result = filter_param_matcher[DecompositionType].parse_enum_values(decomp_type)
             if result.success:
-                self.decomp_types = result.value
+                self.decomp_types = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if line_break:
             result = filter_param_matcher[LineBreakType].parse_enum_values(line_break)
             if result.success:
-                self.line_break_types = result.value
+                self.line_break_types = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if ccc:
             result = filter_param_matcher[CombiningClassCategory].parse_enum_values(ccc)
             if result.success:
-                self.ccc_list = result.value
+                self.ccc_list = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if num_type:
             result = filter_param_matcher[NumericType].parse_enum_values(num_type)
             if result.success:
-                self.num_types = result.value
+                self.num_types = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if join_type:
             result = filter_param_matcher[JoiningType].parse_enum_values(join_type)
             if result.success:
-                self.join_types = result.value
+                self.join_types = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if flag:
             result = filter_param_matcher[CharacterFilterFlags].parse_enum_values(flag)
             if result.success:
-                self.flags = result.value
+                self.flags = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if show_props:
             result = filter_param_matcher[CharPropertyGroup].parse_enum_values(show_props)
             if result.success:
-                self.show_props = result.value
+                self.show_props = result.value  # type: ignore  # noqa: PGH003
             else:
                 errors.append(result.error or "")
 
         if errors:
             all_errors = f"Invalid values were provided for the following {len(errors)} parameters:\n\n"
             all_errors += "\n\n".join(errors)
-            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=all_errors)
+            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=all_errors)  # type: ignore  # noqa: PGH003, E501

@@ -159,13 +159,13 @@ def remove_irrelevant_indic_properties(char_props: dict[str, Any]) -> list[str]:
         "indic_matra_category",
         "indic_positional_category",
     ]
-    if all(prop_name in char_props for prop_name in indic_properties):
-        if (
-            "Other" in char_props["indic_syllabic_category"]
-            and "NA" in char_props["indic_matra_category"]
-            and "NA" in char_props["indic_positional_category"]
-        ):
-            return indic_properties
+    if (
+        all(prop_name in char_props for prop_name in indic_properties)
+        and "Other" in char_props["indic_syllabic_category"]
+        and "NA" in char_props["indic_matra_category"]
+        and "NA" in char_props["indic_positional_category"]
+    ):
+        return indic_properties
     return []
 
 

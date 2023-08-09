@@ -74,7 +74,7 @@ def get_block_range_for_each_plane(
 ) -> tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict]]:
     for plane in parsed_planes:
         blocks_in_plane = [block for block in parsed_blocks if block["plane_id"] == plane["id"]]
-        block_ids = sorted(list(set(block["id"] for block in blocks_in_plane if block and "id" in block)))
+        block_ids = sorted({block["id"] for block in blocks_in_plane if block and "id" in block})
         if block_ids:
             plane["start_block_id"] = block_ids[0]
             plane["finish_block_id"] = block_ids[-1]
@@ -92,7 +92,7 @@ def parse_unicode_character_data_from_xml(
     all_chars = [
         parse_character_details(char, parsed_blocks, parsed_planes, spinner, i, len(char_nodes))
         for (i, char) in enumerate(char_nodes, start=1)
-        if "cp" in char.keys()  # type: ignore
+        if "cp" in char.keys()  # noqa: SIM118
     ]
     finish_task(spinner, True, "Successfully parsed Unicode character data from XML database file!")
     return all_chars
@@ -227,11 +227,7 @@ def get_unicode_block_containing_codepoint(
 
 
 def char_is_unihan(block_name: str) -> bool:
-    return (
-        True
-        if "cjk unified ideographs" in block_name.lower() or "cjk compatibility ideographs" in block_name.lower()
-        else False
-    )
+    return bool("cjk unified ideographs" in block_name.lower() or "cjk compatibility ideographs" in block_name.lower())
 
 
 def get_character_name(char_node: _Element, codepoint: str, codepoint_dec: int, block: BlockOrPlaneDetailsDict) -> str:

@@ -14,7 +14,7 @@ class UnicodePlaneResponse(CamelModel):
 
 
 class UnicodePlane(UnicodePlaneResponse, table=True):
-    __tablename__ = "plane"  # type: ignore
+    __tablename__ = "plane"  # type: ignore  # noqa: PGH003
 
     id: int | None = Field(default=None, primary_key=True)
     start_dec: int
@@ -22,9 +22,9 @@ class UnicodePlane(UnicodePlaneResponse, table=True):
     start_block_id: int
     finish_block_id: int
 
-    blocks: list["UnicodeBlock"] = Relationship(back_populates="plane")  # type: ignore
-    characters: list["UnicodeCharacter"] = Relationship(back_populates="plane")  # type: ignore
-    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="plane")  # type: ignore
+    blocks: list["UnicodeBlock"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
+    characters: list["UnicodeCharacter"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
+    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003, E501
 
     @classmethod
     def responsify(cls, plane) -> "UnicodePlaneResponse":
