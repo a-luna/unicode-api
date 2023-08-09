@@ -25,11 +25,11 @@ def update_all_data():
     config = result.value
 
     result = get_xml_unicode_database(config)
-    if result.failure or not result.value:
+    if result.failure:
         return result
 
     result = parse_xml_unicode_database(config)
-    if result.failure or not result.value:
+    if result.failure:
         return result
     (all_planes, all_blocks, all_chars) = result.value
     update_json_files(config, all_planes, all_blocks, all_chars)

@@ -71,7 +71,7 @@ def sanitize_codepoint_value(codepoint: str) -> str:
 
 
 def get_invalid_hex_characters(s: str) -> list[str]:
-    return sorted(list({char for char in s if char not in ASCII_HEX}))
+    return sorted({char for char in s if char not in ASCII_HEX})
 
 
 def check_codepoint_is_in_unicode_range(codepoint: int, starting_after: bool) -> Result[int]:

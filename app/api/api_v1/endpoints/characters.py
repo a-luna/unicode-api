@@ -148,7 +148,7 @@ def get_paginated_character_list(
         result = paginate_search_results(codepoints, per_page, page)
         if result.failure:
             raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
-        paginated = result.value if result.value else {}
+        paginated = result.value or {}
         start = paginated.pop("start", 0)
         end = paginated.pop("end", 0)
         paginated["results"] = [

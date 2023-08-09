@@ -1,6 +1,7 @@
+from collections.abc import Callable
 from functools import wraps
 from time import sleep
-from typing import Callable, ParamSpec, Type, TypeVar
+from typing import ParamSpec, TypeVar
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -18,18 +19,18 @@ def retry(
     *,
     max_attempts: int = 2,
     delay: int = 1,
-    exceptions: tuple[Type[Exception], ...] = (Exception,),
+    exceptions: tuple[type[Exception], ...] = (Exception,),
     on_failure: Callable[[Callable, int, Exception, int], None] | None = None,
 ) -> Callable[[Callable[P, T]], Callable[P, T]]:
     """Retry the wrapped function when an exception is raised until max_attempts have failed."""
 
     def decorator(func: Callable[P, T]) -> Callable[P, T]:
         @wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:  # type: ignore
+        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             for remaining in reversed(range(max_attempts)):
                 try:
                     return func(*args, **kwargs)
-                except exceptions as ex:
+                except exceptions as ex:  # noqa: PERF203
                     if remaining <= 0:
                         raise RetryLimitExceededError(func, max_attempts) from ex
                     if on_failure:

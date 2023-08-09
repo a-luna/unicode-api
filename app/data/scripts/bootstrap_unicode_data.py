@@ -16,9 +16,9 @@ UNICODE_PUBLIC_DIR_URL = "https://www.unicode.org/Public/"
 
 def bootstrap_unicode_data() -> Result[UnicodeApiSettings]:
     result = get_all_unicode_versions()
-    if result.failure or not result.value:
+    if result.failure:
         return Result.Fail(result.error if result.error else "")
-    versions = result.value
+    versions = result.value or []
 
     if not os.environ.get("UNICODE_VERSION"):
         os.environ["UNICODE_VERSION"] = versions[-1]
@@ -49,7 +49,7 @@ def parse_all_unicode_version_numbers(page_source: str) -> Result[list[str]]:
     page_content = html.fromstring(page_source, base_url=UNICODE_PUBLIC_DIR_URL)
     for link in page_content.xpath(UNICODE_DIR_LINKS_XPATH):
         result = parse_semver_string(link)
-        if result.failure or not result.value:
+        if result.failure:
             continue
         (major, minor, patch) = result.value
         versions.append(f"{major}.{minor}{f'.{patch}' if patch else ''}")
@@ -74,7 +74,7 @@ def parse_semver_string(input: str) -> Result[tuple[int, int, int]]:
 def check_min_version(all_versions: list[str]) -> Result:
     check_version = os.environ.get("UNICODE_VERSION", "0")
     result = parse_semver_string(check_version)
-    if result.failure or not result.value:
+    if result.failure:
         return result
     (major, minor, patch) = result.value
     if float(f"{major}.{minor}") >= MINIMUM_UNICODE_VERSION:

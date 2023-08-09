@@ -69,7 +69,7 @@ def update_char_dict_enum_values(char_dict):
 
 
 def get_column_names(db_model, parsed):
-    return [name for name in db_model.__fields__.keys() if name in parsed]
+    return [name for name in db_model.__fields__ if name in parsed]
 
 
 def get_csv_rows_for_chunk(chunk, db_model, column_names):

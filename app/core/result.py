@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Callable, Generic, TypeVar
+from collections.abc import Callable
+from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
@@ -42,11 +43,11 @@ class Result(Generic[T]):
         return func(self, *args, **kwargs)
 
     @staticmethod
-    def Fail(error_message: str) -> Result[T]:
+    def Fail(error_message: str) -> Result[T]:  # noqa: N802
         """Create a Result object for a failed operation."""
         return Result(False, value=None, error=error_message)
 
     @staticmethod
-    def Ok(value: T | None = None) -> Result[T]:
+    def Ok(value: T | None = None) -> Result[T]:  # noqa: N802
         """Create a Result object for a successful operation."""
         return Result(True, value=value, error=None)
