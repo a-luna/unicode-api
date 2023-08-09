@@ -11,7 +11,7 @@ from app.tests.test_character_endpoints.test_list_all_unicode_characters.data im
 )
 
 
-def test_get_all_chars_start_after_172E_limit_25(client):
+def test_get_all_chars_start_after_172e_limit_25(client):
     response = client.get("/v1/characters?limit=25&starting_after=172E")
     assert response.status_code == 200
     assert response.json() == ALL_CHARS_START_AFTER_172E_LIMIT_25
