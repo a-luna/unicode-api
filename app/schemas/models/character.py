@@ -48,7 +48,6 @@ class UnicodeCharacterBase(CamelModel):
     NFKD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
     numeric_type: NumericType = Field(sa_column=Column(ChoiceType(NumericType, impl=Integer()), nullable=False))
     numeric_value: str
-    numeric_value_parsed: float | None
     joining_type: JoiningType = Field(sa_column=Column(ChoiceType(JoiningType, impl=Integer()), nullable=False))
     joining_group: str
     joining_control: bool
@@ -123,7 +122,7 @@ class UnicodeCharacterUnihan(UnicodeCharacterBase, table=True):
     ideo_grade_level: int | None
     rs_count_unicode: str | None
     rs_count_kangxi: str | None
-    total_strokes: int | None
+    total_strokes: str | None
     traditional_variant: str | None
     simplified_variant: str | None
     z_variant: str | None
@@ -158,7 +157,7 @@ class UnicodeCharacterResponse(CamelModel):
     ideo_grade_level: int | None = None
     rs_count_unicode: str | None = None
     rs_count_kangxi: str | None = None
-    total_strokes: str | None = None
+    total_strokes: list[int] | None = None
     score: float = 0.0
     utf8: str = ""
     utf8_hex_bytes: list[str] = []
@@ -181,8 +180,8 @@ class UnicodeCharacterResponse(CamelModel):
     NFKC_QC: str = ""
     NFKD_QC: str = ""
     numeric_type: str = ""
-    numeric_value: str = ""
-    numeric_value_parsed: float | None = 0.0
+    numeric_value: list[str] | None = []
+    numeric_value_parsed: list[float] | None = []
     joining_type: str = ""
     joining_group: str = ""
     joining_control: bool = False

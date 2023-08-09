@@ -187,7 +187,7 @@ CJK_BASIC_PROPERTIES = BASIC_PROPERTIES + [
         "char_property": "kTotalStrokes",
         "db_required": True,
         "db_column": True,
-        "response_value": lambda char: get_string_prop_value(char, "total_strokes"),
+        "response_value": lambda char: get_list_of_ints_prop_value(char, "total_strokes"),
     },
 ]
 
@@ -416,15 +416,15 @@ PROPERTY_GROUPS = {
             "char_property": "nv",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "numeric_value"),
+            "response_value": lambda char: get_list_of_strings_prop_value(char, "numeric_value"),
         },
         {
             "name_in": "numeric_value_parsed",
             "name_out": "numeric_value_parsed",
             "char_property": "",
-            "db_required": True,
-            "db_column": True,
-            "response_value": lambda char: char["numeric_value_parsed"] if "numeric_value_parsed" in char else 0.0,
+            "db_required": False,
+            "db_column": False,
+            "response_value": lambda char: get_list_of_ints_prop_value(char, "numeric_value"),
         },
     ],
     CharPropertyGroup.JOINING: [
@@ -984,12 +984,36 @@ def get_plane_abbreviation_containing_codepoint(codepoint: int) -> str:
     return block.plane.abbreviation if block.plane else "None"
 
 
+def get_list_of_strings_prop_value(char_props: dict[str, Any], prop_name: str) -> list[str]:
+    prop_value = get_string_prop_value(char_props, prop_name)
+    return prop_value.split(" ") if prop_value else []
+
+
+def get_list_of_ints_prop_value(char_props: dict[str, Any], prop_name: str) -> list[float]:
+    prop_value = get_string_prop_value(char_props, prop_name)
+    return (
+        [parse_numeric_value(parsed) for parsed in prop_value.split(" ") if parsed and parsed != "NaN"]
+        if prop_value
+        else []
+    )
+
+
+def parse_numeric_value(numeric_value: str) -> float | int:
+    if "/" in numeric_value:
+        [num, dom] = numeric_value.split("/", 1)
+        return int(num) / float(dom)
+    try:
+        return int(numeric_value)
+    except ValueError:  # pragma: no cover
+        return 0
+
+
 def get_string_prop_value(char_props: dict[str, Any], prop_name: str) -> str:
     return char_props.get(prop_name, "")
 
 
 def get_bool_prop_value(char_props: dict[str, Any], prop_name: str) -> bool:
-    return True if char_props.get(prop_name, False) else False
+    return bool(char_props.get(prop_name, False))
 
 
 def get_int_prop_value(char_props: dict[str, Any], prop_name: str) -> int:
@@ -1069,7 +1093,7 @@ def get_default_vo_display_name(codepoint: int) -> str:
 
 
 def get_default_vert_orient_upright_block_ids() -> set[int]:
-    return set(UnicodeBlockName.match_loosely(block_name) for block_name in DEFAULT_VO_U_BLOCK_NAMES)
+    return {UnicodeBlockName.match_loosely(block_name) for block_name in DEFAULT_VO_U_BLOCK_NAMES}
 
 
 def get_script_extensions(value: str) -> list[str]:
