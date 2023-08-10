@@ -205,7 +205,8 @@ body>svg {
 
 .swagger-ui .renderedMarkdown>details:nth-of-type(5),
 .swagger-ui .renderedMarkdown>details:nth-of-type(6),
-.swagger-ui .renderedMarkdown>details:nth-of-type(7) {
+.swagger-ui .renderedMarkdown>details:nth-of-type(7),
+.swagger-ui .renderedMarkdown>details:nth-of-type(8) {
     margin: 1rem 0 1rem 1.5rem;
 }
 

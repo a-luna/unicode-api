@@ -36,6 +36,7 @@ from app.docs.api_docs.content.character import (
     UNICODE_CHATACTER_OBJECT_INTRO,
     VERBOSITY,
 )
+from app.docs.api_docs.content.codepoint import CODEPOINT_CONTENT, CODEPOINTS_ENDPOINT
 from app.docs.api_docs.content.intro import INTRODUCTION, LOOSE_MATCHING, PAGINATION, PROJECT_LINKS_SWAGGER_HTML, SEARCH
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
 
@@ -92,6 +93,11 @@ UNICODE_CHARACTERS_DOCS = f"""
 {create_details_element_for_swagger_ui('<h6 id="emoji">Property Group: Emoji</h6>', PROP_GROUP_EMOJI)}</div>
 """
 
+UNICODE_CODEPOINTS_DOCS = f"""
+    <div>
+        {create_details_element_for_swagger_ui("API Endpoints", CODEPOINTS_ENDPOINT, True)}{CODEPOINT_CONTENT}</div>
+"""
+
 UNICODE_BLOCKS_DOCS = f"""
     <div>
         {create_details_element_for_swagger_ui("API Endpoints", BLOCK_ENDPOINTS, True)}<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
@@ -107,6 +113,9 @@ UNICODE_PLANES_DOCS = f"""
 """
 
 
+# TODO: Add section for Unicode Codepoints under Core Resources, will be short sinece this is just a single endpoint used to retrieve character details by codepoint value
+
+
 def get_api_docs_for_swagger_ui():
     return (
         INTRODUCTION
@@ -119,6 +128,9 @@ def get_api_docs_for_swagger_ui():
         + "<h3>Core Resources</h3>\n"
         + create_details_element_for_swagger_ui(
             '<h4 id="unicode-characters">Unicode Characters</h4>', UNICODE_CHARACTERS_DOCS
+        )
+        + create_details_element_for_swagger_ui(
+            '<h4 id="unicode-codepoints">Unicode Codepoints</h4>', UNICODE_CODEPOINTS_DOCS
         )
         + create_details_element_for_swagger_ui('<h4 id="unicode-blocks">Unicode Blocks</h4>', UNICODE_BLOCKS_DOCS)
         + create_details_element_for_swagger_ui('<h4 id="unicode-planes">Unicode Planes</h4>', UNICODE_PLANES_DOCS)

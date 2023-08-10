@@ -36,6 +36,14 @@
 				</ul>
 			</li>
 			<li>
+				<a href="#unicode-codepoints">Unicode Codepoints</a>
+				<ul>
+					<li>
+						<a href="#codepoint-api-endpoints">API Endpoints</a>
+					</li>
+				</ul>
+			</li>
+			<li>
 				<a href="#unicode-blocks">Unicode Blocks</a>
 				<ul>
 					<li>
@@ -161,7 +169,10 @@
                     <p class="prop-group-ref">More info: <a href="http://www.unicode.org/reports/tr38/#kDefinition" rel="noopener noreferrer" target="_blank">http://www.unicode.org/reports/tr38/#kDefinition</a></p>
                 </dd>
                 <dt><strong>codepoint</strong></dt>
-                <dd>A number in the range from <code>U+0000</code> to <code>U+10FFFF</code> assigned to a single character</dd>
+                <dd>
+                    <p>In character encoding terminology, a codepoint is a numerical value that maps to a specific character. Code points usually represent a single grapheme—usually a letter, digit, punctuation mark, or whitespace—but sometimes represent symbols, control characters, or formatting. The set of all possible code points within a given encoding/character set make up that encoding's codespace.</p>
+                    <p>For example, the character encoding scheme ASCII comprises 128 code points in the range <code>00-7F</code>, Extended ASCII comprises 256 code points in the range <code>00-FF</code>, and Unicode comprises 1,114,112 code points in the range <code>0000-10FFFF</code>. The Unicode code space is divided into seventeen planes (the basic multilingual plane, and 16 supplementary planes), each with 65,536 (= 2<sup>16</sup>) code points. Thus the total size of the Unicode code space is 17 × 65,536 = 1,114,112.</p>
+                </dd>
                 <dt><strong>uriEncoded</strong></dt>
                 <dd>
                     <p>The character as a URI encoded string. A URI is a string that identifies an abstract or physical resource on the internet (The specification for the URI format is defined in <a href="https://www.rfc-editor.org/rfc/rfc3986" rel="noopener noreferrer" target="_blank">RFC 3986</a>).</p>
@@ -855,6 +866,26 @@
             </dl>
 		</details>
 	</div>
+<h3 id="unicode-codepoints">Unicode Codepoints</h3>
+    <div>
+        		<details open>
+            <summary style="list-style: none; align-items: center">
+                <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
+                    <div style="height: 16px; transition: transform 0.3s ease-in">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" stroke="currentColor" fill="currentColor" style="stroke-width: 0; padding: 0; ">
+                            <path d="M285.476 272.971L91.132 467.314c-9.373 9.373-24.569 9.373-33.941 0l-22.667-22.667c-9.357-9.357-9.375-24.522-.04-33.901L188.505 256 34.484 101.255c-9.335-9.379-9.317-24.544.04-33.901l22.667-22.667c9.373-9.373 24.569-9.373 33.941 0L285.475 239.03c9.373 9.372 9.373 24.568.001 33.941z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <strong style="flex: 1"><h4 id="codepoint-api-endpoints">API Endpoints</h4></strong>
+            </summary>
+        <dl>
+            <dt><strong>GET</strong> <code>/v1/codepoints/{hex}</code></dt>
+            <dd>Retrieve details of a single character</dd>
+        </dl>
+		</details>
+		<p>The <code>UnicodeCodepoint</code> resource is not an object like the other resources, it is simply a hexadecimal value that refers to a single character in the Unicode codespace. </p><p>This endpoint performs nearly the same function as the <code>/v1/characters/{string}</code> endpoint. However, sending a request for a character to the <code>/v1/characters/{string}</code> endpoint requires you to provide either the character itself or the URI encoded string representation of the character.</p><p>Since there are plenty of scenarios where it may be easier to supply the assigned codepoint for a character rather than the rendered glyph or URI-encoded value, the <code>/v1/codepoints/{hex}</code> endpoint allows you to request the same sets of character property groups as the <code>/v1/characters/{string}</code> endpoint.</p><p>The only difference between the two endpoints is requests to the <code>/v1/characters/{string}</code> endpoint can retrieve data for one or more characters, while requests to the <code>/v1/codepoints/{hex}</code> endpoint can only be used to retrieve details of a single character.</p>
+    </div>
 <h3 id="unicode-blocks">Unicode Blocks</h3>
     <div>
         		<details open>

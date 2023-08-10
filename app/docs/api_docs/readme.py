@@ -34,6 +34,7 @@ from app.docs.api_docs.content.character import (
     UNICODE_CHATACTER_OBJECT_INTRO,
     VERBOSITY,
 )
+from app.docs.api_docs.content.codepoint import CODEPOINT_CONTENT, CODEPOINTS_ENDPOINT
 from app.docs.api_docs.content.intro import INTRODUCTION, LOOSE_MATCHING, PAGINATION, PROJECT_LINKS_README, SEARCH
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
 from app.docs.util import slugify
@@ -139,6 +140,12 @@ UNICODE_CHARACTERS_DOCS = f"""
 {UNICODE_CHARACTER_PROP_GROUPS_README}\t</div>
 """
 
+UNICODE_CODEPOINTS_DOCS = f"""
+    <div>
+        {create_details_element_readme('<h4 id="codepoint-api-endpoints">API Endpoints</h4>', CODEPOINTS_ENDPOINT, True)}\t\t{CODEPOINT_CONTENT}
+    </div>
+"""
+
 UNICODE_BLOCKS_DOCS = f"""
     <div>
         {create_details_element_readme('<h4 id="block-api-endpoints">API Endpoints</h4>', BLOCK_ENDPOINTS, True)}\t\t<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
@@ -159,6 +166,9 @@ def update_readme():
     ROOT_FOLDER.joinpath("README.md").write_text(readme_api_docs)
 
 
+# TODO: Update README to include Unicode Codepoints section under Core Resources
+
+
 def get_api_docs_for_readme():
     return (
         create_readme_section(2, "Introduction", INTRODUCTION)
@@ -168,6 +178,7 @@ def get_api_docs_for_readme():
         + create_readme_section(2, "Loose Matching", LOOSE_MATCHING)
         + '<h2 id="core-resources">Core Resources</h2>\n'
         + create_readme_section(3, "Unicode Characters", UNICODE_CHARACTERS_DOCS)
+        + create_readme_section(3, "Unicode Codepoints", UNICODE_CODEPOINTS_DOCS)
         + create_readme_section(3, "Unicode Blocks", UNICODE_BLOCKS_DOCS)
         + create_readme_section(3, "Unicode Planes", UNICODE_PLANES_DOCS)
     )
@@ -202,10 +213,7 @@ def create_toc_section(level: int, section_start: int, section_end: int, heading
         return []
     toc: list[TocSection] = []
     for i, heading in enumerate(level_map):
-        if i < len(level_map) - 1:
-            end = (level_map[i + 1].index or 0) - 1
-        else:
-            end = section_end
+        end = (level_map[i + 1].index or 0) - 1 if i < len(level_map) - 1 else section_end
         toc.append(TocSection(heading=heading, children=create_toc_section(level + 1, heading.index, end, heading_map)))
     return toc
 
