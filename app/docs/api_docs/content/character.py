@@ -54,7 +54,7 @@ PROP_GROUP_MINIMUM = """
             </dl>
 """
 
-UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = "<p>⚠️ <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>\n"
+UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = '<p><span class="alert">⚠️</span> <strong><i>NOTE: Specifying <code>show_props=Minimum</code> in any request is redundent since the <strong>Minimum</strong> property group is included in all responses.</i></strong></p>\n'
 
 UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2 = (
     "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/{string}</code> and <code>/v1/characters/filter</code> endpoints accept one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
