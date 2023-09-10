@@ -7,10 +7,10 @@ from app.data.scripts.bootstrap_unicode_data import bootstrap_unicode_data
 from app.data.util import download_file
 
 
-def get_prod_data() -> Result:
+def get_prod_data() -> Result[None]:
     result = bootstrap_unicode_data()
     if result.failure or not result.value:
-        return result
+        return Result.Fail(result.error if result.error else "")
     config = result.value
 
     result = get_unicode_db(config)
@@ -23,16 +23,16 @@ def get_prod_data() -> Result:
     return Result.Ok()
 
 
-def get_unicode_db(config: UnicodeApiSettings) -> Result:
+def get_unicode_db(config: UnicodeApiSettings) -> Result[None]:
     result = download_file(config.DB_ZIP_URL, config.DB_FOLDER)
     if result.failure:
-        return result
+        return Result.Fail(result.error if result.error else "")
     if not config.DB_ZIP_FILE.exists():
         return Result.Fail(f"Failed to download {config.DB_ZIP_FILE.name}")
 
     result = extract_unicode_db(config)
     if result.failure:
-        return result
+        return Result.Fail(result.error if result.error else "")
     config.DB_ZIP_FILE.unlink()
     return Result.Ok()
 
@@ -51,15 +51,15 @@ def extract_unicode_db(config: UnicodeApiSettings) -> Result[list[Path]]:
         return Result.Ok(extracted_files)
 
 
-def get_unicode_json(config: UnicodeApiSettings) -> Result:
+def get_unicode_json(config: UnicodeApiSettings) -> Result[None]:
     result = download_file(config.JSON_ZIP_URL, config.JSON_FOLDER)
     if result.failure:
-        return result
+        return Result.Fail(result.error if result.error else "")
     if not config.JSON_ZIP_FILE.exists():
         return Result.Fail(f"Failed to download {config.JSON_ZIP_FILE.name}")
     result = extract_unicode_json(config)
     if result.failure:
-        return result
+        return Result.Fail(result.error if result.error else "")
     config.JSON_ZIP_FILE.unlink()
     return Result.Ok()
 

@@ -18,19 +18,19 @@ CharDetailsDict = dict[str, bool | int | str]
 BlockOrPlaneDetailsDict = dict[str, int | str]
 
 
-def update_all_data():
+def update_all_data() -> Result[None]:
     result = bootstrap_unicode_data()
     if result.failure or not result.value:
-        return result
+        return Result.Fail(result.error or "")
     config = result.value
 
     result = get_xml_unicode_database(config)
     if result.failure:
-        return result
+        return Result.Fail(result.error or "")
 
     result = parse_xml_unicode_database(config)
     if result.failure:
-        return result
+        return Result.Fail(result.error or "")
     (all_planes, all_blocks, all_chars) = result.value or ([], [], [])
     update_json_files(config, all_planes, all_blocks, all_chars)
 
@@ -79,7 +79,7 @@ def update_json_files(
     finish_task(spinner, True, "Successfully created JSON files for parsed Unicode data")
 
 
-def backup_db_and_json_files(config: UnicodeApiSettings):
+def backup_db_and_json_files(config: UnicodeApiSettings) -> Result[None]:
     spinner = start_task("Creating compressed backup files of SQLite DB and JSON files...")
     backup_sqlite_db(config)
     backup_json_files(config)
@@ -113,7 +113,7 @@ def backup_json_files(config: UnicodeApiSettings):
         zip.write(config.CHAR_NAME_MAP, f"{config.CHAR_NAME_MAP.name}")
 
 
-def upload_zip_file_to_s3(local_file: Path, unicode_version: str) -> Result:
+def upload_zip_file_to_s3(local_file: Path, unicode_version: str) -> Result[None]:
     result = run_command(f"s3cmd put {local_file} {S3_BUCKET_URL}/{unicode_version}/{local_file.name} -P")
     if result.failure:
         return result

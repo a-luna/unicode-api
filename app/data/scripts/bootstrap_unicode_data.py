@@ -25,7 +25,7 @@ def bootstrap_unicode_data() -> Result[UnicodeApiSettings]:
 
     result = check_min_version(versions)
     if result.failure:
-        return result
+        return Result.Fail(result.error if result.error else "")
 
     config = UnicodeApiSettings()
     init_data_folders(config)
@@ -71,11 +71,11 @@ def parse_semver_string(input: str) -> Result[tuple[int, int, int]]:
     return Result.Ok((int(major), int(minor), int(patch)))
 
 
-def check_min_version(all_versions: list[str]) -> Result:
+def check_min_version(all_versions: list[str]) -> Result[None]:
     check_version = os.environ.get("UNICODE_VERSION", "0")
     result = parse_semver_string(check_version)
     if result.failure:
-        return result
+        return Result.Fail(result.error if result.error else "")
     (major, minor, patch) = result.value or (0, 0, 0)
     if float(f"{major}.{minor}") >= MINIMUM_UNICODE_VERSION:
         return Result.Ok()

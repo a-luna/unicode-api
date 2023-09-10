@@ -66,8 +66,7 @@ class RedisClient:
             self.connected = False
             self.logger.info(f"Failed to connect to Redis server (attempt {self.failed_attempts}/{MAX_ATTEMPTS}).")
 
-    def rate_limit_exceeded(self, key: str) -> Result:
-        allowed_at: float = 0.0
+    def rate_limit_exceeded(self, key: str) -> Result[None]:
         arrived_at = datetime.now().timestamp()
         emission_interval = round(int(self.rate_limit_period.total_seconds()) / float(self.rate_limit))
         self.client.setnx(key, 0)

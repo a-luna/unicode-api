@@ -5,7 +5,7 @@ from pathlib import Path
 from app.core.result import Result
 
 
-def run_command(command: str, cwd: Path | None = None, shell: bool = True, text: bool = True) -> Result:
+def run_command(command: str, cwd: Path | None = None, shell: bool = True, text: bool = True) -> Result[None]:
     try:
         subprocess.check_call(
             command,

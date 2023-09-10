@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from app.core.config import ROOT_FOLDER
+from app.core.result import Result
 from app.data.util.command import run_command
 
 REQ_BASE = ROOT_FOLDER.joinpath("requirements.txt")
@@ -11,12 +12,11 @@ REQ_LOCK = ROOT_FOLDER.joinpath("requirements-lock.txt")
 def sync_requirements_files():
     result = create_lock_file()
     if result.failure:
-        print(result.error)
-        return 1
+        return result
     pinned_versions = parse_lock_file(REQ_LOCK)
     update_requirements(REQ_BASE, pinned_versions)
     update_requirements(REQ_DEV, pinned_versions)
-    return 0
+    return Result.Ok()
 
 
 def create_lock_file():

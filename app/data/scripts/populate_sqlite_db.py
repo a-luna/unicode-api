@@ -16,7 +16,7 @@ from app.schemas.enums import CharPropertyGroup
 BATCH_SIZE = 10000
 
 
-def populate_sqlite_database(config: UnicodeApiSettings) -> Result:
+def populate_sqlite_database(config: UnicodeApiSettings) -> Result[None]:
     table_csv_file_map: dict[
         type[db.UnicodePlane] | type[db.UnicodeBlock] | type[db.UnicodeCharacter] | type[db.UnicodeCharacterUnihan],
         Path,

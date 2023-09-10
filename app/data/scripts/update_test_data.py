@@ -51,6 +51,7 @@ def update_test_data():
         + STATIC_CONTENT
     )
     TEST_DATA_FILE.write_text(data_py, encoding="utf-8")
+    return Result.Ok()
 
 
 def camelize_character_prop_names(char_details: dict[str, Any]) -> dict[str, Any]:

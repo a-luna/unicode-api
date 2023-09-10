@@ -30,15 +30,15 @@ class Result(Generic[T]):
         """Flag that indicates if the operation failed."""
         return not self.success
 
-    def on_success(self, func: Callable, *args, **kwargs) -> Result:
+    def on_success(self, func: Callable, *args, **kwargs) -> Result[T]:
         """Pass result of successful operation (if any) to subsequent function."""
         return self if self.failure else func(self.value, *args, **kwargs) if self.value else func(*args, **kwargs)
 
-    def on_failure(self, func: Callable, *args, **kwargs) -> Result:
+    def on_failure(self, func: Callable, *args, **kwargs) -> Result[T]:
         """Pass error message from failed operation to subsequent function."""
         return self if self.success else func(self.error, *args, **kwargs)
 
-    def on_both(self, func: Callable, *args, **kwargs) -> Result:
+    def on_both(self, func: Callable, *args, **kwargs) -> Result[T]:
         """Pass result (either succeeded/failed) to subsequent function."""
         return func(self, *args, **kwargs)
 
