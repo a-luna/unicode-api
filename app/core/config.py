@@ -10,7 +10,7 @@ from app.core.dotenv_file import DotEnvFile
 HTTP_BUCKET_URL = "https://unicode-api.us-southeast-1.linodeobjects.com"
 S3_BUCKET_URL = "s3://unicode-api"
 DEV_API_ROOT = "http://localhost:3507"
-PROP_API_ROOT = "https://unicode-api.aaronluna.dev"
+PROD_API_ROOT = "https://unicode-api.aaronluna.dev"
 
 XML_FILE_NAME = "ucd.all.flat.xml"
 XML_ZIP_FILE_NAME = "ucd.all.flat.zip"
@@ -63,7 +63,7 @@ class UnicodeApiSettings(BaseSettings):
     SERVER_NAME: str = "unicode-api.aaronluna.dev"
     SERVER_HOST: str = "https://unicode-api.aaronluna.dev"
     CACHE_HEADER: str = "X-UnicodeAPI-Cache"
-    API_ROOT = DEV_API_ROOT if os.environ.get("ENV") == "DEV" else PROP_API_ROOT
+    API_ROOT = DEV_API_ROOT if os.environ.get("ENV", "") != "PROD" else PROD_API_ROOT
     LOGGING_CONFIG: dict[str, Any] = LOGGING_CONFIG
 
     ROOT_FOLDER: Path = ROOT_FOLDER
