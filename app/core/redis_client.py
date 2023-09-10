@@ -72,7 +72,7 @@ class RedisClient:
         self.client.setnx(key, 0)
         try:
             with self.client.lock("lock:" + key, blocking_timeout=5):
-                tat = float(self.client.get(key) or 0)
+                tat = float(self.client.get(key) or 0)  # type: ignore  # noqa: PGH003
                 allowed_at = tat - (emission_interval * self.rate_limit_burst)
                 if allowed_at < arrived_at:
                     new_tat = max(tat, arrived_at) + emission_interval
@@ -82,7 +82,7 @@ class RedisClient:
                 self.logger.info(f"Rate limit exceeded for IP: {key}")
                 return Result.Fail(self._get_limit_exceeded_error_message(allowed_at))
         except LockError:  # pragma: no cover
-            return Result.Fail(self._get_limit_exceeded_error_message(allowed_at))
+            return Result.Fail(self._get_lock_error_message())
 
     def _get_limit_exceeded_error_message(self, allowed_at: float) -> str:
         limit_duration = get_duration_from_timestamp(allowed_at)
@@ -90,6 +90,9 @@ class RedisClient:
             f"API rate limit of {self.rate_limit} requests in {self.rate_limit_period.seconds} seconds exceeded, "
             f"please wait {limit_duration} before submitting another request"
         )
+
+    def _get_lock_error_message(self) -> str:
+        return "An error occurred attempting to acquire a Redis lock for a shared resource."
 
 
 redis = RedisClient()
