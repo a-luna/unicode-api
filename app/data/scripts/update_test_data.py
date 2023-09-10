@@ -2,6 +2,7 @@ import json
 from typing import Any
 
 from app.core.config import settings
+from app.core.result import Result
 from app.db.engine import engine
 from app.db.get_char_details import get_character_properties
 from app.schemas.enums.property_group import CharPropertyGroup
@@ -37,9 +38,9 @@ def update_test_data():
     data_verbose = {}
     for char in TEST_CHARS:
         concise_details = get_character_properties(engine, ord(char), [CharPropertyGroup.ALL], False)
-        data_concise[char] = camelize_character_prop_names(concise_details)
+        data_concise[char] = format_character_properties(concise_details)
         verbose_details = get_character_properties(engine, ord(char), [CharPropertyGroup.ALL], True)
-        data_verbose[char] = camelize_character_prop_names(verbose_details)
+        data_verbose[char] = format_character_properties(verbose_details)
 
     character_properties = json.dumps(data_concise, indent=4, ensure_ascii=False)
     verbose_character_properties = json.dumps(data_verbose, indent=4, ensure_ascii=False)
@@ -54,7 +55,7 @@ def update_test_data():
     return Result.Ok()
 
 
-def camelize_character_prop_names(char_details: dict[str, Any]) -> dict[str, Any]:
+def format_character_properties(char_details: dict[str, Any]) -> dict[str, Any]:
     return {
         to_lower_camel(prop_name): format_prop_value(prop_name, prop_value)
         for prop_name, prop_value in char_details.items()
