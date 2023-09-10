@@ -13,4 +13,4 @@ pytest-sugar==0.9.7
 pyupgrade==3.10.1
 ruff==0.0.284
 snoop==0.4.3
-tox==4.7.0
+trogon==0.5.0
