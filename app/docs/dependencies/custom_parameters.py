@@ -202,6 +202,14 @@ CHAR_NAME_FILTER_DESCRIPTION = """
 <p>Filter Unicode characters by name. A character is considered a match if the official name of the character <strong>contains</strong> the value provided.</p>
 """
 
+CJK_DEFINITION_FILTER_DESCRIPTION = """
+<ul class="param-notes">
+    <li>This value is optional</li>
+    <li class=\"alert\">This parameter only applies to CJK characters. Including this parameter in any request guarantees that the response will be limited to CJK characters.</li>
+</ul>
+<p>Filter CJK characters by the English-language definition, if available. A character is considered a match if the CJK definition of the character <strong>contains</strong> the value provided.</p>
+"""
+
 VERBOSE_DESCRIPTION = """
 <ul class="param-notes">
     <li>This value is optional (default: <code>verbose=false</code>)</li>

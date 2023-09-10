@@ -7,6 +7,7 @@ from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matche
 from app.data.cache import cached_data
 from app.docs.dependencies.custom_parameters import (
     CHAR_NAME_FILTER_DESCRIPTION,
+    CJK_DEFINITION_FILTER_DESCRIPTION,
     PAGE_NUMBER_DESCRIPTION,
     PER_PAGE_DESCRIPTION,
     VERBOSE_DESCRIPTION,
@@ -32,6 +33,7 @@ class FilterParameters:
     def __init__(
         self,
         name: Annotated[str | None, Query(description=CHAR_NAME_FILTER_DESCRIPTION)] = None,
+        cjk_definition: Annotated[str | None, Query(description=CJK_DEFINITION_FILTER_DESCRIPTION)] = None,
         block: Annotated[list[str] | None, Query(description=get_filter_param_description("block"))] = None,
         category: Annotated[list[str] | None, Query(description=get_filter_param_description("category"))] = None,
         age: Annotated[list[str] | None, Query(description=get_filter_param_description("age"))] = None,
@@ -64,6 +66,7 @@ class FilterParameters:
         )
         self.verbose = verbose or False
         self.name = name
+        self.cjk_definition = cjk_definition
         self.per_page = per_page or 10
         self.page = page or 1
 
@@ -72,6 +75,9 @@ class FilterParameters:
         filter_settings = []
         if self.name:
             filter_settings.append(f"name: {self.name}")
+
+        if self.cjk_definition:
+            filter_settings.append(f"cjk_definition: {self.cjk_definition}")
 
         if self.blocks:
             block_names = [cached_data.get_unicode_block_by_id(block_id).name for block_id in self.blocks]

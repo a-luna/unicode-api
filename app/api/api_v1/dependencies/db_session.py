@@ -31,16 +31,22 @@ class DBSession:
         return get_character_properties(self.engine, codepoint, show_props, verbose)
 
     def filter_all_characters(self, filter_params: FilterParameters) -> list[int]:
-        queries = [construct_filter_query(filter_params, table) for table in CHAR_TABLES]
+        queries = [
+            query for table in CHAR_TABLES if (query := construct_filter_query(filter_params, table)) is not None
+        ]
         return apply_filter(self.session, queries)
 
 
 def construct_filter_query(  # noqa: C901
     filter_params: FilterParameters, table: db.UnicodeCharacter | db.UnicodeCharacterUnihan
-) -> Select:
+) -> Select | None:
+    if table == db.UnicodeCharacter and filter_params.cjk_definition:
+        return None
     query = select(column("codepoint_dec")).select_from(table)
     if filter_params.name:
         query = query.where(column("name").contains(filter_params.name.upper()))
+    if filter_params.cjk_definition:
+        query = query.where(column("description").contains(filter_params.cjk_definition))
     if filter_params.blocks:
         query = query.where(column("block_id").in_(filter_params.blocks))
     if filter_params.categories:
