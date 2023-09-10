@@ -1,8 +1,8 @@
-black==23.7.0
-coverage==7.2.7
-ipython==8.14.0
+black==23.9.0
+coverage==7.3.1
+ipython==8.15.0
 isort==5.12.0
-pytest==7.4.0
+pytest==7.4.2
 pytest-black==0.3.12
 pytest-clarity==1.0.1
 pytest-cov==4.1.0
@@ -11,6 +11,7 @@ pytest-mock==3.11.1
 pytest-random-order==1.1.0
 pytest-sugar==0.9.7
 pyupgrade==3.10.1
-ruff==0.0.284
+ruff==0.0.287
 snoop==0.4.3
+tox==4.11.3
 trogon==0.5.0
