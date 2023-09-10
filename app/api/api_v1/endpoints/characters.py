@@ -92,7 +92,7 @@ def filter_unicode_characters(
 
 
 @router.get(
-    "/{string}",
+    "/-/{string:path}",
     response_model=list[db.UnicodeCharacterResponse],
     response_model_exclude_unset=True,
 )
