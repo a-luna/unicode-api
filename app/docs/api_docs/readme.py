@@ -29,10 +29,10 @@ from app.docs.api_docs.content.character import (
     PROP_GROUP_UTF8,
     PROP_GROUP_UTF16,
     PROP_GROUP_UTF32,
+    UNICODE_CHARACTER_OBJECT_INTRO,
     UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1,
     UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2,
     UNICODE_CHARACTER_PROP_GROUPS_INTRO,
-    UNICODE_CHATACTER_OBJECT_INTRO,
     VERBOSITY,
 )
 from app.docs.api_docs.content.codepoint import CODEPOINT_CONTENT, CODEPOINTS_ENDPOINT
@@ -135,7 +135,7 @@ UNICODE_CHARACTER_PROP_GROUPS_README = (
 UNICODE_CHARACTERS_DOCS = f"""
     <div>
 {create_details_element_readme('<h4 id="character-api-endpoints">API Endpoints</h4>', CHARACTER_ENDPOINTS, True)}\t\t<h4 id="the-unicodecharacter-object">The <code>UnicodeCharacter</code> Object</h4>
-        {UNICODE_CHATACTER_OBJECT_INTRO}
+        {UNICODE_CHARACTER_OBJECT_INTRO}
         <h4 id="unicodecharacter-property-groups"><code>UnicodeCharacter</code> Property Groups</h4>
         {UNICODE_CHARACTER_PROP_GROUPS_INTRO}
 {UNICODE_CHARACTER_PROP_GROUPS_README}\t</div>

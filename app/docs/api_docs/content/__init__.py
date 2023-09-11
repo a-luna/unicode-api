@@ -24,7 +24,7 @@ from app.docs.api_docs.content.character import (
     UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1,
     UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2,
     UNICODE_CHARACTER_PROP_GROUPS_INTRO,
-    UNICODE_CHATACTER_OBJECT_INTRO,
+    UNICODE_CHARACTER_OBJECT_INTRO,
     VERBOSITY,
 )
 from app.docs.api_docs.content.intro import (
