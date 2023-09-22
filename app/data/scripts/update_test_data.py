@@ -13,7 +13,8 @@ TEST_CHARS = ["\x17", "(", "∑", "㑢", "穩", "范", "𑿀", "\uf800", "\ufffe
 INT_TO_STR_PROP_NAMES = ["accounting_numeric", "primary_numeric", "other_numeric"]
 
 TEST_DATA_FILE = (
-    get_settings.TESTS_FOLDER.joinpath("test_character_endpoints")
+    get_settings()
+    .TESTS_FOLDER.joinpath("test_character_endpoints")
     .joinpath("test_get_unicode_character_details")
     .joinpath("data.py")
 )
