@@ -62,10 +62,9 @@ def init_redis_client():
 
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
-    if testing(request) or not RATE_LIMIT_ROUTE_REGEX.search(request.url.path):
+    if testing(request) or not RATE_LIMIT_ROUTE_REGEX.search(request.url.path) or not request.client:
         return await call_next(request)
-    client_ip = request.client.host if request.client else ""
-    result = redis.rate_limit_exceeded(client_ip)
+    result = redis.is_request_allowed_by_rate_limit(request.client.host)
     if result.success:
         return await call_next(request)
     return JSONResponse(content=result.error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))

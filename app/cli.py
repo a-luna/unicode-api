@@ -45,7 +45,7 @@ def exit_app(result, message=None):
 
 def exit_app_success(message=None):
     if message:
-        print_message(message, fg="bright_green")
+        click.secho(message, fg="bright_green")
     return 0
 
 
@@ -53,14 +53,10 @@ def exit_app_error(message):
     if message:
         if isinstance(message, list):
             for m in message:
-                print_message(m, fg="bright_red")
+                click.secho(m, fg="bright_red")
         else:
-            print_message(message, fg="bright_red")
+            click.secho(message, fg="bright_red")
     return 1
-
-
-def print_message(message, fg=None):
-    click.secho(message, fg=fg)
 
 
 if __name__ == "__main__":

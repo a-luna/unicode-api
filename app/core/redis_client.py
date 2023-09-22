@@ -1,4 +1,5 @@
 import logging
+import os
 import time
 from datetime import datetime, timedelta
 
@@ -27,7 +28,7 @@ class RedisClient:
         self.rate_limit: int = settings.RATE_LIMIT_PER_PERIOD
         self.rate_limit_period: timedelta = settings.RATE_LIMIT_PERIOD_SECONDS
         self.rate_limit_burst: int = settings.RATE_LIMIT_BURST
-        self._client: Redis = FakeRedis()
+        self._client: Redis
 
     @property
     def redis_url(self) -> str:
@@ -39,11 +40,12 @@ class RedisClient:
 
     @property
     def client(self) -> Redis:
-        return self.get_redis_client()
+        return self.get_redis_client() if os.environ.get("ENV", "") != "TEST" else FakeRedis()
 
     def get_redis_client(self) -> Redis:
         while not self.connected and self.failed_attempts < MAX_ATTEMPTS:
             try:
+                self.logger.info("Attempting to connect to to Redis server...")
                 client = from_url(self.redis_url)
                 if client.ping():
                     self._client = client
@@ -58,16 +60,23 @@ class RedisClient:
     def handle_connect_attempt_failed(self):
         self.failed_attempts += 1
         if self.failed_attempts < MAX_ATTEMPTS:
-            self.logger.info(
-                "Redis server did not respond to ping, retrying... " f"(attempt {self.failed_attempts}/{MAX_ATTEMPTS})."
+            self.logger.warning(
+                "Redis server did not respond to ping, will retry in 3 seconds... "
+                f"(attempt {self.failed_attempts}/{MAX_ATTEMPTS})"
             )
             time.sleep(3)
         else:
             self._client = FakeRedis()
             self.connected = False
-            self.logger.info(f"Failed to connect to Redis server (attempt {self.failed_attempts}/{MAX_ATTEMPTS}).")
+            self.logger.warning(f"Failed to connect to Redis server (attempt {self.failed_attempts}/{MAX_ATTEMPTS}).")
 
-    def rate_limit_exceeded(self, key: str) -> Result[None]:
+    def is_request_allowed_by_rate_limit(self, key: str) -> Result[None]:
+        """
+        This is an implementation of the Genetic Cell Rate Algorithm (GCRA) with burst.
+
+        Adapted for Python from this article:
+        https://vikas-kumar.medium.com/rate-limiting-techniques-245c3a5e9cad
+        """
         arrived_at = datetime.now().timestamp()
         emission_interval = round(int(self.rate_limit_period.total_seconds()) / float(self.rate_limit))
         self.client.setnx(key, 0)
@@ -75,7 +84,7 @@ class RedisClient:
             with self.client.lock("lock:" + key, blocking_timeout=5):
                 tat = float(self.client.get(key) or 0)  # type: ignore  # noqa: PGH003
                 allowed_at = tat - (emission_interval * self.rate_limit_burst)
-                if allowed_at < arrived_at:
+                if arrived_at >= allowed_at:
                     new_tat = max(tat, arrived_at) + emission_interval
                     self.client.set(key, new_tat)
                     self.logger.info(f"Request allowed for IP: {key}")

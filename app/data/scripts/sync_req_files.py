@@ -1,10 +1,10 @@
 import re
 from pathlib import Path
 
-from app.core.config import ROOT_FOLDER
 from app.core.result import Result
 from app.data.util.command import run_command
 
+ROOT_FOLDER = Path(__file__).parent.parent.parent.parent
 REQ_BASE = ROOT_FOLDER.joinpath("requirements.txt")
 REQ_DEV = ROOT_FOLDER.joinpath("requirements-dev.txt")
 REQ_LOCK = ROOT_FOLDER.joinpath("requirements-lock.txt")

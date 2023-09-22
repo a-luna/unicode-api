@@ -25,8 +25,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function addClickHandlersAfterDelay() {
 	await sleep(1000);
-	const apiEndpoints = document.querySelectorAll('.opblock');
-	apiEndpoints.forEach((el) =>
+	document.querySelectorAll('.opblock').forEach((el) =>
 		el.addEventListener('click', () => addClickHandlers(el), {
 			once: true
 		})
@@ -101,7 +100,7 @@ function openDetailsElementById(event, id) {
 // ###### SET PAGE BACKGROUND USING SVG BASE64 URLS ######
 // The page background is created by converting SVG elements to base64 strings. The SVGs are
 // defined in the function that creates the HTML for the API docs:
-// app/docs/api_docs/swagger_ui.get_swagger_ui_html.
+// (get_swagger_ui_html in app.docs.api_docs.swagger_ui)
 
 // The base64 strings are used as the value of the background property for the root html element,
 // which is accessed through the style property of the HTMLElement interface.
