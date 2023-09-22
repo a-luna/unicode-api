@@ -12,7 +12,7 @@ from fastapi_utils.openapi import simplify_operation_ids
 from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
-from app.core.config import settings
+from app.core.config import get_settings
 from app.core.redis_client import redis
 from app.data.cache import cached_data
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
@@ -23,10 +23,10 @@ RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|planes")
 
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
+    title=get_settings().PROJECT_NAME,
     description=get_api_docs_for_swagger_ui(),
-    version=settings.API_VERSION,
-    openapi_url=f"{settings.API_VERSION}/openapi.json",
+    version=get_settings().API_VERSION,
+    openapi_url=f"{get_settings().API_VERSION}/openapi.json",
     docs_url=None,
     redoc_url=None,
 )
@@ -55,6 +55,7 @@ def init_unicode_obj():
 
 @app.on_event("startup")
 def init_redis_client():
+    settings = get_settings()
     logging.config.dictConfig(settings.LOGGING_CONFIG)
     _ = redis.get_redis_client()
 
@@ -79,8 +80,9 @@ def testing(request: Request) -> bool:
     )
 
 
-@app.get(f"{settings.API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
+@app.get(f"{get_settings().API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
 async def swagger_ui_html():
+    settings = get_settings()
     return get_swagger_ui_html(
         openapi_url=app.openapi_url or "/openapi.json",
         title=f"{settings.PROJECT_NAME} Docs - Swagger UI",
@@ -115,5 +117,5 @@ def get_api_root():
     )
 
 
-app.include_router(router, prefix=settings.API_VERSION)
+app.include_router(router, prefix=get_settings().API_VERSION)
 simplify_operation_ids(app)

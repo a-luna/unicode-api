@@ -11,7 +11,7 @@ from app.api.api_v1.dependencies import (
     UnicodePlaneResolver,
 )
 from app.api.api_v1.pagination import paginate_search_results
-from app.core.config import settings
+from app.core.config import get_settings
 from app.data.cache import cached_data
 
 router = APIRouter()
@@ -23,7 +23,7 @@ def list_all_unicode_blocks(
 ):
     (start, stop) = get_block_list_endpoints(list_params, plane)
     return {
-        "url": f"{settings.API_VERSION}/blocks",
+        "url": f"{get_settings().API_VERSION}/blocks",
         "has_more": stop <= plane.finish_block_id,
         "data": [cached_data.get_unicode_block_by_id(id).as_response() for id in range(start, stop)],
     }
@@ -38,7 +38,7 @@ def search_unicode_blocks_by_name(
     search_params: Annotated[BlockSearchParameters, Depends()],
 ):
     params = {
-        "url": f"{settings.API_VERSION}/blocks/search",
+        "url": f"{get_settings().API_VERSION}/blocks/search",
         "query": search_params.name,
     }
     results = cached_data.search_blocks_by_name(search_params.name, search_params.min_score)

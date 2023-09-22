@@ -15,7 +15,7 @@ from app.api.api_v1.dependencies import (
 from app.api.api_v1.dependencies.filter_param_matcher import FilterParameterMatcher
 from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
-from app.core.config import settings
+from app.core.config import get_settings
 from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
 from app.docs.dependencies.custom_parameters import (
@@ -41,7 +41,7 @@ def list_all_unicode_characters(
 ):
     (start, stop) = get_char_list_endpoints(list_params, block)
     return {
-        "url": f"{settings.API_VERSION}/characters",
+        "url": f"{get_settings().API_VERSION}/characters",
         "has_more": stop <= block.finish,
         "data": [get_character_details(db_ctx, codepoint, []) for codepoint in range(start, stop)],
     }
@@ -56,7 +56,7 @@ def search_unicode_characters_by_name(
     db_ctx: Annotated[DBSession, Depends(get_session)],
     search_parameters: Annotated[CharacterSearchParameters, Depends()],
 ):
-    response_data = {"url": f"{settings.API_VERSION}/characters/search", "query": search_parameters.name}
+    response_data = {"url": f"{get_settings().API_VERSION}/characters/search", "query": search_parameters.name}
     search_results = cached_data.search_characters_by_name(search_parameters.name, search_parameters.min_score)
     return get_paginated_character_list(
         db_ctx,
@@ -77,7 +77,10 @@ def search_unicode_characters_by_name(
 def filter_unicode_characters(
     db_ctx: Annotated[DBSession, Depends(get_session)], filter_parameters: Annotated[FilterParameters, Depends()]
 ):
-    response_data = {"url": f"{settings.API_VERSION}/characters/filter", "filter_settings": filter_parameters.settings}
+    response_data = {
+        "url": f"{get_settings().API_VERSION}/characters/filter",
+        "filter_settings": filter_parameters.settings,
+    }
     codepoints = db_ctx.filter_all_characters(filter_parameters)
     filter_results = [(cp, None) for cp in codepoints]
     return get_paginated_character_list(

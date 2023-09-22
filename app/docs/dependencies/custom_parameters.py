@@ -1,4 +1,4 @@
-from app.core.config import settings
+from app.core.config import get_settings
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.docs.dependencies import (
@@ -99,9 +99,9 @@ UNICODE_CHAR_URI_EXAMPLES = f"""
     </summary>
     <dl class="param-examples">
         <dt><span>Ⱒ</span><sup>2</sup></dt>
-        <dd><a href="{settings.API_ROOT}/v1/characters/{get_uri_encoded_value('Ⱒ')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('Ⱒ')}</a><sup>1</sup></dd>
+        <dd><a href="{get_settings().API_ROOT}/v1/characters/{get_uri_encoded_value('Ⱒ')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('Ⱒ')}</a><sup>1</sup></dd>
         <dt><span>👨‍🌾 </span><sup>3</sup></dt>
-        <dd><a href="{settings.API_ROOT}/v1/characters/{get_uri_encoded_value('👨‍🌾')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('👨‍🌾')}</a><sup>1</sup></dd>
+        <dd><a href="{get_settings().API_ROOT}/v1/characters/{get_uri_encoded_value('👨‍🌾')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('👨‍🌾')}</a><sup>1</sup></dd>
     </dl>
     <div class="footnotes">
         <sup>1</sup>

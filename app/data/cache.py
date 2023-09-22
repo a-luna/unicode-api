@@ -7,7 +7,7 @@ from sqlalchemy import distinct, select
 from sqlmodel import Session
 
 import app.db.models as db
-from app.core.config import settings
+from app.core.config import get_settings
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,
     ALL_UNICODE_CODEPOINTS,
@@ -27,6 +27,7 @@ CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 class UnicodeDataCache:
     @cached_property
     def non_unihan_character_name_map(self) -> dict[int, str]:
+        settings = get_settings()
         json_map = json.loads(settings.CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
@@ -36,6 +37,7 @@ class UnicodeDataCache:
 
     @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
+        settings = get_settings()
         if not settings.BLOCKS_JSON.exists():  # pragma: no cover
             return []
         blocks = [db.UnicodeBlock(**block) for block in json.loads(settings.BLOCKS_JSON.read_text())]
@@ -95,6 +97,7 @@ class UnicodeDataCache:
 
     @cached_property
     def planes(self) -> list[db.UnicodePlane]:
+        settings = get_settings()
         return [db.UnicodePlane(**plane) for plane in json.loads(settings.PLANES_JSON.read_text())]
 
     @property
@@ -200,6 +203,7 @@ class UnicodeDataCache:
 
     @property
     def unicode_version(self) -> str:
+        settings = get_settings()
         return settings.UNICODE_VERSION
 
     def search_characters_by_name(self, query: str, score_cutoff: int = 80) -> list[tuple[int, float]]:

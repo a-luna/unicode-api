@@ -1,28 +1,20 @@
-import os
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
 
 from pydantic import BaseSettings
 
-from app.core.dotenv_file import DotEnvFile
-
 HTTP_BUCKET_URL = "https://unicode-api.us-southeast-1.linodeobjects.com"
 S3_BUCKET_URL = "s3://unicode-api"
 DEV_API_ROOT = "http://localhost:3507"
-PROD_API_ROOT = "https://unicode-api.aaronluna.dev"
 
 XML_FILE_NAME = "ucd.all.flat.xml"
 XML_ZIP_FILE_NAME = "ucd.all.flat.zip"
 DB_FILE_NAME = "unicode-api.db"
 DB_ZIP_FILE_NAME = "unicode-api.db.zip"
 
-APP_FOLDER = Path(__file__).parent.parent
+APP_FOLDER = Path(__file__).parent.parent.parent
 ROOT_FOLDER = APP_FOLDER.parent
-DOTENV_FILE = ROOT_FOLDER.joinpath(".env")
-
-if os.environ.get("ENV", "") != "PROD":  # pragma: no cover
-    dotenv = DotEnvFile(dotenv_filepath=DOTENV_FILE)
 
 LOGGING_CONFIG: dict[str, Any] = {
     "version": 1,
@@ -48,22 +40,22 @@ LOGGING_CONFIG: dict[str, Any] = {
 }
 
 
-class UnicodeApiSettings(BaseSettings):
-    ENV: str = os.environ.get("ENV", "DEV")
-    UNICODE_VERSION: str = os.environ.get("UNICODE_VERSION", "")
-    PROJECT_NAME: str = "Unicode API"
+class UnicodeApiSettingsTest(BaseSettings):
+    ENV: str = "TEST"
+    UNICODE_VERSION: str = "15.0.0"
+    PROJECT_NAME: str = "Test Unicode API"
     API_VERSION: str = "/v1"
-    REDIS_PW: str = os.environ.get("REDIS_PW", "")
-    REDIS_HOST: str = os.environ.get("REDIS_HOST", "")
-    REDIS_PORT: int = int(os.environ.get("REDIS_PORT", ""))
-    REDIS_DB: int = int(os.environ.get("REDIS_DB", "0"))
-    RATE_LIMIT_PER_PERIOD: int = int(os.environ.get("RATE_LIMIT_PER_PERIOD", "1"))
-    RATE_LIMIT_PERIOD_SECONDS: timedelta = timedelta(seconds=int(os.environ.get("RATE_LIMIT_PERIOD_SECONDS", "100")))
-    RATE_LIMIT_BURST: int = int(os.environ.get("RATE_LIMIT_BURST", "10"))
-    SERVER_NAME: str = "unicode-api.aaronluna.dev"
-    SERVER_HOST: str = "https://unicode-api.aaronluna.dev"
-    CACHE_HEADER: str = "X-UnicodeAPI-Cache"
-    API_ROOT = DEV_API_ROOT if os.environ.get("ENV", "") != "PROD" else PROD_API_ROOT
+    REDIS_PW: str = ""
+    REDIS_HOST: str = ""
+    REDIS_PORT: int = 0
+    REDIS_DB: int = 0
+    RATE_LIMIT_PER_PERIOD: int = 0
+    RATE_LIMIT_PERIOD_SECONDS: timedelta = timedelta()
+    RATE_LIMIT_BURST: int = 0
+    SERVER_NAME: str = ""
+    SERVER_HOST: str = ""
+    CACHE_HEADER: str = ""
+    API_ROOT = DEV_API_ROOT = DEV_API_ROOT
     LOGGING_CONFIG: dict[str, Any] = LOGGING_CONFIG
 
     ROOT_FOLDER: Path = ROOT_FOLDER
@@ -79,6 +71,7 @@ class UnicodeApiSettings(BaseSettings):
     DB_ZIP_FILE: Path = DB_FOLDER.joinpath(DB_ZIP_FILE_NAME)
     DB_ZIP_URL: str = f"{HTTP_BUCKET_URL}/{UNICODE_VERSION}/{DB_ZIP_FILE.name}"
     DB_URL: str = f"sqlite:///{DB_FILE}"
+    S3_BUCKET_URL: str = S3_BUCKET_URL
     JSON_FOLDER: Path = VERSION_FOLDER.joinpath("json")
     PLANES_JSON: Path = JSON_FOLDER.joinpath("planes.json")
     BLOCKS_JSON: Path = JSON_FOLDER.joinpath("blocks.json")
@@ -93,6 +86,3 @@ class UnicodeApiSettings(BaseSettings):
 
     class Config:
         case_sensitive = True
-
-
-settings = UnicodeApiSettings()

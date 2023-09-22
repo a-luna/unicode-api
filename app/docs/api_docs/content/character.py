@@ -1,5 +1,5 @@
 # flake8: noqa
-from app.core.config import settings
+from app.core.config import get_settings
 
 CHARACTER_ENDPOINTS = """
             <dl>
@@ -58,7 +58,7 @@ UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_1 = '<p><span class="alert">⚠️</span
 
 UNICODE_CHARACTER_PROP_GROUPS_CONTINUED_2 = (
     "<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/-/{string}</code> and <code>/v1/characters/filter</code> endpoints accept one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p>"
-    + f'<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="{settings.API_ROOT}/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>'
+    + f'<p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="{get_settings().API_ROOT}/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>'
 )
 
 VERBOSITY = (

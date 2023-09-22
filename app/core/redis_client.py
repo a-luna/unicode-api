@@ -7,7 +7,7 @@ from redis import from_url
 from redis.client import Redis
 from redis.exceptions import ConnectionError, LockError
 
-from app.core.config import settings
+from app.core.config import get_settings
 from app.core.result import Result
 from app.core.util import get_duration_from_timestamp
 
@@ -16,6 +16,7 @@ MAX_ATTEMPTS = 3
 
 class RedisClient:
     def __init__(self):
+        settings = get_settings()
         self.logger = logging.getLogger("app.api.error")
         self.connected: bool = False
         self.failed_attempts: int = 0

@@ -1,7 +1,10 @@
 # flake8: noqa
+from app.core.config import get_settings
+from app.core.util import get_unicode_version_release_date
 
-INTRODUCTION = """
-<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener noreferrer" target="_blank">version 15.0 of the Unicode Standard</a> (released September 13, 2022). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
+
+INTRODUCTION = f"""
+<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode{get_settings().UNICODE_VERSION}/" rel="noopener noreferrer" target="_blank">version {get_settings().UNICODE_VERSION} of the Unicode Standard</a> (released {get_unicode_version_release_date(get_settings().UNICODE_VERSION)}). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul class="api-principles">
     <li>URLs are predictable and resource-oriented.</li>
     <li>Uses standard HTTP verbs and response codes.</li>

@@ -1,7 +1,7 @@
 import json
 from typing import Any
 
-from app.core.config import settings
+from app.core.config import get_settings
 from app.core.result import Result
 from app.db.engine import engine
 from app.db.get_char_details import get_character_properties
@@ -13,7 +13,7 @@ TEST_CHARS = ["\x17", "(", "∑", "㑢", "穩", "范", "𑿀", "\uf800", "\ufffe
 INT_TO_STR_PROP_NAMES = ["accounting_numeric", "primary_numeric", "other_numeric"]
 
 TEST_DATA_FILE = (
-    settings.TESTS_FOLDER.joinpath("test_character_endpoints")
+    get_settings.TESTS_FOLDER.joinpath("test_character_endpoints")
     .joinpath("test_get_unicode_character_details")
     .joinpath("data.py")
 )

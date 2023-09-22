@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Path
 
 import app.db.models as db
-from app.core.config import settings
+from app.core.config import get_settings
 from app.data.cache import cached_data
 
 router = APIRouter()
@@ -13,7 +13,7 @@ router = APIRouter()
 def list_all_unicode_planes():
     planes = [db.UnicodePlane.responsify(plane) for plane in cached_data.planes]
     return {
-        "url": f"{settings.API_VERSION}/planes",
+        "url": f"{get_settings().API_VERSION}/planes",
         "total_results": len(planes),
         "has_more": False,
         "data": planes,

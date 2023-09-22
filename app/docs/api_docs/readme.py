@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-from app.core.config import ROOT_FOLDER
+from app.core.config import get_settings
 from app.core.result import Result
 from app.docs.api_docs.content.block import BLOCK_ENDPOINTS, UNICODE_BLOCK_OBJECT_INTRO, UNICODE_BLOCK_OBJECT_PROPERTIES
 from app.docs.api_docs.content.character import (
@@ -164,7 +164,7 @@ UNICODE_PLANES_DOCS = f"""
 
 def update_readme():
     readme_api_docs = f"<h1>Unicode API</h1>\n{create_toc_for_readme()}{get_api_docs_for_readme()}"
-    ROOT_FOLDER.joinpath("README.md").write_text(readme_api_docs)
+    get_settings().ROOT_FOLDER.joinpath("README.md").write_text(readme_api_docs)
     return Result.Ok()
 
 

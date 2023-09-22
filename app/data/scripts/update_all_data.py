@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from app.core.config import S3_BUCKET_URL, UnicodeApiSettings
+from app.core.config import UnicodeApiSettings
 from app.core.result import Result
 from app.data.scripts import (
     bootstrap_unicode_data,
@@ -87,12 +87,12 @@ def backup_db_and_json_files(config: UnicodeApiSettings) -> Result[None]:
 
     spinner = start_task("")
     spinner.stop_and_persist("Uploading backup files to S3 bucket...")
-    result = upload_zip_file_to_s3(config.DB_ZIP_FILE, config.UNICODE_VERSION)
+    result = upload_zip_file_to_s3(config, config.DB_ZIP_FILE)
     if result.failure:
         return result
     config.DB_ZIP_FILE.unlink()
 
-    result = upload_zip_file_to_s3(config.JSON_ZIP_FILE, config.UNICODE_VERSION)
+    result = upload_zip_file_to_s3(config, config.JSON_ZIP_FILE)
     if result.failure:
         return result
     config.JSON_ZIP_FILE.unlink()
@@ -113,8 +113,8 @@ def backup_json_files(config: UnicodeApiSettings):
         zip.write(config.CHAR_NAME_MAP, f"{config.CHAR_NAME_MAP.name}")
 
 
-def upload_zip_file_to_s3(local_file: Path, unicode_version: str) -> Result[None]:
-    result = run_command(f"s3cmd put {local_file} {S3_BUCKET_URL}/{unicode_version}/{local_file.name} -P")
+def upload_zip_file_to_s3(config: UnicodeApiSettings, local_file: Path) -> Result[None]:
+    result = run_command(f"s3cmd put {local_file} {config.S3_BUCKET_URL}/{config.UNICODE_VERSION}/{local_file.name} -P")
     if result.failure:
         return result
     return Result.Ok()
