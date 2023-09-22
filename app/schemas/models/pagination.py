@@ -15,7 +15,7 @@ class PaginatedList(GenericCamelModel, Generic[T]):
 class PaginatedSearchResults(GenericCamelModel, Generic[T]):
     url: str
     query: str | None
-    filter_settings: list[str] | None
+    filter_settings: dict[str, str] | None
     has_more: bool
     current_page: int
     next_page: int | None
