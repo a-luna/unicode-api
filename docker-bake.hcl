@@ -7,7 +7,7 @@ variable "REDIS_PW" {
 }
 
 variable "UNICODE_VERSION" {
-  default = "15.0.0"
+  default = "15.1.0"
 }
 
 target "unicode-api" {
