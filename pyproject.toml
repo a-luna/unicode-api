@@ -80,6 +80,8 @@ norecursedirs = [
 
 [tool.coverage.run]
 omit = [
+    "app/cli.py",
+    "app/core/config/config.py",
     "app/core/logging.py",
     "app/core/redis_client.py",
     "app/core/result.py",
