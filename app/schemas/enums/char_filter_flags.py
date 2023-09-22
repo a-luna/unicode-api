@@ -40,6 +40,10 @@ class CharacterFilterFlags(IntFlag):
     UNIFIED_IDEOGRAPH = auto()
     RADICAL = auto()
 
+    EMOJI_GROUP = (
+        EMOJI | EMOJI_PRESENTATION | EMOJI_MODIFIER | EMOJI_MODIFIER_BASE | EMOJI_COMPONENT | EXTENDED_PICTOGRAPHIC
+    )
+
     def __str__(self) -> str:
         return self.display_name
 
@@ -77,6 +81,10 @@ class CharacterFilterFlags(IntFlag):
     def db_column_name(self) -> str:
         flag = CHAR_FLAG_MAP.get(int(self), None)
         return flag.db_column if flag else ""
+
+    @classmethod
+    def is_emoji_flag(cls, flag) -> bool:
+        return flag in cls.EMOJI_GROUP
 
     @classmethod
     def match_loosely(cls, name: str) -> CharacterFilterFlags:

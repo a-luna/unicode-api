@@ -124,9 +124,21 @@ def get_unihan_properties_with_null_values(char_props: dict[str, Any]) -> list[s
 def get_unset_flag_properties(char_props: dict[str, Any]) -> list[str]:
     return [
         flag.db_column_name
-        for flag in CharacterFilterFlags
+        for flag in get_removable_flag_properties(char_props)
         if flag.db_column_name in char_props and not char_props[flag.db_column_name]
     ]
+
+
+def get_removable_flag_properties(char_props: dict[str, Any]) -> list[CharacterFilterFlags]:
+    removable_flags = list(CharacterFilterFlags)
+    set_flag_props = [
+        flag for flag in CharacterFilterFlags if flag.db_column_name in char_props and char_props[flag.db_column_name]
+    ]
+    if any(CharacterFilterFlags.is_emoji_flag(flag) for flag in set_flag_props):
+        removable_flags = [
+            flag for flag in CharacterFilterFlags if int(CharacterFilterFlags.EMOJI_GROUP) & flag != flag
+        ]
+    return removable_flags
 
 
 def remove_irrelevant_casing_properties(char_props: dict[str, Any], codepoint: int) -> list[str]:
