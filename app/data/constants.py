@@ -1,5 +1,6 @@
 import re
 from collections import namedtuple
+from datetime import date
 
 MAX_CODEPOINT = 1114111
 
@@ -45,6 +46,107 @@ CHAR_FLAG_MAP: dict[int, CharacterFlag] = {
     2**30: CharacterFlag("RADICAL", "radical", "radical"),
 }
 
+UNICODE_PLANES_DEFAULT = [
+    {
+        "id": 1,
+        "number": 0,
+        "name": "Basic Multilingual Plane",
+        "abbreviation": "BMP",
+        "start": "0000",
+        "start_dec": 0,
+        "finish": "FFFF",
+        "finish_dec": 65535,
+        "start_block_id": 0,
+        "finish_block_id": 0,
+        "total_allocated": 0,
+        "total_defined": 0,
+    },
+    {
+        "id": 2,
+        "number": 1,
+        "name": "Supplementary Multilingual Plane",
+        "abbreviation": "SMP",
+        "start": "10000",
+        "start_dec": 65536,
+        "finish": "1FFFF",
+        "finish_dec": 131071,
+        "start_block_id": 0,
+        "finish_block_id": 0,
+        "total_allocated": 0,
+        "total_defined": 0,
+    },
+    {
+        "id": 3,
+        "number": 2,
+        "name": "Supplementary Ideographic Plane",
+        "abbreviation": "SIP",
+        "start": "20000",
+        "start_dec": 131072,
+        "finish": "2FFFF",
+        "finish_dec": 196607,
+        "start_block_id": 0,
+        "finish_block_id": 0,
+        "total_allocated": 0,
+        "total_defined": 0,
+    },
+    {
+        "id": 4,
+        "number": 3,
+        "name": "Tertiary Ideographic Plane",
+        "abbreviation": "TIP",
+        "start": "30000",
+        "start_dec": 196608,
+        "finish": "3FFFF",
+        "finish_dec": 262143,
+        "start_block_id": 0,
+        "finish_block_id": 0,
+        "total_allocated": 0,
+        "total_defined": 0,
+    },
+    {
+        "id": 5,
+        "number": 14,
+        "name": "Supplementary Special-purpose Plane",
+        "abbreviation": "SSP",
+        "start": "E0000",
+        "start_dec": 917504,
+        "finish": "EFFFF",
+        "finish_dec": 983039,
+        "start_block_id": 0,
+        "finish_block_id": 0,
+        "total_allocated": 0,
+        "total_defined": 0,
+    },
+    {
+        "id": 6,
+        "number": 15,
+        "name": "Supplementary Private Use Area-A",
+        "abbreviation": "SPUA-A",
+        "start": "F0000",
+        "start_dec": 983040,
+        "finish": "FFFFF",
+        "finish_dec": 1048575,
+        "start_block_id": 0,
+        "finish_block_id": 0,
+        "total_allocated": 0,
+        "total_defined": 0,
+    },
+    {
+        "id": 7,
+        "number": 16,
+        "name": "Supplementary Private Use Area-B",
+        "abbreviation": "SPUA-B",
+        "start": "100000",
+        "start_dec": 1048576,
+        "finish": "10FFFF",
+        "finish_dec": 1114111,
+        "start_block_id": 0,
+        "finish_block_id": 0,
+        "total_allocated": 0,
+        "total_defined": 0,
+    },
+]
+
 NULL_BLOCK = {
     "id": 0,
     "name": "None",
@@ -70,6 +172,28 @@ NULL_PLANE = {
     "total_allocated": 0,
     "total_defined": 0,
 }
+
+UNICODE_VERSION_RELEASE_DATES = {
+    "5.1.0": date(2008, 4, 4),
+    "5.2.0": date(2009, 10, 1),
+    "6.0.0": date(2010, 10, 11),
+    "6.1.0": date(2012, 1, 31),
+    "6.2.0": date(2012, 9, 26),
+    "6.3.0": date(2013, 9, 30),
+    "7.0.0": date(2014, 6, 16),
+    "8.0.0": date(2015, 6, 17),
+    "9.0.0": date(2016, 6, 21),
+    "10.0.0": date(2017, 6, 20),
+    "11.0.0": date(2018, 6, 5),
+    "12.0.0": date(2019, 3, 5),
+    "12.1.0": date(2019, 5, 11),
+    "13.0.0": date(2020, 3, 10),
+    "14.0.0": date(2021, 9, 14),
+    "15.0.0": date(2022, 9, 13),
+    "15.1.0": date(2023, 9, 12),
+}
+
+SUPPORTED_UNICODE_VERSIONS = list(UNICODE_VERSION_RELEASE_DATES.keys())
 
 NON_CHARACTER_CODEPOINTS = [
     64976,

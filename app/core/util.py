@@ -1,6 +1,16 @@
 import time
 from datetime import datetime, timedelta, timezone, tzinfo
 
+from app.data.constants import UNICODE_VERSION_RELEASE_DATES
+
+DATE_MONTH_NAME = "%b %d, %Y"
+
+
+def get_unicode_version_release_date(version: str) -> str:
+    if release_date := UNICODE_VERSION_RELEASE_DATES.get(version, None):
+        return release_date.strftime(DATE_MONTH_NAME)
+    return ""
+
 
 def make_tzaware(dt: datetime, use_tz: tzinfo | None = None, localize: bool = True) -> datetime:
     """Translate an aware datetime to a different timezone OR add timezone to naive datetime."""
