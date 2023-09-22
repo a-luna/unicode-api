@@ -1,10 +1,10 @@
 FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "name: spiritus",
-        "category: Nonspacing Mark",
-        "script: Coptic",
-    ],
+    "filterSettings": {
+        "name": "spiritus",
+        "category": "Nonspacing Mark",
+        "script": "Coptic",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 2,
@@ -18,10 +18,10 @@ INVALID_PAGE_NUMBER = {"detail": "Request for page #2 is invalid since there is 
 
 NO_CHARS_MATCH_SETTINGS = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "name: test",
-        "script: Coptic",
-    ],
+    "filterSettings": {
+        "name": "test",
+        "script": "Coptic",
+    },
     "hasMore": False,
     "currentPage": 0,
     "totalResults": 0,
@@ -30,10 +30,10 @@ NO_CHARS_MATCH_SETTINGS = {
 
 FILTER_BY_UNICODE_AGE = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "category: Modifier Symbol",
-        "version: 13.0, 14.0, 15.0",
-    ],
+    "filterSettings": {
+        "category": "Modifier Symbol",
+        "version": "13.0, 14.0, 15.0",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 4,
@@ -47,10 +47,10 @@ FILTER_BY_UNICODE_AGE = {
 
 FILTER_BY_BIDIRECTIONAL_CLASS = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "name: dong",
-        "bidi_class: European Terminator",
-    ],
+    "filterSettings": {
+        "name": "dong",
+        "bidi_class": "European Terminator",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 1,
@@ -59,10 +59,10 @@ FILTER_BY_BIDIRECTIONAL_CLASS = {
 
 FILTER_BY_DECOMPOSITION_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "name: seven",
-        "decomp_type: Encircled Form",
-    ],
+    "filterSettings": {
+        "name": "seven",
+        "decomp_type": "Encircled Form",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 6,
@@ -78,7 +78,7 @@ FILTER_BY_DECOMPOSITION_TYPE = {
 
 FILTER_BY_LINE_BREAK_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["line_break: Infix Separator"],
+    "filterSettings": {"line_break": "Infix Separator"},
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
@@ -99,7 +99,7 @@ FILTER_BY_LINE_BREAK_TYPE = {
 
 FILTER_BY_CCC = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["ccc: Attached Above"],
+    "filterSettings": {"ccc": "Attached Above"},
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 1,
@@ -108,10 +108,10 @@ FILTER_BY_CCC = {
 
 FILTER_BY_NUMERIC_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "script: Kharoshthi",
-        "num_type: Digit",
-    ],
+    "filterSettings": {
+        "script": "Kharoshthi",
+        "num_type": "Digit",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 4,
@@ -125,7 +125,7 @@ FILTER_BY_NUMERIC_TYPE = {
 
 FILTER_BY_JOINING_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["join_type: Left Joining"],
+    "filterSettings": {"join_type": "Left Joining"},
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 5,
@@ -145,7 +145,7 @@ FILTER_BY_JOINING_TYPE = {
 
 FILTER_BY_CHAR_FLAG = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["flag: Is Hyphen"],
+    "filterSettings": {"flag": "Is Hyphen"},
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 11,
@@ -166,7 +166,7 @@ FILTER_BY_CHAR_FLAG = {
 
 FILTER_BY_BLOCK_NAME = {
     "url": "/v1/characters/filter",
-    "filterSettings": ["block: Ancient Symbols"],
+    "filterSettings": {"block": "Ancient Symbols"},
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
@@ -187,10 +187,10 @@ FILTER_BY_BLOCK_NAME = {
 
 FILTER_BY_COMBINED_CATEGORY = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "block: Basic Latin",
-        "category: Punctuation",
-    ],
+    "filterSettings": {
+        "block": "Basic Latin",
+        "category": "Punctuation",
+    },
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
@@ -211,10 +211,10 @@ FILTER_BY_COMBINED_CATEGORY = {
 
 FILTER_BY_SEPARATE_CATEGORIES = {
     "url": "/v1/characters/filter",
-    "filterSettings": [
-        "block: Basic Latin",
-        "category: Connector Punctuation, Dash Punctuation, Open Punctuation, Close Punctuation, Initial Punctuation, Final Punctuation, Other Punctuation",
-    ],
+    "filterSettings": {
+        "block": "Basic Latin",
+        "category": "Connector Punctuation, Dash Punctuation, Open Punctuation, Close Punctuation, Initial Punctuation, Final Punctuation, Other Punctuation",
+    },
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,

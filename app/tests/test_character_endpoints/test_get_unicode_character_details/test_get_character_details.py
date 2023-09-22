@@ -36,7 +36,7 @@ def get_prop_group(char, prop_group, verbose):
 def test_get_character_details_default(char, client):
     url = f"/v1/characters/-/{char}"
     if any(char.isascii() and not char.isprintable() for char in url):
-        url = f"/v1/characters/{get_uri_encoded_value(char)}"
+        url = f"/v1/characters/-/{get_uri_encoded_value(char)}"
     prop_group = (
         CharPropertyGroup.MINIMUM if not cached_data.character_is_unihan(ord(char)) else CharPropertyGroup.CJK_MINIMUM
     )
