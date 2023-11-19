@@ -1,3 +1,4 @@
+import re
 from typing import Any
 
 from sqlalchemy import column, or_, select, true
@@ -44,9 +45,11 @@ def construct_filter_query(  # noqa: C901
         return None
     query = select(column("codepoint_dec")).select_from(table)
     if filter_params.name:
-        query = query.where(column("name").contains(filter_params.name.upper()))
+        char_name_regex = f"\\b{filter_params.name.upper()}\\b"
+        query = query.where(column("name").regexp_match(char_name_regex))
     if filter_params.cjk_definition:
-        query = query.where(column("description").contains(filter_params.cjk_definition))
+        cjk_def_regex = f"\\b{filter_params.cjk_definition.lower()}\\b"
+        query = query.where(column("description").regexp_match(cjk_def_regex))
     if filter_params.blocks:
         query = query.where(column("block_id").in_(filter_params.blocks))
     if filter_params.categories:
