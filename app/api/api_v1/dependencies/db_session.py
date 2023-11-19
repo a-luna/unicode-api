@@ -1,4 +1,3 @@
-import re
 from typing import Any
 
 from sqlalchemy import column, or_, select, true
