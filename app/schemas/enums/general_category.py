@@ -58,10 +58,6 @@ class GeneralCategory(IntFlag):
         return self.name.replace("_", " ").title()
 
     @property
-    def normalized(self) -> str:
-        return normalize_string_lm3(self.code)
-
-    @property
     def display_name(self) -> str:
         return f"{self} ({self.code})"
 
@@ -110,8 +106,8 @@ class GeneralCategory(IntFlag):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):  # pragma: no cover
-        code_map = {
+    def code_map(cls):  # pragma: no cover
+        return {
             "Lu": cls.UPPERCASE_LETTER,
             "Ll": cls.LOWERCASE_LETTER,
             "Lt": cls.TITLECASE_LETTER,
@@ -151,7 +147,10 @@ class GeneralCategory(IntFlag):
             "Cn": cls.UNASSIGNED,
             "C": cls.OTHER,
         }
-        return code_map.get(code, cls.NONE)
+
+    @classmethod
+    def from_code(cls, code):  # pragma: no cover
+        return cls.code_map().get(code, cls.NONE)
 
     @property
     def values(self) -> list[str]:
@@ -160,5 +159,5 @@ class GeneralCategory(IntFlag):
 
     @classmethod
     def match_loosely(cls, name: str) -> GeneralCategory:
-        gen_category_map = {e.normalized: e for e in cls if e != e.NONE}
+        gen_category_map = {normalize_string_lm3(code): category for code, category in cls.code_map().items()}
         return gen_category_map.get(normalize_string_lm3(name), cls.NONE)
