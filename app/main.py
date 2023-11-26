@@ -1,6 +1,7 @@
 import logging.config
 import os
 import re
+from contextlib import asynccontextmanager
 from http import HTTPStatus
 from pathlib import Path
 
@@ -22,6 +23,26 @@ STATIC_FOLDER = APP_FOLDER.joinpath("static")
 RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|planes")
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_unicode_obj()
+    init_redis_client()
+    yield
+
+
+def init_unicode_obj():
+    _ = cached_data.non_unihan_character_name_map
+    _ = cached_data.blocks
+    _ = cached_data.planes
+    _ = cached_data.all_unicode_versions
+
+
+def init_redis_client():
+    settings = get_settings()
+    logging.config.dictConfig(settings.LOGGING_CONFIG)
+    _ = redis.get_redis_client()
+
+
 app = FastAPI(
     title=get_settings().PROJECT_NAME,
     description=get_api_docs_for_swagger_ui(),
@@ -29,6 +50,7 @@ app = FastAPI(
     openapi_url=f"{get_settings().API_VERSION}/openapi.json",
     docs_url=None,
     redoc_url=None,
+    lifespan=lifespan,
 )
 app.add_middleware(
     CORSMiddleware,
@@ -45,29 +67,14 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory=str(STATIC_FOLDER)), name="static")
 
 
-@app.on_event("startup")
-def init_unicode_obj():
-    _ = cached_data.non_unihan_character_name_map
-    _ = cached_data.blocks
-    _ = cached_data.planes
-    _ = cached_data.all_unicode_versions
-
-
-@app.on_event("startup")
-def init_redis_client():
-    settings = get_settings()
-    logging.config.dictConfig(settings.LOGGING_CONFIG)
-    _ = redis.get_redis_client()
-
-
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
     if testing(request) or not RATE_LIMIT_ROUTE_REGEX.search(request.url.path) or not request.client:
         return await call_next(request)
     result = redis.is_request_allowed_by_rate_limit(request.client.host)
-    if result.success:
-        return await call_next(request)
-    return JSONResponse(content=result.error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
+    if result.failure:
+        return JSONResponse(content=result.error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
+    return await call_next(request)
 
 
 def testing(request: Request) -> bool:
