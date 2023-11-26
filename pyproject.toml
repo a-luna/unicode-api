@@ -39,6 +39,7 @@ exclude =  '''
 [tool.ruff]
 line-length = 120
 select = ["B", "C4", "C90", "E", "ERA", "F", "FA", "I", "INT", "N", "PERF", "PGH", "PIE", "PLE", "PLW", "PTH", "RUF100", "SIM", "UP", "W", "YTT"]
+extend-select = ["I"]
 ignore = ["B019", "B905"]
 fixable = ["I"]
 unfixable = ["B", "C90", "PIE", "SIM"]
