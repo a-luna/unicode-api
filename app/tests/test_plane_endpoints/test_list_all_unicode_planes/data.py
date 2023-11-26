@@ -10,7 +10,7 @@ ALL_PLANES = {
             "start": "U+0000",
             "finish": "U+FFFF",
             "totalAllocated": 65536,
-            "totalDefined": 55639,
+            "totalDefined": 55634,
         },
         {
             "number": 1,
@@ -28,7 +28,7 @@ ALL_PLANES = {
             "start": "U+20000",
             "finish": "U+2FFFF",
             "totalAllocated": 65536,
-            "totalDefined": 61495,
+            "totalDefined": 60873,
         },
         {
             "number": 3,
