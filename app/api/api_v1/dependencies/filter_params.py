@@ -240,4 +240,4 @@ class FilterParameters:
         if errors:
             all_errors = f"Invalid values were provided for the following {len(errors)} parameters:\n\n"
             all_errors += "\n\n".join(errors)
-            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=all_errors)  # type: ignore  # noqa: PGH003, E501
+            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=all_errors)  # type: ignore  # noqa: PGH003

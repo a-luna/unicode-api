@@ -31,10 +31,15 @@ class DBSession:
         return get_character_properties(self.engine, codepoint, show_props, verbose)
 
     def filter_all_characters(self, filter_params: FilterParameters) -> list[int]:
-        queries = [
-            query for table in CHAR_TABLES if (query := construct_filter_query(filter_params, table)) is not None
-        ]
-        return apply_filter(self.session, queries)
+        matching_codepoints = []
+        for query in get_filter_queries(filter_params):
+            results = self.session.execute(query).scalars().all()
+            matching_codepoints.extend(results)
+        return sorted(set(matching_codepoints))
+
+
+def get_filter_queries(filter_params: FilterParameters) -> list[Select | None]:
+    return [query for table in CHAR_TABLES if (query := construct_filter_query(filter_params, table)) is not None]
 
 
 def construct_filter_query(  # noqa: C901
@@ -74,11 +79,3 @@ def construct_filter_query(  # noqa: C901
         query = query.where(or_(*flag_conditions))
 
     return query
-
-
-def apply_filter(session: Session, queries: list[Select]) -> list[int]:
-    matching_codepoints = []
-    for query in queries:
-        results = session.execute(query).scalars().all()
-        matching_codepoints.extend(results)
-    return sorted(set(matching_codepoints))

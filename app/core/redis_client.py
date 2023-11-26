@@ -84,13 +84,13 @@ class RedisClient:
             with self.client.lock("lock:" + key, blocking_timeout=5):
                 tat = float(self.client.get(key) or 0)  # type: ignore  # noqa: PGH003
                 allowed_at = tat - (emission_interval * self.rate_limit_burst)
-                if arrived_at >= allowed_at:
-                    new_tat = max(tat, arrived_at) + emission_interval
-                    self.client.set(key, new_tat)
-                    self.logger.info(f"Request allowed for IP: {key}")
-                    return Result.Ok()
-                self.logger.info(f"Rate limit exceeded for IP: {key}")
-                return Result.Fail(self._get_limit_exceeded_error_message(allowed_at))
+                if arrived_at < allowed_at:
+                    self.logger.info(f"Rate limit exceeded for IP: {key}")
+                    return Result.Fail(self._get_limit_exceeded_error_message(allowed_at))
+                new_tat = max(tat, arrived_at) + emission_interval
+                self.client.set(key, new_tat)
+                self.logger.info(f"Request allowed for IP: {key}")
+                return Result.Ok()
         except LockError:  # pragma: no cover
             return Result.Fail(self._get_lock_error_message())
 
