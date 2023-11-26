@@ -44,11 +44,9 @@ def construct_filter_query(  # noqa: C901
         return None
     query = select(column("codepoint_dec")).select_from(table)
     if filter_params.name:
-        char_name_regex = f"\\b{filter_params.name.upper()}\\b"
-        query = query.where(column("name").regexp_match(char_name_regex))
+        query = query.where(column("name").regexp_match(f"\\b{filter_params.name.upper()}\\b"))
     if filter_params.cjk_definition:
-        cjk_def_regex = f"\\b{filter_params.cjk_definition.lower()}\\b"
-        query = query.where(column("description").regexp_match(cjk_def_regex))
+        query = query.where(column("description").regexp_match(f"\\b{filter_params.cjk_definition.lower()}\\b"))
     if filter_params.blocks:
         query = query.where(column("block_id").in_(filter_params.blocks))
     if filter_params.categories:
