@@ -118,7 +118,3 @@ def upload_zip_file_to_s3(config: UnicodeApiSettings, local_file: Path) -> Resul
     if result.failure:
         return result
     return Result.Ok()
-
-
-if __name__ == "__main__":
-    update_all_data()
