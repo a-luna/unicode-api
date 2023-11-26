@@ -1,10 +1,9 @@
 import json
 import os
+from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 from typing import Any
-
-from pydantic import BaseSettings
 
 from app.core.dotenv_file import DotEnvFile
 from app.data.constants import UNICODE_PLANES_DEFAULT
@@ -18,6 +17,7 @@ XML_FILE_NAME = "ucd.all.flat.xml"
 XML_ZIP_FILE_NAME = "ucd.all.flat.zip"
 DB_FILE_NAME = "unicode-api.db"
 DB_ZIP_FILE_NAME = "unicode-api.db.zip"
+JSON_ZIP_FILE_NAME = "unicode_json.zip"
 
 APP_FOLDER = Path(__file__).parent.parent.parent
 ROOT_FOLDER = APP_FOLDER.parent
@@ -50,52 +50,49 @@ LOGGING_CONFIG: dict[str, Any] = {
 }
 
 
-class UnicodeApiSettings(BaseSettings):
-    ENV: str = os.environ.get("ENV", "DEV")
-    UNICODE_VERSION: str = os.environ.get("UNICODE_VERSION", "")
-    PROJECT_NAME: str = "Unicode API"
-    API_VERSION: str = "/v1"
-    REDIS_PW: str = os.environ.get("REDIS_PW", "")
-    REDIS_HOST: str = os.environ.get("REDIS_HOST", "")
-    REDIS_PORT: int = int(os.environ.get("REDIS_PORT", ""))
-    REDIS_DB: int = int(os.environ.get("REDIS_DB", "0"))
-    RATE_LIMIT_PER_PERIOD: int = int(os.environ.get("RATE_LIMIT_PER_PERIOD", "1"))
-    RATE_LIMIT_PERIOD_SECONDS: timedelta = timedelta(seconds=int(os.environ.get("RATE_LIMIT_PERIOD_SECONDS", "100")))
-    RATE_LIMIT_BURST: int = int(os.environ.get("RATE_LIMIT_BURST", "10"))
-    SERVER_NAME: str = "unicode-api.aaronluna.dev"
-    SERVER_HOST: str = PROD_API_ROOT
-    CACHE_HEADER: str = "X-UnicodeAPI-Cache"
-    API_ROOT = DEV_API_ROOT if os.environ.get("ENV", "") != "PROD" else PROD_API_ROOT
-    LOGGING_CONFIG: dict[str, Any] = LOGGING_CONFIG
-
-    ROOT_FOLDER: Path = ROOT_FOLDER
-    APP_FOLDER: Path = ROOT_FOLDER.joinpath("app")
-    DATA_FOLDER: Path = APP_FOLDER.joinpath("data")
-    TESTS_FOLDER: Path = APP_FOLDER.joinpath("tests")
-    VERSION_FOLDER: Path = DATA_FOLDER.joinpath("unicode_versions").joinpath(UNICODE_VERSION)
-    XML_FOLDER: Path = VERSION_FOLDER.joinpath("xml")
-    XML_FILE: Path = XML_FOLDER.joinpath(XML_FILE_NAME)
-    XML_ZIP_FILE: Path = XML_FOLDER.joinpath(XML_ZIP_FILE_NAME)
-    DB_FOLDER: Path = VERSION_FOLDER.joinpath("db")
-    DB_FILE: Path = DB_FOLDER.joinpath(DB_FILE_NAME)
-    DB_ZIP_FILE: Path = DB_FOLDER.joinpath(DB_ZIP_FILE_NAME)
-    DB_ZIP_URL: str = f"{HTTP_BUCKET_URL}/{UNICODE_VERSION}/{DB_ZIP_FILE.name}"
-    DB_URL: str = f"sqlite:///{DB_FILE}"
-    S3_BUCKET_URL: str = S3_BUCKET_URL
-    JSON_FOLDER: Path = VERSION_FOLDER.joinpath("json")
-    PLANES_JSON: Path = JSON_FOLDER.joinpath("planes.json")
-    BLOCKS_JSON: Path = JSON_FOLDER.joinpath("blocks.json")
-    CHAR_NAME_MAP: Path = JSON_FOLDER.joinpath("char_name_map.json")
-    JSON_ZIP_FILE: Path = JSON_FOLDER.joinpath("unicode_json.zip")
-    JSON_ZIP_URL: str = f"{HTTP_BUCKET_URL}/{UNICODE_VERSION}/{JSON_ZIP_FILE.name}"
-    CSV_FOLDER: Path = VERSION_FOLDER.joinpath("csv")
-    PLANES_CSV: Path = CSV_FOLDER.joinpath("planes.csv")
-    BLOCKS_CSV: Path = CSV_FOLDER.joinpath("blocks.csv")
-    NAMED_CHARS_CSV: Path = CSV_FOLDER.joinpath("named_chars.csv")
-    UNIHAN_CHARS_CSV: Path = CSV_FOLDER.joinpath("unihan_chars.csv")
-
-    class Config:
-        case_sensitive = True
+@dataclass
+class UnicodeApiSettings:
+    ENV: str
+    UNICODE_VERSION: str
+    PROJECT_NAME: str
+    API_VERSION: str
+    REDIS_PW: str
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_DB: int
+    RATE_LIMIT_PER_PERIOD: int
+    RATE_LIMIT_PERIOD_SECONDS: timedelta
+    RATE_LIMIT_BURST: int
+    SERVER_NAME: str
+    SERVER_HOST: str
+    CACHE_HEADER: str
+    API_ROOT: str
+    LOGGING_CONFIG: dict[str, Any]
+    ROOT_FOLDER: Path
+    APP_FOLDER: Path
+    DATA_FOLDER: Path
+    TESTS_FOLDER: Path
+    VERSION_FOLDER: Path
+    XML_FOLDER: Path
+    XML_FILE: Path
+    XML_ZIP_FILE: Path
+    DB_FOLDER: Path
+    DB_FILE: Path
+    DB_ZIP_FILE: Path
+    DB_ZIP_URL: str
+    DB_URL: str
+    S3_BUCKET_URL: str
+    JSON_FOLDER: Path
+    PLANES_JSON: Path
+    BLOCKS_JSON: Path
+    CHAR_NAME_MAP: Path
+    JSON_ZIP_FILE: Path
+    JSON_ZIP_URL: str
+    CSV_FOLDER: Path
+    PLANES_CSV: Path
+    BLOCKS_CSV: Path
+    NAMED_CHARS_CSV: Path
+    UNIHAN_CHARS_CSV: Path
 
     def init_data_folders(self) -> None:
         self.DB_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -110,7 +107,7 @@ class UnicodeApiSettings(BaseSettings):
         if self.CHAR_NAME_MAP.exists():
             self.CHAR_NAME_MAP.unlink()
 
-        if os.environ.get("ENV") == "PROD":
+        if "PROD" in self.ENV:
             return
 
         self.CSV_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -127,3 +124,115 @@ class UnicodeApiSettings(BaseSettings):
 
     def create_planes_json(self) -> None:
         self.PLANES_JSON.write_text(json.dumps(UNICODE_PLANES_DEFAULT, indent=4))
+
+
+def get_api_settings() -> UnicodeApiSettings:
+    env = os.environ.get("ENV", "DEV")
+    unicode_version = os.environ.get("UNICODE_VERSION", "15.0.0")
+    data_folder = APP_FOLDER.joinpath("data")
+    version_folder = data_folder.joinpath("unicode_versions").joinpath(unicode_version)
+    xml_folder = version_folder.joinpath("xml")
+    db_folder = version_folder.joinpath("db")
+    json_folder = version_folder.joinpath("json")
+    csv_folder = version_folder.joinpath("csv")
+
+    settings = UnicodeApiSettings(
+        ENV=env,
+        UNICODE_VERSION=unicode_version,
+        PROJECT_NAME="Unicode API",
+        API_VERSION="/v1",
+        REDIS_PW=os.environ.get("REDIS_PW", ""),
+        REDIS_HOST=os.environ.get("REDIS_HOST", ""),
+        REDIS_PORT=int(os.environ.get("REDIS_PORT", "")),
+        REDIS_DB=int(os.environ.get("REDIS_DB", "0")),
+        RATE_LIMIT_PER_PERIOD=int(os.environ.get("RATE_LIMIT_PER_PERIOD", "1")),
+        RATE_LIMIT_PERIOD_SECONDS=timedelta(seconds=int(os.environ.get("RATE_LIMIT_PERIOD_SECONDS", "100"))),
+        RATE_LIMIT_BURST=int(os.environ.get("RATE_LIMIT_BURST", "10")),
+        SERVER_NAME="unicode-api.aaronluna.dev",
+        SERVER_HOST=PROD_API_ROOT,
+        CACHE_HEADER="X-UnicodeAPI-Cache",
+        API_ROOT=DEV_API_ROOT if "PROD" not in env else PROD_API_ROOT,
+        LOGGING_CONFIG=LOGGING_CONFIG,
+        ROOT_FOLDER=ROOT_FOLDER,
+        APP_FOLDER=ROOT_FOLDER.joinpath("app"),
+        DATA_FOLDER=data_folder,
+        TESTS_FOLDER=APP_FOLDER.joinpath("tests"),
+        VERSION_FOLDER=version_folder,
+        XML_FOLDER=xml_folder,
+        XML_FILE=xml_folder.joinpath(XML_FILE_NAME),
+        XML_ZIP_FILE=xml_folder.joinpath(XML_ZIP_FILE_NAME),
+        DB_FOLDER=db_folder,
+        DB_FILE=db_folder.joinpath(DB_FILE_NAME),
+        DB_ZIP_FILE=db_folder.joinpath(DB_ZIP_FILE_NAME),
+        DB_ZIP_URL=f"{HTTP_BUCKET_URL}/{unicode_version}/{DB_ZIP_FILE_NAME}",
+        DB_URL=f"sqlite:///{db_folder.joinpath(DB_FILE_NAME)}",
+        S3_BUCKET_URL=S3_BUCKET_URL,
+        JSON_FOLDER=json_folder,
+        PLANES_JSON=json_folder.joinpath("planes.json"),
+        BLOCKS_JSON=json_folder.joinpath("blocks.json"),
+        CHAR_NAME_MAP=json_folder.joinpath("char_name_map.json"),
+        JSON_ZIP_FILE=json_folder.joinpath(JSON_ZIP_FILE_NAME),
+        JSON_ZIP_URL=f"{HTTP_BUCKET_URL}/{unicode_version}/{JSON_ZIP_FILE_NAME}",
+        CSV_FOLDER=csv_folder,
+        PLANES_CSV=csv_folder.joinpath("planes.csv"),
+        BLOCKS_CSV=csv_folder.joinpath("blocks.csv"),
+        NAMED_CHARS_CSV=csv_folder.joinpath("named_chars.csv"),
+        UNIHAN_CHARS_CSV=csv_folder.joinpath("unihan_chars.csv"),
+    )
+    return settings
+
+
+def get_test_settings() -> UnicodeApiSettings:
+    env = "TEST"
+    unicode_version = "15.0.0"
+    data_folder = APP_FOLDER.joinpath("data")
+    version_folder = data_folder.joinpath("unicode_versions").joinpath(unicode_version)
+    xml_folder = version_folder.joinpath("xml")
+    db_folder = version_folder.joinpath("db")
+    json_folder = version_folder.joinpath("json")
+    csv_folder = version_folder.joinpath("csv")
+
+    settings = UnicodeApiSettings(
+        ENV=env,
+        UNICODE_VERSION=unicode_version,
+        PROJECT_NAME="Test Unicode API",
+        API_VERSION="/v1",
+        REDIS_PW="",
+        REDIS_HOST="",
+        REDIS_PORT=0,
+        REDIS_DB=0,
+        RATE_LIMIT_PER_PERIOD=1,
+        RATE_LIMIT_PERIOD_SECONDS=timedelta(seconds=100),
+        RATE_LIMIT_BURST=10,
+        SERVER_NAME="",
+        SERVER_HOST="",
+        CACHE_HEADER="",
+        API_ROOT=DEV_API_ROOT,
+        LOGGING_CONFIG=LOGGING_CONFIG,
+        ROOT_FOLDER=ROOT_FOLDER,
+        APP_FOLDER=ROOT_FOLDER.joinpath("app"),
+        DATA_FOLDER=data_folder,
+        TESTS_FOLDER=APP_FOLDER.joinpath("tests"),
+        VERSION_FOLDER=version_folder,
+        XML_FOLDER=xml_folder,
+        XML_FILE=xml_folder.joinpath(XML_FILE_NAME),
+        XML_ZIP_FILE=xml_folder.joinpath(XML_ZIP_FILE_NAME),
+        DB_FOLDER=db_folder,
+        DB_FILE=db_folder.joinpath(DB_FILE_NAME),
+        DB_ZIP_FILE=db_folder.joinpath(DB_ZIP_FILE_NAME),
+        DB_ZIP_URL=f"{HTTP_BUCKET_URL}/{unicode_version}/{DB_ZIP_FILE_NAME}",
+        DB_URL=f"sqlite:///{db_folder.joinpath(DB_FILE_NAME)}",
+        S3_BUCKET_URL=S3_BUCKET_URL,
+        JSON_FOLDER=json_folder,
+        PLANES_JSON=json_folder.joinpath("planes.json"),
+        BLOCKS_JSON=json_folder.joinpath("blocks.json"),
+        CHAR_NAME_MAP=json_folder.joinpath("char_name_map.json"),
+        JSON_ZIP_FILE=json_folder.joinpath(JSON_ZIP_FILE_NAME),
+        JSON_ZIP_URL=f"{HTTP_BUCKET_URL}/{unicode_version}/{JSON_ZIP_FILE_NAME}",
+        CSV_FOLDER=csv_folder,
+        PLANES_CSV=csv_folder.joinpath("planes.csv"),
+        BLOCKS_CSV=csv_folder.joinpath("blocks.csv"),
+        NAMED_CHARS_CSV=csv_folder.joinpath("named_chars.csv"),
+        UNIHAN_CHARS_CSV=csv_folder.joinpath("unihan_chars.csv"),
+    )
+    return settings
