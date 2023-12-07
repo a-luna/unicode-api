@@ -1,6 +1,4 @@
 import logging.config
-import os
-import re
 from contextlib import asynccontextmanager
 from http import HTTPStatus
 from pathlib import Path
@@ -14,13 +12,13 @@ from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
 from app.core.config import get_settings
+from app.core.rate_limit import rate_limit
 from app.core.redis_client import redis
 from app.data.cache import cached_data
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 
 APP_FOLDER = Path(__file__).parent
 STATIC_FOLDER = APP_FOLDER.joinpath("static")
-RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|planes")
 
 
 @asynccontextmanager
@@ -69,21 +67,10 @@ app.mount("/static", StaticFiles(directory=str(STATIC_FOLDER)), name="static")
 
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
-    if testing(request) or not RATE_LIMIT_ROUTE_REGEX.search(request.url.path) or not request.client:
-        return await call_next(request)
-    result = redis.is_request_allowed_by_rate_limit(request.client.host)
+    result = rate_limit.is_exceeded(request)
     if result.failure:
         return JSONResponse(content=result.error, status_code=int(HTTPStatus.TOO_MANY_REQUESTS))
     return await call_next(request)
-
-
-def testing(request: Request) -> bool:
-    test_header = os.environ.get("TEST_HEADER", "").lower()
-    return (
-        test_header in request.headers or test_header in request.headers.get("access-control-request-headers", [])
-        if test_header
-        else False
-    )
 
 
 @app.get(f"{get_settings().API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
