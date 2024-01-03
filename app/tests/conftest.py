@@ -4,8 +4,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="function")
 def client(request):
+    os.environ["ENV"] = "TEST"
+    os.environ["TEST_HEADER"] = "x-unicodeapi-test"
     from app.main import app
 
     with TestClient(app) as client:
@@ -13,8 +15,3 @@ def client(request):
         headers[os.environ.get("TEST_HEADER", "").lower()] = "true"
         client.headers = headers
         yield client
-
-
-@pytest.fixture(scope="function", autouse=True)
-def set_env(request):
-    os.environ["ENV"] = "TEST"

@@ -328,7 +328,7 @@ ALL_BLOCKS_ENDING_BEFORE_171_LIMIT_15 = {
 }
 
 PLANE_TIP_START_AFTER_20_LIMIT_15 = {
-    "detail": "The starting block id (21) is not within the range of blocks which comprise the specified Unicode plane (Tertiary Ideographic Plane): first block: 323, last block: 324"
+    "detail": "The starting block id (21) is not within the range of blocks which comprise the specified Unicode plane (Tertiary Ideographic Plane): first block: 322, last block: 323"
 }
 
 BOTH_START_AFTER_END_BEFORE_INVALID = {

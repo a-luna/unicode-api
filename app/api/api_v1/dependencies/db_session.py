@@ -31,10 +31,15 @@ class DBSession:
         return get_character_properties(self.engine, codepoint, show_props, verbose)
 
     def filter_all_characters(self, filter_params: FilterParameters) -> list[int]:
-        queries = [
-            query for table in CHAR_TABLES if (query := construct_filter_query(filter_params, table)) is not None
-        ]
-        return apply_filter(self.session, queries)
+        matching_codepoints = []
+        for query in get_filter_queries(filter_params):
+            results = self.session.execute(query).scalars().all()
+            matching_codepoints.extend(results)
+        return sorted(set(matching_codepoints))
+
+
+def get_filter_queries(filter_params: FilterParameters) -> list[Select | None]:
+    return [query for table in CHAR_TABLES if (query := construct_filter_query(filter_params, table)) is not None]
 
 
 def construct_filter_query(  # noqa: C901
@@ -44,9 +49,9 @@ def construct_filter_query(  # noqa: C901
         return None
     query = select(column("codepoint_dec")).select_from(table)
     if filter_params.name:
-        query = query.where(column("name").contains(filter_params.name.upper()))
+        query = query.where(column("name").regexp_match(f"\\b{filter_params.name.upper()}\\b"))
     if filter_params.cjk_definition:
-        query = query.where(column("description").contains(filter_params.cjk_definition))
+        query = query.where(column("description").regexp_match(f"\\b{filter_params.cjk_definition.lower()}\\b"))
     if filter_params.blocks:
         query = query.where(column("block_id").in_(filter_params.blocks))
     if filter_params.categories:
@@ -74,11 +79,3 @@ def construct_filter_query(  # noqa: C901
         query = query.where(or_(*flag_conditions))
 
     return query
-
-
-def apply_filter(session: Session, queries: list[Select]) -> list[int]:
-    matching_codepoints = []
-    for query in queries:
-        results = session.execute(query).scalars().all()
-        matching_codepoints.extend(results)
-    return sorted(set(matching_codepoints))

@@ -1,4 +1,4 @@
 {
-  "venvPath": "../../.pyenv/versions",
-  "venv": "venv-unicode-api"
+  "venvPath": ".",
+  "venv": "venv"
 }

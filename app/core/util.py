@@ -54,7 +54,7 @@ def format_timedelta_str(td: timedelta, precise: bool = True) -> str:
     return f"{microseconds}us"
 
 
-def get_duration_from_timestamp(ts: float):
+def get_duration_from_timestamp(ts: float) -> str:
     now = dtaware_fromtimestamp(datetime.now().timestamp())
     dt = dtaware_fromtimestamp(ts)
     return format_timedelta_str(dt - now, precise=True)

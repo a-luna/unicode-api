@@ -95,7 +95,7 @@ class UnicodeDataCache:
     def all_cjk_ideograph_block_ids(self) -> set[int]:
         return set(list(self.cjk_unified_ideograph_block_ids) + list(self.cjk_compatibility_block_ids))
 
-    @cached_property
+    @property
     def planes(self) -> list[db.UnicodePlane]:
         settings = get_settings()
         return [db.UnicodePlane(**plane) for plane in json.loads(settings.PLANES_JSON.read_text())]
