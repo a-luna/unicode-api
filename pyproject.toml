@@ -50,6 +50,7 @@ unfixable = ["B", "C90", "PIE", "SIM"]
 "app/docs/dependencies/filter_tables.py" = ["E501"]
 "app/docs/api_docs/readme.py" = ["E501"]
 "app/docs/api_docs/swagger_ui.py" = ["E501"]
+"app/data/scripts/update_test_data/update_test_list_all_unicode_blocks.py" = ["E501"]
 "app/tests/test_block_endpoints/test_get_unicode_block_details/data.py" = ["E501"]
 "app/tests/test_block_endpoints/test_list_all_unicode_blocks/data.py" = ["E501"]
 "app/tests/test_character_endpoints/test_filter_unicode_characters/data.py" = ["E501"]
@@ -82,6 +83,7 @@ norecursedirs = [
 [tool.coverage.run]
 omit = [
     "app/cli.py",
+    "app/config/dotenv_file.py",
     "app/core/config/config.py",
     "app/core/logging.py",
     "app/core/redis_client.py",

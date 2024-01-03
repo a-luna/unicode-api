@@ -6,7 +6,7 @@ import pytest
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.db.character_props import PROPERTY_GROUPS
-from app.db.get_char_details import get_prop_groups
+from app.db.procs.get_char_details import get_prop_groups
 from app.schemas.enums import CharPropertyGroup
 from app.schemas.util import to_lower_camel
 from app.tests.test_character_endpoints.test_get_unicode_character_details.data import (

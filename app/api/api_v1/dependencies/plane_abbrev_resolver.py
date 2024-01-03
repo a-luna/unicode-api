@@ -1,7 +1,6 @@
-from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import HTTPException, Query
+from fastapi import HTTPException, Query, status
 
 from app.data.cache import cached_data
 from app.docs.dependencies.custom_parameters import PLANE_NAME_DESCRIPTION
@@ -18,7 +17,7 @@ class UnicodePlaneResolver:
             self.finish_block_id = self.plane.finish_block_id
         else:
             raise HTTPException(
-                status_code=int(HTTPStatus.BAD_REQUEST),
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=(f"{plane} does not match any Unicode plane abbreviation: {get_all_plane_abbreviations()}."),
             )
 

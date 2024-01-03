@@ -1,16 +1,16 @@
-from pydantic.generics import GenericModel
+from typing import Generic, TypeVar
+
+from pydantic import BaseModel, ConfigDict
 from sqlmodel import SQLModel
 
 from app.schemas.util import to_lower_camel
 
+T = TypeVar("T")
+
 
 class CamelModel(SQLModel):
-    class Config:
-        alias_generator = to_lower_camel
-        allow_population_by_field_name = True
+    model_config = ConfigDict(alias_generator=to_lower_camel, populate_by_name=True)
 
 
-class GenericCamelModel(GenericModel):
-    class Config:
-        alias_generator = to_lower_camel
-        allow_population_by_field_name = True
+class GenericCamelModel(BaseModel, Generic[T]):
+    model_config = ConfigDict(alias_generator=to_lower_camel, populate_by_name=True)

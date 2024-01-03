@@ -3,15 +3,15 @@ import os
 import pytest
 from fastapi.testclient import TestClient
 
+os.environ["ENV"] = "TEST"
+
 
 @pytest.fixture(scope="function")
-def client(request):
-    os.environ["ENV"] = "TEST"
-    os.environ["TEST_HEADER"] = "x-unicodeapi-test"
+def client():
     from app.main import app
 
     with TestClient(app) as client:
         headers = {}
-        headers[os.environ.get("TEST_HEADER", "").lower()] = "true"
+        headers["x-verify-rate-limiting"] = "false"
         client.headers = headers
         yield client

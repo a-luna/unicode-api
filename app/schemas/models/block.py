@@ -40,17 +40,17 @@ class UnicodeBlock(UnicodeBlockBase, table=True):
 
     plane: "UnicodePlane" = Relationship(back_populates="blocks")  # type: ignore  # noqa: PGH003
     characters: list["UnicodeCharacter"] = Relationship(back_populates="block")  # type: ignore  # noqa: PGH003
-    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="block")  # type: ignore  # noqa: PGH003, E501
+    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="block")  # type: ignore  # noqa: PGH003
 
     def as_response(self) -> "UnicodeBlockResponse":
-        block_dict = self.dict(by_alias=True)
+        block_dict = self.model_dump(by_alias=True)
         block_dict["plane"] = self.plane.abbreviation
         block_dict["start"] = f"U+{self.start}"
         block_dict["finish"] = f"U+{self.finish}"
         return UnicodeBlockResponse(**block_dict)
 
     def as_search_result(self, score=None) -> "UnicodeBlockResult":
-        block_dict = self.dict(by_alias=True)
+        block_dict = self.model_dump(by_alias=True)
         block_dict["plane"] = self.plane.abbreviation
         block_dict["start"] = f"U+{self.start}"
         block_dict["finish"] = f"U+{self.finish}"

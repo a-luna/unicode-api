@@ -21,6 +21,7 @@ NO_CHARS_MATCH_SETTINGS = {
     "filterSettings": {
         "name": "test",
         "script": "Coptic",
+        "property_groups": "All",
     },
     "hasMore": False,
     "currentPage": 0,
@@ -60,8 +61,10 @@ FILTER_BY_BIDIRECTIONAL_CLASS = {
 FILTER_BY_DECOMPOSITION_TYPE = {
     "url": "/v1/characters/filter",
     "filterSettings": {"name": "seven", "decomp_type": "Encircled Form"},
+    "filterSettings": {"name": "seven", "decomp_type": "Encircled Form"},
     "hasMore": False,
     "currentPage": 1,
+    "totalResults": 5,
     "totalResults": 5,
     "results": [
         {"character": "⑦", "name": "CIRCLED DIGIT SEVEN", "codepoint": "U+2466", "uriEncoded": "%E2%91%A6"},
@@ -74,7 +77,9 @@ FILTER_BY_DECOMPOSITION_TYPE = {
 
 FILTER_BY_LINE_BREAK_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"line_break": "Infix Separator"},
+    "filterSettings": {
+        "line_break": "Infix Separator",
+    },
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
@@ -95,7 +100,9 @@ FILTER_BY_LINE_BREAK_TYPE = {
 
 FILTER_BY_CCC = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"ccc": "Attached Above"},
+    "filterSettings": {
+        "ccc": "Attached Above",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 1,
@@ -121,7 +128,9 @@ FILTER_BY_NUMERIC_TYPE = {
 
 FILTER_BY_JOINING_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"join_type": "Left Joining"},
+    "filterSettings": {
+        "join_type": "Left Joining",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 5,
@@ -141,7 +150,9 @@ FILTER_BY_JOINING_TYPE = {
 
 FILTER_BY_CHAR_FLAG = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"flag": "Is Hyphen"},
+    "filterSettings": {
+        "flag": "Is Hyphen",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 11,
@@ -162,7 +173,9 @@ FILTER_BY_CHAR_FLAG = {
 
 FILTER_BY_BLOCK_NAME = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"block": "Ancient Symbols"},
+    "filterSettings": {
+        "block": "Ancient Symbols",
+    },
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
@@ -235,7 +248,7 @@ FILTER_BY_CJK_DEFINITION = {
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
-    "totalResults": 22,
+    "totalResults": 21,
     "results": [
         {
             "character": "㡣",

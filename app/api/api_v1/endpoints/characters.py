@@ -1,7 +1,6 @@
-from http import HTTPStatus
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 import app.db.models as db
 from app.api.api_v1.dependencies import (
@@ -15,7 +14,7 @@ from app.api.api_v1.dependencies import (
 from app.api.api_v1.dependencies.filter_param_matcher import FilterParameterMatcher
 from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
-from app.core.config import get_settings
+from app.config import get_settings
 from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
 from app.docs.dependencies.custom_parameters import (
@@ -110,7 +109,7 @@ def get_unicode_character_details(
     if show_props:
         result = PropertyGroupMatcher.parse_enum_values(show_props)
         if result.failure:
-            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
         prop_groups = result.value
     else:
         prop_groups = None
@@ -128,7 +127,7 @@ def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQuer
     stop = min(block.finish + 1, start + list_params.limit)
     if start < block.start or start > stop:
         raise HTTPException(
-            status_code=int(HTTPStatus.BAD_REQUEST),
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
                 f"The starting codepoint value {get_codepoint_string(start)} is outside the range of characters "
                 f"{get_codepoint_string(block.start)}...{get_codepoint_string(block.finish)} ({block.name})"
@@ -150,7 +149,7 @@ def get_paginated_character_list(
     if codepoints:
         result = paginate_search_results(codepoints, per_page, page)
         if result.failure:
-            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
         paginated = result.value or {}
         start = paginated.pop("start", 0)
         end = paginated.pop("end", 0)

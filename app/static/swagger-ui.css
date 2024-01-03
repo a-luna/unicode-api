@@ -706,8 +706,6 @@ body>svg {
     height: 12px;
 }
 
-/* pnpm --filter shared-ui run build && pnpm --filter portfolio update && pnpm --filter portfolio run dev */
-
 .swagger-ui .info ol li {
     font-size: 0.8rem;
     font-weight: 700;
@@ -1051,12 +1049,26 @@ body>svg {
     display: none;
 }
 
+.swagger-ui details details dt:has(.cjk-only) {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 0.25rem;
+}
+
 .cjk-only {
     color: hsl(0, 100%, 50%);
     font-size: 0.7rem;
     font-weight: 700;
     font-style: italic;
 }
+
+.opblock-summary-control .arrow {
+    margin: 0 0.5rem 0 0;
+}
+
+[data-param-name="hex"] dd code {
+    padding: 0 0 0 2px;
+} 
 
 /* END: MY CUSTOMIZATIONS */
 

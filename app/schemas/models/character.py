@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Integer
 from sqlalchemy_utils import ChoiceType
 from sqlmodel import Field, Relationship
 
@@ -26,46 +26,34 @@ class UnicodeCharacterBase(CamelModel):
     age: str
     plane_number: int
     general_category: str
-    combining_class: CombiningClassCategory = Field(
-        sa_column=Column(ChoiceType(CombiningClassCategory, impl=Integer()), nullable=False)
-    )
-    bidirectional_class: BidirectionalClass = Field(
-        sa_column=Column(ChoiceType(BidirectionalClass, impl=Integer()), nullable=False)
-    )
+    combining_class: CombiningClassCategory = Field(sa_type=ChoiceType(CombiningClassCategory, impl=Integer()))
+    bidirectional_class: BidirectionalClass = Field(sa_type=ChoiceType(BidirectionalClass, impl=Integer()))
     bidirectional_is_mirrored: bool
     bidirectional_mirroring_glyph: str
     bidirectional_control: bool
-    paired_bracket_type: BidirectionalBracketType = Field(
-        sa_column=Column(ChoiceType(BidirectionalBracketType, impl=Integer()), nullable=False)
-    )
+    paired_bracket_type: BidirectionalBracketType = Field(sa_type=ChoiceType(BidirectionalBracketType, impl=Integer()))
     paired_bracket_property: str
-    decomposition_type: DecompositionType = Field(
-        sa_column=Column(ChoiceType(DecompositionType, impl=Integer()), nullable=False)
-    )
-    NFC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    NFD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    NFKC_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    NFKD_QC: TriadicLogic = Field(sa_column=Column(ChoiceType(TriadicLogic, impl=Integer()), nullable=False))
-    numeric_type: NumericType = Field(sa_column=Column(ChoiceType(NumericType, impl=Integer()), nullable=False))
+    decomposition_type: DecompositionType = Field(sa_type=ChoiceType(DecompositionType, impl=Integer()))
+    NFC_QC: TriadicLogic = Field(sa_type=ChoiceType(TriadicLogic, impl=Integer()))
+    NFD_QC: TriadicLogic = Field(sa_type=ChoiceType(TriadicLogic, impl=Integer()))
+    NFKC_QC: TriadicLogic = Field(sa_type=ChoiceType(TriadicLogic, impl=Integer()))
+    NFKD_QC: TriadicLogic = Field(sa_type=ChoiceType(TriadicLogic, impl=Integer()))
+    numeric_type: NumericType = Field(sa_type=ChoiceType(NumericType, impl=Integer()))
     numeric_value: str
-    joining_type: JoiningType = Field(sa_column=Column(ChoiceType(JoiningType, impl=Integer()), nullable=False))
+    joining_type: JoiningType = Field(sa_type=ChoiceType(JoiningType, impl=Integer()))
     joining_group: str
     joining_control: bool
-    line_break: LineBreakType = Field(sa_column=Column(ChoiceType(LineBreakType, impl=Integer()), nullable=False))
-    east_asian_width: EastAsianWidthType = Field(
-        sa_column=Column(ChoiceType(EastAsianWidthType, impl=Integer()), nullable=False)
-    )
+    line_break: LineBreakType = Field(sa_type=ChoiceType(LineBreakType, impl=Integer()))
+    east_asian_width: EastAsianWidthType = Field(sa_type=ChoiceType(EastAsianWidthType, impl=Integer()))
     uppercase: bool
     lowercase: bool
     simple_uppercase_mapping: str
     simple_lowercase_mapping: str
     simple_titlecase_mapping: str
     simple_case_folding: str
-    script: ScriptCode = Field(sa_column=Column(ChoiceType(ScriptCode, impl=Integer()), nullable=False))
+    script: ScriptCode = Field(sa_type=ChoiceType(ScriptCode, impl=Integer()))
     script_extensions: str
-    hangul_syllable_type: HangulSyllableType = Field(
-        sa_column=Column(ChoiceType(HangulSyllableType, impl=Integer()), nullable=False)
-    )
+    hangul_syllable_type: HangulSyllableType = Field(sa_type=ChoiceType(HangulSyllableType, impl=Integer()))
     indic_syllabic_category: str
     indic_matra_category: str
     indic_positional_category: str
@@ -89,9 +77,7 @@ class UnicodeCharacterBase(CamelModel):
     logical_order_exception: bool
     prepended_concatenation_mark: bool
     white_space: bool
-    vertical_orientation: VerticalOrientationType = Field(
-        sa_column=Column(ChoiceType(VerticalOrientationType, impl=Integer()), nullable=False)
-    )
+    vertical_orientation: VerticalOrientationType = Field(sa_type=ChoiceType(VerticalOrientationType, impl=Integer()))
     regional_indicator: bool
     emoji: bool
     emoji_presentation: bool
@@ -117,28 +103,28 @@ class UnicodeCharacterUnihan(UnicodeCharacterBase, table=True):
     block: "UnicodeBlock" = Relationship(back_populates="characters_unihan")  # type: ignore  # noqa: PGH003
     plane: "UnicodePlane" = Relationship(back_populates="characters_unihan")  # type: ignore  # noqa: PGH003
 
-    description: str | None
-    ideo_frequency: int | None
-    ideo_grade_level: int | None
-    rs_count_unicode: str | None
-    rs_count_kangxi: str | None
-    total_strokes: str | None
-    traditional_variant: str | None
-    simplified_variant: str | None
-    z_variant: str | None
-    compatibility_variant: str | None
-    semantic_variant: str | None
-    specialized_semantic_variant: str | None
-    spoofing_variant: str | None
-    accounting_numeric: int | None
-    primary_numeric: int | None
-    other_numeric: int | None
-    hangul: str | None
-    cantonese: str | None
-    mandarin: str | None
-    japanese_kun: str | None
-    japanese_on: str | None
-    vietnamese: str | None
+    description: str | None = None
+    ideo_frequency: int | None = None
+    ideo_grade_level: int | None = None
+    rs_count_unicode: str | None = None
+    rs_count_kangxi: str | None = None
+    total_strokes: str | None = None
+    traditional_variant: str | None = None
+    simplified_variant: str | None = None
+    z_variant: str | None = None
+    compatibility_variant: str | None = None
+    semantic_variant: str | None = None
+    specialized_semantic_variant: str | None = None
+    spoofing_variant: str | None = None
+    accounting_numeric: str | None = None
+    primary_numeric: str | None = None
+    other_numeric: str | None = None
+    hangul: str | None = None
+    cantonese: str | None = None
+    mandarin: str | None = None
+    japanese_kun: str | None = None
+    japanese_on: str | None = None
+    vietnamese: str | None = None
 
 
 class UnicodeCharacterResponse(CamelModel):
@@ -161,13 +147,13 @@ class UnicodeCharacterResponse(CamelModel):
     score: float = 0.0
     utf8: str = ""
     utf8_hex_bytes: list[str] = []
-    utf8_dec_bytes: list[str] = []
+    utf8_dec_bytes: list[int] = []
     utf16: str = ""
     utf16_hex_bytes: list[str] = []
-    utf16_dec_bytes: list[str] = []
+    utf16_dec_bytes: list[int] = []
     utf32: str = ""
     utf32_hex_bytes: list[str] = []
-    utf32_dec_bytes: list[str] = []
+    utf32_dec_bytes: list[int] = []
     bidirectional_class: str = ""
     bidirectional_is_mirrored: bool = False
     bidirectional_mirroring_glyph: str = ""
@@ -248,7 +234,7 @@ class UnicodeCharacterResponse(CamelModel):
 class UnicodeCharacterResult(CamelModel):
     character: str
     name: str
-    description: str | None
+    description: str | None = None
     codepoint: str
     uri_encoded: str
-    score: float | None
+    score: float | None = None

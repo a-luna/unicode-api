@@ -8,7 +8,7 @@ from sqlmodel import Session
 import app.db.models as db
 from app.api.api_v1.dependencies.filter_params import FilterParameters
 from app.db.engine import engine
-from app.db.get_char_details import get_character_properties
+from app.db.procs import get_character_properties
 from app.schemas.enums import CharPropertyGroup
 from app.schemas.util import flatten_list2d
 
@@ -33,7 +33,7 @@ class DBSession:
     def filter_all_characters(self, filter_params: FilterParameters) -> list[int]:
         matching_codepoints = []
         for query in get_filter_queries(filter_params):
-            results = self.session.execute(query).scalars().all()
+            results = self.session.scalars(query).all()
             matching_codepoints.extend(results)
         return sorted(set(matching_codepoints))
 

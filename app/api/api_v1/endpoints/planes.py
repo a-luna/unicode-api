@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Path
 
 import app.db.models as db
-from app.core.config import get_settings
+from app.config import get_settings
 from app.data.cache import cached_data
 
 router = APIRouter()

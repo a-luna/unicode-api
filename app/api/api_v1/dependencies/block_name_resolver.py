@@ -1,7 +1,6 @@
-from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import HTTPException, Path, Query
+from fastapi import HTTPException, Path, Query, status
 
 import app.db.models as db
 from app.data.cache import cached_data
@@ -44,4 +43,4 @@ def loose_match_string_with_unicode_block_name(name: str) -> db.UnicodeBlock:
     if fuzzy_matches:
         detail += " The following block names are similar to the name you provided: "
         detail += f'{", ".join([str(b) for b in fuzzy_matches])}'
-    raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=detail)
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=detail)

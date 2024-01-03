@@ -1,7 +1,6 @@
-from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import HTTPException, Query
+from fastapi import HTTPException, Query, status
 
 from app.api.api_v1.dependencies.util import get_decimal_number_from_hex_codepoint
 from app.data.cache import cached_data
@@ -23,7 +22,7 @@ class ListParameters:
     ):
         if ending_before and starting_after:
             raise HTTPException(
-                status_code=int(HTTPStatus.BAD_REQUEST),
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=(
                     "Request contained values for BOTH 'ending_before' and 'starting_after', you must specify ONLY ONE "
                     "of these two values."
@@ -51,7 +50,7 @@ class ListParametersDecimal:
     ):
         if ending_before and starting_after:
             raise HTTPException(
-                status_code=int(HTTPStatus.BAD_REQUEST),
+                status_code=status.HTTP_400_BAD_REQUEST,
                 detail=(
                     "Request contained values for BOTH 'ending_before' and 'starting_after', you must specify "
                     "ONLY ONE of these two values."

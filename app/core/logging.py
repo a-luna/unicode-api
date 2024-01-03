@@ -1,11 +1,34 @@
 import logging
 import sys
 from copy import copy
-from typing import Literal
+from typing import Any, Literal
 
 import click
 
 TRACE_LOG_LEVEL = 5
+
+LOGGING_CONFIG: dict[str, Any] = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "default": {
+            "()": "app.core.logging.DefaultFormatter",
+            "fmt": "%(levelprefix)s %(message)s",
+            "use_colors": True,
+        },
+    },
+    "handlers": {
+        "default": {
+            "formatter": "default",
+            "class": "logging.StreamHandler",
+            "stream": "ext://sys.stderr",
+        },
+    },
+    "loggers": {
+        "app.api": {"handlers": ["default"], "level": "INFO", "propagate": False},
+        "app.api.error": {"level": "INFO"},
+    },
+}
 
 
 class ColourizedFormatter(logging.Formatter):

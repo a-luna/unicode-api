@@ -1,7 +1,6 @@
 import re
-from http import HTTPStatus
 
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 
 from app.core.result import Result
 from app.data.constants import ASCII_HEX, MAX_CODEPOINT
@@ -17,13 +16,13 @@ CP_OUT_OF_RANGE_REGEX = re.compile(r"^(?:U\+)([A-Fa-f0-9]+)|(?:0x)?([A-Fa-f0-9]{
 def get_decimal_number_from_hex_codepoint(codepoint: str, starting_after: bool = True) -> int:
     result = get_codepoint_hex_from_string(codepoint)
     if result.failure:
-        raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
     cp_hex = result.value or "0"
     codepoint_dec = int(cp_hex, 16)
     result = check_codepoint_is_in_unicode_range(codepoint_dec, starting_after)
     if result.success:
         return codepoint_dec
-    raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
+    raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
 
 
 def get_codepoint_hex_from_string(s: str) -> Result[str]:

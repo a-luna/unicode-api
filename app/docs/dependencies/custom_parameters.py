@@ -1,4 +1,4 @@
-from app.core.config import get_settings
+from app.config import get_settings
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.docs.dependencies import (
@@ -47,12 +47,12 @@ CODEPOINT_EXAMPLES = """
         </div>
     </summary>
     <dl class="param-examples">
-        <dt><code>11FC0</code></dt>
-        <dd>Codepoint without prefix</dd>
-        <dt><code>0x11FC0</code></dt>
-        <dd>Codepoint with 'U+' prefix</dd>
-        <dt><code>U+11FC0</code></dt>
-        <dd>Codepoint with '0x' prefix</dd>
+        <dt>Codepoint without prefix</dt>
+        <dd>✅<code>72</code>, ✅<code>11FC0</code></dd>
+        <dt>Codepoint with 'U+' prefix</dt>
+        <dd>✅<code>U+0072</code>, ✅<code>U+11FC0</code>, ❌<code>U+72</code></dd>
+        <dt>Codepoint with '0x' prefix</dt>
+        <dd>✅<code>0x72</code>, ✅<code>0x0072</code>, ✅<code>0x11FC0</code></dd>
     </dl>
 </details>
 """

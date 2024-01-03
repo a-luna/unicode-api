@@ -1,7 +1,6 @@
-from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Path, Query
+from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 import app.db.models as db
 from app.api.api_v1.dependencies.db_session import DBSession, get_session
@@ -36,7 +35,7 @@ def get_unicode_character_at_codepoint(
     if show_props:
         result = PropertyGroupMatcher.parse_enum_values(show_props)
         if result.failure:
-            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=result.error)
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
         prop_groups = result.value
     else:
         prop_groups = None

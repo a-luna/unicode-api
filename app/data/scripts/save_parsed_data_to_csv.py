@@ -1,9 +1,10 @@
 import app.db.models as db
 from app.core.result import Result
-from app.data.util import finish_task, start_task, update_progress
+from app.data.util.spinners import Spinner
 from app.schemas.enums import (
     BidirectionalBracketType,
     BidirectionalClass,
+    CombiningClassCategory,
     DecompositionType,
     EastAsianWidthType,
     GeneralCategory,
@@ -30,11 +31,12 @@ def save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars):
         db.UnicodeCharacterUnihan: (all_unihan_chars, config.UNIHAN_CHARS_CSV),
     }
     for table, (parsed_data, csv_file) in csv_file_map.items():
-        spinner = start_task(f"Saving parsed {table.__tablename__} data to CSV...")
         total_rows = len(parsed_data)
         column_names = get_column_names(table, parsed_data[0])
+        spinner = Spinner()
+        spinner.start(f"Saving parsed {table.__tablename__} data to CSV...", total=total_rows)
         append_to_csv(csv_file, text=",".join(column_names))
-        chunk_size, chunk_count, row_count, last_reported = 10000, 0, 0, 0
+        chunk_size, chunk_count, row_count = 10000, 0, 0
         while True:
             start = chunk_size * chunk_count
             stop = min(start + chunk_size, total_rows)
@@ -42,15 +44,16 @@ def save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars):
             append_to_csv(csv_file, text=get_csv_rows_for_chunk(chunk, column_names))
             row_count += len(chunk)
             chunk_count += 1
-            last_reported = report_progress(spinner, table, row_count, total_rows, last_reported)
+            spinner.increment(amount=len(chunk))
             if row_count == total_rows:
                 break
-        finish_task(spinner, True, f"Successfully parsed {table.__tablename__} data to CSV!")
+        spinner.successful(f"Successfully parsed {table.__tablename__} data to CSV!")
     return Result.Ok()
 
 
 def update_char_dict_enum_values(char_dict):
     char_dict["general_category"] = GeneralCategory.from_code(char_dict["general_category"]).code
+    char_dict["combining_class"] = get_combining_class(char_dict["combining_class"]).value
     char_dict["bidirectional_class"] = BidirectionalClass.from_code(char_dict["bidirectional_class"]).value
     char_dict["paired_bracket_type"] = BidirectionalBracketType.from_code(char_dict["paired_bracket_type"]).value
     char_dict["decomposition_type"] = DecompositionType.from_code(char_dict["decomposition_type"]).value
@@ -103,9 +106,8 @@ def append_to_csv(csv_file, text):
         csv.write(f"{text}\n")
 
 
-def report_progress(spinner, table, count, total, last_reported):
-    percent_complete = count / float(total)
-    if percent_complete - last_reported > ONE_PERCENT:
-        update_progress(spinner, f"Saving parsed {table.__tablename__} data to CSV...", count, total)
-        last_reported = percent_complete
-    return last_reported
+def get_combining_class(cc_value: int) -> CombiningClassCategory:
+    try:
+        return CombiningClassCategory(cc_value)
+    except ValueError:
+        return CombiningClassCategory(0)
