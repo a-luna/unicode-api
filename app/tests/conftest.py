@@ -15,8 +15,3 @@ def client():
         headers["x-verify-rate-limiting"] = "false"
         client.headers = headers
         yield client
-
-
-@pytest.fixture(scope="function", autouse=True)
-def set_env(request):
-    os.environ["ENV"] = "TEST"

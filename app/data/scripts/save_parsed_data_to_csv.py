@@ -41,7 +41,7 @@ def save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars):
             start = chunk_size * chunk_count
             stop = min(start + chunk_size, total_rows)
             chunk = parsed_data[start:stop]
-            append_to_csv(csv_file, text=get_csv_rows_for_chunk(chunk, table, column_names))
+            append_to_csv(csv_file, text=get_csv_rows_for_chunk(chunk, column_names))
             row_count += len(chunk)
             chunk_count += 1
             spinner.increment(amount=len(chunk))
@@ -75,7 +75,7 @@ def get_column_names(db_model, parsed):
     return [name for name in db_model.__fields__ if name in parsed]
 
 
-def get_csv_rows_for_chunk(chunk, db_model, column_names):
+def get_csv_rows_for_chunk(chunk, column_names):
     return "\n".join(get_csv_row_for_parsed_data(parsed, column_names) for parsed in chunk)
 
 

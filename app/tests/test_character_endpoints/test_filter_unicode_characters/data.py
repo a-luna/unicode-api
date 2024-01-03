@@ -61,8 +61,10 @@ FILTER_BY_BIDIRECTIONAL_CLASS = {
 FILTER_BY_DECOMPOSITION_TYPE = {
     "url": "/v1/characters/filter",
     "filterSettings": {"name": "seven", "decomp_type": "Encircled Form"},
+    "filterSettings": {"name": "seven", "decomp_type": "Encircled Form"},
     "hasMore": False,
     "currentPage": 1,
+    "totalResults": 5,
     "totalResults": 5,
     "results": [
         {"character": "⑦", "name": "CIRCLED DIGIT SEVEN", "codepoint": "U+2466", "uriEncoded": "%E2%91%A6"},

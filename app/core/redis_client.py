@@ -93,12 +93,12 @@ class RedisClient:
                     self.connected = True
                     self.logger.info("Successfully connected to Redis server.")
                 else:
-                    self.handle_connect_attempt_failed()
+                    self._handle_connect_attempt_failed()
             except ConnectionError:  # noqa: PERF203
-                self.handle_connect_attempt_failed()
+                self._handle_connect_attempt_failed()
         return self._client
 
-    def handle_connect_attempt_failed(self):
+    def _handle_connect_attempt_failed(self):
         self.failed_attempts += 1
         if self.failed_attempts < MAX_ATTEMPTS:
             self.logger.warning(
