@@ -1,7 +1,6 @@
-from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import HTTPException, Query
+from fastapi import HTTPException, Query, status
 
 from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matcher
 from app.data.cache import cached_data
@@ -34,7 +33,7 @@ class FilterParameters:
         self,
         name: Annotated[str | None, Query(description=CHAR_NAME_FILTER_DESCRIPTION)] = None,
         cjk_definition: Annotated[str | None, Query(description=CJK_DEFINITION_FILTER_DESCRIPTION)] = None,
-        block: Annotated[list[str] | None, Query(description=get_filter_param_description("block"))] = None,
+        block: Annotated[list[str], Query(description=get_filter_param_description("block"))] = None,
         category: Annotated[list[str] | None, Query(description=get_filter_param_description("category"))] = None,
         age: Annotated[list[str] | None, Query(description=get_filter_param_description("age"))] = None,
         script: Annotated[list[str] | None, Query(description=get_filter_param_description("script"))] = None,
@@ -122,6 +121,10 @@ class FilterParameters:
             flags = [flag.display_name.replace("_", " ") for flag in self.flags]
             filter_settings["flag"] = ", ".join(flags)
 
+        if self.show_props:
+            prop_groups = [str(prop) for prop in self.show_props]
+            filter_settings["property_groups"] = ", ".join(prop_groups)
+
         return filter_settings
 
     def parse_all_enum_values(  # noqa: C901
@@ -156,88 +159,88 @@ class FilterParameters:
         if block:
             result = filter_param_matcher[UnicodeBlockName].parse_enum_values(block)
             if result.success:
-                self.blocks = result.value  # type: ignore  # noqa: PGH003
+                self.blocks = result.value
             else:
                 errors.append(result.error or "")
 
         if category:
             result = filter_param_matcher[GeneralCategory].parse_enum_values(category)
             if result.success:
-                self.categories = result.value  # type: ignore  # noqa: PGH003
+                self.categories = result.value
             else:
                 errors.append(result.error or "")
 
         if age:
             result = filter_param_matcher[UnicodeAge].parse_enum_values(age)
             if result.success:
-                self.age_list = result.value  # type: ignore  # noqa: PGH003
+                self.age_list = result.value
             else:
                 errors.append(result.error or "")
 
         if script:
             result = filter_param_matcher[ScriptCode].parse_enum_values(script)
             if result.success:
-                self.scripts = result.value  # type: ignore  # noqa: PGH003
+                self.scripts = result.value
             else:
                 errors.append(result.error or "")
 
         if bidi_class:
             result = filter_param_matcher[BidirectionalClass].parse_enum_values(bidi_class)
             if result.success:
-                self.bidi_class_list = result.value  # type: ignore  # noqa: PGH003
+                self.bidi_class_list = result.value
             else:
                 errors.append(result.error or "")
 
         if decomp_type:
             result = filter_param_matcher[DecompositionType].parse_enum_values(decomp_type)
             if result.success:
-                self.decomp_types = result.value  # type: ignore  # noqa: PGH003
+                self.decomp_types = result.value
             else:
                 errors.append(result.error or "")
 
         if line_break:
             result = filter_param_matcher[LineBreakType].parse_enum_values(line_break)
             if result.success:
-                self.line_break_types = result.value  # type: ignore  # noqa: PGH003
+                self.line_break_types = result.value
             else:
                 errors.append(result.error or "")
 
         if ccc:
             result = filter_param_matcher[CombiningClassCategory].parse_enum_values(ccc)
             if result.success:
-                self.ccc_list = result.value  # type: ignore  # noqa: PGH003
+                self.ccc_list = result.value
             else:
                 errors.append(result.error or "")
 
         if num_type:
             result = filter_param_matcher[NumericType].parse_enum_values(num_type)
             if result.success:
-                self.num_types = result.value  # type: ignore  # noqa: PGH003
+                self.num_types = result.value
             else:
                 errors.append(result.error or "")
 
         if join_type:
             result = filter_param_matcher[JoiningType].parse_enum_values(join_type)
             if result.success:
-                self.join_types = result.value  # type: ignore  # noqa: PGH003
+                self.join_types = result.value
             else:
                 errors.append(result.error or "")
 
         if flag:
             result = filter_param_matcher[CharacterFilterFlags].parse_enum_values(flag)
             if result.success:
-                self.flags = result.value  # type: ignore  # noqa: PGH003
+                self.flags = result.value
             else:
                 errors.append(result.error or "")
 
         if show_props:
             result = filter_param_matcher[CharPropertyGroup].parse_enum_values(show_props)
             if result.success:
-                self.show_props = result.value  # type: ignore  # noqa: PGH003
+                self.show_props = result.value
             else:
                 errors.append(result.error or "")
 
         if errors:
             all_errors = f"Invalid values were provided for the following {len(errors)} parameters:\n\n"
             all_errors += "\n\n".join(errors)
-            raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=all_errors)  # type: ignore  # noqa: PGH003, E501
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=all_errors)

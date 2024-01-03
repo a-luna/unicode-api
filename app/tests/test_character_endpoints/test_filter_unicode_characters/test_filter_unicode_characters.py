@@ -3,6 +3,7 @@ from app.tests.test_character_endpoints.test_filter_unicode_characters.data impo
     FILTER_BY_BLOCK_NAME,
     FILTER_BY_CCC,
     FILTER_BY_CHAR_FLAG,
+    FILTER_BY_CJK_DEFINITION,
     FILTER_BY_COMBINED_CATEGORY,
     FILTER_BY_DECOMPOSITION_TYPE,
     FILTER_BY_JOINING_TYPE,
@@ -83,13 +84,27 @@ def test_filter_by_combined_general_category(client):
     combined_response = response.json()
     assert combined_response == FILTER_BY_COMBINED_CATEGORY
     response = client.get(
-        "/v1/characters/filter?block=Basic_Latin&category=pc&category=pd&category=ps&category=pe&category=pi&category=pf&category=po"
+        "/v1/characters/filter"
+        "?block=Basic_Latin"
+        "&category=pc"
+        "&category=pd"
+        "&category=ps"
+        "&category=pe"
+        "&category=pi"
+        "&category=pf"
+        "&category=po"
     )
     assert response.status_code == 200
     separate_response = response.json()
     assert separate_response == FILTER_BY_SEPARATE_CATEGORIES
     assert combined_response["totalResults"] == separate_response["totalResults"]
     assert combined_response["results"] == separate_response["results"]
+
+
+def test_filter_by_cjk_definition(client):
+    response = client.get("/v1/characters/filter?cjk_definition=dragon")
+    assert response.status_code == 200
+    assert response.json() == FILTER_BY_CJK_DEFINITION
 
 
 def test_no_characters_match_filter_settings(client):

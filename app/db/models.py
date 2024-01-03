@@ -3,9 +3,9 @@ from app.schemas.models.block import UnicodeBlock, UnicodeBlockResponse, Unicode
 from app.schemas.models.character import (
     UnicodeCharacter,
     UnicodeCharacterBase,
-    UnicodeCharacterUnihan,
     UnicodeCharacterResponse,
     UnicodeCharacterResult,
+    UnicodeCharacterUnihan,
 )
 from app.schemas.models.pagination import PaginatedList, PaginatedSearchResults
 from app.schemas.models.plane import UnicodePlane, UnicodePlaneResponse

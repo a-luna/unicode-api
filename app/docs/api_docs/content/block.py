@@ -17,20 +17,20 @@ UNICODE_BLOCK_OBJECT_INTRO = (
 )
 
 UNICODE_BLOCK_OBJECT_PROPERTIES = """
-            <dl>
-                <dt><strong>id</strong></dt>
-                <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is an integer value used to navigate within a paginated list of <code>UnicodeBlock</code> objects. The first block (<code>U+0000..U+007F <span>BASIC LATIN</span></code>) has <code>id=1</code> and each block is numbered sequentially in order of starting codepoint.</dd>
-                <dt><strong>name</strong></dt>
-                <dd>Unicode blocks are identified by unique names, which use only ASCII characters and are usually descriptive of the nature of the symbols (in English), such as "Tibetan" or "Supplemental Arrows-A".</dd>
-                <dt><strong>plane</strong></dt>
-                <dd>A string value equal to the abbreviated name of the Unicode Plane containing the block (e.g., "BMP" for Basic Multilingual Plane).</dd>
-                <dt><strong>start</strong></dt>
-                <dd>A string value equal to the first codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
-                <dt><strong>finish</strong></dt>
-                <dd>A string value equal to the last codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
-                <dt><strong>total_allocated</strong></dt>
-                <dd>An integer value equal to the total number of characters (defined or reserved) contained in the block.</dd>
-                <dt><strong>total_defined</strong></dt>
-                <dd>An integer value equal to the total number of characters with defined names, glyphs, etc in the block.</dd>
-            </dl>
+        <dl>
+            <dt><strong>id</strong></dt>
+            <dd><strong><i>This is NOT a property from the Unicode Standard.</i></strong> This is an integer value used to navigate within a paginated list of <code>UnicodeBlock</code> objects. The first block (<code>U+0000..U+007F <span>BASIC LATIN</span></code>) has <code>id=1</code> and each block is numbered sequentially in order of starting codepoint.</dd>
+            <dt><strong>name</strong></dt>
+            <dd>Unicode blocks are identified by unique names, which use only ASCII characters and are usually descriptive of the nature of the symbols (in English), such as "Tibetan" or "Supplemental Arrows-A".</dd>
+            <dt><strong>plane</strong></dt>
+            <dd>A string value equal to the abbreviated name of the Unicode Plane containing the block (e.g., "BMP" for Basic Multilingual Plane).</dd>
+            <dt><strong>start</strong></dt>
+            <dd>A string value equal to the first codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
+            <dt><strong>finish</strong></dt>
+            <dd>A string value equal to the last codepoint allocated to the block, expressed in <code>U+hhhhhh</code> format.</dd>
+            <dt><strong>total_allocated</strong></dt>
+            <dd>An integer value equal to the total number of characters (defined or reserved) contained in the block.</dd>
+            <dt><strong>total_defined</strong></dt>
+            <dd>An integer value equal to the total number of characters with defined names, glyphs, etc in the block.</dd>
+        </dl>
 """

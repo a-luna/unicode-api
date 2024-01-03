@@ -2,12 +2,12 @@ import os
 from pathlib import Path
 from zipfile import ZipFile, is_zipfile
 
-from app.core.config import UnicodeApiSettings
+from app.config import UnicodeApiSettings
 from app.core.result import Result
 from app.data.util import download_file
 
 UNICODE_ORG_ROOT = "https://www.unicode.org/Public"
-XML_FOLDER = "ucdxml"
+UNICODE_XML_FOLDER = "ucdxml"
 
 
 def download_xml_unicode_database(config: UnicodeApiSettings) -> Result[Path]:
@@ -26,8 +26,7 @@ def download_xml_unicode_database(config: UnicodeApiSettings) -> Result[Path]:
 
 
 def download_unicode_xml_zip(config: UnicodeApiSettings) -> Result[Path]:
-    url = f"{UNICODE_ORG_ROOT}/{config.UNICODE_VERSION}/{XML_FOLDER}/{config.XML_ZIP_FILE.name}"
-    result = download_file(url, config.XML_FOLDER)
+    result = download_file(config.XML_DB_URL, config.XML_FOLDER)
     if result.failure:
         return result
     xml_zip = result.value

@@ -656,7 +656,7 @@ PROPERTY_GROUPS = {
             "char_property": "kAccountingNumeric",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_int_prop_value(char, "accounting_numeric"),
+            "response_value": lambda char: get_string_prop_value(char, "accounting_numeric"),
         },
         {
             "name_in": "primary_numeric",
@@ -664,7 +664,7 @@ PROPERTY_GROUPS = {
             "char_property": "kPrimaryNumeric",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_int_prop_value(char, "primary_numeric"),
+            "response_value": lambda char: get_string_prop_value(char, "primary_numeric"),
         },
         {
             "name_in": "other_numeric",
@@ -672,7 +672,7 @@ PROPERTY_GROUPS = {
             "char_property": "kOtherNumeric",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_int_prop_value(char, "other_numeric"),
+            "response_value": lambda char: get_string_prop_value(char, "other_numeric"),
         },
     ],
     CharPropertyGroup.CJK_READINGS: [

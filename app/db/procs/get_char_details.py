@@ -14,9 +14,8 @@ from app.schemas.enums import CharacterFilterFlags, CharPropertyGroup
 def get_character_properties(
     engine: Engine, codepoint: int, show_props: list[CharPropertyGroup] | None, verbose: bool
 ) -> dict[str, Any]:
-    prop_groups = get_prop_groups(codepoint, show_props)
-    prop_group_values = [get_prop_values(engine, codepoint, group) for group in prop_groups]
-    character_props = reduce(operator.ior, prop_group_values, {})
+    group_dicts = [get_prop_values(engine, codepoint, group) for group in get_prop_groups(codepoint, show_props)]
+    character_props = reduce(operator.ior, group_dicts, {})
     return trim_irrelevent_values(codepoint, character_props) if not verbose else character_props
 
 
@@ -60,7 +59,7 @@ def get_prop_values(engine: Engine, codepoint: int, prop_group: CharPropertyGrou
 def get_prop_values_from_database(engine: Engine, codepoint: int, columns):
     char_props = {"codepoint_dec": codepoint}
     table = db.UnicodeCharacter if cached_data.character_is_non_unihan(codepoint) else db.UnicodeCharacterUnihan
-    query = select(columns).select_from(table).where(column("codepoint_dec") == codepoint)
+    query = select(*columns).select_from(table).where(column("codepoint_dec") == codepoint)
     with engine.connect() as con:
         for row in con.execute(query):
             char_props.update(dict(row._mapping))
@@ -81,11 +80,11 @@ def get_prop_names_with_irrelevant_values(codepoint: int, char_props: dict[str, 
         + get_all_other_properties_with_irrelevant_values(char_props, codepoint)
     )
     if cached_data.character_is_unihan(codepoint):
-        remove_props.extend(get_unihan_properties_with_null_values(char_props))
+        remove_props.extend(get_unihan_prop_names_with_null_values(char_props))
     return list(set(remove_props))
 
 
-def get_unihan_properties_with_null_values(char_props: dict[str, Any]) -> list[str]:
+def get_unihan_prop_names_with_null_values(char_props: dict[str, Any]) -> list[str]:
     unihan_list_properties = [
         "traditional_variant",
         "simplified_variant",

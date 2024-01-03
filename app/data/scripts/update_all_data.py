@@ -1,9 +1,8 @@
 import json
-import os
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from app.core.config import UnicodeApiSettings
+from app.config import UnicodeApiSettings
 from app.core.result import Result
 from app.data.scripts import (
     bootstrap_unicode_data,
@@ -12,10 +11,9 @@ from app.data.scripts import (
     populate_sqlite_database,
     save_parsed_data_to_csv,
 )
-from app.data.util import finish_task, run_command, start_task
-
-CharDetailsDict = dict[str, bool | int | str]
-BlockOrPlaneDetailsDict = dict[str, int | str]
+from app.data.scripts.types import BlockOrPlaneDetailsDict, CharDetailsDict
+from app.data.util import run_command
+from app.data.util.spinners import Spinner
 
 
 def update_all_data() -> Result[None]:
@@ -42,9 +40,8 @@ def update_all_data() -> Result[None]:
     if result.failure:
         return result
 
-    if os.environ.get("ENV") == "PROD":
-        if config.XML_FILE.exists():
-            config.XML_FILE.unlink()
+    if config.is_prod and config.XML_FILE.exists():
+        config.XML_FILE.unlink()
     else:
         result = backup_db_and_json_files(config)
         if result.failure:
@@ -53,14 +50,14 @@ def update_all_data() -> Result[None]:
 
 
 def get_xml_unicode_database(config: UnicodeApiSettings) -> Result[Path]:
-    spinner = start_task(f"Downloading Unicode XML Database v{config.UNICODE_VERSION} from unicode.org...")
-    spinner.stop_and_persist()
+    spinner = Spinner()
     get_xml_result = download_xml_unicode_database(config)
     if get_xml_result.failure or not get_xml_result.value:
-        finish_task(spinner, False, "Download failed! Please check the internet connection.")
+        spinner.start("")
+        spinner.failed("Download failed! Please check the internet connection.")
         return get_xml_result
-    spinner.start()
-    finish_task(spinner, True, f"Successfully downloaded Unicode XML Database v{config.UNICODE_VERSION}!")
+    spinner.start("")
+    spinner.successful(f"Successfully downloaded Unicode XML Database v{config.UNICODE_VERSION}!")
     xml_file = get_xml_result.value
     return Result.Ok(xml_file)
 
@@ -71,32 +68,38 @@ def update_json_files(
     all_blocks: list[BlockOrPlaneDetailsDict],
     all_chars: list[CharDetailsDict],
 ):
-    spinner = start_task("Creating JSON files for parsed Unicode data...")
+    spinner = Spinner()
+    spinner.start("Creating JSON files for parsed Unicode data...")
     config.PLANES_JSON.write_text(json.dumps(all_planes, indent=4))
     config.BLOCKS_JSON.write_text(json.dumps(all_blocks, indent=4))
     char_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["_unihan"]}
     config.CHAR_NAME_MAP.write_text(json.dumps(char_name_map, indent=4))
-    finish_task(spinner, True, "Successfully created JSON files for parsed Unicode data")
+    spinner.successful("Successfully created JSON files for parsed Unicode data")
 
 
 def backup_db_and_json_files(config: UnicodeApiSettings) -> Result[None]:
-    spinner = start_task("Creating compressed backup files of SQLite DB and JSON files...")
+    spinner = Spinner()
+    spinner.start("Creating compressed backup files of SQLite DB and JSON files...")
     backup_sqlite_db(config)
     backup_json_files(config)
-    finish_task(spinner, True, "Successfully created compressed backup files of SQLite DB and JSON files!")
+    spinner.successful("Successfully created compressed backup files of SQLite DB and JSON files!")
 
-    spinner = start_task("")
-    spinner.stop_and_persist("Uploading backup files to S3 bucket...")
+    spinner = Spinner()
     result = upload_zip_file_to_s3(config, config.DB_ZIP_FILE)
     if result.failure:
+        spinner.start("")
+        spinner.failed(result.error)
         return result
     config.DB_ZIP_FILE.unlink()
 
     result = upload_zip_file_to_s3(config, config.JSON_ZIP_FILE)
     if result.failure:
+        spinner.start("")
+        spinner.failed(result.error)
         return result
     config.JSON_ZIP_FILE.unlink()
-    finish_task(spinner, True, "Successfully uploaded backup files to S3 bucket!")
+    spinner.start("")
+    spinner.successful("Successfully uploaded backup files to S3 bucket!")
     return Result.Ok()
 
 

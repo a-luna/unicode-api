@@ -1,7 +1,6 @@
-from http import HTTPStatus
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 
 import app.db.models as db
 from app.api.api_v1.dependencies import (
@@ -11,7 +10,7 @@ from app.api.api_v1.dependencies import (
     UnicodePlaneResolver,
 )
 from app.api.api_v1.pagination import paginate_search_results
-from app.core.config import get_settings
+from app.config import get_settings
 from app.data.cache import cached_data
 
 router = APIRouter()
@@ -52,7 +51,7 @@ def search_unicode_blocks_by_name(
     block_ids = [block_id for (block_id, _) in results]
     paginate_result = paginate_search_results(block_ids, search_params.per_page, search_params.page)
     if paginate_result.failure:
-        raise HTTPException(status_code=int(HTTPStatus.BAD_REQUEST), detail=paginate_result.error)
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=paginate_result.error)
     paginated = paginate_result.value if paginate_result.value else {}
     start = paginated.pop("start", 0)
     end = paginated.pop("end", 0)
@@ -82,7 +81,7 @@ def get_block_list_endpoints(list_params: ListParametersDecimal, plane: UnicodeP
     if start >= plane.start_block_id and start <= plane.finish_block_id:
         return (start, stop)
     raise HTTPException(
-        status_code=int(HTTPStatus.BAD_REQUEST),
+        status_code=status.HTTP_400_BAD_REQUEST,
         detail=(
             f"The starting block id ({start}) is not within the range of blocks which comprise the "
             f"specified Unicode plane ({plane.plane.name}): first block: {plane.start_block_id}, "

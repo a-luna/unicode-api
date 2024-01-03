@@ -54,7 +54,9 @@ def format_timedelta_str(td: timedelta, precise: bool = True) -> str:
     return f"{microseconds}us"
 
 
-def get_duration_from_timestamp(ts: float):
-    now = dtaware_fromtimestamp(datetime.now().timestamp())
-    dt = dtaware_fromtimestamp(ts)
-    return format_timedelta_str(dt - now, precise=True)
+def get_time_until_timestamp(ts: float, precise: bool = True) -> str:
+    return get_duration_between_timestamps(datetime.now().timestamp(), ts, precise)
+
+
+def get_duration_between_timestamps(ts1: float, ts2: float, precise: bool = True) -> str:
+    return format_timedelta_str(dtaware_fromtimestamp(ts2) - dtaware_fromtimestamp(ts1), precise)

@@ -24,7 +24,7 @@ class UnicodePlane(UnicodePlaneResponse, table=True):
 
     blocks: list["UnicodeBlock"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
     characters: list["UnicodeCharacter"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
-    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003, E501
+    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
 
     @classmethod
     def responsify(cls, plane) -> "UnicodePlaneResponse":

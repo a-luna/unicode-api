@@ -72,13 +72,11 @@ class CombiningClassCategory(IntEnum):
 
     @property
     def display_name(self) -> str:
-        return f"{self} ({self.code})"
-
-    @property
-    def code(self) -> str:
-        return f"{int(self)}"
+        return f"{self} ({self.value})"
 
     @classmethod
     def match_loosely(cls, code: str) -> CombiningClassCategory:
-        ccc_map = {e.code: e for e in cls}
-        return ccc_map.get(code, cls.NOT_REORDERED)
+        try:
+            return cls(int(code))
+        except ValueError:
+            return cls.NOT_REORDERED

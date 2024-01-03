@@ -1,34 +1,58 @@
 import json
+from pathlib import Path
 
 from lxml import etree
 from lxml.etree import _Element, _ElementTree
 
-from app.core.config import UnicodeApiSettings
+from app.config import UnicodeApiSettings
 from app.core.result import Result
 from app.data.constants import NULL_BLOCK, NULL_PLANE
 from app.data.encoding import get_codepoint_string
-from app.data.util import finish_task, start_task, update_progress
+from app.data.scripts.types import AllParsedUnicodeData, BlockOrPlaneDetailsDict, CharDetailsDict
+from app.data.util.spinners import Spinner
 
-YES_NO_MAP = {"Y": 1, "N": 0}
-CharDetailsDict = dict[str, bool | int | str]
-BlockOrPlaneDetailsDict = dict[str, int | str]
-AllParsedUnicodeData = tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict], list[CharDetailsDict]]
+YES_NO_MAP = {"Y": "True", "N": "False"}
 
 
 def parse_xml_unicode_database(config: UnicodeApiSettings) -> Result[AllParsedUnicodeData]:
-    spinner = start_task("Parsing Unicode XML database...")
-    unicode_xml = etree.parse(str(config.XML_FILE), parser=None)  # nosec
-    spinner.text = "Parsing Unicode plane and block data from XML database file..."
+    result = parse_etree_from_xml_file(config.XML_FILE)
+    if result.failure or not result.value:
+        return Result.Fail(result.error or "")
+    unicode_xml = result.value
+
+    (all_planes, all_blocks) = parse_unicode_plane_and_block_data_from_xml(unicode_xml, config)
+    all_chars: list[CharDetailsDict] = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
+    spinner = Spinner()
+    spinner.start("Counting number of defined characters in each block and plane...")
+    count_defined_characters_per_block(all_chars, all_blocks)
+    count_defined_characters_per_plane(all_blocks, all_planes)
+    spinner.successful("Successfully counted number of defined characters in each block and plane!")
+    return Result.Ok((all_planes, all_blocks, all_chars))
+
+
+def parse_etree_from_xml_file(xml: Path) -> Result[_ElementTree]:
+    spinner = Spinner()
+    spinner.start("Parsing Unicode XML file to ETree..")
+    try:
+        unicode_xml = etree.parse(str(xml), parser=None)  # nosec
+        spinner.successful("Successfully parsed Unicode XML database file!")
+        return Result.Ok(unicode_xml)
+    except Exception as ex:
+        error = f"Error occurred parsing Unicode XML database file: {repr(ex)}"
+        spinner.failed(error)
+        return Result.Fail(error)
+
+
+def parse_unicode_plane_and_block_data_from_xml(
+    unicode_xml: _ElementTree, config: UnicodeApiSettings
+) -> tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict]]:
+    spinner = Spinner()
+    spinner.start("Parsing Unicode plane and block data from XML database file...")
     all_planes: list[BlockOrPlaneDetailsDict] = json.loads(config.PLANES_JSON.read_text())
     all_blocks: list[BlockOrPlaneDetailsDict] = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
     (all_planes, all_blocks) = get_block_range_for_each_plane(all_planes, all_blocks)
-    finish_task(spinner, True, "Successfully parsed Unicode plane and block data from XML database file!")
-    all_chars: list[CharDetailsDict] = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
-    spinner = start_task("Counting number of defined characters in each block and plane...")
-    count_defined_characters_per_block(all_chars, all_blocks)
-    count_defined_characters_per_plane(all_blocks, all_planes)
-    finish_task(spinner, True, "Successfully counted number of defined characters in each block and plane!")
-    return Result.Ok((all_planes, all_blocks, all_chars))
+    spinner.successful("Successfully parsed Unicode plane and block data from XML database file!")
+    return (all_planes, all_blocks)
 
 
 def parse_unicode_block_data_from_xml(
@@ -83,18 +107,14 @@ def get_block_range_for_each_plane(
 
 def parse_unicode_character_data_from_xml(
     xml: _ElementTree,
-    parsed_blocks: list[BlockOrPlaneDetailsDict],
-    parsed_planes: list[BlockOrPlaneDetailsDict],
+    blocks: list[BlockOrPlaneDetailsDict],
+    planes: list[BlockOrPlaneDetailsDict],
 ) -> list[CharDetailsDict]:
-    spinner = start_task("")
-    spinner.stop_and_persist("Parsing Unicode character data from XML database file...")
     char_nodes = xml.findall(".//char", {None: "http://www.unicode.org/ns/2003/ucd/1.0"})
-    all_chars = [
-        parse_character_details(char, parsed_blocks, parsed_planes, spinner, i, len(char_nodes))
-        for (i, char) in enumerate(char_nodes, start=1)
-        if "cp" in char.keys()  # noqa: SIM118
-    ]
-    finish_task(spinner, True, "Successfully parsed Unicode character data from XML database file!")
+    spinner = Spinner()
+    spinner.start("Parsing Unicode character data from XML database file...", total=len(char_nodes))
+    all_chars = [parse_character_details(char, blocks, planes, spinner) for char in char_nodes if "cp" in char.keys()]  # noqa: SIM118
+    spinner.successful("Successfully parsed Unicode character data from XML database file!")
     return all_chars
 
 
@@ -103,9 +123,7 @@ def parse_character_details(
     parsed_blocks: list[BlockOrPlaneDetailsDict],
     parsed_planes: list[BlockOrPlaneDetailsDict],
     spinner,
-    count,
-    total,
-) -> CharDetailsDict:
+) -> tuple[CharDetailsDict, float]:
     codepoint = char_node.get("cp", "0")
     codepoint_dec = int(codepoint, 16)
     block = get_unicode_block_containing_codepoint(codepoint_dec, parsed_blocks)
@@ -210,7 +228,7 @@ def parse_character_details(
         }
         parsed_char |= unihan_props
 
-    update_progress(spinner, "Parsing Unicode character data from XML database file...", count, total)
+    spinner.increment()
     return parsed_char
 
 

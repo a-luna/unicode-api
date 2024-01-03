@@ -21,6 +21,7 @@ NO_CHARS_MATCH_SETTINGS = {
     "filterSettings": {
         "name": "test",
         "script": "Coptic",
+        "property_groups": "All",
     },
     "hasMore": False,
     "currentPage": 0,
@@ -59,16 +60,12 @@ FILTER_BY_BIDIRECTIONAL_CLASS = {
 
 FILTER_BY_DECOMPOSITION_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "name": "seven",
-        "decomp_type": "Encircled Form",
-    },
+    "filterSettings": {"name": "seven", "decomp_type": "Encircled Form"},
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 6,
+    "totalResults": 5,
     "results": [
         {"character": "⑦", "name": "CIRCLED DIGIT SEVEN", "codepoint": "U+2466", "uriEncoded": "%E2%91%A6"},
-        {"character": "⑰", "name": "CIRCLED NUMBER SEVENTEEN", "codepoint": "U+2470", "uriEncoded": "%E2%91%B0"},
         {"character": "㉗", "name": "CIRCLED NUMBER TWENTY SEVEN", "codepoint": "U+3257", "uriEncoded": "%E3%89%97"},
         {"character": "㊆", "name": "CIRCLED IDEOGRAPH SEVEN", "codepoint": "U+3286", "uriEncoded": "%E3%8A%86"},
         {"character": "㊲", "name": "CIRCLED NUMBER THIRTY SEVEN", "codepoint": "U+32B2", "uriEncoded": "%E3%8A%B2"},
@@ -78,7 +75,9 @@ FILTER_BY_DECOMPOSITION_TYPE = {
 
 FILTER_BY_LINE_BREAK_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"line_break": "Infix Separator"},
+    "filterSettings": {
+        "line_break": "Infix Separator",
+    },
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
@@ -99,7 +98,9 @@ FILTER_BY_LINE_BREAK_TYPE = {
 
 FILTER_BY_CCC = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"ccc": "Attached Above"},
+    "filterSettings": {
+        "ccc": "Attached Above",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 1,
@@ -125,7 +126,9 @@ FILTER_BY_NUMERIC_TYPE = {
 
 FILTER_BY_JOINING_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"join_type": "Left Joining"},
+    "filterSettings": {
+        "join_type": "Left Joining",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 5,
@@ -145,7 +148,9 @@ FILTER_BY_JOINING_TYPE = {
 
 FILTER_BY_CHAR_FLAG = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"flag": "Is Hyphen"},
+    "filterSettings": {
+        "flag": "Is Hyphen",
+    },
     "hasMore": False,
     "currentPage": 1,
     "totalResults": 11,
@@ -166,7 +171,9 @@ FILTER_BY_CHAR_FLAG = {
 
 FILTER_BY_BLOCK_NAME = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"block": "Ancient Symbols"},
+    "filterSettings": {
+        "block": "Ancient Symbols",
+    },
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
@@ -230,6 +237,87 @@ FILTER_BY_SEPARATE_CATEGORIES = {
         {"character": ")", "name": "RIGHT PARENTHESIS", "codepoint": "U+0029", "uriEncoded": "%29"},
         {"character": "*", "name": "ASTERISK", "codepoint": "U+002A", "uriEncoded": "%2A"},
         {"character": ",", "name": "COMMA", "codepoint": "U+002C", "uriEncoded": "%2C"},
+    ],
+}
+
+FILTER_BY_CJK_DEFINITION = {
+    "url": "/v1/characters/filter",
+    "filterSettings": {"cjk_definition": "dragon"},
+    "hasMore": True,
+    "currentPage": 1,
+    "nextPage": 2,
+    "totalResults": 21,
+    "results": [
+        {
+            "character": "㡣",
+            "name": "CJK UNIFIED IDEOGRAPH-3863",
+            "description": "(same as 龍) dragon, or the emperor, imperial, a Chinese family name",
+            "codepoint": "U+3863",
+            "uriEncoded": "%E3%A1%A3",
+        },
+        {
+            "character": "䮾",
+            "name": "CJK UNIFIED IDEOGRAPH-4BBE",
+            "description": "(same as 龐) huge, rich, abundance, to fill up, full of (same as 龍) a legendary, miraculous, marvelous animal, the dragon, associated with rain, floods, and geomancy, an emblem of imperialism",
+            "codepoint": "U+4BBE",
+            "uriEncoded": "%E4%AE%BE",
+        },
+        {
+            "character": "䶬",
+            "name": "CJK UNIFIED IDEOGRAPH-4DAC",
+            "description": "hard fins on the back of a dragon",
+            "codepoint": "U+4DAC",
+            "uriEncoded": "%E4%B6%AC",
+        },
+        {
+            "character": "彨",
+            "name": "CJK UNIFIED IDEOGRAPH-5F68",
+            "description": "yellow dragon",
+            "codepoint": "U+5F68",
+            "uriEncoded": "%E5%BD%A8",
+        },
+        {
+            "character": "彲",
+            "name": "CJK UNIFIED IDEOGRAPH-5F72",
+            "description": "yellow dragon",
+            "codepoint": "U+5F72",
+            "uriEncoded": "%E5%BD%B2",
+        },
+        {
+            "character": "犼",
+            "name": "CJK UNIFIED IDEOGRAPH-72BC",
+            "description": "a fierce Mongolian wolf dragon's head on roofs",
+            "codepoint": "U+72BC",
+            "uriEncoded": "%E7%8A%BC",
+        },
+        {
+            "character": "珑",
+            "name": "CJK UNIFIED IDEOGRAPH-73D1",
+            "description": "a gem cut like dragon",
+            "codepoint": "U+73D1",
+            "uriEncoded": "%E7%8F%91",
+        },
+        {
+            "character": "瓏",
+            "name": "CJK UNIFIED IDEOGRAPH-74CF",
+            "description": "a gem cut like dragon",
+            "codepoint": "U+74CF",
+            "uriEncoded": "%E7%93%8F",
+        },
+        {
+            "character": "竜",
+            "name": "CJK UNIFIED IDEOGRAPH-7ADC",
+            "description": "dragon, symbolic of emperor",
+            "codepoint": "U+7ADC",
+            "uriEncoded": "%E7%AB%9C",
+        },
+        {
+            "character": "虬",
+            "name": "CJK UNIFIED IDEOGRAPH-866C",
+            "description": "young dragon",
+            "codepoint": "U+866C",
+            "uriEncoded": "%E8%99%AC",
+        },
     ],
 }
 

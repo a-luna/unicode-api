@@ -10,7 +10,7 @@ ALL_PLANES = {
             "start": "U+0000",
             "finish": "U+FFFF",
             "totalAllocated": 65536,
-            "totalDefined": 55639,
+            "totalDefined": 55634
         },
         {
             "number": 1,
@@ -19,7 +19,7 @@ ALL_PLANES = {
             "start": "U+10000",
             "finish": "U+1FFFF",
             "totalAllocated": 65536,
-            "totalDefined": 23276,
+            "totalDefined": 23276
         },
         {
             "number": 2,
@@ -28,7 +28,7 @@ ALL_PLANES = {
             "start": "U+20000",
             "finish": "U+2FFFF",
             "totalAllocated": 65536,
-            "totalDefined": 61495,
+            "totalDefined": 60873
         },
         {
             "number": 3,
@@ -37,7 +37,7 @@ ALL_PLANES = {
             "start": "U+30000",
             "finish": "U+3FFFF",
             "totalAllocated": 65536,
-            "totalDefined": 9131,
+            "totalDefined": 9131
         },
         {
             "number": 14,
@@ -46,7 +46,7 @@ ALL_PLANES = {
             "start": "U+E0000",
             "finish": "U+EFFFF",
             "totalAllocated": 65536,
-            "totalDefined": 337,
+            "totalDefined": 337
         },
         {
             "number": 15,
@@ -55,7 +55,7 @@ ALL_PLANES = {
             "start": "U+F0000",
             "finish": "U+FFFFF",
             "totalAllocated": 65536,
-            "totalDefined": 0,
+            "totalDefined": 0
         },
         {
             "number": 16,
@@ -64,10 +64,11 @@ ALL_PLANES = {
             "start": "U+100000",
             "finish": "U+10FFFF",
             "totalAllocated": 65536,
-            "totalDefined": 0,
-        },
-    ],
+            "totalDefined": 0
+        }
+    ]
 }
+
 
 UNASSIGNED_PLANE = {
     "number": 10,

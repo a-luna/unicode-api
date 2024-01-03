@@ -1,9 +1,9 @@
 # flake8: noqa
-import app.db.models as db
 from sqlalchemy import event
 from sqlmodel import create_engine
 
-from app.core.config import get_settings
+import app.db.models as db
+from app.config import get_settings
 
 
 def _fk_pragma_on_connect(dbapi_con, _):

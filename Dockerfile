@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.11
 
 ENV ENV=PROD
 ENV TEST_HEADER=X-UnicodeAPI-Test

@@ -36,7 +36,7 @@ def update_readme():
 @cli.command()
 def update_test_data():
     result = _update_test_data()
-    exit_app(result, "Updated data.py for test_get_character_details module.")
+    exit_app(result, "Updated data for parameterized test cases that verify Unicode character property groups.")
 
 
 def exit_app(result, message=None):

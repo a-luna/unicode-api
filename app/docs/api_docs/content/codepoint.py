@@ -1,9 +1,9 @@
 # flake8: noqa
-CODEPOINTS_ENDPOINT = """
-        <dl>
-            <dt><strong>GET</strong> <code>/v1/codepoints/{hex}</code></dt>
-            <dd>Retrieve details of a single character</dd>
-        </dl>
+CODEPOINTS_ENDPOINTS = """
+            <dl>
+                <dt><strong>GET</strong> <code>/v1/codepoints/{hex}</code></dt>
+                <dd>Retrieve details of a single character</dd>
+            </dl>
 """
 
 CODEPOINT_CONTENT = (
