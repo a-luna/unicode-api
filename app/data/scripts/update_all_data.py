@@ -11,7 +11,7 @@ from app.data.scripts import (
     populate_sqlite_database,
     save_parsed_data_to_csv,
 )
-from app.data.scripts.types import BlockOrPlaneDetailsDict, CharDetailsDict
+from app.data.scripts.script_types import BlockOrPlaneDetailsDict, CharDetailsDict
 from app.data.util import run_command
 from app.data.util.spinners import Spinner
 

@@ -8,7 +8,7 @@ from app.config import UnicodeApiSettings
 from app.core.result import Result
 from app.data.constants import NULL_BLOCK, NULL_PLANE
 from app.data.encoding import get_codepoint_string
-from app.data.scripts.types import AllParsedUnicodeData, BlockOrPlaneDetailsDict, CharDetailsDict
+from app.data.scripts.script_types import AllParsedUnicodeData, BlockOrPlaneDetailsDict, CharDetailsDict
 from app.data.util.spinners import Spinner
 
 YES_NO_MAP = {"Y": "True", "N": "False"}
