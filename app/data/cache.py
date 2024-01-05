@@ -4,6 +4,7 @@ from functools import cache, cached_property
 
 from rapidfuzz import process
 from sqlalchemy import distinct, select
+from sqlalchemy.exc import OperationalError
 from sqlmodel import Session
 
 import app.db.models as db
@@ -194,12 +195,15 @@ class UnicodeDataCache:
 
     @cached_property
     def all_unicode_versions(self):
-        with Session(engine) as session:
-            versions = []
-            for query in [select(distinct(table.age)) for table in CHAR_TABLES]:
-                results = session.execute(query).scalars().all()
-                versions.extend(float(ver) for ver in results)
-            return [str(ver) for ver in sorted(set(versions))]
+        try:
+            with Session(engine) as session:
+                versions = []
+                for query in [select(distinct(table.age)) for table in CHAR_TABLES]:
+                    results = session.scalars(query).all()
+                    versions.extend(float(ver) for ver in results)
+                return [str(ver) for ver in sorted(set(versions))]
+        except OperationalError:
+            return []
 
     @property
     def unicode_version(self) -> str:

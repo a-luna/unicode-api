@@ -2,7 +2,7 @@ import logging
 import os
 import time
 from datetime import datetime
-from typing import Protocol
+from typing import Any, Protocol
 
 from fakeredis import FakeRedis
 from redis import from_url
@@ -10,6 +10,7 @@ from redis.client import Redis
 from redis.exceptions import ConnectionError
 
 from app.config import get_settings
+from app.core.redis_types import RedisKey, RedisResponse, RedisValue
 from app.core.util import dtaware_fromtimestamp
 
 MAX_ATTEMPTS = 3
@@ -20,7 +21,7 @@ class IRedisClient(Protocol):
     def client(self) -> Redis:
         ...
 
-    def lock(self, name: str, blocking_timeout: int) -> Redis.lock:
+    def lock(self, name: str, blocking_timeout: float | int) -> Any:
         """
         Return a new Lock object using key ``name`` that mimics
         the behavior of threading.Lock.
@@ -31,19 +32,19 @@ class IRedisClient(Protocol):
         """
         ...
 
-    def setnx(self, name: str, value: str) -> None:
+    def setnx(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         """
         Set the value of key ``name`` to ``value`` if key doesn't exist.
         """
         ...
 
-    def set(self, name: str, value: str) -> None:
+    def set(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         """
         Set the value at key ``name`` to ``value``
         """
         ...
 
-    def get(self, name: str) -> str:
+    def get(self, name: RedisKey) -> RedisResponse:
         """
         Return the value at key ``name``, or None if the key doesn't exist
         """
@@ -86,9 +87,9 @@ class RedisClient:
             return FakeRedis()
         while not self.connected and self.failed_attempts < MAX_ATTEMPTS:
             try:
-                self.logger.info("Attempting to connect to to Redis server...")
+                self.logger.info("Attempting to connect to Redis server...")
                 client = from_url(self.redis_url)
-                if client.ping():
+                if client and client.ping():
                     self._client = client
                     self.connected = True
                     self.logger.info("Successfully connected to Redis server.")
@@ -101,7 +102,7 @@ class RedisClient:
     def _handle_connect_attempt_failed(self):
         self.failed_attempts += 1
         if self.failed_attempts < MAX_ATTEMPTS:
-            self.logger.warning(
+            self.logger.info(
                 "Redis server did not respond to ping, will retry in 3 seconds... "
                 f"(attempt {self.failed_attempts}/{MAX_ATTEMPTS})"
             )
@@ -111,21 +112,24 @@ class RedisClient:
             self.connected = False
             self.logger.warning(f"Failed to connect to Redis server (attempt {self.failed_attempts}/{MAX_ATTEMPTS}).")
 
-    def lock(self, name: str, blocking_timeout: int) -> Redis.lock:
+    def lock(self, name: str, blocking_timeout: float | int) -> Any:
         return self.client.lock(name, blocking_timeout=blocking_timeout)
 
-    def setnx(self, name: str, value: str) -> None:
+    def setnx(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         return self.client.setnx(name, value)
 
-    def set(self, name: str, value: str) -> None:
+    def set(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         return self.client.set(name, value)
 
-    def get(self, name: str) -> str:
+    def get(self, name: RedisKey) -> RedisResponse:
         return self.client.get(name)
 
     def time(self) -> float:
-        (seconds, microseconds) = self.client.time()
-        return float(f"{seconds}.{microseconds}")
+        response = self.client.time()
+        if type(response) == tuple and len(response) == 2:
+            (seconds, microseconds) = response
+            return float(f"{seconds}.{microseconds}")
+        return datetime.now().timestamp()
 
     def now(self) -> datetime:
         return dtaware_fromtimestamp(self.time())
@@ -139,17 +143,17 @@ class TestRedisClient:
     def client(self) -> Redis:
         return FakeRedis()
 
-    def lock(self, name: str, blocking_timeout: int) -> Redis.lock:
+    def lock(self, name: str, blocking_timeout: float | int) -> Any:
         return self.client.lock(name, blocking_timeout=blocking_timeout)
 
-    def setnx(self, name: str, value: str) -> None:
+    def setnx(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         if name not in self.db:
             self.db[name] = value
 
-    def set(self, name: str, value: str) -> None:
+    def set(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         self.db[name] = value
 
-    def get(self, name: str) -> str:
+    def get(self, name: RedisKey) -> RedisResponse:
         return self.db.get(name, None)
 
     def time(self) -> float:
