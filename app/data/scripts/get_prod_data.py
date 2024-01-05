@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -12,6 +13,11 @@ def get_prod_data() -> Result[None]:
     if result.failure or not result.value:
         return Result.Fail(result.error if result.error else "")
     settings = result.value
+
+    logger = logging.getLogger("app.api")
+    logger.info(
+        "Begin Process: Bootstrap Unicode Data (ENV: ${settings.ENV}, UNICODE_VERSION: ${settings.UNICODE_VERSION})"
+    )
 
     result = get_unicode_db(settings)
     if result.failure:
