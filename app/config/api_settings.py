@@ -187,7 +187,7 @@ def get_prod_settings() -> UnicodeApiSettings:  # pragma: no cover
         "API_VERSION": "/v1",
         "REDIS_PW": os.environ.get("REDIS_PW", ""),
         "REDIS_HOST": os.environ.get("REDIS_HOST", ""),
-        "REDIS_PORT": int(os.environ.get("REDIS_PORT", "")),
+        "REDIS_PORT": int(os.environ.get("REDIS_PORT", "6379")),
         "REDIS_DB": int(os.environ.get("REDIS_DB", "0")),
         "RATE_LIMIT_PER_PERIOD": int(os.environ.get("RATE_LIMIT_PER_PERIOD", "1")),
         "RATE_LIMIT_PERIOD_SECONDS": timedelta(seconds=int(os.environ.get("RATE_LIMIT_PERIOD_SECONDS", "100"))),
