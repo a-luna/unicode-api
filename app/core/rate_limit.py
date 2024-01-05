@@ -9,7 +9,12 @@ from redis.exceptions import LockError
 from app.config import get_settings
 from app.core.redis_client import IRedisClient, redis
 from app.core.result import Result
-from app.core.util import dtaware_fromtimestamp, get_duration_between_timestamps, get_time_until_timestamp
+from app.core.util import (
+    dtaware_fromtimestamp,
+    format_timedelta_str,
+    get_duration_between_timestamps,
+    get_time_until_timestamp,
+)
 
 RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|planes")
 
@@ -17,16 +22,11 @@ RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|planes")
 @dataclass
 class RateLimitDecision:
     ip: str
-    tat: float
-    new_tat: float
     arrived_at: float
     allowed_at: float
-    logger: logging.Logger = field(init=False, default=None)
+    new_tat: float
 
-    def __post_init__(self):
-        self.logger = logging.getLogger("app.api")
-
-    def log(self) -> str:
+    def log(self) -> None:
         decision = (
             "RATE LIMIT DECISION:  "
             f"(IP: {self.ip})  "
@@ -35,34 +35,43 @@ class RateLimitDecision:
             f"(Allowed At: {get_time_portion(self.allowed_at)})  "
         )
         if self.arrived_at < self.allowed_at:
-            decision += (
-                f"({get_duration_between_timestamps(self.arrived_at, self.allowed_at)}) Until Next Request Allowed)"
-            )
+            limit_duration = get_duration_between_timestamps(self.arrived_at, self.allowed_at)
+            decision += f"({format_timedelta_str(limit_duration, precise=True)} Until Next Request Allowed)"
+
         else:
+            time_until_limit = get_duration_between_timestamps(self.allowed_at, self.arrived_at)
             decision += (
                 f"(New TAT: {get_time_portion(self.new_tat)}, "
-                f"{get_duration_between_timestamps(self.allowed_at, self.arrived_at)} from now)"
+                f"{format_timedelta_str(time_until_limit, precise=True)} from now)"
             )
-        self.logger.debug(decision)
+        logging.getLogger("app.api").info(decision)
 
 
 class RateLimit:
     def __init__(self, redis: IRedisClient):
         self.settings = get_settings()
-        self.logger = logging.getLogger("app.api")
         self.rate = self.settings.RATE_LIMIT_PER_PERIOD
         self.period = self.settings.RATE_LIMIT_PERIOD_SECONDS
         self.burst = self.settings.RATE_LIMIT_BURST
         self.redis = redis
+        self.logger = logging.getLogger("app.api")
 
     @property
-    def emission_interval(self) -> timedelta:
-        interval = round((self.period.total_seconds() * 1000) / float(self.rate))
+    def period_seconds(self) -> float:
+        return self.period / timedelta(seconds=1)
+
+    @property
+    def period_milliseconds(self) -> float:
+        return self.period / timedelta(milliseconds=1)
+
+    @property
+    def emission_interval_ms(self) -> timedelta:
+        interval = round(self.period_milliseconds / float(self.rate))
         return timedelta(milliseconds=interval)
 
     @property
-    def delay_tolerance(self) -> timedelta:
-        interval = self.emission_interval.total_seconds() * 1000
+    def delay_tolerance_ms(self) -> timedelta:
+        interval = self.emission_interval_ms / timedelta(milliseconds=1)
         return timedelta(milliseconds=(interval * self.burst))
 
     def is_exceeded(self, request: Request) -> Result[None]:
@@ -72,53 +81,52 @@ class RateLimit:
         Adapted for Python from this article:
         https://vikas-kumar.medium.com/rate-limiting-techniques-245c3a5e9cad
         """
-        if self.rate_limit_is_not_required(request):
+        if not (request.client and self.rate_limit_is_required(request)):
             return Result.Ok()
         client_ip = request.client.host
         arrived_at = self.redis.time()
-        self.redis.setnx(client_ip, 0)
+        self.redis.setnx(client_ip, "0")
         try:
             with self.redis.lock("lock:" + client_ip, blocking_timeout=5):
                 tat = float(self.redis.get(client_ip) or 0)  # type: ignore  # noqa: PGH003
                 allowed_at = self.get_allowed_at(tat)
                 if arrived_at < allowed_at:
-                    RateLimitDecision(client_ip, tat, 0, arrived_at, allowed_at).log()
+                    RateLimitDecision(client_ip, arrived_at, allowed_at, 0).log()
                     return self.rate_limit_exceeded(client_ip, allowed_at)
                 new_tat = self.get_new_tat(tat, arrived_at)
-                RateLimitDecision(client_ip, tat, new_tat, arrived_at, allowed_at).log()
+                RateLimitDecision(client_ip, arrived_at, allowed_at, new_tat).log()
                 self.redis.set(client_ip, new_tat)
                 return self.request_allowed(client_ip)
         except LockError:  # pragma: no cover
             return self.lock_error(client_ip)
 
-    def rate_limit_is_not_required(self, request: Request):
-        if self.settings.is_prod:  # pragma: no cover
-            return requested_route_is_not_rate_limited(request) or client_ip_address_is_missing(request)
-        if self.settings.is_dev:  # pragma: no cover
-            return False
-        return current_test_does_not_verify_rate_limit(request)
+    def rate_limit_is_required(self, request: Request):
+        if self.settings.is_prod or self.settings.is_dev:  # pragma: no cover
+            return requested_route_is_rate_limited(request)
+        return rate_limit_feature_is_under_test(request)
 
     def get_allowed_at(self, tat: float) -> float:
-        return (dtaware_fromtimestamp(tat) - self.delay_tolerance).timestamp()
+        return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
 
     def get_new_tat(self, tat: float, arrived_at: float) -> float:
-        return (dtaware_fromtimestamp(max(tat, arrived_at)) + self.emission_interval).timestamp()
+        return (dtaware_fromtimestamp(max(tat, arrived_at)) + self.emission_interval_ms).timestamp()
 
-    def rate_limit_exceeded(self, client, allowed_at: float) -> Result[str]:
+    def rate_limit_exceeded(self, client, allowed_at: float) -> Result[None]:
         limit_duration = get_time_until_timestamp(allowed_at)
         burst = f" (+{self.burst} request burst allowance)" if self.burst > 1 else ""
         error = (
-            f"API rate limit of {self.rate} requests{burst} in {self.period.seconds} seconds exceeded for IP {client}, "
-            f"{limit_duration} until limit is removed"
+            f"API rate limit of {self.rate} requests{burst} in {round(self.period_seconds, 1)} "
+            f"second{'s' if self.period_seconds > 1 else ''} exceeded for IP {client}, "
+            f"{format_timedelta_str(limit_duration, precise=True)} until limit is removed"
         )
         self.logger.info(error)
         return Result.Fail(error)
 
-    def request_allowed(self, client) -> Result[str]:
+    def request_allowed(self, client) -> Result[None]:
         self.logger.info(f"Request allowed for IP: {client}")
         return Result.Ok()
 
-    def lock_error(self, client) -> Result[str]:  # pragma: no cover
+    def lock_error(self, client) -> Result[None]:  # pragma: no cover
         error = (
             f"An error occurred attempting to access rate limit data for IP {client} "
             f"(Error: Unable to acquire Redis lock for shared resource)."
@@ -127,22 +135,18 @@ class RateLimit:
         return Result.Fail(error)
 
 
-def current_test_does_not_verify_rate_limit(request: Request) -> bool:
-    return not (
-        request.headers["x-verify-rate-limiting"] == "true"
-        if "x-verify-rate-limiting" in request.headers
-        else request.headers.get("access-control-request-headers", [])["x-verify-rate-limiting"] == "true"
-        if "x-verify-rate-limiting" in request.headers.get("access-control-request-headers", [])
-        else False
-    )
+def rate_limit_feature_is_under_test(request: Request) -> bool:
+    if "x-verify-rate-limiting" in request.headers:
+        return request.headers["x-verify-rate-limiting"] == "true"
+    if "access-control-request-headers" in request.headers:  # pragma: no cover
+        ac_request_headers = request.headers["access-control-request-headers"]
+        if isinstance(ac_request_headers) == dict and "x-verify-rate-limiting" in ac_request_headers:
+            return ac_request_headers["x-verify-rate-limiting"] == "true"
+    return False  # pragma: no cover
 
 
-def requested_route_is_not_rate_limited(request: Request):  # pragma: no cover
-    return not RATE_LIMIT_ROUTE_REGEX.search(request.url.path)
-
-
-def client_ip_address_is_missing(request):  # pragma: no cover
-    return not request.client
+def requested_route_is_rate_limited(request: Request):  # pragma: no cover
+    return RATE_LIMIT_ROUTE_REGEX.search(request.url.path)
 
 
 def get_time_portion(ts: float) -> str:

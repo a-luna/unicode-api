@@ -32,26 +32,29 @@ def dtaware_fromtimestamp(timestamp: float, use_tz: tzinfo | None = None) -> dat
 
 def format_timedelta_str(td: timedelta, precise: bool = True) -> str:
     """Convert timedelta to an easy-to-read string value."""
+    duration = ""
+    if td.days < 0:
+        td = -td
+        duration = "-"
     (milliseconds, microseconds) = divmod(td.microseconds, 1000)
     (minutes, seconds) = divmod(td.seconds, 60)
     (hours, minutes) = divmod(minutes, 60)
-    if td.days == -1:
-        hours += -24
-        return f"{hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{hours:.0f} hours {minutes:.0f} minutes"
-    if td.days != 0:
-        (years, days) = divmod(td.days, 365)
-        if years > 0:
-            return f"{years}y {days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{td.days} days"
-        return f"{td.days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{td.days} days"
-    if hours > 0:
-        return f"{hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{hours:.0f} hours {minutes:.0f} minutes"
-    if minutes > 0:
-        return f"{minutes:.0f}m {seconds}s" if precise else f"{minutes:.0f} minutes"
-    if td.seconds > 0:
-        return f"{td.seconds}s {milliseconds:.0f}ms" if precise else f"{td.seconds} seconds"
-    if milliseconds > 0:
-        return f"{milliseconds}ms"
-    return f"{microseconds}us"
+    (years, days) = divmod(td.days, 365)
+    if years > 0:
+        duration += f"{years}y {days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{years}y {days} days"
+    elif days > 0:
+        duration += f"{days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{days} days"
+    elif hours > 0:
+        duration += f"{hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{hours:.0f} hours {minutes:.0f} minutes"
+    elif minutes > 0:
+        duration += f"{minutes:.0f}m {seconds}s" if precise else f"{minutes:.0f} minutes"
+    elif seconds > 0:
+        duration += f"{seconds}s {milliseconds:.0f}ms" if precise else f"{seconds} seconds"
+    elif milliseconds > 0:
+        duration += f"{milliseconds}ms {microseconds}us" if precise else f"{milliseconds}ms"
+    else:
+        duration += f"{microseconds}us"
+    return duration
 
 
 def get_time_until_timestamp(ts: float, precise: bool = True) -> str:
@@ -59,4 +62,4 @@ def get_time_until_timestamp(ts: float, precise: bool = True) -> str:
 
 
 def get_duration_between_timestamps(ts1: float, ts2: float, precise: bool = True) -> str:
-    return format_timedelta_str(dtaware_fromtimestamp(ts2) - dtaware_fromtimestamp(ts1), precise)
+    return dtaware_fromtimestamp(ts2) - dtaware_fromtimestamp(ts1)
