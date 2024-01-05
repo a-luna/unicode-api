@@ -1,5 +1,4 @@
 import itertools
-import json
 from functools import cache, cached_property
 
 from rapidfuzz import process
@@ -31,8 +30,7 @@ class UnicodeDataCache:
 
     @cached_property
     def non_unihan_character_name_map(self) -> dict[int, str]:
-        json_map = json.loads(self.settings.CHAR_NAME_MAP.read_text())
-        return {int(codepoint): name for (codepoint, name) in json_map.items()}
+        return self.settings.get_non_unihan_character_name_map()
 
     @property
     def non_unihan_character_name_choices(self) -> dict[int, str]:
@@ -40,9 +38,7 @@ class UnicodeDataCache:
 
     @cached_property
     def blocks(self) -> list[db.UnicodeBlock]:
-        if not self.settings.BLOCKS_JSON.exists():  # pragma: no cover
-            return []
-        blocks = [db.UnicodeBlock(**block) for block in json.loads(self.settings.BLOCKS_JSON.read_text())]
+        blocks = self.settings.get_unicode_blocks_data()
         for block in blocks:
             block.plane = self.get_unicode_plane_containing_block_id(block.id if block.id else 0)
         return blocks

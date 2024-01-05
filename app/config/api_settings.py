@@ -143,6 +143,16 @@ class UnicodeApiSettings:
         planes_dict = json.loads(self.PLANES_JSON.read_text()) if self.PLANES_JSON.exists() else UNICODE_PLANES_DEFAULT
         return [db.UnicodePlane(**plane) for plane in planes_dict]
 
+    def get_unicode_blocks_data(self) -> list[db.UnicodeBlock]:
+        blocks_dict = json.loads(self.BLOCKS_JSON.read_text()) if self.BLOCKS_JSON.exists() else []
+        return [db.UnicodeBlock(**block) for block in blocks_dict]
+
+    def get_non_unihan_character_name_map(self) -> dict[int, str]:
+        if not self.CHAR_NAME_MAP.exists():
+            return {}
+        json_map = json.loads(self.CHAR_NAME_MAP.read_text())
+        return {int(codepoint): name for (codepoint, name) in json_map.items()}
+
     def init_data_folders(self) -> None:  # pragma: no cover
         self.DB_FOLDER.mkdir(parents=True, exist_ok=True)
         if self.DB_FILE.exists():
