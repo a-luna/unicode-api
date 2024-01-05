@@ -11,67 +11,67 @@ def get_prod_data() -> Result[None]:
     result = bootstrap_unicode_data()
     if result.failure or not result.value:
         return Result.Fail(result.error if result.error else "")
-    config = result.value
+    settings = result.value
 
-    result = get_unicode_db(config)
+    result = get_unicode_db(settings)
     if result.failure:
         return result
 
-    result = get_unicode_json(config)
+    result = get_unicode_json(settings)
     if result.failure:
         return result
     return Result.Ok()
 
 
-def get_unicode_db(config: UnicodeApiSettings) -> Result[None]:
-    result = download_file(config.DB_ZIP_URL, config.DB_FOLDER)
+def get_unicode_db(settings: UnicodeApiSettings) -> Result[None]:
+    result = download_file(settings.DB_ZIP_URL, settings.DB_FOLDER)
     if result.failure:
         return Result.Fail(result.error if result.error else "")
-    if not config.DB_ZIP_FILE.exists():
-        return Result.Fail(f"Failed to download {config.DB_ZIP_FILE.name}")
+    if not settings.DB_ZIP_FILE.exists():
+        return Result.Fail(f"Failed to download {settings.DB_ZIP_FILE.name}")
 
-    result = extract_unicode_db(config)
+    result = extract_unicode_db(settings)
     if result.failure:
         return Result.Fail(result.error if result.error else "")
-    config.DB_ZIP_FILE.unlink()
+    settings.DB_ZIP_FILE.unlink()
     return Result.Ok()
 
 
-def extract_unicode_db(config: UnicodeApiSettings) -> Result[list[Path]]:
-    with ZipFile(config.DB_ZIP_FILE, mode="r") as zip:
-        zip.extractall(path=str(config.DB_FOLDER))
-        extracted_files = list(config.DB_FOLDER.glob("*.db"))
+def extract_unicode_db(settings: UnicodeApiSettings) -> Result[list[Path]]:
+    with ZipFile(settings.DB_ZIP_FILE, mode="r") as zip:
+        zip.extractall(path=str(settings.DB_FOLDER))
+        extracted_files = list(settings.DB_FOLDER.glob("*.db"))
         if not extracted_files:
-            return Result.Fail(f"Error occurred extracting Unicode DB from {config.DB_ZIP_FILE.name}!")
+            return Result.Fail(f"Error occurred extracting Unicode DB from {settings.DB_ZIP_FILE.name}!")
         if len(extracted_files) != 1:
-            error = f"{len(extracted_files)} files were extracted from {config.DB_ZIP_FILE.name}, expected 1:\n"
+            error = f"{len(extracted_files)} files were extracted from {settings.DB_ZIP_FILE.name}, expected 1:\n"
             for i, file in enumerate(extracted_files, start=1):
                 error += f"\tFile #{i}: {file.name}"
             return Result.Fail(error)
         return Result.Ok(extracted_files)
 
 
-def get_unicode_json(config: UnicodeApiSettings) -> Result[None]:
-    result = download_file(config.JSON_ZIP_URL, config.JSON_FOLDER)
+def get_unicode_json(settings: UnicodeApiSettings) -> Result[None]:
+    result = download_file(settings.JSON_ZIP_URL, settings.JSON_FOLDER)
     if result.failure:
         return Result.Fail(result.error if result.error else "")
-    if not config.JSON_ZIP_FILE.exists():
-        return Result.Fail(f"Failed to download {config.JSON_ZIP_FILE.name}")
-    result = extract_unicode_json(config)
+    if not settings.JSON_ZIP_FILE.exists():
+        return Result.Fail(f"Failed to download {settings.JSON_ZIP_FILE.name}")
+    result = extract_unicode_json(settings)
     if result.failure:
         return Result.Fail(result.error if result.error else "")
-    config.JSON_ZIP_FILE.unlink()
+    settings.JSON_ZIP_FILE.unlink()
     return Result.Ok()
 
 
-def extract_unicode_json(config: UnicodeApiSettings) -> Result[list[Path]]:
-    with ZipFile(config.JSON_ZIP_FILE, mode="r") as zip:
-        zip.extractall(path=str(config.JSON_FOLDER))
-        extracted_files = list(config.JSON_FOLDER.glob("*.json"))
+def extract_unicode_json(settings: UnicodeApiSettings) -> Result[list[Path]]:
+    with ZipFile(settings.JSON_ZIP_FILE, mode="r") as zip:
+        zip.extractall(path=str(settings.JSON_FOLDER))
+        extracted_files = list(settings.JSON_FOLDER.glob("*.json"))
         if not extracted_files:
-            return Result.Fail(f"Error occurred extracting Unicode DB from {config.JSON_ZIP_FILE.name}!")
+            return Result.Fail(f"Error occurred extracting Unicode DB from {settings.JSON_ZIP_FILE.name}!")
         if len(extracted_files) != 3:
-            error = f"{len(extracted_files)} files were extracted from {config.JSON_ZIP_FILE.name}, expected 3:\n"
+            error = f"{len(extracted_files)} files were extracted from {settings.JSON_ZIP_FILE.name}, expected 3:\n"
             for i, file in enumerate(extracted_files, start=1):
                 error += f"\tFile #{i}: {file.name}"
             return Result.Fail(error)
