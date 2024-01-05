@@ -97,8 +97,93 @@ def create_details_element_for_api_endpoints(id: str, content: str, open: bool |
     return create_details_element_readme(title=title, content=content, class_name="api-endpoints", open=open)
 
 
+def create_details_element_for_property_group(prop_group: str, content: str, open: bool | None = False) -> str:
+    title = f"<strong>{prop_group}</strong>"
+    return create_details_element_readme(title=title, content=content, class_name="property-group", open=open)
+
+
+# API ENDPOINT DETAILS ELEMENTS
+CHARACTER_API_ENDPOINTS = create_details_element_for_api_endpoints(
+    id="character-api-endpoints", content=CHARACTER_ENDPOINTS, open=True
+)
+CODEPOINT_API_ENDPOINTS = create_details_element_for_api_endpoints(
+    id="codepoint-api-endpoints", content=CODEPOINTS_ENDPOINTS, open=True
+)
+BLOCK_API_ENDPOINTS = create_details_element_for_api_endpoints(
+    id="block-api-endpoints", content=BLOCK_ENDPOINTS, open=True
+)
+PLANE_API_ENDPOINTS = create_details_element_for_api_endpoints(
+    id="plane-api-endpoints", content=PLANE_ENDPOINTS, open=True
+)
+
+# CHARACTER PROPERTY GROUP DETAILS ELEMENTS
+CHARACTER_PROP_GROUP_MINIMUM = create_details_element_for_property_group(
+    prop_group="Minimum", content=PROP_GROUP_MINIMUM, open=True
+)
+CHARACTER_PROP_GROUP_BASIC = create_details_element_for_property_group(
+    prop_group="Basic", content=PROP_GROUP_BASIC, open=False
+)
+CHARACTER_PROP_GROUP_UTF8 = create_details_element_for_property_group(
+    prop_group="UTF-8", content=PROP_GROUP_UTF8, open=False
+)
+CHARACTER_PROP_GROUP_UTF16 = create_details_element_for_property_group(
+    prop_group="UTF-16", content=PROP_GROUP_UTF16, open=False
+)
+CHARACTER_PROP_GROUP_UTF32 = create_details_element_for_property_group(
+    prop_group="UTF-32", content=PROP_GROUP_UTF32, open=False
+)
+CHARACTER_PROP_GROUP_BIDIRECTIONALITY = create_details_element_for_property_group(
+    prop_group="Bidirectionality", content=PROP_GROUP_BIDIRECTIONALITY, open=False
+)
+CHARACTER_PROP_GROUP_DECOMPOSITION = create_details_element_for_property_group(
+    prop_group="Decomposition", content=PROP_GROUP_DECOMPOSITION, open=False
+)
+CHARACTER_PROP_GROUP_QUICK_CHECK = create_details_element_for_property_group(
+    prop_group="Quick Check", content=PROP_GROUP_QUICK_CHECK, open=False
+)
+CHARACTER_PROP_GROUP_NUMERIC = create_details_element_for_property_group(
+    prop_group="Numeric", content=PROP_GROUP_NUMERIC, open=False
+)
+CHARACTER_PROP_GROUP_JOINING = create_details_element_for_property_group(
+    prop_group="Joining", content=PROP_GROUP_JOINING, open=False
+)
+CHARACTER_PROP_GROUP_LINEBREAK = create_details_element_for_property_group(
+    prop_group="Linebreak", content=PROP_GROUP_LINEBREAK, open=False
+)
+CHARACTER_PROP_GROUP_EAW = create_details_element_for_property_group(
+    prop_group="East Asian Width", content=PROP_GROUP_EAW, open=False
+)
+CHARACTER_PROP_GROUP_CASE = create_details_element_for_property_group(
+    prop_group="Case", content=PROP_GROUP_CASE, open=False
+)
+CHARACTER_PROP_GROUP_SCRIPT = create_details_element_for_property_group(
+    prop_group="Script", content=PROP_GROUP_SCRIPT, open=False
+)
+CHARACTER_PROP_GROUP_HANGUL = create_details_element_for_property_group(
+    prop_group="Hangul", content=PROP_GROUP_HANGUL, open=False
+)
+CHARACTER_PROP_GROUP_INDIC = create_details_element_for_property_group(
+    prop_group="Indic", content=PROP_GROUP_INDIC, open=False
+)
+CHARACTER_PROP_GROUP_CJK_VARIANTS = create_details_element_for_property_group(
+    prop_group="CJK Variants", content=PROP_GROUP_CJK_VARIANTS, open=False
+)
+CHARACTER_PROP_GROUP_CJK_NUMERIC = create_details_element_for_property_group(
+    prop_group="CJK Numeric", content=PROP_GROUP_CJK_NUMERIC, open=False
+)
+CHARACTER_PROP_GROUP_CJK_READINGS = create_details_element_for_property_group(
+    prop_group="CJK Readings", content=PROP_GROUP_CJK_READINGS, open=False
+)
+CHARACTER_PROP_GROUP_F_AND_G = create_details_element_for_property_group(
+    prop_group="Function and Graphic", content=PROP_GROUP_F_AND_G, open=False
+)
+CHARACTER_PROP_GROUP_EMOJI = create_details_element_for_property_group(
+    prop_group="Emoji", content=PROP_GROUP_EMOJI, open=False
+)
+
+
 UNICODE_CHARACTER_PROP_GROUPS_README = (
-    f'{create_details_element_readme("<strong>Minimum</strong>", PROP_GROUP_MINIMUM, True)}'
+    f"{CHARACTER_PROP_GROUP_MINIMUM}"
     + "\t<br />\n"
     + "\t"
     + CHARACTER_PROP_GROUPS_CONTINUED_1
@@ -106,51 +191,48 @@ UNICODE_CHARACTER_PROP_GROUPS_README = (
     + CHARACTER_PROP_GROUPS_CONTINUED_2
     + '\n\t<h4 id="verbosity">Verbosity</h4>\n'
     + f"\t{VERBOSITY}\n"
-    + f'{create_details_element_readme("<strong>Basic</strong>", PROP_GROUP_BASIC)}'
+    + f"{CHARACTER_PROP_GROUP_BASIC}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>UTF-8</strong>", PROP_GROUP_UTF8)}'
+    + f"{CHARACTER_PROP_GROUP_UTF8}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>UTF-16</strong>", PROP_GROUP_UTF16)}'
+    + f"{CHARACTER_PROP_GROUP_UTF16}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>UTF-32</strong>", PROP_GROUP_UTF32)}'
+    + f"{CHARACTER_PROP_GROUP_UTF32}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Bidirectionality</strong>", PROP_GROUP_BIDIRECTIONALITY)}'
+    + f"{CHARACTER_PROP_GROUP_BIDIRECTIONALITY}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Decomposition</strong>", PROP_GROUP_DECOMPOSITION)}'
+    + f"{CHARACTER_PROP_GROUP_DECOMPOSITION}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Quick Check</strong>", PROP_GROUP_QUICK_CHECK)}'
+    + f"{CHARACTER_PROP_GROUP_QUICK_CHECK}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Numeric</strong>", PROP_GROUP_NUMERIC)}'
+    + f"{CHARACTER_PROP_GROUP_NUMERIC}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Joining</strong>", PROP_GROUP_JOINING)}'
+    + f"{CHARACTER_PROP_GROUP_JOINING}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Linebreak</strong>", PROP_GROUP_LINEBREAK)}'
+    + f"{CHARACTER_PROP_GROUP_LINEBREAK}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>East Asian Width</strong>", PROP_GROUP_EAW)}'
+    + f"{CHARACTER_PROP_GROUP_EAW}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Case</strong>", PROP_GROUP_CASE)}'
+    + f"{CHARACTER_PROP_GROUP_CASE}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Script</strong>", PROP_GROUP_SCRIPT)}'
+    + f"{CHARACTER_PROP_GROUP_SCRIPT}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Hangul</strong>", PROP_GROUP_HANGUL)}'
+    + f"{CHARACTER_PROP_GROUP_HANGUL}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Indic</strong>", PROP_GROUP_INDIC)}'
+    + f"{CHARACTER_PROP_GROUP_INDIC}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>CJK Variants</strong>", PROP_GROUP_CJK_VARIANTS)}'
+    + f"{CHARACTER_PROP_GROUP_CJK_VARIANTS}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>CJK Numeric</strong>", PROP_GROUP_CJK_NUMERIC)}'
+    + f"{CHARACTER_PROP_GROUP_CJK_NUMERIC}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>CJK Readings</strong>", PROP_GROUP_CJK_READINGS)}'
+    + f"{CHARACTER_PROP_GROUP_CJK_READINGS}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Function and Graphic</strong>", PROP_GROUP_F_AND_G)}'
+    + f"{CHARACTER_PROP_GROUP_F_AND_G}"
     + "\t<br />\n"
-    + f'{create_details_element_readme("<strong>Emoji</strong>", PROP_GROUP_EMOJI)}'
+    + f"{CHARACTER_PROP_GROUP_EMOJI}"
 )
 
-CHARACTER_API_ENDPOINTS = create_details_element_for_api_endpoints(
-    id="character-api-endpoints", content=CHARACTER_ENDPOINTS, open=True
-)
-
+# UNICODE CHARACTERS DOCS
 UNICODE_CHARACTERS_DOCS = f"""
 <div>
 {CHARACTER_API_ENDPOINTS}\t<h4 id="the-unicodecharacter-object">The <code>UnicodeCharacter</code> Object</h4>
@@ -160,26 +242,25 @@ UNICODE_CHARACTERS_DOCS = f"""
 {UNICODE_CHARACTER_PROP_GROUPS_README}</div>
 """
 
-CODEPOINTS_API_ENDPOINTS = create_details_element_for_api_endpoints(
-    id="codepoint-api-endpoints", content=CODEPOINTS_ENDPOINTS, open=True
-)
-
+# UNICODE CODEPOINTS DOCS
 UNICODE_CODEPOINTS_DOCS = f"""
 <div>
-{CODEPOINTS_API_ENDPOINTS}\t{CODEPOINT_CONTENT}
+{CODEPOINT_API_ENDPOINTS}\t{CODEPOINT_CONTENT}
 </div>
 """
 
+# UNICODE BLOCKS DOCS
 UNICODE_BLOCKS_DOCS = f"""
 <div>
-{create_details_element_readme('<h4 id="block-api-endpoints">API Endpoints</h4>', BLOCK_ENDPOINTS, True)}\t<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
+{BLOCK_API_ENDPOINTS}\t<h4 id="the-unicodeblock-object">The <code>UnicodeBlock</code> Object</h4>
     {UNICODE_BLOCK_OBJECT_INTRO}
 {create_details_element_readme("<strong><code>UnicodeBlock</code> Properties</strong>", UNICODE_BLOCK_OBJECT_PROPERTIES)}</div>
 """
 
+# UNICODE PLANES DOCS
 UNICODE_PLANES_DOCS = f"""
 <div>
-{create_details_element_readme('<h4 id="plane-api-endpoints">API Endpoints</h4>', PLANE_ENDPOINTS, True)}\t<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
+{PLANE_API_ENDPOINTS}\t<h4 id="the-unicodeplane-object">The <code>UnicodePlane</code> Object</h4>
     {UNICODE_PLANE_OBJECT_INTRO}
 {create_details_element_readme("<strong><code>UnicodePlane</code> Properties</strong>", UNICODE_PLANE_OBJECT_PROPERTIES)}</div>
 """
