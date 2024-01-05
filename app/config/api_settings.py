@@ -208,7 +208,7 @@ def get_dev_settings() -> UnicodeApiSettings:  # pragma: no cover
         "API_VERSION": "/v1",
         "REDIS_PW": env_vars.get("REDIS_PW", ""),
         "REDIS_HOST": env_vars.get("REDIS_HOST", ""),
-        "REDIS_PORT": int(env_vars.get("REDIS_PORT", "")),
+        "REDIS_PORT": int(env_vars.get("REDIS_PORT", "6379")),
         "REDIS_DB": int(env_vars.get("REDIS_DB", "0")),
         "RATE_LIMIT_PER_PERIOD": int(env_vars.get("RATE_LIMIT_PER_PERIOD", "1")),
         "RATE_LIMIT_PERIOD_SECONDS": timedelta(seconds=int(env_vars.get("RATE_LIMIT_PERIOD_SECONDS", "100"))),
