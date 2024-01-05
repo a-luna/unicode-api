@@ -99,7 +99,7 @@ class UnicodeDataCache:
 
     @property
     def planes(self) -> list[db.UnicodePlane]:
-        return [db.UnicodePlane(**plane) for plane in json.loads(self.settings.PLANES_JSON.read_text())]
+        return self.settings.get_unicode_planes_data()
 
     @property
     def plane_number_map(self) -> dict[int, db.UnicodePlane]:
