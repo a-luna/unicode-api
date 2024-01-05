@@ -69,7 +69,7 @@
 	</li>
 </ul>
 <h2 id="introduction">Introduction</h2>
-<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.1.0/" rel="noopener noreferrer" target="_blank">version 15.1.0 of the Unicode Standard</a> (released Sep 12, 2023). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
+<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener noreferrer" target="_blank">version 15.0.0 of the Unicode Standard</a> (released Sep 13, 2022). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul class="api-principles">
     <li>URLs are predictable and resource-oriented.</li>
     <li>Uses standard HTTP verbs and response codes.</li>
@@ -147,7 +147,7 @@
     <p>The <code>UnicodeCharacter</code> object represents a single character/codepoint in the <a href="https://unicode.org/reports/tr44/" rel="noopener noreferrer" target="_blank">Unicode Character Database (UCD)</a>. It contains a rich set of properties that document the purpose and intended representation of the character.</p>
     <h4 id="unicodecharacter-property-groups"><code>UnicodeCharacter</code> Property Groups</h4>
     <p>If each response contained every character property, it would be massively inneficient. To ensure that the API remains responsive and performant while also allowing clients to access the full set of character properties, each property is assigned to a <strong>property group</strong>.</p><p>Since they are designed to return lists of characters, responses from the <code>/v1/characters</code> or <code>/v1/characters/search</code> endpoints will only include properties from the <strong>Minimum</strong> property group:</p>
-	<details class=True>
+	<details open class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -186,7 +186,7 @@
 	<p>If you wish to explore the properties of one or more specifc characters, the <code>/v1/characters/-/{string}</code> and <code>/v1/characters/filter</code> endpoints accept one or more <code>show_props</code> parameters that allow you to specify additional property groups to include in the response.</p><p>For example, you could view the properties from groups <strong>UTF-8</strong>, <strong>Numeric</strong>, and <strong>Script</strong> for the character Ⱒ (<code>U+2C22 <span>GLAGOLITIC CAPITAL LETTER SPIDERY HA</span></code>), which is equal to <code>0xE2 0xB0 0xA2</code> in UTF-8 encoding by submitting the following request: <a href="http://localhost:3507/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script" rel="noopener noreferrer" target="_blank">/v1/characters/%E2%B0%A2?show_props=UTF8&show_props=Numeric&show_props=Script</a>.</p>
 	<h4 id="verbosity">Verbosity</h4>
 	<p>The value of many of the properties that are defined for each character are only meaningful for specific blocks or a small subset of codepoints (e.g., the <code>hangul_syllable_type</code> property will have a <code>(Not Applicable) NA</code> value for all codepoints except those in the four blocks that contain characters from the Hangul writing system).</p><p>By default, the <code>hangul_syllable_type</code> property will <strong>NOT</strong> be included with the response for any character that has this default value even if the user has submitted a request containing <code>show_props=hangul</code> or <code>show_props=all</code>. For actual Hangul characters, the property will be included in the response.</p><p>These properties are removed to make the size of each response as small as possible. Knowing that the 🇺 (<code>U+1F1FA <span>REGIONAL INDICATOR SYMBOL LETTER U</span></code>) character has the value <code>hangul_syllable_type=NA</code> provides no real information about this character.</p><p>However, if you wish to see every property value, include <code>verbose=true</code> with your request to the <code>/v1/characters/-/{string}</code> or <code>/v1/characters/filter</code> endpoints.</p>
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -227,7 +227,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -249,7 +249,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -271,7 +271,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -293,7 +293,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -337,7 +337,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -377,7 +377,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -419,7 +419,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -454,7 +454,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -487,7 +487,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -545,7 +545,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -573,7 +573,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -600,7 +600,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -623,7 +623,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -650,7 +650,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -671,7 +671,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -709,7 +709,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -744,7 +744,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -782,7 +782,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -838,7 +838,7 @@
         </dl>
 	</details>
 	<br />
-	<details>
+	<details class='property-group'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -888,7 +888,7 @@
 </div>
 <h3 id="unicode-blocks">Unicode Blocks</h3>
 <div>
-	<details class=True>
+	<details open class='api-endpoints'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">
@@ -941,7 +941,7 @@
 </div>
 <h3 id="unicode-planes">Unicode Planes</h3>
 <div>
-	<details class=True>
+	<details open class='api-endpoints'>
         <summary style="list-style: none; align-items: center">
             <div style="display: flex; gap: 0.75rem; align-items: center; justify-content: space-between; flex: 0; margin: 0 0 0 0.25rem; padding: 0.25rem 1rem 0.25rem 0">
                 <div style="height: 16px; transition: transform 0.3s ease-in">

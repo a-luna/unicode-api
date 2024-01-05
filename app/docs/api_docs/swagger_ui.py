@@ -45,6 +45,7 @@ from app.docs.api_docs.content.intro import (
     SEARCH_HTML,
 )
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
+from app.docs.util import slugify
 
 
 def create_details_element_for_swagger_ui(
@@ -77,11 +78,8 @@ def create_swagger_details_element_with_heading(
 def create_swagger_details_element_for_property_group(
     prop_group: str, heading_level: int, content: str, open: bool | None = False
 ) -> str:
-    id = prop_group.replace("-", "").replace(" ", "-").lower()
-    title = f'<h{heading_level} id="{id}">Property Group: {prop_group}</h{heading_level}>'
-    return create_details_element_for_swagger_ui(
-        title=title, content=content, class_name="unicode-property-group", open=open
-    )
+    title = f'<h{heading_level} id="{slugify(prop_group)}">Property Group: {prop_group}</h{heading_level}>'
+    return create_details_element_for_swagger_ui(title=title, content=content, class_name="property-group", open=open)
 
 
 def create_swagger_details_element_for_api_endpoints(content: str, open: bool | None = False) -> str:
