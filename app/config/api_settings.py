@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
 
-import app.schemas.models as db
+import app.db.models as db
 from app.config.dotenv_file import read_dotenv_file
 from app.data.constants import UNICODE_PLANES_DEFAULT, UNICODE_VERSION_RELEASE_DATES
 
