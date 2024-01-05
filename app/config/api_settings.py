@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
 
+import app.schemas.models as db
 from app.config.dotenv_file import read_dotenv_file
 from app.data.constants import UNICODE_PLANES_DEFAULT, UNICODE_VERSION_RELEASE_DATES
 
@@ -137,6 +138,10 @@ class UnicodeApiSettings:
         if burst_enabled:  # pragma: no cover
             rate_limit_settings += f" (+{self.RATE_LIMIT_BURST} request burst allowance)"
         return rate_limit_settings
+
+    def get_unicode_planes_data(self) -> list[db.UnicodePlane]:
+        planes_dict = json.loads(self.PLANES_JSON.read_text()) if self.PLANES_JSON.exists() else UNICODE_PLANES_DEFAULT
+        return [db.UnicodePlane(**plane) for plane in planes_dict]
 
     def init_data_folders(self) -> None:  # pragma: no cover
         self.DB_FOLDER.mkdir(parents=True, exist_ok=True)
