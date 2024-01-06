@@ -77,7 +77,13 @@ class RedisClient:
 
     @property
     def password_discreet(self) -> str:
-        return f'{"*" * self.redis_pw[:-4]}{self.redis_pw[-4:]}' if self.redis_pw else ""
+        if not self.redis_pw:
+            return ""
+        return (
+            f'{"*" * len(self.redis_pw[:-4])}{self.redis_pw[-4:]}'
+            if len(self.redis_pw) > 4
+            else "*" * len(self.redis_pw)
+        )
 
     @property
     def redis_url(self) -> str:
