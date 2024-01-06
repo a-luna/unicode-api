@@ -26,7 +26,9 @@ jobs:
           files: ./docker-bake.hcl
           targets: unicode-api
           push: true
-          set: unicode-api.args.REDIS_PW=${{ secrets.REDIS_PW }}
+          set: |
+            unicode-api.args.REDIS_PW=${{ secrets.REDIS_PW }}
+            unicode-api.args.TEST1=BAKE_SET1
       - name: Deploy unicode-api docker image to dokku
         uses: dokku/github-action@master
         with:
