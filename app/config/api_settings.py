@@ -2,7 +2,6 @@ import json
 from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
-from pprint import pprint
 
 import app.db.models as db
 from app.config.dotenv_file import read_dotenv_file
@@ -197,8 +196,6 @@ def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
         "SERVER_HOST": PROD_API_ROOT,
         "CACHE_HEADER": "X-UnicodeAPI-Cache",
     }
-    print(f"\n\n{'#' * 10} SETTINGS DICT (get_api_settings) {'#' * 10}\n\n")
-    pprint(settings)
     return UnicodeApiSettings(**settings)
 
 
