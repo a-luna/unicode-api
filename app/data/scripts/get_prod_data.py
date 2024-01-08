@@ -11,7 +11,7 @@ from app.data.util import download_file
 def get_prod_data() -> Result[None]:
     result = bootstrap_unicode_data()
     if result.failure or not result.value:
-        return Result.Fail(result.error if result.error else "")
+        return Result.Fail(result.error or "")
     settings = result.value
 
     logger = logging.getLogger("app.api")
