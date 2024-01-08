@@ -182,7 +182,7 @@ class UnicodeApiSettings:
 def get_prod_settings() -> UnicodeApiSettings:  # pragma: no cover
     settings = {
         "ENV": os.environ.get("ENV", "DEV"),
-        "UNICODE_VERSION": os.environ.get("UNICODE_VERSION", get_latest_unicode_version()),
+        "UNICODE_VERSION": "15.1.0",
         "PROJECT_NAME": "Unicode API",
         "API_VERSION": "/v1",
         "REDIS_PW": os.environ.get("REDIS_PW", ""),
