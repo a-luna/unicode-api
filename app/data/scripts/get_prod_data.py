@@ -3,17 +3,13 @@ from pathlib import Path
 from zipfile import ZipFile
 
 from app.config import UnicodeApiSettings
+from app.config.api_settings import get_prod_settings
 from app.core.result import Result
-from app.data.scripts.bootstrap_unicode_data import bootstrap_unicode_data
 from app.data.util import download_file
 
 
 def get_prod_data() -> Result[None]:
-    result = bootstrap_unicode_data()
-    if result.failure or not result.value:
-        return Result.Fail(result.error or "")
-    settings = result.value
-
+    settings = get_prod_settings()
     logger = logging.getLogger("app.api")
     logger.info(
         "Begin Process: Bootstrap Unicode Data (ENV: ${settings.ENV}, UNICODE_VERSION: ${settings.UNICODE_VERSION})"
