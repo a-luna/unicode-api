@@ -13,9 +13,8 @@ from app.data.util import download_file
 def get_prod_data() -> Result[None]:
     settings = get_api_settings()
 
-    print(f"{'#' * 10} API SETTINGS (get_prod_data) {'#' * 10}\n\n")
+    print(f"\n\n{'#' * 10} API SETTINGS (get_prod_data) {'#' * 10}\n\n")
     pprint(asdict(settings))
-    print(f"\n\n{'#' * 34}\n\n")
 
     logger = logging.getLogger("app.api")
     logger.info(

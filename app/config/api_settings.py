@@ -198,9 +198,8 @@ def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
         "SERVER_HOST": PROD_API_ROOT,
         "CACHE_HEADER": "X-UnicodeAPI-Cache",
     }
-    print(f"{'#' * 10} SETTINGS DICT (get_api_settings) {'#' * 10}\n\n")
+    print(f"\n\n{'#' * 10} SETTINGS DICT (get_api_settings) {'#' * 10}\n\n")
     pprint(settings)
-    print(f"\n\n{'#' * 34}\n\n")
     return UnicodeApiSettings(**settings)
 
 

@@ -25,17 +25,18 @@ ENV TEST_HEADER=${TEST_HEADER}
 
 WORKDIR /code
 
-RUN echo $"ENV=$ENV\n\
-PYTHONPATH=.\n\
-UNICODE_VERSION=$UNICODE_VERSION\n\
-REDIS_HOST=$REDIS_HOST\n\
-REDIS_PORT=$REDIS_PORT\n\
-REDIS_DB=$REDIS_DB\n\
-REDIS_PW=$REDIS_PW\n\
-RATE_LIMIT_PER_PERIOD=$RATE_LIMIT_PER_PERIOD\n\
-RATE_LIMIT_PERIOD_SECONDS=$RATE_LIMIT_PERIOD_SECONDS\n\
-RATE_LIMIT_BURST=$RATE_LIMIT_BURST\n\
-TEST_HEADER=$TEST_HEADER" > /code/.env
+RUN touch /code/.env
+RUN echo "ENV=$ENV" >> /code/.env
+RUN echo "PYTHONPATH=." >> /code/.env
+RUN echo "UNICODE_VERSION=$UNICODE_VERSION" >> /code/.env
+RUN echo "REDIS_HOST=$REDIS_HOST" >> /code/.env
+RUN echo "REDIS_PORT=$REDIS_PORT" >> /code/.env
+RUN echo "REDIS_DB=$REDIS_DB" >> /code/.env
+RUN echo "REDIS_PW=$REDIS_PW" >> /code/.env
+RUN echo "RATE_LIMIT_PER_PERIOD=$RATE_LIMIT_PER_PERIOD" >> /code/.env
+RUN echo "RATE_LIMIT_PERIOD_SECONDS=$RATE_LIMIT_PERIOD_SECONDS" >> /code/.env
+RUN echo "RATE_LIMIT_BURST=$RATE_LIMIT_BURST" >> /code/.env
+RUN echo "TEST_HEADER=$TEST_HEADER" >> /code/.env
 
 RUN pip install -U pip setuptools wheel
 COPY ./requirements.txt /code/requirements.txt
