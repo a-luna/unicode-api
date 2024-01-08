@@ -1,4 +1,5 @@
-FROM python:3.11
+FROM python:3.
+SHELL ["/bin/bash", "-c"]
 
 ARG ENV
 ARG UNICODE_VERSION
@@ -23,6 +24,19 @@ ENV RATE_LIMIT_BURST=${RATE_LIMIT_BURST}
 ENV TEST_HEADER=${TEST_HEADER}
 
 WORKDIR /code
+
+RUN echo $'ENV=${ENV}\n\
+PYTHONPATH=.\n\
+UNICODE_VERSION=${UNICODE_VERSION}\n\
+REDIS_HOST=${REDIS_HOST}\n\
+REDIS_PORT=${REDIS_PORT}\n\
+REDIS_DB=${REDIS_DB}\n\
+REDIS_PW=${REDIS_PW}\n\
+RATE_LIMIT_PER_PERIOD=${RATE_LIMIT_PER_PERIOD}\n\
+RATE_LIMIT_PERIOD_SECONDS=${RATE_LIMIT_PERIOD_SECONDS}\n\
+RATE_LIMIT_BURST=${RATE_LIMIT_BURST}\n\
+TEST_HEADER=${TEST_HEADER}' > /code/.env
+
 RUN pip install -U pip setuptools wheel
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
