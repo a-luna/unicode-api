@@ -3,6 +3,7 @@ import os
 from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
+from pprint import pprint
 
 import app.db.models as db
 from app.config.dotenv_file import read_dotenv_file
@@ -179,26 +180,6 @@ class UnicodeApiSettings:
                 self.PLANES_CSV.unlink()
 
 
-def get_prod_settings() -> UnicodeApiSettings:  # pragma: no cover
-    settings = {
-        "ENV": os.environ.get("ENV", "DEV"),
-        "UNICODE_VERSION": "15.1.0",
-        "PROJECT_NAME": "Unicode API",
-        "API_VERSION": "/v1",
-        "REDIS_PW": os.environ.get("REDIS_PW", ""),
-        "REDIS_HOST": os.environ.get("REDIS_HOST", ""),
-        "REDIS_PORT": int(os.environ.get("REDIS_PORT", "6379")),
-        "REDIS_DB": int(os.environ.get("REDIS_DB", "0")),
-        "RATE_LIMIT_PER_PERIOD": int(os.environ.get("RATE_LIMIT_PER_PERIOD", "1")),
-        "RATE_LIMIT_PERIOD_SECONDS": timedelta(seconds=int(os.environ.get("RATE_LIMIT_PERIOD_SECONDS", "100"))),
-        "RATE_LIMIT_BURST": int(os.environ.get("RATE_LIMIT_BURST", "10")),
-        "SERVER_NAME": "unicode-api.aaronluna.dev",
-        "SERVER_HOST": PROD_API_ROOT,
-        "CACHE_HEADER": "X-UnicodeAPI-Cache",
-    }
-    return UnicodeApiSettings(**settings)
-
-
 def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
     env_vars = read_dotenv_file(DOTENV_FILE)
     settings = {
@@ -217,6 +198,9 @@ def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
         "SERVER_HOST": PROD_API_ROOT,
         "CACHE_HEADER": "X-UnicodeAPI-Cache",
     }
+    print(f"{'#' * 10} SETTINGS DICT (get_api_settings) {'#' * 10}\n\n")
+    pprint(settings)
+    print(f"\n\n{'#' * 34}\n\n")
     return UnicodeApiSettings(**settings)
 
 

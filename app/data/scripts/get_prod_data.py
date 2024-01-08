@@ -1,15 +1,22 @@
 import logging
+from dataclasses import asdict
 from pathlib import Path
+from pprint import pprint
 from zipfile import ZipFile
 
 from app.config import UnicodeApiSettings
-from app.config.api_settings import get_prod_settings
+from app.config.api_settings import get_api_settings
 from app.core.result import Result
 from app.data.util import download_file
 
 
 def get_prod_data() -> Result[None]:
-    settings = get_prod_settings()
+    settings = get_api_settings()
+
+    print(f"{'#' * 10} API SETTINGS (get_prod_data) {'#' * 10}\n\n")
+    pprint(asdict(settings))
+    print(f"\n\n{'#' * 34}\n\n")
+
     logger = logging.getLogger("app.api")
     logger.info(
         "Begin Process: Bootstrap Unicode Data (ENV: ${settings.ENV}, UNICODE_VERSION: ${settings.UNICODE_VERSION})"
