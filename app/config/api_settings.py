@@ -199,7 +199,7 @@ def get_prod_settings() -> UnicodeApiSettings:  # pragma: no cover
     return UnicodeApiSettings(**settings)
 
 
-def get_dev_settings() -> UnicodeApiSettings:  # pragma: no cover
+def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
     env_vars = read_dotenv_file(DOTENV_FILE)
     settings = {
         "ENV": env_vars.get("ENV", "DEV"),
