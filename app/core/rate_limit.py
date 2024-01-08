@@ -102,7 +102,7 @@ class RateLimit:
 
     def rate_limit_is_required(self, request: Request):
         if self.settings.is_prod or self.settings.is_dev:  # pragma: no cover
-            return requested_route_is_rate_limited(request)
+            return request_origin_is_external(request) and requested_route_is_rate_limited(request)
         return rate_limit_feature_is_under_test(request)
 
     def get_allowed_at(self, tat: float) -> float:
@@ -143,6 +143,14 @@ def rate_limit_feature_is_under_test(request: Request) -> bool:
         if isinstance(ac_request_headers) == dict and "x-verify-rate-limiting" in ac_request_headers:
             return ac_request_headers["x-verify-rate-limiting"] == "true"
     return False  # pragma: no cover
+
+
+def request_origin_is_external(request: Request) -> bool:
+    if "localhost" in request.client.host:
+        return False
+    if "sec-fetch-site" in request.headers:
+        return request.headers["sec-fetch-site"] != "same-site"
+    return True
 
 
 def requested_route_is_rate_limited(request: Request):  # pragma: no cover
