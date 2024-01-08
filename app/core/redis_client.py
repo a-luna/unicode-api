@@ -76,19 +76,9 @@ class RedisClient:
         self.logger.info(f"Redis URL: {self.redis_url}")
 
     @property
-    def password_discreet(self) -> str:
-        if not self.redis_pw:
-            return ""
-        return (
-            f'{"*" * len(self.redis_pw[:-4])}{self.redis_pw[-4:]}'
-            if len(self.redis_pw) > 4
-            else "*" * len(self.redis_pw)
-        )
-
-    @property
     def redis_url(self) -> str:
         return (
-            f"redis://:{self.password_discreet}@{self.redis_host}:{self.redis_host_port}/{self.redis_db}"
+            f"redis://:{self.redis_pw}@{self.redis_host}:{self.redis_host_port}/{self.redis_db}"
             if self.redis_pw
             else f"redis://{self.redis_host}:{self.redis_host_port}/{self.redis_db}"
         )
