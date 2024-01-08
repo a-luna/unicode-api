@@ -6,12 +6,8 @@ variable "REDIS_PW" {
   default = ""
 }
 
-variable "TEST1" {
-  default = "NOT_SECRET1"
-}
-
-variable "TEST2" {
-  default = "NOT_SECRET2"
+variable "UNICODE_VERSION" {
+  default = ""
 }
 
 target "unicode-api" {
@@ -19,16 +15,14 @@ target "unicode-api" {
     tags = ["ghcr.io/a-luna/unicode-api:${GITHUB_SHA}"]
     args = {
         ENV="PROD"
-        UNICODE_VERSION="14.0.0"
+        UNICODE_VERSION="${UNICODE_VERSION}"
         REDIS_HOST="dokku-redis-vig-cache"
         REDIS_PORT="6379"
         REDIS_DB="1"
         REDIS_PW="${REDIS_PW}"
-        RATE_LIMIT_PER_PERIOD="45"
-        RATE_LIMIT_PERIOD_SECONDS="55"
-        RATE_LIMIT_BURST="5"
+        RATE_LIMIT_PER_PERIOD="50"
+        RATE_LIMIT_PERIOD_SECONDS="60"
+        RATE_LIMIT_BURST="10"
         TEST_HEADER="X-UnicodeAPI-Test"
-        TEST1="${TEST1}"
-        TEST2="${TEST2}"
     }
 }
