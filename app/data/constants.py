@@ -170,7 +170,29 @@ NULL_PLANE = {
     "total_defined": 0,
 }
 
-UNICODE_VERSION_RELEASE_DATES = {
+UNSUPPORTED_UNICODE_VERSION_RELEASE_DATES = {
+    "1.0.0": date(1991, 10, 1),
+    "1.0.1": date(1992, 6, 1),
+    "1.1.0": date(1993, 6, 1),
+    "1.1.5": date(1995, 7, 1),
+    "2.0.0": date(1996, 7, 1),
+    "2.1.2": date(1998, 5, 1),
+    "2.1.5": date(1998, 8, 1),
+    "2.1.8": date(1998, 12, 1),
+    "2.1.9": date(1999, 4, 1),
+    "3.0.0": date(1999, 9, 1),
+    "3.0.1": date(2000, 8, 1),
+    "3.1.0": date(2001, 3, 1),
+    "3.1.1": date(2001, 8, 1),
+    "3.2.0": date(2002, 3, 1),
+    "4.0.0": date(2003, 4, 1),
+    "4.0.1": date(2004, 3, 1),
+    "4.1.0": date(2005, 3, 31),
+    "5.0.0": date(2006, 7, 14),
+}
+
+
+SUPPORTED_UNICODE_VERSION_RELEASE_DATES = {
     "5.1.0": date(2008, 4, 4),
     "5.2.0": date(2009, 10, 1),
     "6.0.0": date(2010, 10, 11),
@@ -190,7 +212,8 @@ UNICODE_VERSION_RELEASE_DATES = {
     "15.1.0": date(2023, 9, 12),
 }
 
-SUPPORTED_UNICODE_VERSIONS = list(UNICODE_VERSION_RELEASE_DATES.keys())
+UNICODE_VERSION_RELEASE_DATES = UNSUPPORTED_UNICODE_VERSION_RELEASE_DATES | SUPPORTED_UNICODE_VERSION_RELEASE_DATES
+SUPPORTED_UNICODE_VERSIONS = list(SUPPORTED_UNICODE_VERSION_RELEASE_DATES.keys())
 
 NON_CHARACTER_CODEPOINTS = [
     64976,

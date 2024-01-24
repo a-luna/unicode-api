@@ -1,4 +1,10 @@
+from sqlalchemy import distinct, select
+from sqlalchemy.exc import OperationalError
+from sqlmodel import Session
+
+import app.db.models as db
 from app.data.cache import cached_data
+from app.db.engine import engine
 from app.docs.util import slugify
 from app.schemas.enums import (
     BidirectionalClass,
@@ -11,7 +17,8 @@ from app.schemas.enums import (
     NumericType,
     ScriptCode,
 )
-from app.schemas.enums.unicode_age import UnicodeAge
+
+CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 
 GENERAL_CATEGORY_VALUES_TABLE = """
 <div class="filter-table-outer">
@@ -330,13 +337,43 @@ def create_table_listing_enum_values(
     return html
 
 
+def create_table_listing_unicode_versions() -> str:
+    versions = []
+    with Session(engine) as session:
+        try:
+            for query in [select(distinct(table.age)) for table in CHAR_TABLES]:
+                results = session.scalars(query).all()
+                versions.extend(float(ver) for ver in results)
+            versions = [str(ver) for ver in sorted(set(versions))]
+        except OperationalError:
+            return ""
+
+    html = """
+<div class="filter-table-outer">
+    <div class="filter-table-wrapper">
+        <table id="age-values">
+            <tbody>
+                <tr>
+                    <th>Unicode Version Number</th>
+                </tr>"""
+    for ver in versions:
+        html += f"""
+                <tr>
+                    <td>{ver}</td>
+                </tr>"""
+    html += """
+            </tbody>
+        </table>
+    </div>
+</div>"""
+    return html
+
+
 PLANE_ABBREV_VALUES_TABLE = create_table_listing_unicode_plane_abbreviations()
 BLOCK_NAME_VALUES_TABLE = create_table_listing_unicode_block_names()
 BLOCK_NAME_NO_LEGEND_TABLE = create_table_listing_unicode_block_names(has_legend=False)
 PROPERTY_GROUP_VALUES_TABLE = create_table_listing_prop_group_names()
-UNICODE_AGE_VALUES_TABLE = create_table_listing_enum_values(
-    UnicodeAge, "age", "Unicode Version Number", "value", hide_column_2=True
-)
+UNICODE_AGE_VALUES_TABLE = create_table_listing_unicode_versions()
 SCRIPT_CODE_VALUES_TABLE = create_table_listing_enum_values(ScriptCode, "script", column_2_text="Script Name")
 BIDI_CLASS_VALUES_TABLE = create_table_listing_enum_values(
     BidirectionalClass, "bidi_class", column_2_text="Bidirectional Class"
