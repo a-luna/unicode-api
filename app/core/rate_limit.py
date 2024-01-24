@@ -81,9 +81,9 @@ class RateLimit:
         Adapted for Python from this article:
         https://vikas-kumar.medium.com/rate-limiting-techniques-245c3a5e9cad
         """
-        if not (request.client and self.rate_limit_is_required(request)):
+        if self.rate_limit_not_required(request):
             return Result.Ok()
-        client_ip = request.client.host
+        client_ip = request.client.host if request.client else "localhost"
         arrived_at = self.redis.time()
         self.redis.setnx(client_ip, "0")
         try:
@@ -100,10 +100,10 @@ class RateLimit:
         except LockError:  # pragma: no cover
             return self.lock_error(client_ip)
 
-    def rate_limit_is_required(self, request: Request):
+    def rate_limit_not_required(self, request: Request):
         if self.settings.is_prod or self.settings.is_dev:  # pragma: no cover
-            return request_origin_is_external(request) and requested_route_is_rate_limited(request)
-        return rate_limit_feature_is_under_test(request)
+            return request_origin_is_internal(request) and requested_route_is_not_rate_limited(request)
+        return not rate_limit_feature_is_under_test(request)
 
     def get_allowed_at(self, tat: float) -> float:
         return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
@@ -145,16 +145,16 @@ def rate_limit_feature_is_under_test(request: Request) -> bool:
     return False  # pragma: no cover
 
 
-def request_origin_is_external(request: Request) -> bool:
+def request_origin_is_internal(request: Request) -> bool:  # pragma: no cover
     if "localhost" in request.client.host:
-        return False
+        return True
     if "sec-fetch-site" in request.headers:
-        return request.headers["sec-fetch-site"] != "same-site"
-    return True
+        return request.headers["sec-fetch-site"] == "same-site"
+    return False
 
 
-def requested_route_is_rate_limited(request: Request):  # pragma: no cover
-    return RATE_LIMIT_ROUTE_REGEX.search(request.url.path)
+def requested_route_is_not_rate_limited(request: Request):  # pragma: no cover
+    return not RATE_LIMIT_ROUTE_REGEX.search(request.url.path)
 
 
 def get_time_portion(ts: float) -> str:
