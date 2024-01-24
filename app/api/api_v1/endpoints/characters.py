@@ -105,9 +105,7 @@ def filter_unicode_characters(
 def get_unicode_character_details(
     db_ctx: Annotated[DBSession, Depends(get_session)],
     string: Annotated[str, Path(description=UNICODE_CHAR_STRING_DESCRIPTION)],
-    show_props: Annotated[
-        list[str] | None, Query(description=get_description_and_values_table_for_property_group())
-    ] = None,
+    show_props: Annotated[list[str], Query(description=get_description_and_values_table_for_property_group())] = None,
     verbose: Annotated[bool | None, Query(description=VERBOSE_DESCRIPTION)] = None,
 ):
     if show_props:

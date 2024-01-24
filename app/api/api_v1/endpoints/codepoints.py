@@ -25,9 +25,7 @@ router = APIRouter()
 def get_unicode_character_at_codepoint(
     db_ctx: Annotated[DBSession, Depends(get_session)],
     hex: Annotated[str, Path(description=CODEPOINT_PATH_PARAM_DESSCRIPTION)],
-    show_props: Annotated[
-        list[str] | None, Query(description=get_description_and_values_table_for_property_group())
-    ] = None,
+    show_props: Annotated[list[str], Query(description=get_description_and_values_table_for_property_group())] = None,
     verbose: Annotated[bool | None, Query(description=VERBOSE_DESCRIPTION)] = None,
 ):
     codepoint_dec = get_decimal_number_from_hex_codepoint(hex)
