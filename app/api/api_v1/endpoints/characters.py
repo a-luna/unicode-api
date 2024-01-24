@@ -76,6 +76,11 @@ def search_unicode_characters_by_name(
 def filter_unicode_characters(
     db_ctx: Annotated[DBSession, Depends(get_session)], filter_parameters: Annotated[FilterParameters, Depends()]
 ):
+    if not filter_parameters.settings:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No filter settings were specified in the request.",
+        )
     response_data = {
         "url": f"{get_settings().API_VERSION}/characters/filter",
         "filter_settings": filter_parameters.settings,
