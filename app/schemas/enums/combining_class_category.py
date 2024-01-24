@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from enum import IntEnum
+from typing import Self
 
 
 class CombiningClassCategory(IntEnum):
@@ -79,8 +78,8 @@ class CombiningClassCategory(IntEnum):
         return f"{self.value}"
 
     @classmethod
-    def match_loosely(cls, code: str) -> CombiningClassCategory:
+    def match_loosely(cls, value: str) -> Self:
         try:
-            return cls(int(code))
+            return cls(int(value))
         except ValueError:
             return cls.NOT_REORDERED

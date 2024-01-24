@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from enum import IntFlag, auto
+from typing import Self
 
 from app.schemas.util import normalize_string_lm3
 
@@ -158,6 +157,6 @@ class GeneralCategory(IntFlag):
         return [v.code for v in values] if values else [self.code]
 
     @classmethod
-    def match_loosely(cls, name: str) -> GeneralCategory:
+    def match_loosely(cls, value: str) -> Self:
         gen_category_map = {normalize_string_lm3(code): category for code, category in cls.code_map().items()}
-        return gen_category_map.get(normalize_string_lm3(name), cls.NONE)
+        return gen_category_map.get(normalize_string_lm3(value), cls.NONE)

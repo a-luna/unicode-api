@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from enum import IntEnum, auto
+from typing import Self
 
 from app.schemas.util import normalize_string_lm3
 
@@ -85,7 +84,7 @@ class CharPropertyGroup(IntEnum):
         return self.normalized != self.short_alias
 
     @classmethod
-    def get_all_non_unihan_character_prop_groups(cls) -> list[CharPropertyGroup]:
+    def get_all_non_unihan_character_prop_groups(cls) -> list[Self]:
         return [
             prop_group
             for prop_group in cls
@@ -102,12 +101,12 @@ class CharPropertyGroup(IntEnum):
         ]
 
     @classmethod
-    def get_all_unihan_character_prop_groups(cls) -> list[CharPropertyGroup]:
+    def get_all_unihan_character_prop_groups(cls) -> list[Self]:
         return [prop_group for prop_group in cls if prop_group not in [cls.ALL, cls.NONE, cls.MINIMUM, cls.BASIC]]
 
     @classmethod
-    def match_loosely(cls, name: str) -> CharPropertyGroup:
+    def match_loosely(cls, value: str) -> Self:
         prop_names = {e.normalized: e for e in cls if e != cls.NONE}
         prop_aliases = {normalize_string_lm3(e.short_alias): e for e in cls}
         prop_names.update(prop_aliases)
-        return prop_names.get(normalize_string_lm3(name), cls.NONE)
+        return prop_names.get(normalize_string_lm3(value), cls.NONE)

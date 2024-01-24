@@ -35,6 +35,6 @@ class BidirectionalBracketType(IntEnum):
         return code_map.get(code, cls.NONE)
 
     @classmethod
-    def match_loosely(cls, code: str) -> Self:
+    def match_loosely(cls, value: str) -> Self:
         code_map = {e.code: e for e in cls}
-        return code_map.get(normalize_string_lm3(code), cls.NONE)
+        return code_map.get(normalize_string_lm3(value), cls.NONE)

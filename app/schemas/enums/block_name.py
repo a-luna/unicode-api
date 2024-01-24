@@ -19,14 +19,14 @@ def _match_loosely(name, values) -> db.UnicodeBlock:
 
 
 @classmethod
-def match_loosely_block_name_get_block_id(cls, name: str) -> int:
-    block = _match_loosely(name, list(cls))
+def match_loosely_block_name_get_block_id(cls, value: str) -> int:
+    block = _match_loosely(value, list(cls))
     return block.id if block and block.id else 0
 
 
 @classmethod
-def match_loosely_block_name_get_block(cls, name: str) -> db.UnicodeBlock | None:
-    return _match_loosely(name, list(cls))
+def match_loosely_block_name_get_block(cls, value: str) -> db.UnicodeBlock | None:
+    return _match_loosely(value, list(cls))
 
 
 UnicodeBlockName.match_loosely = match_loosely_block_name_get_block_id

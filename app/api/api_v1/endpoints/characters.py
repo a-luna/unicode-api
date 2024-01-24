@@ -11,7 +11,7 @@ from app.api.api_v1.dependencies import (
     UnicodeBlockQueryParamResolver,
     get_session,
 )
-from app.api.api_v1.dependencies.filter_param_matcher import FilterParameterMatcher
+from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matcher
 from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
 from app.config import get_settings
@@ -24,7 +24,6 @@ from app.docs.dependencies.custom_parameters import (
 )
 from app.schemas.enums import CharPropertyGroup
 
-PropertyGroupMatcher = FilterParameterMatcher[CharPropertyGroup]("show_props", CharPropertyGroup)
 router = APIRouter()
 
 
@@ -112,7 +111,7 @@ def get_unicode_character_details(
     verbose: Annotated[bool | None, Query(description=VERBOSE_DESCRIPTION)] = None,
 ):
     if show_props:
-        result = PropertyGroupMatcher.parse_enum_values(show_props)
+        result = filter_param_matcher[CharPropertyGroup].parse_enum_values(show_props)
         if result.failure:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
         prop_groups = result.value

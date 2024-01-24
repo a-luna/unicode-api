@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Self
 
 from app.data.constants import UNICODE_VERSION_RELEASE_DATES
 
@@ -8,13 +9,13 @@ UnicodeAge = Enum(
 
 
 @classmethod
-def match_loosely_unicode_version(cls, ver: str):
+def match_loosely_unicode_version(cls, value: str) -> Self:
     version_map = {}
     for e in cls:
         version_map[e.value] = e.value
         if e.value.endswith(".0"):
             version_map[e.value[:-2]] = e.value
-    return version_map.get(ver)
+    return version_map.get(value)
 
 
 def __str__(self) -> str:  # noqa: N807

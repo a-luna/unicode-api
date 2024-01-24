@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from enum import IntFlag, auto
+from typing import Self
 
 from app.data.constants import CHAR_FLAG_MAP
 from app.schemas.util import normalize_string_lm3
@@ -87,8 +86,8 @@ class CharacterFilterFlags(IntFlag):
         return flag in cls.EMOJI_GROUP
 
     @classmethod
-    def match_loosely(cls, name: str) -> CharacterFilterFlags:
+    def match_loosely(cls, value: str) -> Self:
         flag_name_map = {flag.normalized: flag for flag in cls if flag != cls.NONE}
         flag_name_alias_map = {normalize_string_lm3(flag.short_alias): flag for flag in cls if flag != cls.NONE}
         flag_name_map.update(flag_name_alias_map)
-        return flag_name_map.get(normalize_string_lm3(name), cls.NONE)
+        return flag_name_map.get(normalize_string_lm3(value), cls.NONE)
