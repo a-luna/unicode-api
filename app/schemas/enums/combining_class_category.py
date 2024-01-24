@@ -74,6 +74,10 @@ class CombiningClassCategory(IntEnum):
     def display_name(self) -> str:
         return f"{self} ({self.value})"
 
+    @property
+    def code(self) -> str:
+        return f"{self.value}"
+
     @classmethod
     def match_loosely(cls, code: str) -> CombiningClassCategory:
         try:
