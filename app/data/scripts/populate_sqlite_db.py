@@ -2,7 +2,6 @@ from pathlib import Path
 from types import NoneType
 
 from pydantic import ValidationError
-from pydantic.fields import FieldInfo
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import StatementError
 from sqlalchemy.sql import text
@@ -118,7 +117,7 @@ def import_data_from_csv_file(
         return Result.Ok()
 
 
-def get_column_names_and_total_rows(csv_file: Path) -> list[setattr]:
+def get_column_names_and_total_rows(csv_file: Path) -> tuple[list[str], int]:
     csv_rows = csv_file.read_text().split("\n")
     column_names = [col.strip() for col in csv_rows.pop(0).split(",")]
     return (column_names, len(csv_rows))
@@ -127,7 +126,6 @@ def get_column_names_and_total_rows(csv_file: Path) -> list[setattr]:
 def create_object_dict_with_expected_types(
     column_names: list[str], csv_values: list[str], table: UnicodeModel
 ) -> Result[dict]:
-    object_dict = dict(zip(column_names, csv_values))
     enum_types = (
         BidirectionalBracketType,
         BidirectionalClass,
@@ -142,30 +140,24 @@ def create_object_dict_with_expected_types(
         TriadicLogic,
         VerticalOrientationType,
     )
-    enum_props = [p for p, f in table.model_fields.items() if f.annotation in enum_types]
-    int_props = [p for p, f in table.model_fields.items() if f.annotation in [int, int | NoneType]]
-    str_props = [p for p, f in table.model_fields.items() if f.annotation in [str, str | NoneType]]
-    bool_props = [p for p, f in table.model_fields.items() if f.annotation in [bool, bool | NoneType]]
-    found_props = enum_props + int_props + str_props + bool_props
-    missing_props = [p for p in object_dict if p not in found_props]
-    if missing_props:
-        prop_list = ", ".join(get_property_type(p, f) for p, f in table.model_fields.items() if p in missing_props)
-        return Result.Fail(f"Error! Database model {table.name} has properties not accounted for: {prop_list}")
-
-    for name, value in object_dict.items():
-        if name in enum_props or name in int_props:
-            prop_value = object_dict.get(name)
-            object_dict[name] = int(prop_value) if prop_value else None
-        if name in bool_props:
+    object_dict = {}
+    for name, value in dict(zip(column_names, csv_values)).items():
+        if name not in table.model_fields:
+            return Result.Fail(f"Error! Database model {table.name} has no property named {name}")
+        prop_type = table.model_fields[name].annotation
+        if prop_type in enum_types or prop_type in [int, int | NoneType]:
+            try:
+                object_dict[name] = int(value)
+            except ValueError:
+                object_dict[name] = None
+        elif prop_type in [bool, bool | NoneType]:
             if "True" in value:
                 object_dict[name] = True
             if "False" in value:
                 object_dict[name] = False
+        else:
+            object_dict[name] = value
     return Result.Ok(object_dict)
-
-
-def get_property_type(name: str, field_info: FieldInfo):
-    return f"{name} ({field_info.annotation.__name__}))"
 
 
 def perform_batch_insert(session: Session, batch: list[UnicodeModel]) -> Result[None]:
