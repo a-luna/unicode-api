@@ -1,9 +1,9 @@
 from typing import Any
 
-from sqlalchemy import column, or_, select, true
 from sqlalchemy.engine import Engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.sql import Select
-from sqlmodel import Session
+from sqlmodel import Session, column, distinct, or_, select, true
 
 import app.db.models as db
 from app.api.api_v1.dependencies.filter_params import FilterParameters
@@ -24,6 +24,16 @@ class DBSession:
     def __init__(self, session: Session, engine: Engine):
         self.session = session
         self.engine = engine
+
+    def all_unicode_versions(self):
+        try:
+            versions = []
+            for query in [select(distinct(table.age)) for table in CHAR_TABLES]:
+                results = self.session.scalars(query).all()
+                versions.extend(float(ver) for ver in results)
+            return [str(ver) for ver in sorted(set(versions))]
+        except OperationalError:
+            return []
 
     def get_character_properties(
         self, codepoint: int, show_props: list[CharPropertyGroup] | None, verbose: bool

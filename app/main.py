@@ -45,7 +45,6 @@ def init_unicode_data():
     _ = cached_data.non_unihan_character_name_map
     _ = cached_data.blocks
     _ = cached_data.planes
-    _ = cached_data.all_unicode_versions
 
 
 def simplify_operation_ids(app: FastAPI) -> None:
