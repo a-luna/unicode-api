@@ -1,6 +1,5 @@
-from sqlalchemy import distinct, select
 from sqlalchemy.exc import OperationalError
-from sqlmodel import Session
+from sqlmodel import Session, distinct, select
 
 import app.db.models as db
 from app.data.cache import cached_data
