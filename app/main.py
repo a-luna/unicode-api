@@ -10,8 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
-from app.config import get_settings
-from app.config.api_settings import UnicodeApiSettings
+from app.config.api_settings import UnicodeApiSettings, get_settings
 from app.core.logging import LOGGING_CONFIG
 from app.core.rate_limit import rate_limit
 from app.core.redis_client import redis
@@ -45,7 +44,6 @@ def init_unicode_data():
     _ = cached_data.non_unihan_character_name_map
     _ = cached_data.blocks
     _ = cached_data.planes
-    _ = cached_data.all_unicode_versions
 
 
 def simplify_operation_ids(app: FastAPI) -> None:

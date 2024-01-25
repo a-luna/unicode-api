@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from enum import IntEnum, auto
+from typing import Self
 
 from app.schemas.util import normalize_string_lm3
 
@@ -31,12 +30,8 @@ class BidirectionalClass(IntEnum):
     FIRST_STRONG_ISOLATE = auto()
     POP_DIRECTIONAL_ISOLATE = auto()
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.name.replace("_", " ").title()
-
-    @property
-    def normalized(self) -> str:
-        return normalize_string_lm3(self.code)
 
     @property
     def display_name(self) -> str:
@@ -72,7 +67,7 @@ class BidirectionalClass(IntEnum):
         return code_map.get(self.name, "")
 
     @classmethod
-    def from_code(cls, code):  # pragma: no cover
+    def from_code(cls, code) -> Self:  # pragma: no cover
         code_map = {
             "L": cls.LEFT_TO_RIGHT,
             "R": cls.RIGHT_TO_LEFT,
@@ -101,6 +96,6 @@ class BidirectionalClass(IntEnum):
         return code_map.get(code, cls.NONE)
 
     @classmethod
-    def match_loosely(cls, name: str) -> BidirectionalClass:
-        bidi_class_map = {e.normalized: e for e in cls}
-        return bidi_class_map.get(normalize_string_lm3(name), cls.NONE)
+    def match_loosely(cls, value: str) -> Self:
+        bidi_class_map = {normalize_string_lm3(e.code): e for e in cls}
+        return bidi_class_map.get(normalize_string_lm3(value), cls.NONE)

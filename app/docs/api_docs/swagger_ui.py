@@ -5,7 +5,7 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.openapi.docs import swagger_ui_default_parameters
 from starlette.responses import HTMLResponse
 
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.docs.api_docs.content.block import BLOCK_ENDPOINTS, UNICODE_BLOCK_OBJECT_INTRO, UNICODE_BLOCK_OBJECT_PROPERTIES
 from app.docs.api_docs.content.character import (
     CHARACTER_ENDPOINTS,

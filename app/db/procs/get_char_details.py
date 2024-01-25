@@ -2,8 +2,8 @@ import operator
 from functools import reduce
 from typing import Any
 
-from sqlalchemy import column, select
 from sqlalchemy.engine import Engine
+from sqlmodel import column, select
 
 import app.db.models as db
 from app.data.cache import cached_data

@@ -3,16 +3,6 @@ from sqlmodel import Field, Relationship
 from app.schemas.models.camel_model import CamelModel
 
 
-class UnicodeBlockBase(CamelModel):
-    name: str = Field(index=True)
-    start: str
-    finish: str
-    total_allocated: int
-    total_defined: int
-
-    plane_id: int = Field(foreign_key="plane.id")
-
-
 class UnicodeBlockResponse(CamelModel):
     id: int | None
     name: str = Field(index=True)
@@ -31,13 +21,19 @@ class UnicodeBlockResult(UnicodeBlockResponse):
         return f"{name} ({self.start}...{self.finish})"
 
 
-class UnicodeBlock(UnicodeBlockBase, table=True):
+class UnicodeBlock(CamelModel, table=True):
     __tablename__ = "block"  # type: ignore  # noqa: PGH003
 
     id: int | None = Field(default=None, primary_key=True)
+    name: str = Field(index=True)
+    start: str
+    finish: str
     start_dec: int
     finish_dec: int
+    total_allocated: int
+    total_defined: int
 
+    plane_id: int = Field(foreign_key="plane.id")
     plane: "UnicodePlane" = Relationship(back_populates="blocks")  # type: ignore  # noqa: PGH003
     characters: list["UnicodeCharacter"] = Relationship(back_populates="block")  # type: ignore  # noqa: PGH003
     characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="block")  # type: ignore  # noqa: PGH003

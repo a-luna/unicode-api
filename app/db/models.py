@@ -9,3 +9,5 @@ from app.schemas.models.character import (
 )
 from app.schemas.models.pagination import PaginatedList, PaginatedSearchResults
 from app.schemas.models.plane import UnicodePlane, UnicodePlaneResponse
+
+CHAR_TABLES = [UnicodeCharacter, UnicodeCharacterUnihan]

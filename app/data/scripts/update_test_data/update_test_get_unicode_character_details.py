@@ -1,11 +1,11 @@
 import json
 from typing import Any
 
-from app.config import UnicodeApiSettings
+from app.config.api_settings import UnicodeApiSettings
 from app.core.result import Result
 from app.data.scripts.update_test_data.util import pythonize_that_json
 from app.db.engine import engine
-from app.db.procs import get_character_properties
+from app.db.procs.get_char_details import get_character_properties
 from app.schemas.enums import CharPropertyGroup
 from app.schemas.util import to_lower_camel
 

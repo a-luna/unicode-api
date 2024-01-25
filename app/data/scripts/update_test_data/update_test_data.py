@@ -1,4 +1,4 @@
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.core.result import Result
 from app.data.scripts.update_test_data.update_test_get_unicode_character_details import (
     update_test_get_unicode_character_details,

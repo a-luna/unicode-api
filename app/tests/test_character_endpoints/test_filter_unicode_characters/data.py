@@ -14,6 +14,8 @@ FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT = {
     ],
 }
 
+INVALID_NO_FILTER_SETTINGS = {"detail": "No filter settings were specified in the request."}
+
 INVALID_PAGE_NUMBER = {"detail": "Request for page #2 is invalid since there is only 1 total page."}
 
 NO_CHARS_MATCH_SETTINGS = {

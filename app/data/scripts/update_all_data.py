@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
-from app.config import UnicodeApiSettings
+from app.config.api_settings import UnicodeApiSettings
 from app.core.result import Result
 from app.data.scripts import (
     bootstrap_unicode_data,

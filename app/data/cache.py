@@ -2,12 +2,9 @@ import itertools
 from functools import cache, cached_property
 
 from rapidfuzz import process
-from sqlalchemy import distinct, select
-from sqlalchemy.exc import OperationalError
-from sqlmodel import Session
 
 import app.db.models as db
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,
     ALL_UNICODE_CODEPOINTS,
@@ -18,7 +15,6 @@ from app.data.constants import (
     NULL_BLOCK,
     NULL_PLANE,
 )
-from app.db.engine import engine
 from app.schemas.enums import UnassignedCharacterType
 
 CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
@@ -188,18 +184,6 @@ class UnicodeDataCache:
         # noncharacters and surrogate code points).
         # source: https://en.wikipedia.org/wiki/Unicode#cite_ref-25
         return sum(plane.total_defined for plane in self.planes) - len(self.all_control_character_codepoints)
-
-    @cached_property
-    def all_unicode_versions(self):
-        try:
-            with Session(engine) as session:
-                versions = []
-                for query in [select(distinct(table.age)) for table in CHAR_TABLES]:
-                    results = session.scalars(query).all()
-                    versions.extend(float(ver) for ver in results)
-                return [str(ver) for ver in sorted(set(versions))]
-        except OperationalError:
-            return []
 
     @property
     def unicode_version(self) -> str:

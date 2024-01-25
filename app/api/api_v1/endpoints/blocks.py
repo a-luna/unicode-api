@@ -10,7 +10,7 @@ from app.api.api_v1.dependencies import (
     UnicodePlaneResolver,
 )
 from app.api.api_v1.pagination import paginate_search_results
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.data.cache import cached_data
 
 router = APIRouter()

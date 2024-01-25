@@ -3,7 +3,7 @@ from sqlalchemy import event
 from sqlmodel import create_engine
 
 import app.db.models as db
-from app.config import get_settings
+from app.config.api_settings import get_settings
 
 
 def _fk_pragma_on_connect(dbapi_con, _):

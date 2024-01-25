@@ -1,49 +1,31 @@
-from typing import Any
+from typing import TYPE_CHECKING
 
-from sqlalchemy import column, or_, select, true
-from sqlalchemy.engine import Engine
 from sqlalchemy.sql import Select
-from sqlmodel import Session
+from sqlmodel import Session, column, or_, select, true
 
 import app.db.models as db
-from app.api.api_v1.dependencies.filter_params import FilterParameters
-from app.db.engine import engine
-from app.db.procs import get_character_properties
-from app.schemas.enums import CharPropertyGroup
 from app.schemas.util import flatten_list2d
+
+if TYPE_CHECKING:  # pragma: no cover
+    from app.api.api_v1.dependencies.filter_params import FilterParameters
 
 CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
 
 
-def get_session():
-    with Session(engine) as session:
-        yield DBSession(session, engine)
+def filter_all_characters(session: Session, filter_params: "FilterParameters") -> list[int]:
+    matching_codepoints = []
+    for query in get_filter_queries(filter_params):
+        results = session.scalars(query).all()
+        matching_codepoints.extend(results)
+    return sorted(set(matching_codepoints))
 
 
-class DBSession:
-    def __init__(self, session: Session, engine: Engine):
-        self.session = session
-        self.engine = engine
-
-    def get_character_properties(
-        self, codepoint: int, show_props: list[CharPropertyGroup] | None, verbose: bool
-    ) -> dict[str, Any]:
-        return get_character_properties(self.engine, codepoint, show_props, verbose)
-
-    def filter_all_characters(self, filter_params: FilterParameters) -> list[int]:
-        matching_codepoints = []
-        for query in get_filter_queries(filter_params):
-            results = self.session.scalars(query).all()
-            matching_codepoints.extend(results)
-        return sorted(set(matching_codepoints))
-
-
-def get_filter_queries(filter_params: FilterParameters) -> list[Select | None]:
+def get_filter_queries(filter_params: "FilterParameters") -> list[Select | None]:
     return [query for table in CHAR_TABLES if (query := construct_filter_query(filter_params, table)) is not None]
 
 
 def construct_filter_query(  # noqa: C901
-    filter_params: FilterParameters, table: db.UnicodeCharacter | db.UnicodeCharacterUnihan
+    filter_params: "FilterParameters", table: db.UnicodeCharacter | db.UnicodeCharacterUnihan
 ) -> Select | None:
     if table == db.UnicodeCharacter and filter_params.cjk_definition:
         return None

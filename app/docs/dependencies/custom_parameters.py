@@ -1,4 +1,4 @@
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.data.cache import cached_data
 from app.data.encoding import get_uri_encoded_value
 from app.docs.dependencies import (

@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from enum import IntEnum, auto
+from typing import Self
 
 from app.schemas.util import normalize_string_lm3
 
@@ -43,6 +42,6 @@ class NumericType(IntEnum):
         return code_map.get(code, cls.NONE)
 
     @classmethod
-    def match_loosely(cls, name: str) -> NumericType:
+    def match_loosely(cls, value: str) -> Self:
         numeric_types_map = {e.normalized: e for e in cls}
-        return numeric_types_map.get(normalize_string_lm3(name), cls.NONE)
+        return numeric_types_map.get(normalize_string_lm3(value), cls.NONE)

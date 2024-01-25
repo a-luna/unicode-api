@@ -1,4 +1,6 @@
 import json
+import logging
+import os
 from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
@@ -147,7 +149,7 @@ class UnicodeApiSettings:
         return [db.UnicodeBlock(**block) for block in blocks_dict]
 
     def get_non_unihan_character_name_map(self) -> dict[int, str]:
-        if not self.CHAR_NAME_MAP.exists():
+        if not self.CHAR_NAME_MAP.exists():  # pragma: no cover
             return {}
         json_map = json.loads(self.CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
@@ -217,3 +219,12 @@ def get_test_settings() -> UnicodeApiSettings:
         "CACHE_HEADER": "",
     }
     return UnicodeApiSettings(**settings)
+
+
+def get_settings() -> UnicodeApiSettings:
+    env = os.environ.get("ENV", "DEV")
+    settings = get_test_settings() if "TEST" in env else get_api_settings()
+    logger = logging.getLogger("app.api")
+    logger.debug(settings.api_settings_report)
+    logger.debug(settings.rate_limit_settings_report)
+    return settings

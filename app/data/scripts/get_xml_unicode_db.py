@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from zipfile import ZipFile, is_zipfile
 
-from app.config import UnicodeApiSettings
+from app.config.api_settings import UnicodeApiSettings
 from app.core.result import Result
 from app.data.util import download_file
 

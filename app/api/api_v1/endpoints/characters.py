@@ -5,18 +5,17 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 import app.db.models as db
 from app.api.api_v1.dependencies import (
     CharacterSearchParameters,
-    DBSession,
     FilterParameters,
     ListParameters,
     UnicodeBlockQueryParamResolver,
-    get_session,
 )
-from app.api.api_v1.dependencies.filter_param_matcher import FilterParameterMatcher
+from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matcher
 from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.data.cache import cached_data
 from app.data.encoding import get_codepoint_string
+from app.db.session import DBSession, get_session
 from app.docs.dependencies.custom_parameters import (
     UNICODE_CHAR_STRING_DESCRIPTION,
     VERBOSE_DESCRIPTION,
@@ -24,7 +23,6 @@ from app.docs.dependencies.custom_parameters import (
 )
 from app.schemas.enums import CharPropertyGroup
 
-PropertyGroupMatcher = FilterParameterMatcher[CharPropertyGroup]("show_props", CharPropertyGroup)
 router = APIRouter()
 
 
@@ -76,6 +74,11 @@ def search_unicode_characters_by_name(
 def filter_unicode_characters(
     db_ctx: Annotated[DBSession, Depends(get_session)], filter_parameters: Annotated[FilterParameters, Depends()]
 ):
+    if not filter_parameters.settings:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No filter settings were specified in the request.",
+        )
     response_data = {
         "url": f"{get_settings().API_VERSION}/characters/filter",
         "filter_settings": filter_parameters.settings,
@@ -101,13 +104,11 @@ def filter_unicode_characters(
 def get_unicode_character_details(
     db_ctx: Annotated[DBSession, Depends(get_session)],
     string: Annotated[str, Path(description=UNICODE_CHAR_STRING_DESCRIPTION)],
-    show_props: Annotated[
-        list[str] | None, Query(description=get_description_and_values_table_for_property_group())
-    ] = None,
+    show_props: Annotated[list[str], Query(description=get_description_and_values_table_for_property_group())] = None,
     verbose: Annotated[bool | None, Query(description=VERBOSE_DESCRIPTION)] = None,
 ):
     if show_props:
-        result = PropertyGroupMatcher.parse_enum_values(show_props)
+        result = filter_param_matcher[CharPropertyGroup].parse_enum_values(show_props)
         if result.failure:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
         prop_groups = result.value

@@ -1,6 +1,5 @@
-from __future__ import annotations
-
 from enum import IntEnum, auto
+from typing import Self
 
 from app.schemas.util import normalize_string_lm3
 
@@ -536,6 +535,6 @@ class ScriptCode(IntEnum):
         return code_map.get(code, cls.UNKNOWN)
 
     @classmethod
-    def match_loosely(cls, name: str) -> ScriptCode:
+    def match_loosely(cls, value: str) -> Self:
         script_code_map = {e.normalized: e for e in cls}
-        return script_code_map.get(normalize_string_lm3(name), cls.NONE)
+        return script_code_map.get(normalize_string_lm3(value), cls.NONE)
