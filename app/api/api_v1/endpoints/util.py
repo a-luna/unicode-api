@@ -1,6 +1,6 @@
 import app.db.models as db
-from app.api.api_v1.dependencies.db_session import DBSession
-from app.schemas.enums.property_group import CharPropertyGroup
+from app.db.session import DBSession
+from app.schemas.enums import CharPropertyGroup
 
 
 def get_character_details(

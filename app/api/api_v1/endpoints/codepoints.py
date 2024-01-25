@@ -3,10 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 
 import app.db.models as db
-from app.api.api_v1.dependencies.db_session import DBSession, get_session
 from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matcher
 from app.api.api_v1.dependencies.util import get_decimal_number_from_hex_codepoint
 from app.api.api_v1.endpoints.util import get_character_details
+from app.db.session import DBSession, get_session
 from app.docs.dependencies.custom_parameters import (
     CODEPOINT_PATH_PARAM_DESSCRIPTION,
     VERBOSE_DESCRIPTION,
