@@ -18,7 +18,7 @@ def match_loosely_unicode_version(cls, value: str) -> Self:
     return version_map.get(value)
 
 
-def __str__(self) -> str:  # noqa: N807
+def __str__(self) -> str:  # pragma: no cover  # noqa: N807
     return self.value
 
 

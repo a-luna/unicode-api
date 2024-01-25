@@ -13,6 +13,7 @@ from app.tests.test_character_endpoints.test_filter_unicode_characters.data impo
     FILTER_BY_SEPARATE_CATEGORIES,
     FILTER_BY_UNICODE_AGE,
     INVALID_FILTER_PARAM_VALUES,
+    INVALID_NO_FILTER_SETTINGS,
     INVALID_PAGE_NUMBER,
     NO_CHARS_MATCH_SETTINGS,
 )
@@ -111,6 +112,12 @@ def test_no_characters_match_filter_settings(client):
     response = client.get("/v1/characters/filter?name=test&script=copt&show_props=all")
     assert response.status_code == 200
     assert response.json() == NO_CHARS_MATCH_SETTINGS
+
+
+def test_no_filter_settings(client):
+    response = client.get("/v1/characters/filter")
+    assert response.status_code == 400
+    assert response.json() == INVALID_NO_FILTER_SETTINGS
 
 
 def test_invalid_page_number(client):

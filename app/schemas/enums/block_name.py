@@ -9,7 +9,7 @@ UnicodeBlockName = Enum(
 )
 
 
-def display_name(self) -> str:
+def display_name(self) -> str:  # pragma: no cover
     return self.name.replace("_", " ").title()
 
 

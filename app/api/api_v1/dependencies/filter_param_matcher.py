@@ -21,7 +21,7 @@ T = TypeVar("T", bound="IFilterable")
 
 class IFilterable(Protocol):
     @classmethod
-    def match_loosely(cls: type[T], value: str) -> T:
+    def match_loosely(cls: type[T], value: str) -> T:  # pragma: no cover
         """
         Return the enum value that matches the given value according to the Unicode loose-matching rule UAX44-LM3.
         ref: https://www.unicode.org/reports/tr44/#UAX44-LM3

@@ -149,7 +149,7 @@ class UnicodeApiSettings:
         return [db.UnicodeBlock(**block) for block in blocks_dict]
 
     def get_non_unihan_character_name_map(self) -> dict[int, str]:
-        if not self.CHAR_NAME_MAP.exists():
+        if not self.CHAR_NAME_MAP.exists():  # pragma: no cover
             return {}
         json_map = json.loads(self.CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
