@@ -86,13 +86,12 @@ class UnicodeCharacterBase(CamelModel):
     emoji_component: bool
     extended_pictographic: bool
 
-    block_id: int = Field(foreign_key="block.id")
-    plane_id: int = Field(foreign_key="plane.id")
-
 
 class UnicodeCharacter(UnicodeCharacterBase, table=True):
     __tablename__ = "character"  # type: ignore  # noqa: PGH003
 
+    block_id: int = Field(foreign_key="block.id")
+    plane_id: int = Field(foreign_key="plane.id")
     block: "UnicodeBlock" = Relationship(back_populates="characters")  # type: ignore  # noqa: PGH003
     plane: "UnicodePlane" = Relationship(back_populates="characters")  # type: ignore  # noqa: PGH003
 
@@ -100,6 +99,8 @@ class UnicodeCharacter(UnicodeCharacterBase, table=True):
 class UnicodeCharacterUnihan(UnicodeCharacterBase, table=True):
     __tablename__ = "character_unihan"  # type: ignore  # noqa: PGH003
 
+    block_id: int = Field(foreign_key="block.id")
+    plane_id: int = Field(foreign_key="plane.id")
     block: "UnicodeBlock" = Relationship(back_populates="characters_unihan")  # type: ignore  # noqa: PGH003
     plane: "UnicodePlane" = Relationship(back_populates="characters_unihan")  # type: ignore  # noqa: PGH003
 
