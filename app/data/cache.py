@@ -4,7 +4,7 @@ from functools import cache, cached_property
 from rapidfuzz import process
 
 import app.db.models as db
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.data.constants import (
     ALL_CONTROL_CHARACTERS,
     ALL_UNICODE_CODEPOINTS,

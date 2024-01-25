@@ -6,7 +6,7 @@ from datetime import timedelta
 from fastapi import Request
 from redis.exceptions import LockError
 
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.core.redis_client import IRedisClient, redis
 from app.core.result import Result
 from app.core.util import (

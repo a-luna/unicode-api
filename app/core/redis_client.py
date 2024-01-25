@@ -9,7 +9,7 @@ from redis import from_url
 from redis.client import Redis
 from redis.exceptions import ConnectionError
 
-from app.config import get_settings
+from app.config.api_settings import get_settings
 from app.core.redis_types import RedisKey, RedisResponse, RedisValue
 from app.core.util import dtaware_fromtimestamp
 

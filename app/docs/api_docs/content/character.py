@@ -1,5 +1,5 @@
 # flake8: noqa
-from app.config import get_settings
+from app.config.api_settings import get_settings
 
 CHARACTER_ENDPOINTS = """
         <dl>
