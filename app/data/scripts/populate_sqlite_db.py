@@ -8,7 +8,7 @@ from sqlalchemy.sql import text
 from sqlmodel import Session, SQLModel, create_engine
 
 import app.db.models as db
-from app.config import UnicodeApiSettings
+from app.config.api_settings import UnicodeApiSettings
 from app.core.result import Result
 from app.data.scripts.script_types import UnicodeModel
 from app.data.util.spinners import Spinner

@@ -2,8 +2,7 @@ import logging
 from pathlib import Path
 from zipfile import ZipFile
 
-from app.config import UnicodeApiSettings
-from app.config.api_settings import get_api_settings
+from app.config.api_settings import UnicodeApiSettings, get_api_settings
 from app.core.result import Result
 from app.data.util import download_file
 

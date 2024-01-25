@@ -1,7 +1,7 @@
 import os
 import re
 
-from app.config import UnicodeApiSettings, get_settings
+from app.config.api_settings import UnicodeApiSettings, get_settings
 from app.core.result import Result
 from app.data.constants import SUPPORTED_UNICODE_VERSIONS
 
