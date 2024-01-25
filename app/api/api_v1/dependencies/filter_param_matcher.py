@@ -1,4 +1,4 @@
-from typing import Generic, Protocol, TypeVar
+from typing import Protocol, TypeVar
 
 from app.core.result import Result
 from app.schemas.enums import (
