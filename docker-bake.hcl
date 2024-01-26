@@ -23,6 +23,5 @@ target "unicode-api" {
         RATE_LIMIT_PER_PERIOD="50"
         RATE_LIMIT_PERIOD_SECONDS="60"
         RATE_LIMIT_BURST="10"
-        TEST_HEADER="X-UnicodeAPI-Test"
     }
 }
