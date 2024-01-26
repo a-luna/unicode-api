@@ -51,14 +51,14 @@ def update_all_data() -> Result[None]:
 
 def get_xml_unicode_database(config: UnicodeApiSettings) -> Result[Path]:
     spinner = Spinner()
-    get_xml_result = download_xml_unicode_database(config)
-    if get_xml_result.failure or not get_xml_result.value:
+    result = download_xml_unicode_database(config)
+    if result.failure or not result.value:
         spinner.start("")
         spinner.failed("Download failed! Please check the internet connection.")
-        return get_xml_result
+        return result
     spinner.start("")
     spinner.successful(f"Successfully downloaded Unicode XML Database v{config.UNICODE_VERSION}!")
-    xml_file = get_xml_result.value
+    xml_file = result.value
     return Result.Ok(xml_file)
 
 
