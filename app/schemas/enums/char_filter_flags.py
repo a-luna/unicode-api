@@ -55,7 +55,7 @@ class CharacterFilterFlags(IntFlag):
 
     @property
     def normalized(self) -> str:
-        return normalize_string_lm3(self.name)
+        return normalize_string_lm3(str(self.name))
 
     @property
     def flag_name(self) -> str:

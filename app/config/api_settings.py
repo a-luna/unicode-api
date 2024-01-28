@@ -4,10 +4,28 @@ import os
 from dataclasses import dataclass, field
 from datetime import timedelta
 from pathlib import Path
+from typing import TypedDict
 
 import app.db.models as db
 from app.config.dotenv_file import read_dotenv_file
 from app.data.constants import UNICODE_PLANES_DEFAULT, UNICODE_VERSION_RELEASE_DATES
+
+
+class ApiSettingsDict(TypedDict):
+    ENV: str
+    UNICODE_VERSION: str
+    PROJECT_NAME: str
+    API_VERSION: str
+    REDIS_PW: str
+    REDIS_HOST: str
+    REDIS_PORT: int
+    REDIS_DB: int
+    RATE_LIMIT_PER_PERIOD: int
+    RATE_LIMIT_PERIOD_SECONDS: timedelta
+    RATE_LIMIT_BURST: int
+    SERVER_NAME: str
+    SERVER_HOST: str
+
 
 UNICODE_ORG_ROOT = "https://www.unicode.org/Public"
 UNICODE_XML_FOLDER = "ucdxml"
@@ -48,7 +66,6 @@ class UnicodeApiSettings:
     RATE_LIMIT_BURST: int
     SERVER_NAME: str
     SERVER_HOST: str
-    CACHE_HEADER: str
     API_ROOT: str = field(init=False, default="")
     ROOT_FOLDER: Path = field(init=False)
     APP_FOLDER: Path = field(init=False)
@@ -85,7 +102,7 @@ class UnicodeApiSettings:
         json_folder = version_folder.joinpath("json")
         csv_folder = version_folder.joinpath("csv")
 
-        self.API_ROOT = DEV_API_ROOT if "PROD" not in self.ENV else PROD_API_ROOT
+        self.API_ROOT = DEV_API_ROOT if self.is_dev else PROD_API_ROOT
         self.ROOT_FOLDER = ROOT_FOLDER
         self.APP_FOLDER = ROOT_FOLDER.joinpath("app")
         self.DATA_FOLDER = data_folder
@@ -182,7 +199,7 @@ class UnicodeApiSettings:
 
 def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
     env_vars = read_dotenv_file(DOTENV_FILE)
-    settings = {
+    settings: ApiSettingsDict = {
         "ENV": env_vars.get("ENV", "DEV"),
         "UNICODE_VERSION": env_vars.get("UNICODE_VERSION", get_latest_unicode_version()),
         "PROJECT_NAME": "Unicode API",
@@ -196,13 +213,12 @@ def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
         "RATE_LIMIT_BURST": int(env_vars.get("RATE_LIMIT_BURST", "10")),
         "SERVER_NAME": "unicode-api.aaronluna.dev",
         "SERVER_HOST": PROD_API_ROOT,
-        "CACHE_HEADER": "X-UnicodeAPI-Cache",
     }
     return UnicodeApiSettings(**settings)
 
 
 def get_test_settings() -> UnicodeApiSettings:
-    settings = {
+    settings: ApiSettingsDict = {
         "ENV": "TEST",
         "UNICODE_VERSION": "15.0.0",
         "PROJECT_NAME": "Test Unicode API",
@@ -216,14 +232,12 @@ def get_test_settings() -> UnicodeApiSettings:
         "RATE_LIMIT_BURST": 1,
         "SERVER_NAME": "",
         "SERVER_HOST": "",
-        "CACHE_HEADER": "",
     }
     return UnicodeApiSettings(**settings)
 
 
 def get_settings() -> UnicodeApiSettings:
-    env = os.environ.get("ENV", "DEV")
-    settings = get_test_settings() if "TEST" in env else get_api_settings()
+    settings = get_test_settings() if "TEST" in os.environ.get("ENV", "DEV") else get_api_settings()
     logger = logging.getLogger("app.api")
     logger.debug(settings.api_settings_report)
     logger.debug(settings.rate_limit_settings_report)

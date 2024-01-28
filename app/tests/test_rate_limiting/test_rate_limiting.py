@@ -1,21 +1,4 @@
-import os
-
-import pytest
-from fastapi.testclient import TestClient
-
 from app.tests.test_rate_limiting.data import PLANE_0
-
-
-@pytest.fixture
-def client():
-    os.environ["ENV"] = "TEST"
-    from app.main import app
-
-    with TestClient(app) as client:
-        headers = {}
-        headers["x-verify-rate-limiting"] = "true"
-        client.headers = headers
-        yield client
 
 
 def test_rate_limiting(client):

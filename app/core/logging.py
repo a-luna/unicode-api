@@ -13,7 +13,7 @@ LOGGING_CONFIG: dict[str, Any] = {
     "formatters": {
         "default": {
             "()": "app.core.logging.DefaultFormatter",
-            "fmt": "%(levelprefix)s %(message)s",
+            "fmt": "%(levelprefix)s [unicode-api] %(message)s",
             "use_colors": True,
         },
     },

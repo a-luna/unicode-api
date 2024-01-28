@@ -7,9 +7,11 @@ DATE_MONTH_NAME = "%b %d, %Y"
 
 
 def get_unicode_version_release_date(version: str) -> str:
-    if release_date := UNICODE_VERSION_RELEASE_DATES.get(version, None):
-        return release_date.strftime(DATE_MONTH_NAME)
-    return ""
+    return (
+        release_date.strftime(DATE_MONTH_NAME)
+        if (release_date := UNICODE_VERSION_RELEASE_DATES.get(version, None))
+        else ""
+    )
 
 
 def make_tzaware(dt: datetime, use_tz: tzinfo | None = None, localize: bool = True) -> datetime:
@@ -57,9 +59,9 @@ def format_timedelta_str(td: timedelta, precise: bool = True) -> str:
     return duration
 
 
-def get_time_until_timestamp(ts: float, precise: bool = True) -> str:
-    return get_duration_between_timestamps(datetime.now().timestamp(), ts, precise)
+def get_time_until_timestamp(ts: float) -> timedelta:
+    return get_duration_between_timestamps(datetime.now().timestamp(), ts)
 
 
-def get_duration_between_timestamps(ts1: float, ts2: float, precise: bool = True) -> str:
+def get_duration_between_timestamps(ts1: float, ts2: float) -> timedelta:
     return dtaware_fromtimestamp(ts2) - dtaware_fromtimestamp(ts1)
