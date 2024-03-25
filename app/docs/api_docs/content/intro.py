@@ -13,7 +13,7 @@ INTRODUCTION = f"""
 </ul>
 """
 
-PROJECT_LINKS_SWAGGER_HTML = """    <ul>
+PROJECT_LINKS_SWAGGER = """    <ul>
         <li><a href="https://github.com/a-luna/unicode-api" rel="noopener noreferrer" target="_blank">Source Code (github.com)</a></li>
         <li><a href="https://github.com/a-luna/unicode-api/blob/master/LICENSE" rel="noopener noreferrer" target="_blank">MIT License</a></li>
         <li>Created by Aaron Luna</li>

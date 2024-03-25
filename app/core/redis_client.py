@@ -165,4 +165,4 @@ class TestRedisClient:
         return dtaware_fromtimestamp(self.time())
 
 
-redis = RedisClient() if "TEST" not in os.environ.get("ENV", "DEV") else TestRedisClient()
+redis = TestRedisClient() if get_settings().is_test else RedisClient()

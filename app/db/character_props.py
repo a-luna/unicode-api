@@ -1074,7 +1074,8 @@ def get_default_eaw_display_name(codepoint: int) -> str:
         EastAsianWidthType.EAST_ASIAN_AMBIGUOUS
         if cached_data.codepoint_is_private_use
         else EastAsianWidthType.EAST_ASIAN_WIDE
-        if block.id in cached_data.all_cjk_ideograph_block_ids
+        if block.id in cached_data.cjk_unified_ideograph_block_ids
+        or block.id in cached_data.cjk_compatibility_block_ids
         else EastAsianWidthType.NEUTRAL_NOT_EAST_ASIAN
     )
     return eaw.display_name
