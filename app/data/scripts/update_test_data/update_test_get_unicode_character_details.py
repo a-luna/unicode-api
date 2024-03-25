@@ -17,9 +17,9 @@ TEST_CHARS = [
     "∑",        # U+2211    N-ARY SUMMATION                                  (Math Symbol)
     "㑢",       # U+3462    CJK UNIFIED IDEOGRAPH-3462                       (CJK Ideograph)
     "穩",       # U+7A69    CJK UNIFIED IDEOGRAPH-7A69                       (CJK Ideograph w/ variants)
-    "范",       # U+8303    CJK UNIFIED IDEOGRAPH-8303                       (CJK Ideograph w/ multiple values for totalStrokes)
-    # "\uda92",   # U+DA92    <surrogate-DA92>                                 (High-Surrogate)
-    # "\udddd",   # U+DDDD    <surrogate-DDDD>                                 (Low Surrogate)
+    "范",       # U+8303    CJK UNIFIED IDEOGRAPH-8303                       (CJK Ideograph w/ multiple values for totalStrokes)     # noqa: E501
+    # "\uda92",   # U+DA92    <surrogate-DA92>                                 (High-Surrogate)                                     # noqa: ERA001, E501
+    # "\udddd",   # U+DDDD    <surrogate-DDDD>                                 (Low Surrogate)                                      # noqa: ERA001, E501
     "﨑",       # U+FA11    CJK COMPATIBILITY IDEOGRAPH-FA11                 (CJK Compatibility Ideograph)
     "\uf800",   # U+F800    <private-use-F800>                               (Private Use)
     "\ufffe",   # U+FFFE    <noncharacter-FFFE>                              (Noncharacter)

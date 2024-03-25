@@ -1,6 +1,6 @@
 import logging
-import os
 import time
+from contextlib import contextmanager
 from datetime import datetime
 from typing import Any, Protocol
 
@@ -146,7 +146,7 @@ class TestRedisClient:
         return FakeRedis()
 
     def lock(self, name: str, blocking_timeout: float | int) -> Any:
-        return self.client.lock(name, blocking_timeout=blocking_timeout)
+        return fake_lock_context()
 
     def setnx(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         if name not in self.db:
@@ -163,6 +163,11 @@ class TestRedisClient:
 
     def now(self) -> datetime:
         return dtaware_fromtimestamp(self.time())
+
+
+@contextmanager
+def fake_lock_context():
+    yield None
 
 
 redis = TestRedisClient() if get_settings().is_test else RedisClient()
