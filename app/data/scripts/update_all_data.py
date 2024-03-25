@@ -120,6 +120,8 @@ def backup_json_files(config: UnicodeApiSettings):
         zip.write(config.PLANES_JSON, f"{config.PLANES_JSON.name}")
         zip.write(config.BLOCKS_JSON, f"{config.BLOCKS_JSON.name}")
         zip.write(config.CHAR_NAME_MAP, f"{config.CHAR_NAME_MAP.name}")
+        zip.write(config.UNIHAN_CHARS_JSON, f"{config.UNIHAN_CHARS_JSON.name}")
+        zip.write(config.TANGUT_CHARS_JSON, f"{config.TANGUT_CHARS_JSON.name}")
 
 
 def upload_zip_file_to_s3(config: UnicodeApiSettings, local_file: Path) -> Result[None]:
