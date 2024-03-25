@@ -41,16 +41,15 @@ from app.docs.api_docs.content.intro import (
     INTRODUCTION,
     LOOSE_MATCHING_HTML,
     PAGINATION_HTML,
-    PROJECT_LINKS_SWAGGER_HTML,
+    PROJECT_LINKS_SWAGGER,
     SEARCH_HTML,
 )
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
 from app.docs.util import slugify
 
 
-def create_details_element_for_swagger_ui(
-    title: str, content: str, class_name: str | None = None, open: bool | None = False
-) -> str:
+# fmt: off
+def create_details_element_for_swagger_ui(title: str, content: str, class_name: str | None = None, open: bool | None = False) -> str:
     open_tag = "<details open" if open else "<details"
     open_tag += f" class={class_name!r}>" if class_name else ">"
     return f"""{open_tag}
@@ -67,40 +66,26 @@ def create_details_element_for_swagger_ui(
 """
 
 
-def create_swagger_details_element_with_heading(
-    section: str, heading_level: int, content: str, open: bool | None = False
-) -> str:
+def create_swagger_details_element_with_heading(section: str, heading_level: int, content: str, open: bool | None = False) -> str:
     id = section.replace("-", "").replace(" ", "-").lower()
     title = f'<h{heading_level} id="{id}">{section}</h{heading_level}>'
     return create_details_element_for_swagger_ui(title=title, content=content, class_name="intro", open=open)
 
 
-def create_swagger_details_element_for_property_group(
-    prop_group: str, heading_level: int, content: str, open: bool | None = False
-) -> str:
+def create_swagger_details_element_for_property_group(prop_group: str, heading_level: int, content: str, open: bool | None = False) -> str:
     title = f'<h{heading_level} id="{slugify(prop_group)}">Property Group: {prop_group}</h{heading_level}>'
     return create_details_element_for_swagger_ui(title=title, content=content, class_name="property-group", open=open)
 
 
 def create_swagger_details_element_for_api_endpoints(content: str, open: bool | None = False) -> str:
-    return create_details_element_for_swagger_ui(
-        title="API Endpoints", content=content, class_name="api-endpoints", open=open
-    )
+    return create_details_element_for_swagger_ui(title="API Endpoints", content=content, class_name="api-endpoints", open=open)
 
 
 # API DOCS INTRO SECTIONS
-PROJECT_LINKS = create_swagger_details_element_with_heading(
-    section="Project Resources/Contact Info", heading_level=3, content=PROJECT_LINKS_SWAGGER_HTML
-)
-PAGINATION = PROJECT_LINKS = create_swagger_details_element_with_heading(
-    section="Pagination", heading_level=3, content=PAGINATION_HTML
-)
-SEARCH = PROJECT_LINKS = create_swagger_details_element_with_heading(
-    section="Search", heading_level=3, content=SEARCH_HTML
-)
-LOOSE_MATCHING = PROJECT_LINKS = create_swagger_details_element_with_heading(
-    section="Loose Matching", heading_level=3, content=LOOSE_MATCHING_HTML
-)
+LINKS = create_swagger_details_element_with_heading(section="Project Resources/Contact Info", heading_level=3, content=PROJECT_LINKS_SWAGGER)
+PAGINATION = create_swagger_details_element_with_heading(section="Pagination", heading_level=3, content=PAGINATION_HTML)
+SEARCH = create_swagger_details_element_with_heading(section="Search", heading_level=3, content=SEARCH_HTML)
+LOOSE_MATCHING = create_swagger_details_element_with_heading(section="Loose Matching", heading_level=3, content=LOOSE_MATCHING_HTML)
 
 # API ENDPOINT DETAILS ELEMENTS
 CHARACTER_API_ENDPOINTS = create_swagger_details_element_for_api_endpoints(content=CHARACTER_ENDPOINTS, open=True)
@@ -109,69 +94,27 @@ BLOCK_ENDPOINTS = create_swagger_details_element_for_api_endpoints(content=BLOCK
 PLANE_ENDPOINTS = create_swagger_details_element_for_api_endpoints(content=PLANE_ENDPOINTS, open=True)
 
 # CHARACTER PROPERTY GROUP DETAILS ELEMENTS
-CHARACTER_PROP_GROUP_MINIMUM = create_swagger_details_element_for_property_group(
-    prop_group="Minimum", heading_level=6, content=PROP_GROUP_MINIMUM, open=True
-)
-CHARACTER_PROP_GROUP_BASIC = create_swagger_details_element_for_property_group(
-    prop_group="Basic", heading_level=6, content=PROP_GROUP_BASIC, open=False
-)
-CHARACTER_PROP_GROUP_UTF8 = create_swagger_details_element_for_property_group(
-    prop_group="UTF-8", heading_level=6, content=PROP_GROUP_UTF8, open=False
-)
-CHARACTER_PROP_GROUP_UTF16 = create_swagger_details_element_for_property_group(
-    prop_group="UTF-16", heading_level=6, content=PROP_GROUP_UTF16, open=False
-)
-CHARACTER_PROP_GROUP_UTF32 = create_swagger_details_element_for_property_group(
-    prop_group="UTF-32", heading_level=6, content=PROP_GROUP_UTF32, open=False
-)
-CHARACTER_PROP_GROUP_BIDIRECTIONALITY = create_swagger_details_element_for_property_group(
-    prop_group="Bidirectionality", heading_level=6, content=PROP_GROUP_BIDIRECTIONALITY, open=False
-)
-CHARACTER_PROP_GROUP_DECOMPOSITION = create_swagger_details_element_for_property_group(
-    prop_group="Decomposition", heading_level=6, content=PROP_GROUP_DECOMPOSITION, open=False
-)
-CHARACTER_PROP_GROUP_QUICK_CHECK = create_swagger_details_element_for_property_group(
-    prop_group="Quick Check", heading_level=6, content=PROP_GROUP_QUICK_CHECK, open=False
-)
-CHARACTER_PROP_GROUP_NUMERIC = create_swagger_details_element_for_property_group(
-    prop_group="Numeric", heading_level=6, content=PROP_GROUP_NUMERIC, open=False
-)
-CHARACTER_PROP_GROUP_JOINING = create_swagger_details_element_for_property_group(
-    prop_group="Joining", heading_level=6, content=PROP_GROUP_JOINING, open=False
-)
-CHARACTER_PROP_GROUP_LINEBREAK = create_swagger_details_element_for_property_group(
-    prop_group="Linebreak", heading_level=6, content=PROP_GROUP_LINEBREAK, open=False
-)
-CHARACTER_PROP_GROUP_EAW = create_swagger_details_element_for_property_group(
-    prop_group="East Asian Width", heading_level=6, content=PROP_GROUP_EAW, open=False
-)
-CHARACTER_PROP_GROUP_CASE = create_swagger_details_element_for_property_group(
-    prop_group="Case", heading_level=6, content=PROP_GROUP_CASE, open=False
-)
-CHARACTER_PROP_GROUP_SCRIPT = create_swagger_details_element_for_property_group(
-    prop_group="Script", heading_level=6, content=PROP_GROUP_SCRIPT, open=False
-)
-CHARACTER_PROP_GROUP_HANGUL = create_swagger_details_element_for_property_group(
-    prop_group="Hangul", heading_level=6, content=PROP_GROUP_HANGUL, open=False
-)
-CHARACTER_PROP_GROUP_INDIC = create_swagger_details_element_for_property_group(
-    prop_group="Indic", heading_level=6, content=PROP_GROUP_INDIC, open=False
-)
-CHARACTER_PROP_GROUP_CJK_VARIANTS = create_swagger_details_element_for_property_group(
-    prop_group="CJK Variants", heading_level=6, content=PROP_GROUP_CJK_VARIANTS, open=False
-)
-CHARACTER_PROP_GROUP_CJK_NUMERIC = create_swagger_details_element_for_property_group(
-    prop_group="CJK Numeric", heading_level=6, content=PROP_GROUP_CJK_NUMERIC, open=False
-)
-CHARACTER_PROP_GROUP_CJK_READINGS = create_swagger_details_element_for_property_group(
-    prop_group="CJK Readings", heading_level=6, content=PROP_GROUP_CJK_READINGS, open=False
-)
-CHARACTER_PROP_GROUP_F_AND_G = create_swagger_details_element_for_property_group(
-    prop_group="Function and Graphic", heading_level=6, content=PROP_GROUP_F_AND_G, open=False
-)
-CHARACTER_PROP_GROUP_EMOJI = create_swagger_details_element_for_property_group(
-    prop_group="Emoji", heading_level=6, content=PROP_GROUP_EMOJI, open=False
-)
+CHARACTER_PROP_GROUP_MINIMUM = create_swagger_details_element_for_property_group(prop_group="Minimum", heading_level=6, content=PROP_GROUP_MINIMUM, open=True)
+CHARACTER_PROP_GROUP_BASIC = create_swagger_details_element_for_property_group(prop_group="Basic", heading_level=6, content=PROP_GROUP_BASIC, open=False)
+CHARACTER_PROP_GROUP_UTF8 = create_swagger_details_element_for_property_group(prop_group="UTF-8", heading_level=6, content=PROP_GROUP_UTF8, open=False)
+CHARACTER_PROP_GROUP_UTF16 = create_swagger_details_element_for_property_group(prop_group="UTF-16", heading_level=6, content=PROP_GROUP_UTF16, open=False)
+CHARACTER_PROP_GROUP_UTF32 = create_swagger_details_element_for_property_group(prop_group="UTF-32", heading_level=6, content=PROP_GROUP_UTF32, open=False)
+CHARACTER_PROP_GROUP_BIDIRECTIONALITY = create_swagger_details_element_for_property_group(prop_group="Bidirectionality", heading_level=6, content=PROP_GROUP_BIDIRECTIONALITY, open=False)
+CHARACTER_PROP_GROUP_DECOMPOSITION = create_swagger_details_element_for_property_group(prop_group="Decomposition", heading_level=6, content=PROP_GROUP_DECOMPOSITION, open=False)
+CHARACTER_PROP_GROUP_QUICK_CHECK = create_swagger_details_element_for_property_group(prop_group="Quick Check", heading_level=6, content=PROP_GROUP_QUICK_CHECK, open=False)
+CHARACTER_PROP_GROUP_NUMERIC = create_swagger_details_element_for_property_group(prop_group="Numeric", heading_level=6, content=PROP_GROUP_NUMERIC, open=False)
+CHARACTER_PROP_GROUP_JOINING = create_swagger_details_element_for_property_group(prop_group="Joining", heading_level=6, content=PROP_GROUP_JOINING, open=False)
+CHARACTER_PROP_GROUP_LINEBREAK = create_swagger_details_element_for_property_group(prop_group="Linebreak", heading_level=6, content=PROP_GROUP_LINEBREAK, open=False)
+CHARACTER_PROP_GROUP_EAW = create_swagger_details_element_for_property_group(prop_group="East Asian Width", heading_level=6, content=PROP_GROUP_EAW, open=False)
+CHARACTER_PROP_GROUP_CASE = create_swagger_details_element_for_property_group(prop_group="Case", heading_level=6, content=PROP_GROUP_CASE, open=False)
+CHARACTER_PROP_GROUP_SCRIPT = create_swagger_details_element_for_property_group(prop_group="Script", heading_level=6, content=PROP_GROUP_SCRIPT, open=False)
+CHARACTER_PROP_GROUP_HANGUL = create_swagger_details_element_for_property_group(prop_group="Hangul", heading_level=6, content=PROP_GROUP_HANGUL, open=False)
+CHARACTER_PROP_GROUP_INDIC = create_swagger_details_element_for_property_group(prop_group="Indic", heading_level=6, content=PROP_GROUP_INDIC, open=False)
+CHARACTER_PROP_GROUP_CJK_VARIANTS = create_swagger_details_element_for_property_group(prop_group="CJK Variants", heading_level=6, content=PROP_GROUP_CJK_VARIANTS, open=False)
+CHARACTER_PROP_GROUP_CJK_NUMERIC = create_swagger_details_element_for_property_group(prop_group="CJK Numeric", heading_level=6, content=PROP_GROUP_CJK_NUMERIC, open=False)
+CHARACTER_PROP_GROUP_CJK_READINGS = create_swagger_details_element_for_property_group(prop_group="CJK Readings", heading_level=6, content=PROP_GROUP_CJK_READINGS, open=False)
+CHARACTER_PROP_GROUP_F_AND_G = create_swagger_details_element_for_property_group(prop_group="Function and Graphic", heading_level=6, content=PROP_GROUP_F_AND_G, open=False)
+CHARACTER_PROP_GROUP_EMOJI = create_swagger_details_element_for_property_group(prop_group="Emoji", heading_level=6, content=PROP_GROUP_EMOJI, open=False)
 
 # UNICODE CHARACTERS DOCS
 UNICODE_CHARACTERS_DOCS = f"""
@@ -208,9 +151,7 @@ UNICODE_CHARACTERS_DOCS = f"""
 </div>
 """
 
-UNICODE_CHARACTERS = create_swagger_details_element_with_heading(
-    section="Unicode Characters", heading_level=4, content=UNICODE_CHARACTERS_DOCS
-)
+UNICODE_CHARACTERS = create_swagger_details_element_with_heading(section="Unicode Characters", heading_level=4, content=UNICODE_CHARACTERS_DOCS)
 
 # UNICODE CODEPOINTS DOCS
 UNICODE_CODEPOINTS_DOCS = f"""
@@ -218,9 +159,7 @@ UNICODE_CODEPOINTS_DOCS = f"""
         {CODEPOINT_API_ENDPOINTS}{CODEPOINT_CONTENT}</div>
 """
 
-UNICODE_CODEPOINTS = create_swagger_details_element_with_heading(
-    section="Unicode Codepoints", heading_level=4, content=UNICODE_CODEPOINTS_DOCS
-)
+UNICODE_CODEPOINTS = create_swagger_details_element_with_heading(section="Unicode Codepoints", heading_level=4, content=UNICODE_CODEPOINTS_DOCS)
 
 # UNICODE BLOCKS DOCS
 UNICODE_BLOCKS_DOCS = f"""
@@ -230,9 +169,7 @@ UNICODE_BLOCKS_DOCS = f"""
         {create_details_element_for_swagger_ui(title="<strong><code>UnicodeBlock</code> Properties</strong>", content=UNICODE_BLOCK_OBJECT_PROPERTIES, open=True)}</div>
 """
 
-UNICODE_BLOCKS = create_swagger_details_element_with_heading(
-    section="Unicode Blocks", heading_level=4, content=UNICODE_BLOCKS_DOCS
-)
+UNICODE_BLOCKS = create_swagger_details_element_with_heading(section="Unicode Blocks", heading_level=4, content=UNICODE_BLOCKS_DOCS)
 
 # UNICODE PLANES DOCS
 UNICODE_PLANES_DOCS = f"""
@@ -242,18 +179,13 @@ UNICODE_PLANES_DOCS = f"""
         {create_details_element_for_swagger_ui(title="<strong><code>UnicodePlane</code> Properties</strong>", content=UNICODE_PLANE_OBJECT_PROPERTIES, open=True)}</div>
 """
 
-UNICODE_PLANES = create_swagger_details_element_with_heading(
-    section="Unicode Planes", heading_level=4, content=UNICODE_PLANES_DOCS
-)
-
-
-# TODO: Add section for Unicode Codepoints under Core Resources, will be short sinece this is just a single endpoint used to retrieve character details by codepoint value
+UNICODE_PLANES = create_swagger_details_element_with_heading(section="Unicode Planes", heading_level=4, content=UNICODE_PLANES_DOCS)
 
 
 def get_api_docs_for_swagger_ui():
     return (
         INTRODUCTION
-        + PROJECT_LINKS
+        + LINKS
         + PAGINATION
         + SEARCH
         + LOOSE_MATCHING
@@ -337,3 +269,4 @@ def get_swagger_ui_html(
     </html>
     """
     return HTMLResponse(html)
+# fmt: on

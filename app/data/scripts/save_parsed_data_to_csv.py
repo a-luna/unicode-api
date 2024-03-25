@@ -21,13 +21,13 @@ ONE_PERCENT = 0.01
 
 
 def save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars):
-    all_named_chars = [update_char_dict_enum_values(char) for char in all_chars if not char["_unihan"]]
+    all_non_unihan_chars = [update_char_dict_enum_values(char) for char in all_chars if not char["_unihan"]]
     all_unihan_chars = [update_char_dict_enum_values(char) for char in all_chars if char["_unihan"]]
 
     csv_file_map = {
         db.UnicodePlane: (all_planes, config.PLANES_CSV),
         db.UnicodeBlock: (all_blocks, config.BLOCKS_CSV),
-        db.UnicodeCharacter: (all_named_chars, config.NAMED_CHARS_CSV),
+        db.UnicodeCharacter: (all_non_unihan_chars, config.NAMED_CHARS_CSV),
         db.UnicodeCharacterUnihan: (all_unihan_chars, config.UNIHAN_CHARS_CSV),
     }
     for table, (parsed_data, csv_file) in csv_file_map.items():

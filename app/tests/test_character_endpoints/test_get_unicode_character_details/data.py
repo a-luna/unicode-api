@@ -371,68 +371,77 @@ CHARACTER_PROPERTIES = {
         "alphabetic": True,
         "verticalOrientation": "Upright (U)"
     },
-    "𑿀": {
-        "character": "𑿀",
-        "name": "TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH",
-        "codepoint": "U+11FC0",
-        "uriEncoded": "%F0%91%BF%80",
-        "block": "Tamil Supplement",
-        "plane": "SMP",
-        "age": "12.0",
-        "generalCategory": "Other Number (No)",
-        "combiningClass": "Not Reordered (0)",
-        "htmlEntities": [
-            "&#73664;",
-            "&#x11FC0;"
-        ],
-        "utf8": "0xF0 0x91 0xBF 0x80",
+    "﨑": {
+        "utf8": "0xEF 0xA8 0x91",
         "utf8HexBytes": [
-            "F0",
-            "91",
-            "BF",
-            "80"
+            "EF",
+            "A8",
+            "91"
         ],
         "utf8DecBytes": [
-            240,
-            145,
-            191,
-            128
+            239,
+            168,
+            145
         ],
-        "utf16": "0xD807 0xDFC0",
+        "utf16": "0xFA11",
         "utf16HexBytes": [
-            "D807",
-            "DFC0"
+            "FA11"
         ],
         "utf16DecBytes": [
-            55303,
-            57280
+            64017
         ],
-        "utf32": "0x00011FC0",
+        "utf32": "0x0000FA11",
         "utf32HexBytes": [
-            "00011FC0"
+            "0000FA11"
         ],
         "utf32DecBytes": [
-            73664
+            64017
         ],
         "bidirectionalClass": "Left To Right (L)",
         "NFC_QC": "Yes",
         "NFD_QC": "Yes",
         "NFKC_QC": "Yes",
         "NFKD_QC": "Yes",
-        "numericType": "Numeric (Nu)",
-        "numericValue": [
-            "1/320"
-        ],
-        "numericValueParsed": [
-            0.003125
-        ],
-        "lineBreak": "Ordinary Alphabetic And Symbol (AL)",
-        "eastAsianWidth": "Neutral Not East Asian (N)",
-        "script": "Tamil (Taml)",
+        "lineBreak": "Ideographic (ID)",
+        "eastAsianWidth": "East Asian Wide (W)",
+        "script": "Han (Hani)",
         "scriptExtensions": [
-            "Tamil (Taml)"
+            "Han (Hani)"
         ],
-        "verticalOrientation": "Rotated 90 degrees clockwise (R)"
+        "character": "﨑",
+        "name": "CJK COMPATIBILITY IDEOGRAPH-FA11",
+        "description": "cape, spit, promontory",
+        "codepoint": "U+FA11",
+        "uriEncoded": "%EF%A8%91",
+        "block": "CJK Compatibility Ideographs",
+        "plane": "BMP",
+        "age": "1.1",
+        "generalCategory": "Other Letter (Lo)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#64017;",
+            "&#xFA11;"
+        ],
+        "rsCountUnicode": "46.9",
+        "rsCountKangxi": "46.9",
+        "totalStrokes": [
+            12
+        ],
+        "semanticVariant": [
+            "㟢 (U+37E2 CJK UNIFIED IDEOGRAPH-37E2)",
+            "埼 (U+57FC CJK UNIFIED IDEOGRAPH-57FC)",
+            "崎 (U+5D0E CJK UNIFIED IDEOGRAPH-5D0E)",
+            "嵜 (U+5D5C CJK UNIFIED IDEOGRAPH-5D5C)",
+            "碕 (U+7895 CJK UNIFIED IDEOGRAPH-7895)",
+            "陭 (U+966D CJK UNIFIED IDEOGRAPH-966D)",
+            "𥔎 (U+2550E CJK UNIFIED IDEOGRAPH-2550E)"
+        ],
+        "japaneseKun": "SAKI",
+        "japaneseOn": "KI",
+        "ideographic": True,
+        "unifiedIdeograph": True,
+        "alphabetic": True,
+        "verticalOrientation": "Upright (U)"
     },
     "": {
         "character": "",
@@ -529,6 +538,191 @@ CHARACTER_PROPERTIES = {
         ],
         "utf32DecBytes": [
             65534
+        ],
+        "bidirectionalClass": "Left To Right (L)",
+        "pairedBracketType": "None (n)",
+        "pairedBracketProperty": "",
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
+        "lineBreak": "Unknown (XX)",
+        "eastAsianWidth": "East Asian Ambiguous (A)",
+        "script": "Unknown (Zzzz)",
+        "scriptExtensions": [
+            "Unknown (Zzzz)"
+        ],
+        "indicSyllabicCategory": "",
+        "indicMatraCategory": "",
+        "indicPositionalCategory": "",
+        "verticalOrientation": "Upright (U)"
+    },
+    "𑿀": {
+        "character": "𑿀",
+        "name": "TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH",
+        "codepoint": "U+11FC0",
+        "uriEncoded": "%F0%91%BF%80",
+        "block": "Tamil Supplement",
+        "plane": "SMP",
+        "age": "12.0",
+        "generalCategory": "Other Number (No)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#73664;",
+            "&#x11FC0;"
+        ],
+        "utf8": "0xF0 0x91 0xBF 0x80",
+        "utf8HexBytes": [
+            "F0",
+            "91",
+            "BF",
+            "80"
+        ],
+        "utf8DecBytes": [
+            240,
+            145,
+            191,
+            128
+        ],
+        "utf16": "0xD807 0xDFC0",
+        "utf16HexBytes": [
+            "D807",
+            "DFC0"
+        ],
+        "utf16DecBytes": [
+            55303,
+            57280
+        ],
+        "utf32": "0x00011FC0",
+        "utf32HexBytes": [
+            "00011FC0"
+        ],
+        "utf32DecBytes": [
+            73664
+        ],
+        "bidirectionalClass": "Left To Right (L)",
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
+        "numericType": "Numeric (Nu)",
+        "numericValue": [
+            "1/320"
+        ],
+        "numericValueParsed": [
+            0.003125
+        ],
+        "lineBreak": "Ordinary Alphabetic And Symbol (AL)",
+        "eastAsianWidth": "Neutral Not East Asian (N)",
+        "script": "Tamil (Taml)",
+        "scriptExtensions": [
+            "Tamil (Taml)"
+        ],
+        "verticalOrientation": "Rotated 90 degrees clockwise (R)"
+    },
+    "𘂾": {
+        "character": "𘂾",
+        "name": "TANGUT IDEOGRAPH-180BE",
+        "codepoint": "U+180BE",
+        "uriEncoded": "%F0%98%82%BE",
+        "block": "Tangut",
+        "plane": "SMP",
+        "age": "2.0",
+        "generalCategory": "Unassigned (Cn)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#98494;",
+            "&#x180BE;"
+        ],
+        "utf8": "0xF0 0x98 0x82 0xBE",
+        "utf8HexBytes": [
+            "F0",
+            "98",
+            "82",
+            "BE"
+        ],
+        "utf8DecBytes": [
+            240,
+            152,
+            130,
+            190
+        ],
+        "utf16": "0xD820 0xDCBE",
+        "utf16HexBytes": [
+            "D820",
+            "DCBE"
+        ],
+        "utf16DecBytes": [
+            55328,
+            56510
+        ],
+        "utf32": "0x000180BE",
+        "utf32HexBytes": [
+            "000180BE"
+        ],
+        "utf32DecBytes": [
+            98494
+        ],
+        "bidirectionalClass": "Left To Right (L)",
+        "pairedBracketType": "None (n)",
+        "pairedBracketProperty": "",
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
+        "lineBreak": "Unknown (XX)",
+        "eastAsianWidth": "East Asian Ambiguous (A)",
+        "script": "Unknown (Zzzz)",
+        "scriptExtensions": [
+            "Unknown (Zzzz)"
+        ],
+        "indicSyllabicCategory": "",
+        "indicMatraCategory": "",
+        "indicPositionalCategory": "",
+        "verticalOrientation": "Upright (U)"
+    },
+    "𘠠": {
+        "character": "𘠠",
+        "name": "TANGUT COMPONENT-033",
+        "codepoint": "U+18820",
+        "uriEncoded": "%F0%98%A0%A0",
+        "block": "Tangut Components",
+        "plane": "SMP",
+        "age": "2.0",
+        "generalCategory": "Unassigned (Cn)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#100384;",
+            "&#x18820;"
+        ],
+        "utf8": "0xF0 0x98 0xA0 0xA0",
+        "utf8HexBytes": [
+            "F0",
+            "98",
+            "A0",
+            "A0"
+        ],
+        "utf8DecBytes": [
+            240,
+            152,
+            160,
+            160
+        ],
+        "utf16": "0xD822 0xDC20",
+        "utf16HexBytes": [
+            "D822",
+            "DC20"
+        ],
+        "utf16DecBytes": [
+            55330,
+            56352
+        ],
+        "utf32": "0x00018820",
+        "utf32HexBytes": [
+            "00018820"
+        ],
+        "utf32DecBytes": [
+            100384
         ],
         "bidirectionalClass": "Left To Right (L)",
         "pairedBracketType": "None (n)",
@@ -1404,88 +1598,126 @@ VERBOSE_CHARACTER_PROPERTIES = {
         "emojiComponent": False,
         "extendedPictographic": False
     },
-    "𑿀": {
-        "character": "𑿀",
-        "name": "TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH",
-        "codepoint": "U+11FC0",
-        "uriEncoded": "%F0%91%BF%80",
-        "block": "Tamil Supplement",
-        "plane": "SMP",
-        "age": "12.0",
-        "generalCategory": "Other Number (No)",
-        "combiningClass": "Not Reordered (0)",
-        "htmlEntities": [
-            "&#73664;",
-            "&#x11FC0;"
-        ],
-        "utf8": "0xF0 0x91 0xBF 0x80",
+    "﨑": {
+        "utf8": "0xEF 0xA8 0x91",
         "utf8HexBytes": [
-            "F0",
-            "91",
-            "BF",
-            "80"
+            "EF",
+            "A8",
+            "91"
         ],
         "utf8DecBytes": [
-            240,
-            145,
-            191,
-            128
+            239,
+            168,
+            145
         ],
-        "utf16": "0xD807 0xDFC0",
+        "utf16": "0xFA11",
         "utf16HexBytes": [
-            "D807",
-            "DFC0"
+            "FA11"
         ],
         "utf16DecBytes": [
-            55303,
-            57280
+            64017
         ],
-        "utf32": "0x00011FC0",
+        "utf32": "0x0000FA11",
         "utf32HexBytes": [
-            "00011FC0"
+            "0000FA11"
         ],
         "utf32DecBytes": [
-            73664
+            64017
         ],
         "bidirectionalClass": "Left To Right (L)",
         "bidirectionalIsMirrored": False,
-        "bidirectionalMirroringGlyph": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "bidirectionalMirroringGlyph": "﨑 (U+FA11 CJK COMPATIBILITY IDEOGRAPH-FA11)",
         "bidirectionalControl": False,
         "pairedBracketType": "None (n)",
-        "pairedBracketProperty": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "pairedBracketProperty": "﨑 (U+FA11 CJK COMPATIBILITY IDEOGRAPH-FA11)",
         "decompositionType": "None (none)",
         "NFC_QC": "Yes",
         "NFD_QC": "Yes",
         "NFKC_QC": "Yes",
         "NFKD_QC": "Yes",
-        "numericType": "Numeric (Nu)",
+        "numericType": "None (None)",
         "numericValue": [
-            "1/320"
+            "NaN"
         ],
-        "numericValueParsed": [
-            0.003125
-        ],
+        "numericValueParsed": [],
         "joiningType": "Non Joining (U)",
         "joiningGroup": "No_Joining_Group",
         "joiningControl": False,
-        "lineBreak": "Ordinary Alphabetic And Symbol (AL)",
-        "eastAsianWidth": "Neutral Not East Asian (N)",
+        "lineBreak": "Ideographic (ID)",
+        "eastAsianWidth": "East Asian Wide (W)",
         "uppercase": False,
         "lowercase": False,
-        "simpleUppercaseMapping": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
-        "simpleLowercaseMapping": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
-        "simpleTitlecaseMapping": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
-        "simpleCaseFolding": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
-        "script": "Tamil (Taml)",
+        "simpleUppercaseMapping": "﨑 (U+FA11 CJK COMPATIBILITY IDEOGRAPH-FA11)",
+        "simpleLowercaseMapping": "﨑 (U+FA11 CJK COMPATIBILITY IDEOGRAPH-FA11)",
+        "simpleTitlecaseMapping": "﨑 (U+FA11 CJK COMPATIBILITY IDEOGRAPH-FA11)",
+        "simpleCaseFolding": "﨑 (U+FA11 CJK COMPATIBILITY IDEOGRAPH-FA11)",
+        "script": "Han (Hani)",
         "scriptExtensions": [
-            "Tamil (Taml)"
+            "Han (Hani)"
         ],
         "hangulSyllableType": "Not Applicable (NA)",
         "indicSyllabicCategory": "Other",
         "indicMatraCategory": "NA",
         "indicPositionalCategory": "NA",
-        "ideographic": False,
-        "unifiedIdeograph": False,
+        "character": "﨑",
+        "name": "CJK COMPATIBILITY IDEOGRAPH-FA11",
+        "description": "cape, spit, promontory",
+        "codepoint": "U+FA11",
+        "uriEncoded": "%EF%A8%91",
+        "block": "CJK Compatibility Ideographs",
+        "plane": "BMP",
+        "age": "1.1",
+        "generalCategory": "Other Letter (Lo)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#64017;",
+            "&#xFA11;"
+        ],
+        "ideoFrequency": 0,
+        "ideoGradeLevel": 0,
+        "rsCountUnicode": "46.9",
+        "rsCountKangxi": "46.9",
+        "totalStrokes": [
+            12
+        ],
+        "traditionalVariant": [
+            ""
+        ],
+        "simplifiedVariant": [
+            ""
+        ],
+        "zVariant": [
+            ""
+        ],
+        "compatibilityVariant": [
+            ""
+        ],
+        "semanticVariant": [
+            "㟢 (U+37E2 CJK UNIFIED IDEOGRAPH-37E2)",
+            "埼 (U+57FC CJK UNIFIED IDEOGRAPH-57FC)",
+            "崎 (U+5D0E CJK UNIFIED IDEOGRAPH-5D0E)",
+            "嵜 (U+5D5C CJK UNIFIED IDEOGRAPH-5D5C)",
+            "碕 (U+7895 CJK UNIFIED IDEOGRAPH-7895)",
+            "陭 (U+966D CJK UNIFIED IDEOGRAPH-966D)",
+            "𥔎 (U+2550E CJK UNIFIED IDEOGRAPH-2550E)"
+        ],
+        "specializedSemanticVariant": [
+            ""
+        ],
+        "spoofingVariant": [
+            ""
+        ],
+        "accountingNumeric": "",
+        "primaryNumeric": "",
+        "otherNumeric": "",
+        "hangul": "",
+        "cantonese": "",
+        "mandarin": "",
+        "japaneseKun": "SAKI",
+        "japaneseOn": "KI",
+        "vietnamese": "",
+        "ideographic": True,
+        "unifiedIdeograph": True,
         "equivalentUnifiedIdeograph": "",
         "radical": False,
         "dash": False,
@@ -1496,7 +1728,7 @@ VERBOSE_CHARACTER_PROPERTIES = {
         "diacritic": False,
         "extender": False,
         "softDotted": False,
-        "alphabetic": False,
+        "alphabetic": True,
         "math": False,
         "hexDigit": False,
         "asciiHexDigit": False,
@@ -1504,7 +1736,7 @@ VERBOSE_CHARACTER_PROPERTIES = {
         "logicalOrderException": False,
         "prependedConcatenationMark": False,
         "whiteSpace": False,
-        "verticalOrientation": "Rotated 90 degrees clockwise (R)",
+        "verticalOrientation": "Upright (U)",
         "regionalIndicator": False,
         "emoji": False,
         "emojiPresentation": False,
@@ -1656,6 +1888,325 @@ VERBOSE_CHARACTER_PROPERTIES = {
         "bidirectionalClass": "Left To Right (L)",
         "bidirectionalIsMirrored": False,
         "bidirectionalMirroringGlyph": "￾ (U+FFFE <noncharacter-FFFE>)",
+        "bidirectionalControl": False,
+        "pairedBracketType": "None (n)",
+        "pairedBracketProperty": "",
+        "decompositionType": "None (none)",
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
+        "numericType": "None (None)",
+        "numericValue": [],
+        "numericValueParsed": [],
+        "joiningType": "Non Joining (U)",
+        "joiningGroup": "",
+        "joiningControl": False,
+        "lineBreak": "Unknown (XX)",
+        "eastAsianWidth": "East Asian Ambiguous (A)",
+        "uppercase": False,
+        "lowercase": False,
+        "simpleUppercaseMapping": "",
+        "simpleLowercaseMapping": "",
+        "simpleTitlecaseMapping": "",
+        "simpleCaseFolding": "",
+        "script": "Unknown (Zzzz)",
+        "scriptExtensions": [
+            "Unknown (Zzzz)"
+        ],
+        "hangulSyllableType": "Not Applicable (NA)",
+        "indicSyllabicCategory": "",
+        "indicMatraCategory": "",
+        "indicPositionalCategory": "",
+        "ideographic": False,
+        "unifiedIdeograph": False,
+        "equivalentUnifiedIdeograph": "",
+        "radical": False,
+        "dash": False,
+        "hyphen": False,
+        "quotationMark": False,
+        "terminalPunctuation": False,
+        "sentenceTerminal": False,
+        "diacritic": False,
+        "extender": False,
+        "softDotted": False,
+        "alphabetic": False,
+        "math": False,
+        "hexDigit": False,
+        "asciiHexDigit": False,
+        "defaultIgnorableCodePoint": False,
+        "logicalOrderException": False,
+        "prependedConcatenationMark": False,
+        "whiteSpace": False,
+        "verticalOrientation": "Upright (U)",
+        "regionalIndicator": False,
+        "emoji": False,
+        "emojiPresentation": False,
+        "emojiModifier": False,
+        "emojiModifierBase": False,
+        "emojiComponent": False,
+        "extendedPictographic": False
+    },
+    "𑿀": {
+        "character": "𑿀",
+        "name": "TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH",
+        "codepoint": "U+11FC0",
+        "uriEncoded": "%F0%91%BF%80",
+        "block": "Tamil Supplement",
+        "plane": "SMP",
+        "age": "12.0",
+        "generalCategory": "Other Number (No)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#73664;",
+            "&#x11FC0;"
+        ],
+        "utf8": "0xF0 0x91 0xBF 0x80",
+        "utf8HexBytes": [
+            "F0",
+            "91",
+            "BF",
+            "80"
+        ],
+        "utf8DecBytes": [
+            240,
+            145,
+            191,
+            128
+        ],
+        "utf16": "0xD807 0xDFC0",
+        "utf16HexBytes": [
+            "D807",
+            "DFC0"
+        ],
+        "utf16DecBytes": [
+            55303,
+            57280
+        ],
+        "utf32": "0x00011FC0",
+        "utf32HexBytes": [
+            "00011FC0"
+        ],
+        "utf32DecBytes": [
+            73664
+        ],
+        "bidirectionalClass": "Left To Right (L)",
+        "bidirectionalIsMirrored": False,
+        "bidirectionalMirroringGlyph": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "bidirectionalControl": False,
+        "pairedBracketType": "None (n)",
+        "pairedBracketProperty": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "decompositionType": "None (none)",
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
+        "numericType": "Numeric (Nu)",
+        "numericValue": [
+            "1/320"
+        ],
+        "numericValueParsed": [
+            0.003125
+        ],
+        "joiningType": "Non Joining (U)",
+        "joiningGroup": "No_Joining_Group",
+        "joiningControl": False,
+        "lineBreak": "Ordinary Alphabetic And Symbol (AL)",
+        "eastAsianWidth": "Neutral Not East Asian (N)",
+        "uppercase": False,
+        "lowercase": False,
+        "simpleUppercaseMapping": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "simpleLowercaseMapping": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "simpleTitlecaseMapping": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "simpleCaseFolding": "𑿀 (U+11FC0 TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH)",
+        "script": "Tamil (Taml)",
+        "scriptExtensions": [
+            "Tamil (Taml)"
+        ],
+        "hangulSyllableType": "Not Applicable (NA)",
+        "indicSyllabicCategory": "Other",
+        "indicMatraCategory": "NA",
+        "indicPositionalCategory": "NA",
+        "ideographic": False,
+        "unifiedIdeograph": False,
+        "equivalentUnifiedIdeograph": "",
+        "radical": False,
+        "dash": False,
+        "hyphen": False,
+        "quotationMark": False,
+        "terminalPunctuation": False,
+        "sentenceTerminal": False,
+        "diacritic": False,
+        "extender": False,
+        "softDotted": False,
+        "alphabetic": False,
+        "math": False,
+        "hexDigit": False,
+        "asciiHexDigit": False,
+        "defaultIgnorableCodePoint": False,
+        "logicalOrderException": False,
+        "prependedConcatenationMark": False,
+        "whiteSpace": False,
+        "verticalOrientation": "Rotated 90 degrees clockwise (R)",
+        "regionalIndicator": False,
+        "emoji": False,
+        "emojiPresentation": False,
+        "emojiModifier": False,
+        "emojiModifierBase": False,
+        "emojiComponent": False,
+        "extendedPictographic": False
+    },
+    "𘂾": {
+        "character": "𘂾",
+        "name": "TANGUT IDEOGRAPH-180BE",
+        "codepoint": "U+180BE",
+        "uriEncoded": "%F0%98%82%BE",
+        "block": "Tangut",
+        "plane": "SMP",
+        "age": "2.0",
+        "generalCategory": "Unassigned (Cn)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#98494;",
+            "&#x180BE;"
+        ],
+        "utf8": "0xF0 0x98 0x82 0xBE",
+        "utf8HexBytes": [
+            "F0",
+            "98",
+            "82",
+            "BE"
+        ],
+        "utf8DecBytes": [
+            240,
+            152,
+            130,
+            190
+        ],
+        "utf16": "0xD820 0xDCBE",
+        "utf16HexBytes": [
+            "D820",
+            "DCBE"
+        ],
+        "utf16DecBytes": [
+            55328,
+            56510
+        ],
+        "utf32": "0x000180BE",
+        "utf32HexBytes": [
+            "000180BE"
+        ],
+        "utf32DecBytes": [
+            98494
+        ],
+        "bidirectionalClass": "Left To Right (L)",
+        "bidirectionalIsMirrored": False,
+        "bidirectionalMirroringGlyph": "𘂾 (U+180BE TANGUT IDEOGRAPH-180BE)",
+        "bidirectionalControl": False,
+        "pairedBracketType": "None (n)",
+        "pairedBracketProperty": "",
+        "decompositionType": "None (none)",
+        "NFC_QC": "Yes",
+        "NFD_QC": "Yes",
+        "NFKC_QC": "Yes",
+        "NFKD_QC": "Yes",
+        "numericType": "None (None)",
+        "numericValue": [],
+        "numericValueParsed": [],
+        "joiningType": "Non Joining (U)",
+        "joiningGroup": "",
+        "joiningControl": False,
+        "lineBreak": "Unknown (XX)",
+        "eastAsianWidth": "East Asian Ambiguous (A)",
+        "uppercase": False,
+        "lowercase": False,
+        "simpleUppercaseMapping": "",
+        "simpleLowercaseMapping": "",
+        "simpleTitlecaseMapping": "",
+        "simpleCaseFolding": "",
+        "script": "Unknown (Zzzz)",
+        "scriptExtensions": [
+            "Unknown (Zzzz)"
+        ],
+        "hangulSyllableType": "Not Applicable (NA)",
+        "indicSyllabicCategory": "",
+        "indicMatraCategory": "",
+        "indicPositionalCategory": "",
+        "ideographic": False,
+        "unifiedIdeograph": False,
+        "equivalentUnifiedIdeograph": "",
+        "radical": False,
+        "dash": False,
+        "hyphen": False,
+        "quotationMark": False,
+        "terminalPunctuation": False,
+        "sentenceTerminal": False,
+        "diacritic": False,
+        "extender": False,
+        "softDotted": False,
+        "alphabetic": False,
+        "math": False,
+        "hexDigit": False,
+        "asciiHexDigit": False,
+        "defaultIgnorableCodePoint": False,
+        "logicalOrderException": False,
+        "prependedConcatenationMark": False,
+        "whiteSpace": False,
+        "verticalOrientation": "Upright (U)",
+        "regionalIndicator": False,
+        "emoji": False,
+        "emojiPresentation": False,
+        "emojiModifier": False,
+        "emojiModifierBase": False,
+        "emojiComponent": False,
+        "extendedPictographic": False
+    },
+    "𘠠": {
+        "character": "𘠠",
+        "name": "TANGUT COMPONENT-033",
+        "codepoint": "U+18820",
+        "uriEncoded": "%F0%98%A0%A0",
+        "block": "Tangut Components",
+        "plane": "SMP",
+        "age": "2.0",
+        "generalCategory": "Unassigned (Cn)",
+        "combiningClass": "Not Reordered (0)",
+        "htmlEntities": [
+            "&#100384;",
+            "&#x18820;"
+        ],
+        "utf8": "0xF0 0x98 0xA0 0xA0",
+        "utf8HexBytes": [
+            "F0",
+            "98",
+            "A0",
+            "A0"
+        ],
+        "utf8DecBytes": [
+            240,
+            152,
+            160,
+            160
+        ],
+        "utf16": "0xD822 0xDC20",
+        "utf16HexBytes": [
+            "D822",
+            "DC20"
+        ],
+        "utf16DecBytes": [
+            55330,
+            56352
+        ],
+        "utf32": "0x00018820",
+        "utf32HexBytes": [
+            "00018820"
+        ],
+        "utf32DecBytes": [
+            100384
+        ],
+        "bidirectionalClass": "Left To Right (L)",
+        "bidirectionalIsMirrored": False,
+        "bidirectionalMirroringGlyph": "𘠠 (U+18820 TANGUT COMPONENT-033)",
         "bidirectionalControl": False,
         "pairedBracketType": "None (n)",
         "pairedBracketProperty": "",

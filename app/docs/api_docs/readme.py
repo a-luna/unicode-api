@@ -273,9 +273,6 @@ def update_readme():
     return Result.Ok()
 
 
-# TODO: Update README to include Unicode Codepoints section under Core Resources
-
-
 def get_api_docs_for_readme():
     return (
         create_readme_section("Introduction", content=INTRODUCTION, heading_level=2)
@@ -303,12 +300,13 @@ def create_toc_for_html(html: str) -> str:
 def create_html_heading_map(html: str) -> HeadingMap:
     heading_elements = [
         HtmlHeading(
-            level=int(match.groupdict()["level"]),
-            slug=match.groupdict()["slug"],
-            text=match.groupdict()["text"],
+            level=int(match_dict["level"]),
+            slug=match_dict["slug"],
+            text=match_dict["text"],
             index=match.start(),
         )
         for match in HEADING_ELEMENT_REGEX.finditer(html)
+        if (match_dict := match.groupdict())
     ]
     return {heading_level: [h for h in heading_elements if h.level == heading_level] for heading_level in range(2, 7)}
 

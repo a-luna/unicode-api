@@ -1,4 +1,5 @@
 import logging.config
+import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -26,7 +27,7 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     init_logging(settings)
     init_redis()
-    init_unicode_data()
+    init_unicode_data(settings)
     yield
 
 
@@ -40,10 +41,19 @@ def init_redis():
     _ = redis.client
 
 
-def init_unicode_data():
+def init_unicode_data(settings: UnicodeApiSettings) -> None:
+    start = time.process_time_ns()
     _ = cached_data.non_unihan_character_name_map
     _ = cached_data.blocks
     _ = cached_data.planes
+    _ = cached_data.all_non_unihan_codepoints
+    _ = cached_data.all_cjk_codepoints
+    _ = cached_data.all_tangut_ideograph_codepoints
+    _ = cached_data.all_tangut_component_codepoints
+    end = time.process_time_ns()
+    td = (end - start) / 1_000_000
+    logger = logging.getLogger("app.api")
+    logger.info(f"Initialized Unicode v{settings.UNICODE_VERSION} data in {td:.0f} milliseconds.")
 
 
 def simplify_operation_ids(app: FastAPI) -> None:

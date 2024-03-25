@@ -103,7 +103,7 @@ class RateLimit:
     def apply_rate_limit_to_request(self, request: Request):
         if self.settings.is_test:
             return enable_rate_limit_feature_for_test(request)
-        return request_origin_is_external(request) and requested_route_is_rate_limited(request)
+        return request_origin_is_external(request) and requested_route_is_rate_limited(request)  # pragma: no cover
 
     def get_allowed_at(self, tat: float) -> float:
         return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
@@ -145,7 +145,7 @@ def enable_rate_limit_feature_for_test(request: Request) -> bool:
     return False  # pragma: no cover
 
 
-def request_origin_is_external(request: Request) -> bool:
+def request_origin_is_external(request: Request) -> bool:  # pragma: no cover
     if request.client.host in ["localhost", "127.0.0.1", "testserver"]:
         return False
     if "sec-fetch-site" in request.headers:
@@ -153,7 +153,7 @@ def request_origin_is_external(request: Request) -> bool:
     return True
 
 
-def requested_route_is_rate_limited(request: Request):
+def requested_route_is_rate_limited(request: Request):  # pragma: no cover
     return RATE_LIMIT_ROUTE_REGEX.search(request.url.path)
 
 

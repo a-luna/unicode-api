@@ -4,25 +4,36 @@ from pathlib import Path
 from app.core.result import Result
 from app.data.util.command import run_command
 
-ROOT_FOLDER = Path(__file__).parent.parent.parent.parent
-REQ_BASE = ROOT_FOLDER.joinpath("requirements.txt")
-REQ_DEV = ROOT_FOLDER.joinpath("requirements-dev.txt")
-REQ_LOCK = ROOT_FOLDER.joinpath("requirements-lock.txt")
 REQ_REGEX = re.compile(r"(?P<package>[\w-]+)==(?P<version>[\w.]+)")
 
 
-def sync_requirements_files():
-    result = create_lock_file()
+def sync_requirements_files(project_dir: Path):
+    result = pin_requirements(project_dir)
     if result.failure:
-        return result
-    pinned_versions = parse_lock_file(REQ_LOCK)
-    update_requirements(REQ_BASE, pinned_versions)
-    update_requirements(REQ_DEV, pinned_versions)
+        return Result.Fail(result.error)
+    pinned_versions = result.value
+
+    if (req_base := project_dir.joinpath("requirements.txt")).exists():
+        update_req_file(req_base, pinned_versions)
+    if (req_dev := project_dir.joinpath("requirements.txt")).exists():
+        update_req_file(req_dev, pinned_versions)
     return Result.Ok()
 
 
-def create_lock_file():
-    return run_command(f"pip freeze > {REQ_LOCK}")
+def pin_requirements(project_dir: Path) -> Result[dict[str, str]]:
+    result = create_lock_file(project_dir)
+    if result.failure:
+        return Result.Fail(result.error)
+    lock_file = result.value
+    return Result.Ok(parse_lock_file(lock_file))
+
+
+def create_lock_file(project_dir: Path) -> Result[Path]:
+    lock_file = project_dir.joinpath("requirements-lock.txt")
+    result = run_command(f"pip freeze > {lock_file}")
+    if result.failure:
+        return result
+    return Result.Ok(lock_file)
 
 
 def parse_lock_file(req_file: Path) -> dict[str, str]:
@@ -39,11 +50,11 @@ def parse_installed_package(req: str) -> tuple[str, str] | None:
     return (package, version)
 
 
-def update_requirements(req_file: Path, pinned_versions: dict[str, str]):
-    requirements = parse_lock_file(req_file)
-    updated_versions = {p: pinned_versions.get(p) for p in requirements if p in pinned_versions}
+def update_req_file(req_file: Path, pinned: dict[str, str]):
+    updated_versions = {package: pinned.get(package) for package in parse_lock_file(req_file) if package in pinned}
     req_file.write_text("\n".join([f"{name}=={ver}" for name, ver in updated_versions.items()]))
 
 
 if __name__ == "__main__":
-    sync_requirements_files()
+    project_dir = Path.cwd()
+    sync_requirements_files(project_dir)

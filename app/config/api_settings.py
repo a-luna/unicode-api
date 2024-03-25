@@ -86,6 +86,8 @@ class UnicodeApiSettings:
     PLANES_JSON: Path = field(init=False)
     BLOCKS_JSON: Path = field(init=False)
     CHAR_NAME_MAP: Path = field(init=False)
+    UNIHAN_CHARS_JSON: Path = field(init=False)
+    TANGUT_CHARS_JSON: Path = field(init=False)
     JSON_ZIP_FILE: Path = field(init=False)
     JSON_ZIP_URL: str = field(init=False, default="")
     CSV_FOLDER: Path = field(init=False)
@@ -122,6 +124,8 @@ class UnicodeApiSettings:
         self.PLANES_JSON = json_folder.joinpath("planes.json")
         self.BLOCKS_JSON = json_folder.joinpath("blocks.json")
         self.CHAR_NAME_MAP = json_folder.joinpath("char_name_map.json")
+        self.UNIHAN_CHARS_JSON = json_folder.joinpath("unihan_chars.json")
+        self.TANGUT_CHARS_JSON = json_folder.joinpath("tangut_chars.json")
         self.JSON_ZIP_FILE = json_folder.joinpath(JSON_ZIP_FILE_NAME)
         self.JSON_ZIP_URL = f"{HTTP_BUCKET_URL}/{self.UNICODE_VERSION}/{JSON_ZIP_FILE_NAME}"
         self.CSV_FOLDER = csv_folder
@@ -171,7 +175,19 @@ class UnicodeApiSettings:
         json_map = json.loads(self.CHAR_NAME_MAP.read_text())
         return {int(codepoint): name for (codepoint, name) in json_map.items()}
 
-    def init_data_folders(self) -> None:  # pragma: no cover
+    def get_unihan_character_name_map(self) -> set[int]:
+        if not self.UNIHAN_CHARS_JSON.exists():  # pragma: no cover
+            return set()
+        json_map = json.loads(self.UNIHAN_CHARS_JSON.read_text())
+        return {int(codepoint): int(block_id) for (codepoint, block_id) in json_map.items()}
+
+    def get_tangut_character_name_map(self) -> set[int]:
+        if not self.TANGUT_CHARS_JSON.exists():  # pragma: no cover
+            return set()
+        json_map = json.loads(self.TANGUT_CHARS_JSON.read_text())
+        return {int(codepoint): int(block_id) for (codepoint, block_id) in json_map.items()}
+
+    def init_data_folders(self) -> None:  # pragma: no cover  # noqa: C901
         self.DB_FOLDER.mkdir(parents=True, exist_ok=True)
         if self.DB_FILE.exists():
             self.DB_FILE.unlink()
@@ -184,6 +200,10 @@ class UnicodeApiSettings:
             self.BLOCKS_JSON.unlink()
         if self.CHAR_NAME_MAP.exists():
             self.CHAR_NAME_MAP.unlink()
+        if self.UNIHAN_CHARS_JSON.exists():
+            self.UNIHAN_CHARS_JSON.unlink()
+        if self.TANGUT_CHARS_JSON.exists():
+            self.TANGUT_CHARS_JSON.unlink()
 
         if self.is_dev or self.is_test:
             self.CSV_FOLDER.mkdir(parents=True, exist_ok=True)
