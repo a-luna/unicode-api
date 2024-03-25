@@ -72,8 +72,14 @@ def update_json_files(
     spinner.start("Creating JSON files for parsed Unicode data...")
     config.PLANES_JSON.write_text(json.dumps(all_planes, indent=4))
     config.BLOCKS_JSON.write_text(json.dumps(all_blocks, indent=4))
-    char_name_map = {int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["_unihan"]}
+    char_name_map = {
+        int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["_unihan"] and not char["_tangut"]
+    }
     config.CHAR_NAME_MAP.write_text(json.dumps(char_name_map, indent=4))
+    unihan_char_block_map = {int(char["codepoint_dec"]): int(char["block_id"]) for char in all_chars if char["_unihan"]}
+    config.UNIHAN_CHARS_JSON.write_text(json.dumps(unihan_char_block_map, indent=4))
+    tangut_char_block_map = {int(char["codepoint_dec"]): int(char["block_id"]) for char in all_chars if char["_tangut"]}
+    config.TANGUT_CHARS_JSON.write_text(json.dumps(tangut_char_block_map, indent=4))
     spinner.successful("Successfully created JSON files for parsed Unicode data")
 
 

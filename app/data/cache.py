@@ -15,9 +15,7 @@ from app.data.constants import (
     NULL_BLOCK,
     NULL_PLANE,
 )
-from app.schemas.enums import UnassignedCharacterType
-
-CHAR_TABLES = [db.UnicodeCharacter, db.UnicodeCharacterUnihan]
+from app.schemas.enums import CharacterType
 
 
 class UnicodeDataCache:
@@ -72,8 +70,12 @@ class UnicodeDataCache:
         return {b.id for b in self.blocks if "cjk compatibility ideographs" in b.name.lower() and b.id}
 
     @property
-    def tangut_character_block_ids(self) -> set[int]:
+    def tangut_ideograph_block_ids(self) -> set[int]:
         return {b.id for b in self.blocks if "tangut" in b.name.lower() and "component" not in b.name.lower() and b.id}
+
+    @property
+    def tangut_component_block_ids(self) -> set[int]:
+        return {b.id for b in self.blocks if "tangut components" in b.name.lower() and b.id}
 
     @property
     def surrogate_block_ids(self) -> set[int]:
@@ -85,11 +87,7 @@ class UnicodeDataCache:
             b.id for b in self.blocks if "private use" in b.name.lower() and "surrogate" not in b.name.lower() and b.id
         }
 
-    @property
-    def all_cjk_ideograph_block_ids(self) -> set[int]:
-        return set(list(self.cjk_unified_ideograph_block_ids) + list(self.cjk_compatibility_block_ids))
-
-    @property
+    @cached_property
     def planes(self) -> list[db.UnicodePlane]:
         return self.settings.get_unicode_planes_data()
 
@@ -129,52 +127,50 @@ class UnicodeDataCache:
     def all_noncharacter_codepoints(self) -> set[int]:
         return set(NON_CHARACTER_CODEPOINTS)
 
-    @property
+    @cached_property
     def all_non_unihan_codepoints(self) -> set[int]:
-        return set(self.non_unihan_character_name_map.keys())
+        return set(self.settings.get_non_unihan_character_name_map().keys())
+
+    @cached_property
+    def all_cjk_codepoints(self) -> set[int]:
+        return set(self.settings.get_unihan_character_name_map().keys())
+
+    @cached_property
+    def all_tangut_ideograph_codepoints(self) -> set[int]:
+        return {
+            cp
+            for cp, block_id in self.settings.get_tangut_character_name_map().items()
+            if block_id in self.tangut_ideograph_block_ids
+        }
+
+    @cached_property
+    def all_tangut_component_codepoints(self) -> set[int]:
+        return {
+            cp
+            for cp, block_id in self.settings.get_tangut_character_name_map().items()
+            if block_id in self.tangut_component_block_ids
+        }
 
     @property
-    def all_cjk_ideograph_codepoints(self):
-        cjk_blocks = [self.get_unicode_block_by_id(block_id) for block_id in sorted(self.all_cjk_ideograph_block_ids)]
-        cjk_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in cjk_blocks]
-        return set(itertools.chain(*cjk_codepoints)) - self.all_noncharacter_codepoints
-
-    @property
-    def all_tangut_codepoints(self):
-        tangut_blocks = [self.get_unicode_block_by_id(block_id) for block_id in self.tangut_character_block_ids]
-        tangut_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in tangut_blocks]
-        return set(itertools.chain(*tangut_codepoints)) - self.all_noncharacter_codepoints
+    def all_tangut_codepoints(self) -> set[int]:
+        return self.all_tangut_ideograph_codepoints | self.all_tangut_component_codepoints
 
     @property
     def all_surrogate_codepoints(self) -> set[int]:
-        su_blocks = [self.get_unicode_block_by_id(block_id) for block_id in self.surrogate_block_ids]
-        su_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in su_blocks]
-        return set(itertools.chain(*su_codepoints)) - self.all_noncharacter_codepoints
+        return self.get_all_codepoints_in_block_id_list(self.surrogate_block_ids)
 
     @property
     def all_private_use_codepoints(self) -> set[int]:
-        pu_blocks = [self.get_unicode_block_by_id(block_id) for block_id in self.private_use_block_ids]
-        pu_codepoints = [list(range(b.start_dec, b.finish_dec + 1)) for b in pu_blocks]
-        return set(itertools.chain(*pu_codepoints)) - self.all_noncharacter_codepoints
+        return self.get_all_codepoints_in_block_id_list(self.private_use_block_ids)
 
     @property
     def all_assigned_codepoints(self) -> set[int]:
         return set(
             list(self.all_non_unihan_codepoints)
-            + list(self.all_cjk_ideograph_codepoints)
+            + list(self.all_cjk_codepoints)
             + list(self.all_tangut_codepoints)
             + list(self.all_surrogate_codepoints)
             + list(self.all_private_use_codepoints)
-        )
-
-    @property
-    def all_reserved_codepoints(self) -> set[int]:
-        return (
-            self.all_codepoints_in_unicode_space
-            - self.all_assigned_codepoints
-            - self.all_noncharacter_codepoints
-            - self.all_surrogate_codepoints
-            - self.all_private_use_codepoints
         )
 
     @property
@@ -183,7 +179,10 @@ class UnicodeDataCache:
         # of graphic and format characters (i.e., excluding private-use characters, control characters,
         # noncharacters and surrogate code points).
         # source: https://en.wikipedia.org/wiki/Unicode#cite_ref-25
-        return sum(plane.total_defined for plane in self.planes) - len(self.all_control_character_codepoints)
+        total_defined = (
+            len(self.all_non_unihan_codepoints) + len(self.all_cjk_codepoints) + len(self.all_tangut_codepoints)
+        )
+        return total_defined - len(self.all_control_character_codepoints)
 
     @property
     def unicode_version(self) -> str:
@@ -240,6 +239,9 @@ class UnicodeDataCache:
         found = [p for p in self.planes if p.start_block_id <= block_id and block_id <= p.finish_block_id]
         return found[0] if found else db.UnicodePlane(**NULL_PLANE)
 
+    def codepoint_is_in_unicode_space(self, codepoint: int) -> bool:
+        return codepoint in self.all_codepoints_in_unicode_space
+
     def codepoint_is_assigned(self, codepoint: int) -> bool:
         return codepoint in self.all_assigned_codepoints
 
@@ -252,9 +254,6 @@ class UnicodeDataCache:
     def codepoint_is_private_use(self, codepoint: int) -> bool:
         return codepoint in self.all_private_use_codepoints
 
-    def codepoint_is_reserved(self, codepoint: int) -> bool:
-        return codepoint in self.all_reserved_codepoints
-
     def codepoint_is_ascii_control_character(self, codepoint: int) -> bool:
         return codepoint in C0_CONTROL_CHARACTERS
 
@@ -262,19 +261,39 @@ class UnicodeDataCache:
         return codepoint in self.non_unihan_character_name_map
 
     def character_is_unihan(self, codepoint: int) -> bool:
-        return codepoint in self.all_cjk_ideograph_codepoints
+        return codepoint in self.all_cjk_codepoints
 
     def character_is_tangut(self, codepoint: int) -> bool:
         return codepoint in self.all_tangut_codepoints
 
     @cache
     def get_character_name(self, codepoint: int) -> str:
+        char_type = self.get_character_type(codepoint)
+        match char_type:
+            case CharacterType.NON_UNIHAN:
+                return self.get_name_for_non_unihan_character(codepoint)
+            case CharacterType.UNIHAN | CharacterType.TANGUT:
+                return self.get_generic_name_for_codepoint(codepoint)
+            case _:
+                return self.get_label_for_unnamed_codepoint(codepoint, char_type)
+
+    def get_character_type(self, codepoint: int) -> CharacterType:
         return (
-            self.get_name_for_non_unihan_character(codepoint)
+            CharacterType.NON_UNIHAN
             if self.character_is_non_unihan(codepoint)
-            else self.get_generic_name_for_codepoint(codepoint)
-            if self.character_is_unihan(codepoint) or self.character_is_tangut(codepoint)
-            else self.get_label_for_unassigned_codepoint(codepoint)
+            else CharacterType.UNIHAN
+            if self.character_is_unihan(codepoint)
+            else CharacterType.TANGUT
+            if self.character_is_tangut(codepoint)
+            else CharacterType.NONCHARACTER
+            if self.codepoint_is_noncharacter(codepoint)
+            else CharacterType.SURROGATE
+            if self.codepoint_is_surrogate(codepoint)
+            else CharacterType.PRIVATE_USE
+            if self.codepoint_is_private_use(codepoint)
+            else CharacterType.RESERVED
+            if self.codepoint_is_in_unicode_space(codepoint)
+            else CharacterType.INVALID
         )
 
     def get_name_for_non_unihan_character(self, codepoint: int) -> str:
@@ -288,27 +307,23 @@ class UnicodeDataCache:
             else f"CJK COMPATIBILITY IDEOGRAPH-{codepoint:04X}"
             if block.id in self.cjk_compatibility_block_ids
             else f"TANGUT IDEOGRAPH-{codepoint:04X}"
-            if block.id in self.tangut_character_block_ids
+            if block.id in self.tangut_ideograph_block_ids
+            else f"TANGUT COMPONENT-{self.get_tangut_component_index(codepoint):03}"
+            if block.id in self.tangut_component_block_ids
             else ""
         )
 
-    def get_label_for_unassigned_codepoint(self, codepoint: int) -> str:
-        if (char_type := self.get_unassigned_character_type(codepoint)) != UnassignedCharacterType.INVALID:
-            return f"<{char_type}-{codepoint:04X}>"
-        return f"Invalid Codepoint (U+{codepoint:04X})"
+    def get_tangut_component_index(self, codepoint: int) -> int:
+        tangut_components_block = self.get_unicode_block_by_id(list(self.tangut_component_block_ids)[0])
+        # The Tangut component characters are one-indexed
+        return (codepoint - tangut_components_block.start_dec) + 1
 
-    def get_unassigned_character_type(self, codepoint: int) -> UnassignedCharacterType:
-        return (
-            UnassignedCharacterType.NONCHARACTER
-            if self.codepoint_is_noncharacter(codepoint)
-            else UnassignedCharacterType.SURROGATE
-            if self.codepoint_is_surrogate(codepoint)
-            else UnassignedCharacterType.PRIVATE_USE
-            if self.codepoint_is_private_use(codepoint)
-            else UnassignedCharacterType.RESERVED
-            if self.codepoint_is_reserved(codepoint)
-            else UnassignedCharacterType.INVALID
-        )
+    def get_label_for_unnamed_codepoint(self, codepoint: int, char_type: CharacterType) -> str:
+        match char_type:
+            case CharacterType.INVALID:
+                return f"Invalid Codepoint (U+{codepoint:04X})"
+            case _:
+                return f"<{char_type}-{codepoint:04X}>"
 
     def get_mapped_codepoint_from_hex(self, codepoint_hex: str) -> str:  # pragma: no cover
         if not codepoint_hex:
@@ -327,6 +342,10 @@ class UnicodeDataCache:
             if codepoint_dec
             else ""
         )
+
+    def get_all_codepoints_in_block_id_list(self, block_id_list: list[int]) -> set[int]:
+        blocks = [self.get_unicode_block_by_id(block_id) for block_id in block_id_list]
+        return set(itertools.chain(*[list(range(block.start_dec, block.finish_dec + 1)) for block in blocks]))
 
 
 cached_data = UnicodeDataCache()

@@ -1,7 +1,10 @@
 from enum import IntEnum, auto
 
 
-class UnassignedCharacterType(IntEnum):
+class CharacterType(IntEnum):
+    NON_UNIHAN = auto()
+    UNIHAN = auto()
+    TANGUT = auto()
     NONCHARACTER = auto()
     SURROGATE = auto()
     PRIVATE_USE = auto()

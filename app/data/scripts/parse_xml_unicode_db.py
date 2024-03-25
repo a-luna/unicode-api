@@ -138,6 +138,7 @@ def parse_character_details(
         "plane_id": plane["id"],
         "plane_number": plane["number"],
         "_unihan": unihan,
+        "_tangut": char_is_tangut(str(block["name"])),
         "age": char_node.get("age", "0"),
         "general_category": char_node.get("gc", "0"),
         "combining_class": int(char_node.get("ccc", "0")),
@@ -245,6 +246,10 @@ def get_unicode_block_containing_codepoint(
 
 def char_is_unihan(block_name: str) -> bool:
     return bool("cjk unified ideographs" in block_name.lower() or "cjk compatibility ideographs" in block_name.lower())
+
+
+def char_is_tangut(block_name: str) -> bool:
+    return bool("tangut" in block_name.lower())
 
 
 def get_character_name(char_node: _Element, codepoint: str, codepoint_dec: int, block: BlockOrPlaneDetailsDict) -> str:
@@ -362,12 +367,13 @@ def count_defined_characters_per_block(all_chars: list[CharDetailsDict], all_blo
     char_map = {int(char["codepoint_dec"]): char for char in all_chars}
     for block in all_blocks:
         block["total_allocated"] = int(block["finish_dec"]) - int(block["start_dec"]) + 1
-        block["total_defined"] = count_characters_in_range(char_map, int(block["start_dec"]), int(block["finish_dec"]))
+        block["total_defined"] = count_defined_characters_in_range(
+            char_map, int(block["start_dec"]), int(block["finish_dec"])
+        )
 
 
-def count_characters_in_range(char_map: dict[int, BlockOrPlaneDetailsDict], start: int, finish: int) -> int:
-    chars_in_block = [char_map.get(codepoint) for codepoint in range(start, finish + 1) if codepoint in char_map]
-    return len(chars_in_block)
+def count_defined_characters_in_range(char_map: dict[int, BlockOrPlaneDetailsDict], start: int, finish: int) -> int:
+    return len([codepoint for codepoint in range(start, finish + 1) if codepoint in char_map])
 
 
 def count_defined_characters_per_plane(
