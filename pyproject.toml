@@ -38,13 +38,15 @@ exclude =  '''
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
 select = ["B", "C4", "C90", "E", "ERA", "F", "FA", "I", "INT", "N", "PERF", "PGH", "PIE", "PLE", "PLW", "PTH", "RUF100", "SIM", "UP", "W", "YTT"]
 extend-select = ["I"]
 ignore = ["B019", "B905"]
 fixable = ["I"]
 unfixable = ["B", "C90", "PIE", "SIM"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "app/api/api_v1/dependencies.py" = ["E501"]
 "app/docs/dependencies/custom_parameters.py" = ["E501"]
 "app/docs/dependencies/filter_tables.py" = ["E501"]
