@@ -9,7 +9,27 @@ from app.db.procs.get_char_details import get_character_properties
 from app.schemas.enums import CharPropertyGroup
 from app.schemas.util import to_lower_camel
 
-TEST_CHARS = ["\x17", "(", "∑", "㑢", "穩", "范", "𑿀", "\uf800", "\ufffe", "🇦", "🐍"]
+# fmt: off
+TEST_CHARS = [
+#   Char        Codepoint   Name                                             Test Notes
+    "\x17",     # U+0017    END OF TRANSMISSION BLOCK                        (Control Character)
+    "(",        # U+0028    LEFT PARENTHESIS                                 (Punctuation)
+    "∑",        # U+2211    N-ARY SUMMATION                                  (Math Symbol)
+    "㑢",       # U+3462    CJK UNIFIED IDEOGRAPH-3462                       (CJK Ideograph)
+    "穩",       # U+7A69    CJK UNIFIED IDEOGRAPH-7A69                       (CJK Ideograph w/ variants)
+    "范",       # U+8303    CJK UNIFIED IDEOGRAPH-8303                       (CJK Ideograph w/ multiple values for totalStrokes)
+    # "\uda92",   # U+DA92    <surrogate-DA92>                                 (High-Surrogate)
+    # "\udddd",   # U+DDDD    <surrogate-DDDD>                                 (Low Surrogate)
+    "﨑",       # U+FA11    CJK COMPATIBILITY IDEOGRAPH-FA11                 (CJK Compatibility Ideograph)
+    "\uf800",   # U+F800    <private-use-F800>                               (Private Use)
+    "\ufffe",   # U+FFFE    <noncharacter-FFFE>                              (Noncharacter)
+    "𑿀",      # U+11FC0   TAMIL FRACTION ONE THREE-HUNDRED-AND-TWENTIETH   (Numeric with fractional value)
+    "𘂾",        # U+180BE   TANGUT IDEOGRAPH-180BE                           (Tangut Ideograph)
+    "𘠠",       # U+18820   TANGUT COMPONENT-033                             (Tangut Component)
+    "🇦",      # U+1F1E6   REGIONAL INDICATOR SYMBOL LETTER A               (emoji=True, extendedPictographic=False)
+    "🐍",      # U+1F40D   SNAKE                                            (emoji=True, extendedPictographic=True)
+]
+# fmt: on
 
 INT_TO_STR_PROP_NAMES = ["accounting_numeric", "primary_numeric", "other_numeric"]
 INT_ALWAYS_PROP_VALUES = ["total_strokes", "total_strokes", "utf8_dec_bytes", "utf16_dec_bytes", "utf32_dec_bytes"]
