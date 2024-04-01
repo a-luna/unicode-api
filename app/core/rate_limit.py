@@ -16,7 +16,7 @@ from app.core.util import (
     get_time_until_timestamp,
 )
 
-RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|planes")
+RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|codepoints|planes")
 
 
 @dataclass
