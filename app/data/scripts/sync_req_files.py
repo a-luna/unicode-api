@@ -15,7 +15,7 @@ def sync_requirements_files(project_dir: Path):
 
     if (req_base := project_dir.joinpath("requirements.txt")).exists():
         update_req_file(req_base, pinned_versions)
-    if (req_dev := project_dir.joinpath("requirements.txt")).exists():
+    if (req_dev := project_dir.joinpath("requirements-dev.txt")).exists():
         update_req_file(req_dev, pinned_versions)
     return Result.Ok()
 
@@ -37,10 +37,10 @@ def create_lock_file(project_dir: Path) -> Result[Path]:
 
 
 def parse_lock_file(req_file: Path) -> dict[str, str]:
-    return dict(parsed for s in req_file.read_text().splitlines() if (parsed := parse_installed_package(s)))
+    return dict(pkg for line in req_file.read_text().splitlines() if (pkg := parse_lock_file_entry(line)))
 
 
-def parse_installed_package(req: str) -> tuple[str, str] | None:
+def parse_lock_file_entry(req: str) -> tuple[str, str] | None:
     match = REQ_REGEX.match(req)
     if not match:
         return None

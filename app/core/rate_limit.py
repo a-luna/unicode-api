@@ -1,6 +1,6 @@
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 
 from fastapi import Request
@@ -25,26 +25,26 @@ class RateLimitDecision:
     arrived_at: float
     allowed_at: float
     new_tat: float
+    logger: logging.Logger = field(init=False)
+
+    def __post_init__(self):
+        self.logger = logging.getLogger("app.api")
 
     def log(self) -> None:
-        decision = (
-            "RATE LIMIT DECISION:  "
-            f"(IP: {self.ip})  "
-            f"(Allowed: {self.arrived_at >= self.allowed_at})  "
-            f"(Arrived At: {get_time_portion(self.arrived_at)})  "
-            f"(Allowed At: {get_time_portion(self.allowed_at)})  "
-        )
-        if self.arrived_at < self.allowed_at:
-            limit_duration = get_duration_between_timestamps(self.arrived_at, self.allowed_at)
-            decision += f"({format_timedelta_str(limit_duration, precise=True)} Until Next Request Allowed)"
-
+        allowed = self.arrived_at >= self.allowed_at
+        self.logger.info(f'##### {"REQUEST ALLOWED" if allowed else "REQUEST DENIED"} #####')
+        self.logger.info(f"Request From...: {self.ip}")
+        self.logger.info(f"Arrived At.....: {get_time_portion(self.arrived_at)}")
+        self.logger.info(f"Allowed At.....: {get_time_portion(self.allowed_at)}")
+        if allowed:
+            new_tat = get_time_portion(self.new_tat)
+            dur_until_limit = get_duration_between_timestamps(self.allowed_at, self.arrived_at)
+            time_until_limit = format_timedelta_str(dur_until_limit, precise=True)
+            self.logger.info(f"New TAT........: {new_tat}, ({time_until_limit} from now)")
         else:
-            time_until_limit = get_duration_between_timestamps(self.allowed_at, self.arrived_at)
-            decision += (
-                f"(New TAT: {get_time_portion(self.new_tat)}, "
-                f"{format_timedelta_str(time_until_limit, precise=True)} from now)"
-            )
-        logging.getLogger("app.api").info(decision)
+            dur_limit_remaining = get_duration_between_timestamps(self.arrived_at, self.allowed_at)
+            time_limit_remaining = format_timedelta_str(dur_limit_remaining, precise=True)
+            self.logger.info(f"Limit Expires..: {time_limit_remaining}")
 
 
 class RateLimit:
@@ -96,7 +96,7 @@ class RateLimit:
                 new_tat = self.get_new_tat(tat, arrived_at)
                 RateLimitDecision(client_ip, arrived_at, allowed_at, new_tat).log()
                 self.redis.set(client_ip, new_tat)
-                return self.request_allowed(client_ip)
+                return Result.Ok()
         except LockError:  # pragma: no cover
             return self.lock_error(client_ip)
 
@@ -114,17 +114,13 @@ class RateLimit:
     def rate_limit_exceeded(self, client, allowed_at: float) -> Result[None]:
         limit_duration = get_time_until_timestamp(allowed_at)
         burst = f" (+{self.burst} request burst allowance)" if self.burst > 1 else ""
-        error = (
+        detail = (
             f"API rate limit of {self.rate} requests{burst} in {round(self.period_seconds, 1)} "
-            f"second{'s' if self.period_seconds > 1 else ''} exceeded for IP {client}, "
+            f"second{s(self.period_seconds)} exceeded for IP {client}, "
             f"{format_timedelta_str(limit_duration, precise=True)} until limit is removed"
         )
-        self.logger.info(error)
-        return Result.Fail(error)
-
-    def request_allowed(self, client) -> Result[None]:
-        self.logger.info(f"Request allowed for IP: {client}")
-        return Result.Ok()
+        self.logger.debug(detail)
+        return Result.Fail(detail)
 
     def lock_error(self, client) -> Result[None]:  # pragma: no cover
         error = (
@@ -153,12 +149,18 @@ def request_origin_is_external(request: Request) -> bool:  # pragma: no cover
     return True
 
 
-def requested_route_is_rate_limited(request: Request):  # pragma: no cover
-    return RATE_LIMIT_ROUTE_REGEX.search(request.url.path)
+def requested_route_is_rate_limited(request: Request) -> bool:  # pragma: no cover
+    return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
 
 
 def get_time_portion(ts: float) -> str:
     return dtaware_fromtimestamp(ts).time().strftime("%I:%M:%S.%f %p")
+
+
+def s(x: list | int | float) -> str:
+    if isinstance(x, list):
+        return "s" if len(x) > 1 else ""
+    return "s" if x > 1 else ""
 
 
 rate_limit = RateLimit(redis)
