@@ -3,8 +3,8 @@ from functools import reduce
 
 import pytest
 
-from app.data.cache import cached_data
-from app.data.encoding import get_uri_encoded_value
+from app.core.cache import cached_data
+from app.core.encoding import get_uri_encoded_value
 from app.db.character_props import PROPERTY_GROUPS
 from app.db.procs.get_char_details import get_prop_groups
 from app.schemas.enums import CharPropertyGroup

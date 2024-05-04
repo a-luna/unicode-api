@@ -1,17 +1,29 @@
+import re
 import time
 from datetime import datetime, timedelta, timezone, tzinfo
 
-from app.data.constants import UNICODE_VERSION_RELEASE_DATES
+from app.constants import DATE_MONTH_NAME, UNICODE_VERSION_RELEASE_DATES
 
-DATE_MONTH_NAME = "%b %d, %Y"
+
+def s(x: list | int | float) -> str:
+    if isinstance(x, list):
+        return "s" if len(x) > 1 else ""
+    return "s" if x > 1 else ""
+
+
+def slugify(text: str) -> str:
+    text = text.lower().strip()
+    text = re.compile(r"\s+").sub("-", text)
+    text = re.compile(r"([^A-Za-z0-9-])+").sub("-", text)
+    text = re.compile(r"--+").sub("-", text)
+    text = re.compile(r"(^-|-$)").sub("", text)
+    return text
 
 
 def get_unicode_version_release_date(version: str) -> str:
-    return (
-        release_date.strftime(DATE_MONTH_NAME)
-        if (release_date := UNICODE_VERSION_RELEASE_DATES.get(version, None))
-        else ""
-    )
+    if release_date := UNICODE_VERSION_RELEASE_DATES.get(version, None):
+        return release_date.strftime(DATE_MONTH_NAME)
+    return ""
 
 
 def make_tzaware(dt: datetime, use_tz: tzinfo | None = None, localize: bool = True) -> datetime:
@@ -38,24 +50,24 @@ def format_timedelta_str(td: timedelta, precise: bool = True) -> str:
     if td.days < 0:
         td = -td
         duration = "-"
-    (milliseconds, microseconds) = divmod(td.microseconds, 1000)
+    (ms, us) = divmod(td.microseconds, 1000)
     (minutes, seconds) = divmod(td.seconds, 60)
     (hours, minutes) = divmod(minutes, 60)
     (years, days) = divmod(td.days, 365)
     if years > 0:
         duration += f"{years}y {days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{years}y {days} days"
     elif days > 0:
-        duration += f"{days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{days} days"
+        duration += f"{days}d {hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{days} days {hours:.0f} hours"
     elif hours > 0:
         duration += f"{hours:.0f}h {minutes:.0f}m {seconds}s" if precise else f"{hours:.0f} hours {minutes:.0f} minutes"
     elif minutes > 0:
-        duration += f"{minutes:.0f}m {seconds}s" if precise else f"{minutes:.0f} minutes"
+        duration += f"{minutes:.0f}m {seconds}s {ms:.0f}ms" if precise else f"{minutes:.0f} minutes {seconds} seconds"
     elif seconds > 0:
-        duration += f"{seconds}s {milliseconds:.0f}ms" if precise else f"{seconds} seconds"
-    elif milliseconds > 0:
-        duration += f"{milliseconds}ms {microseconds}us" if precise else f"{milliseconds}ms"
+        duration += f"{seconds}s {ms:.0f}ms" if precise else f"{seconds} seconds"
+    elif ms > 0:
+        duration += f"{ms}ms {us}us" if precise else f"{ms}ms"
     else:
-        duration += f"{microseconds}us"
+        duration += f"{us}us"
     return duration
 
 

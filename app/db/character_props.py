@@ -1,15 +1,15 @@
 from typing import Any
 
-from app.data.cache import cached_data
-from app.data.constants import (
-    CODEPOINT_WITH_PREFIX_REGEX,
+from app.constants import (
+    CP_PREFIX_1_REGEX,
     DEFAULT_BC_AL_CODEPOINTS,
     DEFAULT_BC_ET_CODEPOINTS,
     DEFAULT_BC_R_CODEPOINTS,
     DEFAULT_VO_U_BLOCK_NAMES,
     DEFAULT_VO_U_PLANE_NUMBERS,
 )
-from app.data.encoding import (
+from app.core.cache import cached_data
+from app.core.encoding import (
     get_codepoint_string,
     get_html_entities,
     get_uri_encoded_value,
@@ -748,7 +748,7 @@ PROPERTY_GROUPS = {
             "char_property": "EqUIdeo",
             "db_required": True,
             "db_column": True,
-            "response_value": lambda char: get_string_prop_value(char, "equivalent_unified_ideograph"),
+            "response_value": lambda char: get_char_and_unicode_hex_value(char, "equivalent_unified_ideograph"),
         },
         {
             "name_in": "radical",
@@ -1024,19 +1024,13 @@ def get_int_prop_value(char_props: dict[str, Any], prop_name: str) -> int:
 
 def get_char_and_unicode_hex_value(char_props: dict[str, Any], prop_name: str) -> str:
     prop_value = get_string_prop_value(char_props, prop_name)
-    return (
-        cached_data.get_mapped_codepoint_from_hex(prop_value)
-        if prop_value and cached_data.codepoint_is_assigned(char_props["codepoint_dec"])
-        else ""
-    )
+    return cached_data.get_mapped_codepoint_from_hex(prop_value)
 
 
 def get_list_of_mapped_codepoints(input: str) -> list[str]:
     if not input:
         return [""]
-    return [
-        cached_data.get_mapped_codepoint_from_hex(codepoint) for codepoint in CODEPOINT_WITH_PREFIX_REGEX.findall(input)
-    ]
+    return [cached_data.get_mapped_codepoint_from_hex(codepoint) for codepoint in CP_PREFIX_1_REGEX.findall(input)]
 
 
 def get_default_age(codepoint: int) -> str:

@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import HTTPException, Path, Query, status
 
 import app.db.models as db
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 from app.docs.dependencies.custom_parameters import BLOCK_NAME_DESCRIPTION, CHAR_SEARCH_BLOCK_NAME_DESCRIPTION
 from app.schemas.enums.block_name import UnicodeBlockName
 

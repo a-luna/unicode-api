@@ -2,9 +2,9 @@ from sqlalchemy.exc import OperationalError
 from sqlmodel import Session, distinct, select
 
 import app.db.models as db
-from app.data.cache import cached_data
+from app.core.cache import cached_data
+from app.core.util import slugify
 from app.db.engine import engine
-from app.docs.util import slugify
 from app.schemas.enums import (
     BidirectionalClass,
     CharacterFilterFlags,

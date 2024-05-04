@@ -5,9 +5,9 @@ from lxml import etree
 from lxml.etree import _Element, _ElementTree
 
 from app.config.api_settings import UnicodeApiSettings
+from app.constants import NULL_BLOCK, NULL_PLANE
+from app.core.encoding import get_codepoint_string
 from app.core.result import Result
-from app.data.constants import NULL_BLOCK, NULL_PLANE
-from app.data.encoding import get_codepoint_string
 from app.data.scripts.script_types import AllParsedUnicodeData, BlockOrPlaneDetailsDict, CharDetailsDict
 from app.data.util.spinners import Spinner
 

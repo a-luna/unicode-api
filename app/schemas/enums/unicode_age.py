@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Self
 
-from app.data.constants import UNICODE_VERSION_RELEASE_DATES
+from app.constants import UNICODE_VERSION_RELEASE_DATES
 
 UnicodeAge = Enum(
     "UnicodeAge", {f'V{ver.replace(".", "_")}': ver[:-2] for ver in list(UNICODE_VERSION_RELEASE_DATES.keys())}

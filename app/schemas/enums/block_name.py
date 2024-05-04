@@ -1,7 +1,7 @@
 from enum import Enum
 
 import app.db.models as db
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 from app.schemas.util import normalize_string_lm3
 
 UnicodeBlockName = Enum(

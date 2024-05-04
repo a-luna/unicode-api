@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import HTTPException, Query, status
 
 from app.api.api_v1.dependencies.util import get_decimal_number_from_hex_codepoint
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 from app.docs.dependencies.custom_parameters import (
     ENDING_BEFORE_BLOCK_ID_DESCRIPTION,
     ENDING_BEFORE_CODEPOINT_DESCRIPTION,

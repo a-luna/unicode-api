@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.12
 SHELL ["/bin/bash", "-c"]
 
 ARG ENV

@@ -2,8 +2,8 @@ import os
 import re
 
 from app.config.api_settings import UnicodeApiSettings, get_settings
+from app.constants import SUPPORTED_UNICODE_VERSIONS
 from app.core.result import Result
-from app.data.constants import SUPPORTED_UNICODE_VERSIONS
 
 SEMVER_REGEX = re.compile(r"^(?P<major>(?:[1-9]\d*))\.(?P<minor>(?:[0-9]\d*))(?:\.(?P<patch>(?:[0-9]\d*)))?")
 

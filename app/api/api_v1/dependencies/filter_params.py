@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import HTTPException, Query, status
 
 from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matcher
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 from app.docs.dependencies.custom_parameters import (
     CHAR_NAME_FILTER_DESCRIPTION,
     CJK_DEFINITION_FILTER_DESCRIPTION,

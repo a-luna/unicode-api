@@ -5,7 +5,15 @@ from datetime import date
 MAX_CODEPOINT = 1114111
 ALL_UNICODE_CODEPOINTS = range(MAX_CODEPOINT + 1)
 ASCII_HEX = "0123456789ABCDEFabcdef"
-CODEPOINT_WITH_PREFIX_REGEX = re.compile(r"(?:U\+([A-Fa-f0-9]{4,6}))")
+
+DATE_MONTH_NAME = "%b %d, %Y"
+
+CP_PREFIX_1_REGEX = re.compile(r"(?:U\+([A-Fa-f0-9]{4,6}))")
+CP_PREFIX_1_REGEX_STRICT = re.compile(r"^U\+([A-Fa-f0-9]{4,6})$")
+CP_PREFIX_2_REGEX_STRICT = re.compile(r"^0x([A-Fa-f0-9]{2,6})$")
+CP_NO_PREFIX_REGEX_STRICT = re.compile(r"^([A-Fa-f0-9]{2,6})$")
+CP_NEED_LEADING_ZEROS_REGEX = re.compile(r"^U\+([A-Fa-f0-9]{1,3})$")
+CP_OUT_OF_RANGE_REGEX = re.compile(r"^(?:U\+)([A-Fa-f0-9]+)|(?:0x)?([A-Fa-f0-9]{7,})$")
 
 CharacterFlag = namedtuple("CharacterFlag", ["name", "alias", "db_column"])
 
