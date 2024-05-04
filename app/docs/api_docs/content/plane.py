@@ -1,5 +1,5 @@
 # flake8: noqa
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 
 PLANE_ENDPOINTS = """
         <dl>

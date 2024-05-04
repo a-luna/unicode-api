@@ -6,7 +6,7 @@ from sqlalchemy.engine import Engine
 from sqlmodel import column, select
 
 import app.db.models as db
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 from app.db.character_props import PROPERTY_GROUPS
 from app.schemas.enums import CharacterFilterFlags, CharPropertyGroup
 

@@ -9,7 +9,7 @@ from app.data.constants import (
     DEFAULT_VO_U_BLOCK_NAMES,
     DEFAULT_VO_U_PLANE_NUMBERS,
 )
-from app.data.encoding import (
+from app.core.cache import cached_data
     get_codepoint_string,
     get_html_entities,
     get_uri_encoded_value,

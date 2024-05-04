@@ -1,4 +1,4 @@
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 
 TOTAL_CHARACTERS_IN_UNICODE_V15_0 = 149186
 

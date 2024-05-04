@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import HTTPException, Query, status
 
-from app.data.cache import cached_data
+from app.core.cache import cached_data
 from app.docs.dependencies.custom_parameters import PLANE_NAME_DESCRIPTION
 
 

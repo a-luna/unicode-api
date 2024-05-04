@@ -5,7 +5,7 @@ from rapidfuzz import process
 
 import app.db.models as db
 from app.config.api_settings import get_settings
-from app.data.constants import (
+from app.constants import (
     ALL_CONTROL_CHARACTERS,
     ALL_UNICODE_CODEPOINTS,
     ASCII_HEX,
@@ -164,16 +164,6 @@ class UnicodeDataCache:
         return self.get_all_codepoints_in_block_id_list(self.private_use_block_ids)
 
     @property
-    def all_assigned_codepoints(self) -> set[int]:
-        return set(
-            list(self.all_non_unihan_codepoints)
-            + list(self.all_cjk_codepoints)
-            + list(self.all_tangut_codepoints)
-            + list(self.all_surrogate_codepoints)
-            + list(self.all_private_use_codepoints)
-        )
-
-    @property
     def official_number_of_unicode_characters(self) -> int:
         # The "official" number of characters listed for each version of Unicode is the total number
         # of graphic and format characters (i.e., excluding private-use characters, control characters,
@@ -241,9 +231,6 @@ class UnicodeDataCache:
 
     def codepoint_is_in_unicode_space(self, codepoint: int) -> bool:
         return codepoint in self.all_codepoints_in_unicode_space
-
-    def codepoint_is_assigned(self, codepoint: int) -> bool:
-        return codepoint in self.all_assigned_codepoints
 
     def codepoint_is_noncharacter(self, codepoint: int) -> bool:
         return codepoint in self.all_noncharacter_codepoints
@@ -335,13 +322,11 @@ class UnicodeDataCache:
         return self.get_mapped_codepoint_from_int(int(codepoint_hex, 16))
 
     def get_mapped_codepoint_from_int(self, codepoint_dec: int) -> str:  # pragma: no cover
-        if codepoint_dec not in ALL_UNICODE_CODEPOINTS:
+        if not codepoint_dec:
+            return ""
+        if not self.codepoint_is_in_unicode_space(codepoint_dec):
             return f"Invalid Codepoint ({codepoint_dec} is not within the Unicode codespace)"
-        return (
-            f"{chr(codepoint_dec)} (U+{codepoint_dec:04X} {cached_data.get_character_name(codepoint_dec)})"
-            if codepoint_dec
-            else ""
-        )
+        return f"{chr(codepoint_dec)} (U+{codepoint_dec:04X} {cached_data.get_character_name(codepoint_dec)})"
 
     def get_all_codepoints_in_block_id_list(self, block_id_list: list[int]) -> set[int]:
         blocks = [self.get_unicode_block_by_id(block_id) for block_id in block_id_list]

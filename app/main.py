@@ -12,10 +12,10 @@ from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
 from app.config.api_settings import UnicodeApiSettings, get_settings
+from app.core.cache import cached_data
 from app.core.logging import LOGGING_CONFIG
 from app.core.rate_limit import rate_limit
 from app.core.redis_client import redis
-from app.data.cache import cached_data
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 
 APP_FOLDER = Path(__file__).parent
