@@ -1,5 +1,9 @@
+from pathlib import Path
+
 import app.db.models as db
+from app.config.api_settings import UnicodeApiSettings
 from app.core.result import Result
+from app.data.scripts.script_types import BlockOrPlaneDetailsDict, CharDetailsDict, ParsedUnicodeData, UnicodeModel
 from app.data.util.spinners import Spinner
 from app.schemas.enums import (
     BidirectionalBracketType,
@@ -20,7 +24,12 @@ from app.schemas.enums import (
 ONE_PERCENT = 0.01
 
 
-def save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars):
+def save_parsed_data_to_csv(
+    config: UnicodeApiSettings,
+    all_planes: list[BlockOrPlaneDetailsDict],
+    all_blocks: list[BlockOrPlaneDetailsDict],
+    all_chars: list[CharDetailsDict],
+) -> Result[None]:
     all_non_unihan_chars = [update_char_dict_enum_values(char) for char in all_chars if not char["_unihan"]]
     all_unihan_chars = [update_char_dict_enum_values(char) for char in all_chars if char["_unihan"]]
 
@@ -51,7 +60,7 @@ def save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars):
     return Result.Ok()
 
 
-def update_char_dict_enum_values(char_dict):
+def update_char_dict_enum_values(char_dict: CharDetailsDict) -> CharDetailsDict:
     char_dict["general_category"] = GeneralCategory.from_code(char_dict["general_category"]).code
     char_dict["combining_class"] = get_combining_class(char_dict["combining_class"]).value
     char_dict["bidirectional_class"] = BidirectionalClass.from_code(char_dict["bidirectional_class"]).value
@@ -71,19 +80,19 @@ def update_char_dict_enum_values(char_dict):
     return char_dict
 
 
-def get_column_names(db_model, parsed):
+def get_column_names(db_model: UnicodeModel, parsed: ParsedUnicodeData) -> list[str]:
     return [name for name in db_model.__fields__ if name in parsed]
 
 
-def get_csv_rows_for_chunk(chunk, column_names):
+def get_csv_rows_for_chunk(chunk: list[ParsedUnicodeData], column_names: list[str]) -> str:
     return "\n".join(get_csv_row_for_parsed_data(parsed, column_names) for parsed in chunk)
 
 
-def get_csv_row_for_parsed_data(db_obj, column_names):
+def get_csv_row_for_parsed_data(db_obj: ParsedUnicodeData, column_names: list[str]) -> str:
     return ",".join(sanitize_value_for_csv(db_obj.get(name, "")) for name in column_names)
 
 
-def sanitize_value_for_csv(val):
+def sanitize_value_for_csv(val: bool | int | str | float) -> str:
     if isinstance(val, str):
         val = val.replace(",", ";").replace("Nan", "")
     return (
@@ -101,7 +110,7 @@ def sanitize_value_for_csv(val):
     )
 
 
-def append_to_csv(csv_file, text):
+def append_to_csv(csv_file: Path, text: str) -> None:
     with csv_file.open("a") as csv:
         csv.write(f"{text}\n")
 

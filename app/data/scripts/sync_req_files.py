@@ -7,7 +7,7 @@ from app.data.util.command import run_command
 REQ_REGEX = re.compile(r"(?P<package>[\w-]+)==(?P<version>[\w.]+)")
 
 
-def sync_requirements_files(project_dir: Path):
+def sync_requirements_files(project_dir: Path) -> Result[None]:
     result = pin_requirements(project_dir)
     if result.failure:
         return Result.Fail(result.error)
@@ -50,7 +50,7 @@ def parse_lock_file_entry(req: str) -> tuple[str, str] | None:
     return (package, version)
 
 
-def update_req_file(req_file: Path, pinned: dict[str, str]):
+def update_req_file(req_file: Path, pinned: dict[str, str]) -> None:
     updated_versions = {package: pinned.get(package) for package in parse_lock_file(req_file) if package in pinned}
     req_file.write_text("\n".join([f"{name}=={ver}" for name, ver in updated_versions.items()]))
 

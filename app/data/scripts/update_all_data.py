@@ -67,7 +67,7 @@ def update_json_files(
     all_planes: list[BlockOrPlaneDetailsDict],
     all_blocks: list[BlockOrPlaneDetailsDict],
     all_chars: list[CharDetailsDict],
-):
+) -> None:
     spinner = Spinner()
     spinner.start("Creating JSON files for parsed Unicode data...")
     config.PLANES_JSON.write_text(json.dumps(all_planes, indent=4))
