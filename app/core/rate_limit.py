@@ -82,9 +82,9 @@ class RateLimit:
         Adapted for Python from this article:
         https://vikas-kumar.medium.com/rate-limiting-techniques-245c3a5e9cad
         """
-        if not self.apply_rate_limit_to_request(request):
+        client_ip = get_client_ip_address(request)
+        if not self.apply_rate_limit_to_request(request, client_ip):
             return Result.Ok()
-        client_ip = request.client.host if request.client else "localhost"
         arrived_at = self.redis.time()
         self.redis.setnx(client_ip, "0")
         try:
@@ -101,10 +101,10 @@ class RateLimit:
         except LockError:  # pragma: no cover
             return self.lock_error(client_ip)
 
-    def apply_rate_limit_to_request(self, request: Request):
+    def apply_rate_limit_to_request(self, request: Request, client_ip: str):
         if self.settings.is_test:
             return enable_rate_limit_feature_for_test(request)
-        return request_origin_is_external(request) and requested_route_is_rate_limited(request)  # pragma: no cover
+        return rate_limit_applies_to_route(request) and client_ip_is_external(request, client_ip)  # pragma: no cover
 
     def get_allowed_at(self, tat: float) -> float:
         return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
@@ -132,6 +132,12 @@ class RateLimit:
         return Result.Fail(error)
 
 
+def get_client_ip_address(request: Request) -> str:
+    if "x-forwarded-for" in request.headers:
+        return request.headers["x-forwarded-for"]
+    return request.client.host if request.client else "localhost"
+
+
 def enable_rate_limit_feature_for_test(request: Request) -> bool:
     if "x-verify-rate-limiting" in request.headers:
         return request.headers["x-verify-rate-limiting"] == "true"
@@ -142,16 +148,16 @@ def enable_rate_limit_feature_for_test(request: Request) -> bool:
     return False  # pragma: no cover
 
 
-def request_origin_is_external(request: Request) -> bool:  # pragma: no cover
-    if request.client.host in ["localhost", "127.0.0.1", "testserver"]:
+def rate_limit_applies_to_route(request: Request) -> bool:  # pragma: no cover
+    return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
+
+
+def client_ip_is_external(request: Request, client_ip: str) -> bool:  # pragma: no cover
+    if client_ip in ["localhost", "127.0.0.1", "testserver"] or client_ip.startswith("172.17.0."):
         return False
     if "sec-fetch-site" in request.headers:
         return request.headers["sec-fetch-site"] != "same-site"
     return True
-
-
-def requested_route_is_rate_limited(request: Request) -> bool:  # pragma: no cover
-    return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
 
 
 def get_time_portion(ts: float) -> str:
