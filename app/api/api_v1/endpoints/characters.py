@@ -13,7 +13,7 @@ from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matche
 from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.cache import cached_data
-from app.data.encoding import get_codepoint_string
+from app.core.encoding import get_codepoint_string
 from app.db.session import DBSession, get_session
 from app.docs.dependencies.custom_parameters import (
     UNICODE_CHAR_STRING_DESCRIPTION,
