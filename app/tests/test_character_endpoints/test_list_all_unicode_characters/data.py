@@ -156,9 +156,7 @@ INVALID_CODEPOINT_STRING_1 = {
     "detail": "The value provided (U+49) is invalid because Unicode codepoint values prefixed with 'U+' must contain at least 4 hexadecimal digits. The correct way to request the character assigned to codepoint 0x49 is with the value 'U+0049', which adds the necessary leading zeros."
 }
 
-INVALID_CODEPOINT_STRING_2 = {
-    "detail": "U+110000 is not within the range of valid codepoints for Unicode characters (U+0000 to U+10FFFF)."
-}
+INVALID_CODEPOINT_STRING_2 = {"detail": "U+110000 is not within the Unicode codespace (U+0000 to U+10FFFF)."}
 
 INVALID_BLOCK_NAME = {
     "detail": "'ancient numbers' does not match any valid Unicode block name. The following block names are similar to the name you provided: Ancient_Greek_Numbers (U+10140...U+1018F), Sinhala_Archaic_Numbers (U+111E0...U+111FF), Cuneiform_Numbers_and_Punctuation (U+12400...U+1247F), Ancient_Greek_Musical_Notation (U+1D200...U+1D24F), Aegean_Numbers (U+10100...U+1013F), Ancient_Symbols (U+10190...U+101CF)"
