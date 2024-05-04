@@ -1,7 +1,7 @@
 from enum import IntFlag, auto
 from typing import Self
 
-from app.data.constants import CHAR_FLAG_MAP
+from app.constants import CHAR_FLAG_MAP
 from app.schemas.util import normalize_string_lm3
 
 

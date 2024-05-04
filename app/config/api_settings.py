@@ -8,7 +8,7 @@ from typing import TypedDict
 
 import app.db.models as db
 from app.config.dotenv_file import read_dotenv_file
-from app.data.constants import UNICODE_PLANES_DEFAULT, UNICODE_VERSION_RELEASE_DATES
+from app.constants import UNICODE_PLANES_DEFAULT, UNICODE_VERSION_RELEASE_DATES
 
 
 class ApiSettingsDict(TypedDict):

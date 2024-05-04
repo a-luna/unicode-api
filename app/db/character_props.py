@@ -1,8 +1,7 @@
 from typing import Any
 
-from app.data.cache import cached_data
-from app.data.constants import (
-    CODEPOINT_WITH_PREFIX_REGEX,
+from app.constants import (
+    CP_PREFIX_1_REGEX,
     DEFAULT_BC_AL_CODEPOINTS,
     DEFAULT_BC_ET_CODEPOINTS,
     DEFAULT_BC_R_CODEPOINTS,

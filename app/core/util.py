@@ -1,7 +1,7 @@
 import time
 from datetime import datetime, timedelta, timezone, tzinfo
 
-from app.data.constants import UNICODE_VERSION_RELEASE_DATES
+from app.constants import DATE_MONTH_NAME, UNICODE_VERSION_RELEASE_DATES
 
 DATE_MONTH_NAME = "%b %d, %Y"
 
