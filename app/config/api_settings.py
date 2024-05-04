@@ -9,6 +9,7 @@ from typing import TypedDict
 import app.db.models as db
 from app.config.dotenv_file import read_dotenv_file
 from app.constants import UNICODE_PLANES_DEFAULT, UNICODE_VERSION_RELEASE_DATES
+from app.core.util import s
 
 
 class ApiSettingsDict(TypedDict):
@@ -152,9 +153,9 @@ class UnicodeApiSettings:
 
     @property
     def rate_limit_settings_report(self) -> str:
-        rate = f"{self.RATE_LIMIT_PER_PERIOD} request{'s' if self.RATE_LIMIT_PER_PERIOD > 1 else ''}"
+        rate = f"{self.RATE_LIMIT_PER_PERIOD} request{s(self.RATE_LIMIT_PER_PERIOD)}"
         interval = self.RATE_LIMIT_PERIOD_SECONDS.total_seconds()
-        period = f"{interval} seconds" if interval > 1 else "second"
+        period = f"{interval}second{s(interval)}"
         rate_limit_settings = f"Rate Limit Settings: {rate} per {period}"
         burst_enabled = self.RATE_LIMIT_BURST > 1
         if burst_enabled:  # pragma: no cover

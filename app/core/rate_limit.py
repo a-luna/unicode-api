@@ -14,6 +14,7 @@ from app.core.util import (
     format_timedelta_str,
     get_duration_between_timestamps,
     get_time_until_timestamp,
+    s,
 )
 
 RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|codepoints|planes")
@@ -155,12 +156,6 @@ def requested_route_is_rate_limited(request: Request) -> bool:  # pragma: no cov
 
 def get_time_portion(ts: float) -> str:
     return dtaware_fromtimestamp(ts).time().strftime("%I:%M:%S.%f %p")
-
-
-def s(x: list | int | float) -> str:
-    if isinstance(x, list):
-        return "s" if len(x) > 1 else ""
-    return "s" if x > 1 else ""
 
 
 rate_limit = RateLimit(redis)

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from app.config.api_settings import get_settings
 from app.core.result import Result
+from app.core.util import slugify
 from app.docs.api_docs.content.block import BLOCK_ENDPOINTS, UNICODE_BLOCK_OBJECT_INTRO, UNICODE_BLOCK_OBJECT_PROPERTIES
 from app.docs.api_docs.content.character import (
     CHARACTER_ENDPOINTS,
@@ -44,7 +45,6 @@ from app.docs.api_docs.content.intro import (
     SEARCH_HTML,
 )
 from app.docs.api_docs.content.plane import PLANE_ENDPOINTS, UNICODE_PLANE_OBJECT_INTRO, UNICODE_PLANE_OBJECT_PROPERTIES
-from app.docs.util import slugify
 
 
 @dataclass
