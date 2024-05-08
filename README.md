@@ -69,7 +69,7 @@
 	</li>
 </ul>
 <h2 id="introduction">Introduction</h2>
-<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.0.0/" rel="noopener noreferrer" target="_blank">version 15.0.0 of the Unicode Standard</a> (released Sep 13, 2022). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
+<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.1.0/" rel="noopener noreferrer" target="_blank">version 15.1.0 of the Unicode Standard</a> (released Sep 12, 2023). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul class="api-principles">
     <li>URLs are predictable and resource-oriented.</li>
     <li>Uses standard HTTP verbs and response codes.</li>
