@@ -30,7 +30,7 @@ def retry(
             for remaining in reversed(range(max_attempts)):
                 try:
                     return func(*args, **kwargs)
-                except exceptions as ex:  # noqa: PERF203
+                except exceptions as ex:
                     if remaining <= 0:
                         raise RetryLimitExceededError(func, max_attempts) from ex
                     if on_failure:

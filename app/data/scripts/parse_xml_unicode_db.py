@@ -16,12 +16,12 @@ YES_NO_MAP = {"Y": "True", "N": "False"}
 
 def parse_xml_unicode_database(config: UnicodeApiSettings) -> Result[AllParsedUnicodeData]:
     result = parse_etree_from_xml_file(config.XML_FILE)
-    if result.failure or not result.value:
-        return Result.Fail(result.error or "")
+    if result.failure:
+        return Result.Fail(result.error)
     unicode_xml = result.value
 
     (all_planes, all_blocks) = parse_unicode_plane_and_block_data_from_xml(unicode_xml, config)
-    all_chars: list[CharDetailsDict] = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
+    all_chars = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
     spinner = Spinner()
     spinner.start("Counting number of defined characters in each block and plane...")
     count_defined_characters_per_block(all_chars, all_blocks)

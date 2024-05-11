@@ -80,6 +80,13 @@ def update_char_dict_enum_values(char_dict: CharDetailsDict) -> CharDetailsDict:
     return char_dict
 
 
+def get_combining_class(cc_value: int) -> CombiningClassCategory:
+    try:
+        return CombiningClassCategory(cc_value)
+    except ValueError:
+        return CombiningClassCategory(0)
+
+
 def get_column_names(db_model: UnicodeModel, parsed: ParsedUnicodeData) -> list[str]:
     return [name for name in db_model.__fields__ if name in parsed]
 
@@ -113,10 +120,3 @@ def sanitize_value_for_csv(val: bool | int | str | float) -> str:
 def append_to_csv(csv_file: Path, text: str) -> None:
     with csv_file.open("a") as csv:
         csv.write(f"{text}\n")
-
-
-def get_combining_class(cc_value: int) -> CombiningClassCategory:
-    try:
-        return CombiningClassCategory(cc_value)
-    except ValueError:
-        return CombiningClassCategory(0)

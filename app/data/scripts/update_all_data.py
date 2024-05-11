@@ -18,17 +18,17 @@ from app.data.util.spinners import Spinner
 def update_all_data() -> Result[None]:
     result = bootstrap_unicode_data()
     if result.failure or not result.value:
-        return Result.Fail(result.error or "")
+        return Result.Fail(result.error)
     config = result.value
 
     result = get_xml_unicode_database(config)
     if result.failure:
-        return Result.Fail(result.error or "")
+        return Result.Fail(result.error)
 
     result = parse_xml_unicode_database(config)
     if result.failure:
-        return Result.Fail(result.error or "")
-    (all_planes, all_blocks, all_chars) = result.value or ([], [], [])
+        return Result.Fail(result.error)
+    (all_planes, all_blocks, all_chars) = result.value
     update_json_files(config, all_planes, all_blocks, all_chars)
 
     result = save_parsed_data_to_csv(config, all_planes, all_blocks, all_chars)
@@ -51,7 +51,7 @@ def update_all_data() -> Result[None]:
 def get_xml_unicode_database(config: UnicodeApiSettings) -> Result[Path]:
     spinner = Spinner()
     result = download_xml_unicode_database(config)
-    if result.failure or not result.value:
+    if result.failure:
         spinner.start("")
         spinner.failed("Download failed! Please check the internet connection.")
         return result
