@@ -111,7 +111,10 @@ def import_data_from_csv_file(
                 return result
             spinner.increment(amount=BATCH_SIZE)
         if batch:
-            perform_batch_insert(session, batch)
+            result = perform_batch_insert(session, batch)
+            if result.failure:
+                spinner.failed(result.error)
+                return result
             spinner.increment(amount=len(batch))
         spinner.successful(f"Successfully added parsed {table.__tablename__} data to database")
         return Result.Ok()

@@ -19,6 +19,9 @@ MAX_ATTEMPTS = 3
 class IRedisClient(Protocol):
     @property
     def client(self) -> Redis:
+        """
+        Returns an active Redis client using config values generated from environment variables.
+        """
         ...
 
     def lock(self, name: str, blocking_timeout: float | int) -> Any:
@@ -52,12 +55,14 @@ class IRedisClient(Protocol):
 
     def time(self) -> float:
         """
-        Returns the server time as a 2-item tuple of ints:
-        (seconds since epoch, microseconds into this second).
+        Return POSIX timestamp as a float value representing seconds since the epoch
         """
         ...
 
     def now(self) -> datetime:
+        """
+        Return the current time as a time-zone aware datetime object
+        """
         ...
 
 
@@ -97,7 +102,7 @@ class RedisClient:
                     self.logger.info("Successfully connected to Redis server.")
                 else:
                     self._handle_connect_attempt_failed()
-            except ConnectionError:  # noqa: PERF203
+            except ConnectionError:
                 self._handle_connect_attempt_failed()
         return self._client
 

@@ -14,11 +14,11 @@ def download_xml_unicode_database(config: UnicodeApiSettings) -> Result[Path]:
     if os.environ.get("ENV") != "PROD" and config.XML_FILE.exists():
         return Result.Ok(config.XML_FILE)
     result = download_unicode_xml_zip(config)
-    if result.failure or not result.value:
+    if result.failure:
         return result
     xml_zip = result.value
     result = extract_unicode_xml_from_zip(config)
-    if result.failure or not result.value:
+    if result.failure:
         return result
     xml_file = result.value
     xml_zip.unlink()
