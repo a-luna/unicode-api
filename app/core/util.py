@@ -77,3 +77,16 @@ def get_time_until_timestamp(ts: float) -> timedelta:
 
 def get_duration_between_timestamps(ts1: float, ts2: float) -> timedelta:
     return dtaware_fromtimestamp(ts2) - dtaware_fromtimestamp(ts1)
+
+
+def get_dict_report(data: dict, title: str | None = None) -> list[str]:
+    def dots(key: str, max_len: int) -> str:
+        return "." * ((max_len - len(key)) + 2)
+
+    report = []
+    if title:
+        report.append([f"{'#' * 5} {title} {'#' * 5}"])
+    max_key_len = max(len(str(key)) for key in data)
+    for key, value in data.items():
+        report.append(f"{key}{dots(str(key), max_key_len)}: {value}")
+    return report
