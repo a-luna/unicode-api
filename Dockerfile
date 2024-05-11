@@ -38,7 +38,7 @@ RUN echo "RATE_LIMIT_BURST=$RATE_LIMIT_BURST" >> /code/.env
 
 RUN pip install -U pip setuptools wheel
 COPY ./requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN pip install --no-cache-dir -r /code/requirements.txt
 EXPOSE 80
 COPY ./app /code/app 
 RUN PYTHONPATH=/code/. python /code/./app/data/scripts/get_prod_data.py
