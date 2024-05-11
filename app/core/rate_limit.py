@@ -12,6 +12,7 @@ from app.core.result import Result
 from app.core.util import (
     dtaware_fromtimestamp,
     format_timedelta_str,
+    get_dict_report,
     get_duration_between_timestamps,
     get_time_until_timestamp,
     s,
@@ -104,7 +105,25 @@ class RateLimit:
     def apply_rate_limit_to_request(self, request: Request, client_ip: str):
         if self.settings.is_test:
             return enable_rate_limit_feature_for_test(request)
-        return rate_limit_applies_to_route(request) and client_ip_is_external(request, client_ip)  # pragma: no cover
+        return self.rate_limit_applies_to_route(request) and self.client_ip_is_external(
+            request, client_ip
+        )  # pragma: no cover
+
+    def rate_limit_applies_to_route(self, request: Request) -> bool:  # pragma: no cover
+        return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
+
+    def client_ip_is_external(self, request: Request, client_ip: str) -> bool:  # pragma: no cover
+        if client_ip in ["localhost", "127.0.0.1", "testserver"] or client_ip.startswith("172.17.0."):
+            return False
+        if "sec-fetch-site" in request.headers:
+            if request.headers["sec-fetch-site"] == "same-site":
+                self.logger.info(f"##### BYPASS RATE LIMITING (SAME SITE, IP: {client_ip}) #####")
+                for log in get_dict_report(request.headers):
+                    self.logger.info(log)
+                return False
+            else:
+                return True
+        return True
 
     def get_allowed_at(self, tat: float) -> float:
         return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
@@ -146,18 +165,6 @@ def enable_rate_limit_feature_for_test(request: Request) -> bool:
         if isinstance(ac_request_headers) == dict and "x-verify-rate-limiting" in ac_request_headers:
             return ac_request_headers["x-verify-rate-limiting"] == "true"
     return False  # pragma: no cover
-
-
-def rate_limit_applies_to_route(request: Request) -> bool:  # pragma: no cover
-    return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
-
-
-def client_ip_is_external(request: Request, client_ip: str) -> bool:  # pragma: no cover
-    if client_ip in ["localhost", "127.0.0.1", "testserver"] or client_ip.startswith("172.17.0."):
-        return False
-    if "sec-fetch-site" in request.headers:
-        return request.headers["sec-fetch-site"] != "same-site"
-    return True
 
 
 def get_time_portion(ts: float) -> str:
