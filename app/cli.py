@@ -5,7 +5,7 @@ from trogon import tui
 
 from app.data.scripts import sync_requirements_files as _sync_requirements_files
 from app.data.scripts import update_all_data as _update_all_data
-from app.data.scripts.update_test_data import update_test_data as _update_test_data
+from app.data.scripts import update_test_data as _update_test_data
 from app.docs.api_docs.readme import update_readme as _update_readme
 
 

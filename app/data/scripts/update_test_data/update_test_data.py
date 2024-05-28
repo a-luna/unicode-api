@@ -1,10 +1,10 @@
 from app.config.api_settings import get_settings
 from app.core.result import Result
-from app.data.scripts.update_test_data.update_test_get_unicode_character_details import (
+from app.data.scripts.update_test_data import (
     update_test_get_unicode_character_details,
+    update_test_list_all_unicode_blocks,
+    update_test_list_all_unicode_planes,
 )
-from app.data.scripts.update_test_data.update_test_list_all_unicode_blocks import update_test_list_all_unicode_blocks
-from app.data.scripts.update_test_data.update_test_list_all_unicode_planes import update_test_list_all_unicode_planes
 
 UNICODE_VERSION_UNDER_TEST = "15.0.0"
 
