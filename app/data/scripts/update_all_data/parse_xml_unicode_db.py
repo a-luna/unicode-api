@@ -14,13 +14,13 @@ from app.data.util.spinners import Spinner
 YES_NO_MAP = {"Y": "True", "N": "False"}
 
 
-def parse_xml_unicode_database(config: UnicodeApiSettings) -> Result[AllParsedUnicodeData]:
-    result = parse_etree_from_xml_file(config.XML_FILE)
+def parse_xml_unicode_database(settings: UnicodeApiSettings) -> Result[AllParsedUnicodeData]:
+    result = parse_etree_from_xml_file(settings.XML_FILE)
     if result.failure:
         return Result.Fail(result.error)
     unicode_xml = result.value
 
-    (all_planes, all_blocks) = parse_unicode_plane_and_block_data_from_xml(unicode_xml, config)
+    (all_planes, all_blocks) = parse_unicode_plane_and_block_data_from_xml(unicode_xml, settings)
     all_chars = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
     spinner = Spinner()
     spinner.start("Counting number of defined characters in each block and plane...")
@@ -44,11 +44,11 @@ def parse_etree_from_xml_file(xml: Path) -> Result[_ElementTree]:
 
 
 def parse_unicode_plane_and_block_data_from_xml(
-    unicode_xml: _ElementTree, config: UnicodeApiSettings
+    unicode_xml: _ElementTree, settings: UnicodeApiSettings
 ) -> tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict]]:
     spinner = Spinner()
     spinner.start("Parsing Unicode plane and block data from XML database file...")
-    all_planes: list[BlockOrPlaneDetailsDict] = json.loads(config.PLANES_JSON.read_text())
+    all_planes: list[BlockOrPlaneDetailsDict] = json.loads(settings.PLANES_JSON.read_text())
     all_blocks: list[BlockOrPlaneDetailsDict] = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
     (all_planes, all_blocks) = get_block_range_for_each_plane(all_planes, all_blocks)
     spinner.successful("Successfully parsed Unicode plane and block data from XML database file!")

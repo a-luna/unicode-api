@@ -8,17 +8,16 @@ from app.core.result import Result
 SEMVER_REGEX = re.compile(r"^(?P<major>(?:[1-9]\d*))\.(?P<minor>(?:[0-9]\d*))(?:\.(?P<patch>(?:[0-9]\d*)))?")
 
 
-def bootstrap_unicode_data() -> Result[UnicodeApiSettings]:
+def get_api_settings() -> Result[UnicodeApiSettings]:
     if version := os.environ.get("UNICODE_VERSION"):
         result = check_min_version(version)
         if result.failure:
             return Result.Fail(result.error)
     else:
         os.environ["UNICODE_VERSION"] = SUPPORTED_UNICODE_VERSIONS[-1]
-
-    config = get_settings()
-    config.init_data_folders()
-    return Result.Ok(config)
+    settings = get_settings()
+    settings.init_data_folders()
+    return Result.Ok(settings)
 
 
 def check_min_version(check_version: str) -> Result[None]:
