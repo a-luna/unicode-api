@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import app.db.models as db
@@ -24,8 +25,39 @@ from app.schemas.enums import (
 ONE_PERCENT = 0.01
 
 
+def save_parsed_data(
+    settings: UnicodeApiSettings,
+    all_planes: list[BlockOrPlaneDetailsDict],
+    all_blocks: list[BlockOrPlaneDetailsDict],
+    all_chars: list[CharDetailsDict],
+) -> Result[None]:
+    update_json_files(settings, all_planes, all_blocks, all_chars)
+    return save_parsed_data_to_csv(settings, all_planes, all_blocks, all_chars)
+
+
+def update_json_files(
+    settings: UnicodeApiSettings,
+    all_planes: list[BlockOrPlaneDetailsDict],
+    all_blocks: list[BlockOrPlaneDetailsDict],
+    all_chars: list[CharDetailsDict],
+) -> None:
+    spinner = Spinner()
+    spinner.start("Creating JSON files for parsed Unicode data...")
+    settings.PLANES_JSON.write_text(json.dumps(all_planes, indent=4))
+    settings.BLOCKS_JSON.write_text(json.dumps(all_blocks, indent=4))
+    char_name_map = {
+        int(char["codepoint_dec"]): char["name"] for char in all_chars if not char["_unihan"] and not char["_tangut"]
+    }
+    settings.CHAR_NAME_MAP.write_text(json.dumps(char_name_map, indent=4))
+    unihan_char_block_map = {int(char["codepoint_dec"]): int(char["block_id"]) for char in all_chars if char["_unihan"]}
+    settings.UNIHAN_CHARS_JSON.write_text(json.dumps(unihan_char_block_map, indent=4))
+    tangut_char_block_map = {int(char["codepoint_dec"]): int(char["block_id"]) for char in all_chars if char["_tangut"]}
+    settings.TANGUT_CHARS_JSON.write_text(json.dumps(tangut_char_block_map, indent=4))
+    spinner.successful("Successfully created JSON files for parsed Unicode data")
+
+
 def save_parsed_data_to_csv(
-    config: UnicodeApiSettings,
+    settings: UnicodeApiSettings,
     all_planes: list[BlockOrPlaneDetailsDict],
     all_blocks: list[BlockOrPlaneDetailsDict],
     all_chars: list[CharDetailsDict],
@@ -34,10 +66,10 @@ def save_parsed_data_to_csv(
     all_unihan_chars = [update_char_dict_enum_values(char) for char in all_chars if char["_unihan"]]
 
     csv_file_map = {
-        db.UnicodePlane: (all_planes, config.PLANES_CSV),
-        db.UnicodeBlock: (all_blocks, config.BLOCKS_CSV),
-        db.UnicodeCharacter: (all_non_unihan_chars, config.NAMED_CHARS_CSV),
-        db.UnicodeCharacterUnihan: (all_unihan_chars, config.UNIHAN_CHARS_CSV),
+        db.UnicodePlane: (all_planes, settings.PLANES_CSV),
+        db.UnicodeBlock: (all_blocks, settings.BLOCKS_CSV),
+        db.UnicodeCharacter: (all_non_unihan_chars, settings.NAMED_CHARS_CSV),
+        db.UnicodeCharacterUnihan: (all_unihan_chars, settings.UNIHAN_CHARS_CSV),
     }
     for table, (parsed_data, csv_file) in csv_file_map.items():
         total_rows = len(parsed_data)

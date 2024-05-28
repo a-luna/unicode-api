@@ -32,27 +32,28 @@ from app.schemas.enums import (
 BATCH_SIZE = 10000
 
 
-def populate_sqlite_database(config: UnicodeApiSettings) -> Result[None]:
+def populate_sqlite_database(settings: UnicodeApiSettings) -> Result[None]:
     table_csv_file_map: dict[UnicodeModel, Path] = {
-        db.UnicodePlane: config.PLANES_CSV,
-        db.UnicodeBlock: config.BLOCKS_CSV,
-        db.UnicodeCharacter: config.NAMED_CHARS_CSV,
-        db.UnicodeCharacterUnihan: config.UNIHAN_CHARS_CSV,
+        db.UnicodePlane: settings.PLANES_CSV,
+        db.UnicodeBlock: settings.BLOCKS_CSV,
+        db.UnicodeCharacter: settings.NAMED_CHARS_CSV,
+        db.UnicodeCharacterUnihan: settings.UNIHAN_CHARS_CSV,
     }
-    engine = create_engine(str(config.DB_URL), echo=False, connect_args={"check_same_thread": False})
+    engine = create_engine(str(settings.DB_URL), echo=False, connect_args={"check_same_thread": False})
+    result = Result.Ok()
     with Session(engine) as session:
-        create_db_and_tables(config, engine)
+        create_db_and_tables(settings, engine)
         for table, csv_file in table_csv_file_map.items():
             result = import_data_from_csv_file(session, csv_file, table)
             if result.failure:
-                return result
+                break
     engine.dispose()
     return Result.Ok()
 
 
-def create_db_and_tables(config: UnicodeApiSettings, engine: Engine) -> None:
-    if config.DB_FILE.exists():
-        config.DB_FILE.unlink()
+def create_db_and_tables(settings: UnicodeApiSettings, engine: Engine) -> None:
+    if settings.DB_FILE.exists():
+        settings.DB_FILE.unlink()
 
     SQLModel.metadata.create_all(engine)
     with engine.connect() as con:
@@ -109,12 +110,14 @@ def import_data_from_csv_file(
             if result.failure:
                 spinner.failed(result.error)
                 return result
+            batch.clear()
             spinner.increment(amount=BATCH_SIZE)
         if batch:
             result = perform_batch_insert(session, batch)
             if result.failure:
                 spinner.failed(result.error)
                 return result
+            batch.clear()
             spinner.increment(amount=len(batch))
         spinner.successful(f"Successfully added parsed {table.__tablename__} data to database")
         return Result.Ok()
@@ -167,7 +170,6 @@ def perform_batch_insert(session: Session, batch: list[UnicodeModel]) -> Result[
     try:
         session.add_all(batch)
         session.commit()
-        batch.clear()
         return Result.Ok()
     except StatementError as ex:
         return Result.Fail(f"Error! {repr(ex)}")

@@ -5,9 +5,14 @@ from datetime import datetime, timedelta, timezone, tzinfo
 from app.constants import DATE_MONTH_NAME, UNICODE_VERSION_RELEASE_DATES
 
 
-def s(x: list | int | float) -> str:
+def s(x: list | int | float | str) -> str:
     if isinstance(x, list):
         return "s" if len(x) > 1 else ""
+    if isinstance(x, str):
+        try:
+            return "s" if float(x) > 1 else ""
+        except ValueError:
+            return ""
     return "s" if x > 1 else ""
 
 

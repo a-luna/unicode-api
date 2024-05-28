@@ -1,5 +1,4 @@
 import json
-import logging
 import os
 from dataclasses import dataclass, field
 from datetime import timedelta
@@ -14,9 +13,9 @@ from app.core.util import s
 
 class ApiSettingsDict(TypedDict):
     ENV: str
-    UNICODE_VERSION: str
-    PROJECT_NAME: str
+    API_ROOT: str
     API_VERSION: str
+    UNICODE_VERSION: str
     REDIS_PW: str
     REDIS_HOST: str
     REDIS_PORT: int
@@ -24,16 +23,12 @@ class ApiSettingsDict(TypedDict):
     RATE_LIMIT_PER_PERIOD: int
     RATE_LIMIT_PERIOD_SECONDS: timedelta
     RATE_LIMIT_BURST: int
-    SERVER_NAME: str
-    SERVER_HOST: str
 
 
 UNICODE_ORG_ROOT = "https://www.unicode.org/Public"
 UNICODE_XML_FOLDER = "ucdxml"
 HTTP_BUCKET_URL = "https://unicode-api.us-southeast-1.linodeobjects.com"
 S3_BUCKET_URL = "s3://unicode-api"
-DEV_API_ROOT = "http://localhost:3507"
-PROD_API_ROOT = "https://unicode-api.aaronluna.dev"
 
 XML_FILE_NAME = "ucd.all.flat.xml"
 XML_ZIP_FILE_NAME = "ucd.all.flat.zip"
@@ -55,9 +50,9 @@ def get_latest_unicode_version() -> str:  # pragma: no cover
 @dataclass
 class UnicodeApiSettings:
     ENV: str
-    UNICODE_VERSION: str
-    PROJECT_NAME: str
+    API_ROOT: str
     API_VERSION: str
+    UNICODE_VERSION: str
     REDIS_PW: str
     REDIS_HOST: str
     REDIS_PORT: int
@@ -65,9 +60,7 @@ class UnicodeApiSettings:
     RATE_LIMIT_PER_PERIOD: int
     RATE_LIMIT_PERIOD_SECONDS: timedelta
     RATE_LIMIT_BURST: int
-    SERVER_NAME: str
-    SERVER_HOST: str
-    API_ROOT: str = field(init=False, default="")
+    PROJECT_NAME: str = field(init=False, default="")
     ROOT_FOLDER: Path = field(init=False)
     APP_FOLDER: Path = field(init=False)
     DATA_FOLDER: Path = field(init=False)
@@ -105,7 +98,7 @@ class UnicodeApiSettings:
         json_folder = version_folder.joinpath("json")
         csv_folder = version_folder.joinpath("csv")
 
-        self.API_ROOT = DEV_API_ROOT if self.is_dev else PROD_API_ROOT
+        self.PROJECT_NAME = f"Unicode API{"" if "PROD" in self.ENV else f' ({self.ENV})'}"
         self.ROOT_FOLDER = ROOT_FOLDER
         self.APP_FOLDER = ROOT_FOLDER.joinpath("app")
         self.DATA_FOLDER = data_folder
@@ -148,17 +141,13 @@ class UnicodeApiSettings:
         return "TEST" in self.ENV
 
     @property
-    def api_settings_report(self) -> str:
-        return f"API Settings: (ENV: {self.ENV}) (UNICODE_VERSION: {self.UNICODE_VERSION})"
-
-    @property
     def rate_limit_settings_report(self) -> str:
         rate = f"{self.RATE_LIMIT_PER_PERIOD} request{s(self.RATE_LIMIT_PER_PERIOD)}"
-        interval = self.RATE_LIMIT_PERIOD_SECONDS.total_seconds()
-        period = f"{interval}second{s(interval)}"
+        interval = f"{self.RATE_LIMIT_PERIOD_SECONDS.total_seconds()}"
+        period = f"{'' if interval == '1.0' else f'{interval} '}second{s(interval)}"
         rate_limit_settings = f"Rate Limit Settings: {rate} per {period}"
         burst_enabled = self.RATE_LIMIT_BURST > 1
-        if burst_enabled:  # pragma: no cover
+        if burst_enabled:
             rate_limit_settings += f" (+{self.RATE_LIMIT_BURST} request burst allowance)"
         return rate_limit_settings
 
@@ -222,9 +211,9 @@ def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
     env_vars = read_dotenv_file(DOTENV_FILE)
     settings: ApiSettingsDict = {
         "ENV": env_vars.get("ENV", "DEV"),
-        "UNICODE_VERSION": env_vars.get("UNICODE_VERSION", get_latest_unicode_version()),
-        "PROJECT_NAME": "Unicode API",
+        "API_ROOT": env_vars.get("API_ROOT", ""),
         "API_VERSION": "/v1",
+        "UNICODE_VERSION": env_vars.get("UNICODE_VERSION", get_latest_unicode_version()),
         "REDIS_PW": env_vars.get("REDIS_PW", ""),
         "REDIS_HOST": env_vars.get("REDIS_HOST", ""),
         "REDIS_PORT": int(env_vars.get("REDIS_PORT", "6379")),
@@ -232,8 +221,6 @@ def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
         "RATE_LIMIT_PER_PERIOD": int(env_vars.get("RATE_LIMIT_PER_PERIOD", "1")),
         "RATE_LIMIT_PERIOD_SECONDS": timedelta(seconds=int(env_vars.get("RATE_LIMIT_PERIOD_SECONDS", "100"))),
         "RATE_LIMIT_BURST": int(env_vars.get("RATE_LIMIT_BURST", "10")),
-        "SERVER_NAME": "unicode-api.aaronluna.dev",
-        "SERVER_HOST": PROD_API_ROOT,
     }
     return UnicodeApiSettings(**settings)
 
@@ -241,9 +228,9 @@ def get_api_settings() -> UnicodeApiSettings:  # pragma: no cover
 def get_test_settings() -> UnicodeApiSettings:
     settings: ApiSettingsDict = {
         "ENV": "TEST",
-        "UNICODE_VERSION": "15.0.0",
-        "PROJECT_NAME": "Test Unicode API",
+        "API_ROOT": "",
         "API_VERSION": "/v1",
+        "UNICODE_VERSION": "15.0.0",
         "REDIS_PW": "",
         "REDIS_HOST": "",
         "REDIS_PORT": 0,
@@ -251,15 +238,9 @@ def get_test_settings() -> UnicodeApiSettings:
         "RATE_LIMIT_PER_PERIOD": 2,
         "RATE_LIMIT_PERIOD_SECONDS": timedelta(seconds=1),
         "RATE_LIMIT_BURST": 1,
-        "SERVER_NAME": "",
-        "SERVER_HOST": "",
     }
     return UnicodeApiSettings(**settings)
 
 
 def get_settings() -> UnicodeApiSettings:
-    settings = get_test_settings() if "TEST" in os.environ.get("ENV", "DEV") else get_api_settings()
-    logger = logging.getLogger("app.api")
-    logger.debug(settings.api_settings_report)
-    logger.debug(settings.rate_limit_settings_report)
-    return settings
+    return get_test_settings() if "TEST" in os.environ.get("ENV", "DEV") else get_api_settings()

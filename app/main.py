@@ -35,6 +35,7 @@ def init_logging(settings: UnicodeApiSettings) -> None:
     logging.config.dictConfig(LOGGING_CONFIG)
     logger = logging.getLogger("app.api")
     logger.info(f"ENV: {settings.ENV}, UNICODE_VERSION: {settings.UNICODE_VERSION}")
+    logger.info(settings.rate_limit_settings_report)
 
 
 def init_redis():
