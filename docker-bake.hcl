@@ -16,6 +16,7 @@ target "unicode-api" {
     args = {
         ENV="PROD"
         UNICODE_VERSION="${UNICODE_VERSION}"
+        API_ROOT="https://unicode-api.aaronluna.dev"
         REDIS_HOST="dokku-redis-vig-cache"
         REDIS_PORT="6379"
         REDIS_DB="1"
