@@ -19,6 +19,7 @@ from app.core.util import (
 )
 
 RATE_LIMIT_ROUTE_REGEX = re.compile(r"^\/v1\/blocks|characters|codepoints|planes")
+DOCKER_IP_REGEX = re.compile(r"172\.17\.0\.\d{1,3}")
 
 
 @dataclass
@@ -113,17 +114,19 @@ class RateLimit:
         return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
 
     def client_ip_is_external(self, request: Request, client_ip: str) -> bool:  # pragma: no cover
-        if client_ip in ["localhost", "127.0.0.1", "testserver"] or client_ip.startswith("172.17.0."):
+        if any(host in client_ip for host in ["localhost", "127.0.0.1", "testserver"]):
             return False
-        if "sec-fetch-site" in request.headers:
-            if request.headers["sec-fetch-site"] == "same-site":
-                self.logger.info(f"##### BYPASS RATE LIMITING (SAME SITE, IP: {client_ip}) #####")
-                for log in get_dict_report(request.headers):
-                    self.logger.info(log)
-                return False
-            else:
-                return True
+        if DOCKER_IP_REGEX.search(client_ip):
+            return False
+        if "sec-fetch-site" in request.headers and request.headers["sec-fetch-site"] == "same-site":
+            self.log_request_from_internal_ip(client_ip, request)
+            return False
         return True
+
+    def log_request_from_internal_ip(self, client_ip: str, request: Request) -> None:
+        self.logger.info(f"##### BYPASS RATE LIMITING (SAME SITE, IP: {client_ip}) #####")
+        for log in get_dict_report(request.headers):
+            self.logger.info(log)
 
     def get_allowed_at(self, tat: float) -> float:
         return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
