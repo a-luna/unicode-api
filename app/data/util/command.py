@@ -18,8 +18,7 @@ def run_command(command: str, cwd: Path | None = None, shell: bool = True, text:
         return Result.Ok()
     except subprocess.CalledProcessError as e:
         error = (
-            f"An error occurred while executing the command below:\n"
-            f"\tCommand: {e.cmd} (return code = {e.returncode})"
+            f"An error occurred while executing the command below:\n\tCommand: {e.cmd} (return code = {e.returncode})"
         )
         if e.stderr:
             error += f"\n\tError: {e.stderr}"

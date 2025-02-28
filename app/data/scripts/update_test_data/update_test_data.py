@@ -1,10 +1,18 @@
-from app.config.api_settings import get_settings
+from sqlmodel import Session
+
+from app.config.api_settings import UnicodeApiSettings, get_settings
 from app.core.result import Result
 from app.data.scripts.update_test_data import (
+    update_test_filter_unicode_characters,
+    update_test_get_unicode_character_at_codepoint,
     update_test_get_unicode_character_details,
     update_test_list_all_unicode_blocks,
     update_test_list_all_unicode_planes,
+    update_test_search_unicode_blocks_by_name,
+    update_test_search_unicode_characters_by_name,
 )
+from app.db.engine import ro_db_engine as engine
+from app.db.session import DBSession
 
 UNICODE_VERSION_UNDER_TEST = "15.0.0"
 
@@ -20,7 +28,20 @@ def update_test_data():
         return Result.Fail(error)
     print(f"Updating test data for Unicode v{settings.UNICODE_VERSION}")
 
-    result = update_test_list_all_unicode_planes(settings)
+    with Session(engine) as session:
+        return update_all_test_data(DBSession(session, engine), settings)
+
+
+def update_all_test_data(db_ctx: DBSession, settings: UnicodeApiSettings):
+    result = update_test_filter_unicode_characters(db_ctx, settings)
+    if result.failure:
+        return result
+
+    result = update_test_get_unicode_character_details(settings)
+    if result.failure:
+        return result
+
+    result = update_test_get_unicode_character_at_codepoint(db_ctx, settings)
     if result.failure:
         return result
 
@@ -28,7 +49,15 @@ def update_test_data():
     if result.failure:
         return result
 
-    result = update_test_get_unicode_character_details(settings)
+    result = update_test_list_all_unicode_planes(settings)
+    if result.failure:
+        return result
+
+    result = update_test_search_unicode_blocks_by_name(settings)
+    if result.failure:
+        return result
+
+    result = update_test_search_unicode_characters_by_name(db_ctx, settings)
     if result.failure:
         return result
 

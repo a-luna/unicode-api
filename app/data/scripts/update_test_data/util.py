@@ -1,19 +1,25 @@
 from typing import Any
 
-from app.schemas.util import to_lower_camel
+from app.models.util import to_lower_camel
 
 
-def pythonize_that_json(json: str) -> str:
-    return json.replace("null", "None").replace("false", "False").replace("true", "True")
+def pythonize_that_json(json_str: str) -> str:
+    return json_str.replace("null", "None").replace("false", "False").replace("true", "True")
 
 
-def convert_prop_names_to_camel(data: dict[str, Any]) -> dict[str, Any]:
-    converted = {}
-    for prop_name, prop_value in data.items():
+def format_response_property_names(response: dict[str, Any]) -> dict[str, Any]:
+    formatted = {}
+    for prop_name, prop_value in response.items():
         if isinstance(prop_value, dict):
-            converted[to_lower_camel(prop_name)] = convert_prop_names_to_camel(prop_value)
+            formatted[to_lower_camel(prop_name)] = format_response_property_names(prop_value)
         if isinstance(prop_value, list):
-            converted[to_lower_camel(prop_name)] = [convert_prop_names_to_camel(item) for item in prop_value]
+            formatted_list = []
+            for item in prop_value:
+                if isinstance(item, dict):
+                    formatted_list.append(format_response_property_names(item))
+                else:
+                    formatted_list.append(item)
+            formatted[to_lower_camel(prop_name)] = formatted_list
         else:
-            converted[to_lower_camel(prop_name)] = prop_value
-    return converted
+            formatted[to_lower_camel(prop_name)] = prop_value
+    return formatted

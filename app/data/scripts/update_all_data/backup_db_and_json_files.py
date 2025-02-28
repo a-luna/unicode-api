@@ -41,6 +41,7 @@ def backup_sqlite_db(settings: UnicodeApiSettings):
 def backup_json_files(settings: UnicodeApiSettings):
     zip_file = settings.JSON_FOLDER.joinpath("unicode_json.zip")
     with ZipFile(zip_file, "w", ZIP_DEFLATED) as zip:
+        zip.write(settings.PROP_VALUES_JSON, f"{settings.PROP_VALUES_JSON.name}")
         zip.write(settings.PLANES_JSON, f"{settings.PLANES_JSON.name}")
         zip.write(settings.BLOCKS_JSON, f"{settings.BLOCKS_JSON.name}")
         zip.write(settings.CHAR_NAME_MAP, f"{settings.CHAR_NAME_MAP.name}")

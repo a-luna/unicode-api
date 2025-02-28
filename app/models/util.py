@@ -12,7 +12,7 @@ def normalize_string_lm3(s: str) -> str:
     return re.compile(r"\s+").sub("", s).replace("-", "").replace("_", "")
 
 
-def to_lower_camel(input):
+def to_lower_camel(input: str) -> str:
     s = "" if input is None else re.sub(r"\s+", "", str(input))
     if s.isupper() or s.isnumeric():
         return input
@@ -21,5 +21,5 @@ def to_lower_camel(input):
     return UNDERSCORE_RE.sub(lambda m: m.group(0)[-1].upper(), s)
 
 
-def flatten_list2d(list2d):
+def flatten_list2d[T](list2d: list[list[T]]) -> list[T]:
     return list(itertools.chain(*list2d))

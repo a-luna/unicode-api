@@ -90,8 +90,6 @@ class RedisClient:
 
     @property
     def client(self) -> Redis:
-        if self.settings.is_test:
-            return FakeRedis()
         while not self.connected and self.failed_attempts < MAX_ATTEMPTS:
             try:
                 self.logger.info("Attempting to connect to Redis server...")
@@ -133,7 +131,7 @@ class RedisClient:
 
     def time(self) -> float:
         response = self.client.time()
-        if type(response) == tuple and len(response) == 2:
+        if isinstance(response, tuple) and len(response) == 2:
             (seconds, microseconds) = response
             return float(f"{seconds}.{microseconds}")
         return datetime.now().timestamp()
@@ -151,11 +149,15 @@ class TestRedisClient:
         return FakeRedis()
 
     def lock(self, name: str, blocking_timeout: float | int) -> Any:
+        @contextmanager
+        def fake_lock_context():
+            yield None
+
         return fake_lock_context()
 
     def setnx(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         if name not in self.db:
-            self.db[name] = value
+            self.set(name, value)
 
     def set(self, name: RedisKey, value: RedisValue) -> RedisResponse:
         self.db[name] = value
@@ -170,9 +172,4 @@ class TestRedisClient:
         return dtaware_fromtimestamp(self.time())
 
 
-@contextmanager
-def fake_lock_context():
-    yield None
-
-
-redis = TestRedisClient() if get_settings().is_test else RedisClient()
+redis = RedisClient() if not get_settings().is_test else TestRedisClient()

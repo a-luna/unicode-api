@@ -27,11 +27,11 @@ def get_decimal_number_from_hex_codepoint(codepoint: str, starting_after: bool =
 
 
 def get_codepoint_hex_from_string(cp: str) -> Result[str]:
-    if match := CP_PREFIX_1_REGEX_STRICT.match(cp):
-        return Result.Ok(match[1])
-    if match := CP_PREFIX_2_REGEX_STRICT.match(cp):
-        return Result.Ok(match[1])
-    if match := CP_NO_PREFIX_REGEX_STRICT.match(cp):
+    if (
+        (match := CP_PREFIX_1_REGEX_STRICT.match(cp))
+        or (match := CP_PREFIX_2_REGEX_STRICT.match(cp))
+        or (match := CP_NO_PREFIX_REGEX_STRICT.match(cp))
+    ):
         return Result.Ok(match[1])
     return Result.Fail(get_error_message_for_invalid_codepoint_value(cp))
 

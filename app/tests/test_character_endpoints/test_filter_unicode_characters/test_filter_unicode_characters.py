@@ -31,7 +31,7 @@ def test_filter_by_unicode_age(client):
     assert response.json() == FILTER_BY_UNICODE_AGE
 
 
-def test_filter_by_bidirectional_class(client):
+def test_filter_by_bidi_class(client):
     response = client.get("/v1/characters/filter?name=dong&bidi_class=et")
     assert response.status_code == 200
     assert response.json() == FILTER_BY_BIDIRECTIONAL_CLASS

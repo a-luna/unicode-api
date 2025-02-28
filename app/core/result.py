@@ -5,7 +5,7 @@ from typing import Self, overload
 class Result[T]:
     """Represent the outcome of an operation."""
 
-    def __init__(self, success: bool, value: T | None, error: str | None) -> None:
+    def __init__(self, success: bool, value: T | None, error: str = "") -> None:
         self.success = success
         self.error = error
         self.value = value
@@ -13,8 +13,8 @@ class Result[T]:
     def __str__(self) -> str:
         """Informal string representation of a result."""
         result = "Success" if self.success else "Fail"
-        detail = f" {self.error}" if self.failure else f" value={self.value}" if self.value else ""
-        return f"[{result}]{detail}"
+        detail = f"error={self.error}" if self.failure else f"value={self.value}" if self.value is not None else ""
+        return f"{result}, {detail}"
 
     def __repr__(self) -> str:
         """Official string representation of a result."""
@@ -22,10 +22,10 @@ class Result[T]:
             f"value=None, error={self.error!r}"
             if self.failure
             else f"value={self.value!r}, error=None"
-            if self.value
+            if self.value is not None
             else "value=None, error=None"
         )
-        return f"Result({"True" if self.success else "False"}, {detail})"
+        return f"Result(success={self.success}, {detail})"
 
     @property
     def failure(self) -> bool:
@@ -45,19 +45,23 @@ class Result[T]:
         return func(self, *args, **kwargs)
 
     @staticmethod
-    def Fail(error_message: str) -> Self:  # noqa: N802
+    def Fail(error_message: str) -> "Result":  # noqa: N802
         """Create a Result object for a failed operation."""
         return Result(False, value=None, error=error_message)
 
     @overload
     @staticmethod
-    def Ok() -> "Result": ...
+    def Ok() -> "Result[None]": ...
+
+    @overload
+    @staticmethod
+    def Ok(value: None) -> "Result[None]": ...
 
     @overload
     @staticmethod
     def Ok(value: T) -> "Result[T]": ...
 
     @staticmethod
-    def Ok(value: T | None = None) -> "Result | Result[T]":  # noqa: N802
+    def Ok(value: T | None = None) -> "Result[None] | Result[T]":  # noqa: N802
         """Create a Result object for a successful operation."""
-        return Result(True, value=value, error=None)
+        return Result(True, value=value)

@@ -1,6 +1,6 @@
 from sqlmodel import Session
 
-from app.db.engine import engine
+from app.db.engine import ro_db_engine as engine
 from app.db.session import DBSession
 
 

@@ -1,7 +1,6 @@
 from enum import IntEnum, auto
-from typing import Self
 
-from app.schemas.util import normalize_string_lm3
+from app.models.util import normalize_string_lm3
 
 
 class CharPropertyGroup(IntEnum):
@@ -32,29 +31,35 @@ class CharPropertyGroup(IntEnum):
     EMOJI = auto()
 
     def __str__(self) -> str:
-        special_cases = {
-            "UTF8": "UTF-8",
-            "UTF16": "UTF-16",
-            "UTF32": "UTF-32",
-        }
-        if self.name in special_cases:
-            return special_cases[self.name]
-        return self.name.replace("_", " ").title().replace("Cjk", "CJK").replace("And", "and")
+        match self:
+            case CharPropertyGroup.UTF8:
+                return "UTF-8"
+            case CharPropertyGroup.UTF16:
+                return "UTF-16"
+            case CharPropertyGroup.UTF32:
+                return "UTF-32"
+            case _:
+                return self.name.replace("_", " ").title().replace("Cjk", "CJK").replace("And", "and")
 
     @property
     def index_name(self) -> str:  # pragma: no cover
-        cjk_groups = {
-            "CJK_MINIMUM": "cjk_m",
-            "CJK_BASIC": "cjk_b",
-            "CJK_VARIANTS": "cjk_v",
-            "CJK_NUMERIC": "cjk_n",
-            "CJK_READINGS": "cjk_r",
-        }
-        if self.name in cjk_groups:
-            return cjk_groups[self.name]
-        if "_" in self.name:
-            return "".join([s[0] for s in self.name.split("_") if s.upper() != "AND"]).lower()
-        return self.name.lower()
+        match self:
+            case CharPropertyGroup.CJK_MINIMUM:
+                return "cjk_m"
+            case CharPropertyGroup.CJK_BASIC:
+                return "cjk_b"
+            case CharPropertyGroup.CJK_VARIANTS:
+                return "cjk_v"
+            case CharPropertyGroup.CJK_NUMERIC:
+                return "cjk_n"
+            case CharPropertyGroup.CJK_READINGS:
+                return "cjk_r"
+            case _:
+                return (
+                    "".join([s[0] for s in self.name.split("_") if s.upper() != "AND"]).lower()
+                    if "_" in self.name
+                    else self.name.lower()
+                )
 
     @property
     def normalized(self) -> str:
@@ -84,7 +89,7 @@ class CharPropertyGroup(IntEnum):
         return self.normalized != self.short_alias
 
     @classmethod
-    def get_all_non_unihan_character_prop_groups(cls) -> list[Self]:
+    def get_all_non_unihan_character_prop_groups(cls) -> list["CharPropertyGroup"]:
         return [
             prop_group
             for prop_group in cls
@@ -101,12 +106,12 @@ class CharPropertyGroup(IntEnum):
         ]
 
     @classmethod
-    def get_all_unihan_character_prop_groups(cls) -> list[Self]:
+    def get_all_unihan_character_prop_groups(cls) -> list["CharPropertyGroup"]:
         return [prop_group for prop_group in cls if prop_group not in [cls.ALL, cls.NONE, cls.MINIMUM, cls.BASIC]]
 
     @classmethod
-    def match_loosely(cls, value: str) -> Self:
+    def match_loosely(cls, value: str) -> "CharPropertyGroup | None":
         prop_names = {e.normalized: e for e in cls if e != cls.NONE}
         prop_aliases = {normalize_string_lm3(e.short_alias): e for e in cls}
         prop_names.update(prop_aliases)
-        return prop_names.get(normalize_string_lm3(value), cls.NONE)
+        return prop_names.get(normalize_string_lm3(value), None)

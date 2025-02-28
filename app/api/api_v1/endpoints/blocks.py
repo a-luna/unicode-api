@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -35,7 +35,7 @@ def list_all_unicode_blocks(
 )
 def search_unicode_blocks_by_name(
     search_params: Annotated[BlockSearchParameters, Depends()],
-):
+) -> dict[str, Any]:
     params = {
         "url": f"{get_settings().API_VERSION}/blocks/search",
         "query": search_params.name,

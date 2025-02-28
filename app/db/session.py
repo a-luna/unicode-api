@@ -7,11 +7,11 @@ import app.db.procs.filter_characters as proc_filter
 import app.db.procs.get_char_details as proc_char
 import app.db.procs.get_unicode_versions as proc_ver
 from app.config.api_settings import get_settings
-from app.db.engine import engine
-from app.schemas.enums import CharPropertyGroup
+from app.db.engine import ro_db_engine as engine
+from app.enums.property_group import CharPropertyGroup
 
 if TYPE_CHECKING:  # pragma: no cover
-    from app.api.api_v1.dependencies.filter_params import FilterParameters
+    from app.api.api_v1.dependencies.filter_settings import FilterParameters
 
 
 def get_session():

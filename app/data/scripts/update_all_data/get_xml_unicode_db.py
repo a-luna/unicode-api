@@ -21,7 +21,8 @@ def download_xml_unicode_database(settings: UnicodeApiSettings) -> Result[Path]:
     if result.failure:
         spinner.failed(result.error)
         return result
-    xml_zip = result.value
+    if not (xml_zip := result.value):
+        return Result.Fail("Download attempt failed, please check internet connection.")
     result = extract_unicode_xml_from_zip(settings)
     if result.failure:
         spinner.failed(result.error)
@@ -36,8 +37,7 @@ def download_unicode_xml_zip(settings: UnicodeApiSettings) -> Result[Path]:
     result = download_file(settings.XML_DB_URL, settings.XML_FOLDER)
     if result.failure:
         return result
-    xml_zip = result.value
-    if not xml_zip:
+    if not (xml_zip := result.value):
         return Result.Fail("Download attempt failed, please check internet connection.")
     if not is_zipfile(xml_zip):
         return Result.Fail("Zip file is possibly corrupt, the format cannot be recognized.")
@@ -48,8 +48,7 @@ def extract_unicode_xml_from_zip(settings: UnicodeApiSettings) -> Result[Path]:
     xml_file = None
     with ZipFile(settings.XML_ZIP_FILE, mode="r") as zip:
         zip.extractall(path=settings.XML_FOLDER)
-        extracted_xml_files = list(settings.XML_FOLDER.glob("*.xml"))
-        if not extracted_xml_files:
+        if not (extracted_xml_files := list(settings.XML_FOLDER.glob("*.xml"))):
             return Result.Fail(f"Error occurred extracting XML file from {settings.XML_ZIP_FILE.name}!")
         if len(extracted_xml_files) != 1:
             return Result.Fail(get_extracted_file_details(settings.XML_ZIP_FILE, extracted_xml_files))
@@ -58,7 +57,7 @@ def extract_unicode_xml_from_zip(settings: UnicodeApiSettings) -> Result[Path]:
 
 
 def get_extracted_file_details(xml_zip: Path, extracted_files: list[Path]) -> str:
-    error = f"{len(extracted_files)} XML files were extracted from {xml_zip.name}, expected only 1:\n"
+    error = f"{len(extracted_files)} XML files were extracted from {xml_zip.name}, expected only 1:"
     for i, file in enumerate(extracted_files, start=1):
-        error += f"\tFile #{i}: {file.name}"
+        error += f"\n\tFile #{i}: {file.name}"
     return error

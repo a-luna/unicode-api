@@ -5,11 +5,11 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 import app.db.models as db
 from app.api.api_v1.dependencies import (
     CharacterSearchParameters,
-    FilterParameters,
+    FilterSettings,
     ListParameters,
     UnicodeBlockQueryParamResolver,
 )
-from app.api.api_v1.dependencies.filter_param_matcher import filter_param_matcher
+from app.api.api_v1.dependencies.filter_param_matcher import FilterParameterMatcher
 from app.api.api_v1.endpoints.util import get_character_details
 from app.api.api_v1.pagination import paginate_search_results
 from app.core.cache import cached_data
@@ -20,7 +20,6 @@ from app.docs.dependencies.custom_parameters import (
     VERBOSE_DESCRIPTION,
     get_description_and_values_table_for_property_group,
 )
-from app.schemas.enums import CharPropertyGroup
 
 router = APIRouter()
 
@@ -57,7 +56,7 @@ def search_unicode_characters_by_name(
     return get_paginated_character_list(
         db_ctx,
         search_results,
-        [CharPropertyGroup.MINIMUM],
+        [db.CharPropertyGroup.MINIMUM],
         search_parameters.per_page,
         search_parameters.page,
         response_data,
@@ -71,27 +70,32 @@ def search_unicode_characters_by_name(
     response_model_exclude_unset=True,
 )
 def filter_unicode_characters(
-    db_ctx: Annotated[DBSession, Depends(get_session)], filter_parameters: Annotated[FilterParameters, Depends()]
+    db_ctx: Annotated[DBSession, Depends(get_session)], filter_settings: Annotated[FilterSettings, Depends()]
 ):
-    if not filter_parameters.settings:
+    if not filter_settings.did_parse:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=filter_settings.error_message,
+        )
+    if filter_settings.no_settings_provided:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No filter settings were specified in the request.",
         )
     response_data = {
         "url": f"{db_ctx.api_settings.API_VERSION}/characters/filter",
-        "filter_settings": filter_parameters.settings,
+        "filter_settings": filter_settings.parsed,
     }
-    codepoints = db_ctx.filter_all_characters(filter_parameters)
+    codepoints = db_ctx.filter_all_characters(filter_settings.params)
     filter_results = [(cp, None) for cp in codepoints]
     return get_paginated_character_list(
         db_ctx,
         filter_results,
-        filter_parameters.show_props,
-        filter_parameters.per_page,
-        filter_parameters.page,
+        filter_settings.show_props,
+        filter_settings.per_page,
+        filter_settings.page,
         response_data,
-        filter_parameters.verbose,
+        filter_settings.verbose,
     )
 
 
@@ -103,11 +107,12 @@ def filter_unicode_characters(
 def get_unicode_character_details(
     db_ctx: Annotated[DBSession, Depends(get_session)],
     string: Annotated[str, Path(description=UNICODE_CHAR_STRING_DESCRIPTION)],
-    show_props: Annotated[list[str], Query(description=get_description_and_values_table_for_property_group())] = None,
+    show_props: Annotated[list[str], Query(description=get_description_and_values_table_for_property_group())] = None,  # type: ignore[reportArgumentType]
     verbose: Annotated[bool | None, Query(description=VERBOSE_DESCRIPTION)] = None,
 ):
     if show_props:
-        result = filter_param_matcher[CharPropertyGroup].parse_enum_values(show_props)
+        param_matcher = FilterParameterMatcher("show_props", db.CharPropertyGroup)
+        result = param_matcher.parse_filter_params(show_props)
         if result.failure:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=result.error)
         prop_groups = result.value
@@ -139,10 +144,10 @@ def get_char_list_endpoints(list_params: ListParameters, block: UnicodeBlockQuer
 def get_paginated_character_list(
     db_ctx: DBSession,
     results: list[tuple[int, Any]],
-    show_props: list[CharPropertyGroup] | None,
+    show_props: list[db.CharPropertyGroup] | None,
     per_page: int,
     page: int,
-    response_data: dict[str, str],
+    response_data: dict[str, Any],
     verbose: bool,
 ):
     codepoints = [cp for (cp, _) in results]

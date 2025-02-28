@@ -99,9 +99,9 @@ UNICODE_CHAR_URI_EXAMPLES = f"""
     </summary>
     <dl class="param-examples">
         <dt><span>Ⱒ</span><sup>2</sup></dt>
-        <dd><a href="{get_settings().API_ROOT}/v1/characters/{get_uri_encoded_value('Ⱒ')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('Ⱒ')}</a><sup>1</sup></dd>
+        <dd><a href="{get_settings().API_ROOT}/v1/characters/{get_uri_encoded_value("Ⱒ")}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value("Ⱒ")}</a><sup>1</sup></dd>
         <dt><span>👨‍🌾 </span><sup>3</sup></dt>
-        <dd><a href="{get_settings().API_ROOT}/v1/characters/{get_uri_encoded_value('👨‍🌾')}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value('👨‍🌾')}</a><sup>1</sup></dd>
+        <dd><a href="{get_settings().API_ROOT}/v1/characters/{get_uri_encoded_value("👨‍🌾")}" rel="noopener noreferrer" target="_blank">{get_uri_encoded_value("👨‍🌾")}</a><sup>1</sup></dd>
     </dl>
     <div class="footnotes">
         <sup>1</sup>
@@ -156,17 +156,11 @@ PLANE_NAME_DESCRIPTION = """
 """
 
 SEARCH_CHAR_NAME_DESCRIPTION = """
-<ul class="param-notes">
-    <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
-</ul>
 <p>Search for any Unicode character by name. Exact matches are unnecessary since the search algorithm will return character names similar to the search term and provide a <strong>score</strong> value for each result.</p>
 <p>You can restrict or expand your search based on the score value with the <strong>min_score</strong> parameter. For more information on this search behavior, see the <a href="#search">Search section</a> of the docs</p>
 """
 
 SEARCH_BLOCK_NAME_DESCRIPTION = """
-<ul class="param-notes">
-    <li class=\"loose-match\">The <a href="#loose-matching">Loose-matching rule</a> is applied to the value of this parameter</li>
-</ul>
 <p>Search for any Unicode block by name. Exact matches are unnecessary since the search algorithm will return block names similar to the search term and provide a <strong>score</strong> value for each result that indicates how similar your search term is to each block name.</p>
 <p>You can restrict or expand your search based on the score value with the <strong>min_score</strong> parameter. For more information on this search behavior, see the <a href="#search">Search section</a> of the docs.</p>
 """
@@ -265,7 +259,8 @@ def get_description_and_values_table_for_general_category() -> str:
         + "<p>Filter Unicode characters by <strong>General Category</strong>. Sending multiple values will return all characters that match any of the selected catagories (e.g., sending <code>category=P</code> and <code>category=S</code> will return <strong>both</strong> Punctuation and Symbol characters).<p>"
         + "<p>All valid general category codes are shown in the table below:</p>"
         + f"{GENERAL_CATEGORY_VALUES_TABLE}"
-        + "<p>To add a filter setting for <code>general_category</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+        + '<p><strong>NOTE:</strong> The values in <strong>bold text</strong> with darker background color represent groupings of related <strong>General Category</strong> values. E.g., these values allow you to filter by general types such as "number" or "letter", rather than by the more specific category values "Decimal_Number" or "Uppercase_Letter".</p>'
+        + "<p>To add a filter setting for <code>general_category</code>, click the button below and enter a value from the <strong>Code</strong> <i><u>or</u></i> <strong>General Category</strong> column of the table above.</p>"
     )
 
 
@@ -291,7 +286,7 @@ def get_description_and_values_table_for_bidi_class() -> str:
         + "<p>Filter Unicode characters by <strong>Bidirectional Class</strong>. Sending multiple values will return all characters that match any of the selected classes (e.g., sending <code>bidi_class=AL</code> and <code>bidi_class=AN</code> will return characters that are treated as Arabic Letters <strong>and</strong> characters that are treated as Arabic Numbers when formatting bidiretional text.<p>"
         + "<p>All valid bidirectional class values are shown in the table below:</p>"
         + f"{BIDI_CLASS_VALUES_TABLE}"
-        + "<p>To add a filter setting for <code>bidirectional_class</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
+        + "<p>To add a filter setting for <code>bidi_class</code>, click the button below and enter a value from the <strong>Code</strong> column of the table above.</p>"
     )
 
 
@@ -368,7 +363,7 @@ def get_description_and_values_table_for_flags() -> str:
         + "<p>Filter Unicode characters by various boolean values. Sending multiple values will return all characters that match any of the selected types (e.g., sending <code>flag=emoji</code> and <code>flag=ascii_hex</code> will return <strong>both</strong> Emoji and ASCII Hex Digit characters).<p>"
         + "<p>All possible flag values are shown in the table below:</p>"
         + f"{CHAR_FLAGS_TABLE}"
-        + "<p>To add a filter setting for any <strong>flag</strong> value, click the button below and enter the value from the <strong>Flags (Boolean Properties)</strong> <i><u>or</u></i> <strong>Alias</strong> column of the table above.</p>"
+        + "<p>To add a filter setting for any <strong>flag</strong> value, click the button below and enter the value from the <strong>Flags (Boolean Properties)</strong> column of the table above.</p>"
     )
 
 

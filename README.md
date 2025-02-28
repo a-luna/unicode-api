@@ -69,7 +69,7 @@
 	</li>
 </ul>
 <h2 id="introduction">Introduction</h2>
-<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode15.1.0/" rel="noopener noreferrer" target="_blank">version 15.1.0 of the Unicode Standard</a> (released Sep 12, 2023). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
+<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode16.0.0/" rel="noopener noreferrer" target="_blank">version 16.0.0 of the Unicode Standard</a> (released Sep 10, 2024). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul class="api-principles">
     <li>URLs are predictable and resource-oriented.</li>
     <li>Uses standard HTTP verbs and response codes.</li>
@@ -207,7 +207,7 @@
             <dt><strong>generalCategory</strong></dt>
             <dd>The <a href="https://www.unicode.org/versions/latest/ch04.pdf#G124142" rel="noopener noreferrer" target="_blank">General Category</a> that this character belongs to (e.g., letters, numbers, punctuation, symbols, etc.). The full list of values which are valid for this property is defined in <a href="http://www.unicode.org/reports/tr44/#General_Category_Values" rel="noopener noreferrer" target="_blank">Unicode Standard Annex #44</a></dd>
             <dt><strong>combiningClass</strong></dt>
-            <dd>Specifies, with a numeric code, which sequences of combining marks are to be considered canonically equivalent and which are not. This is used in the Canonical Ordering Algorithm and in normalization. For more info, please see <a href="https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#page=11" rel="noopener noreferrer" target="_blank">Unicode Standard Section 4.3</a>.</dd>
+            <dd>Specifies, with a numeric code, which sequences of combining marks are to be considered canonically equivalent and which are not. This is used in the Canonical Ordering Algorithm and in normalization. For more info, please see <a href="https://www.unicode.org/versions/latest/ch04.pdf#page=11" rel="noopener noreferrer" target="_blank">Unicode Standard Section 4.3</a>.</dd>
             <dt><strong>htmlEntities</strong></dt>
             <dd>A string begining with an ampersand (&) character and ending with a semicolon (;). Entities are used to display reserved characters (e.g., '<' in an HTML document) or invisible characters (e.g., non-breaking spaces). For more info, please see the <a href="https://developer.mozilla.org/en-US/docs/Glossary/Entity" rel="noopener noreferrer" target="_blank">MDN entry for HTML Entities</a>.</dd>
             <dt><strong>ideoFrequency</strong><br /><span class="cjk-only">(CJK Characters ONLY)</span></dt>
@@ -348,7 +348,7 @@
             </div>
             <strong style="flex: 1"><strong>Decomposition</strong></strong>
         </summary>
-        <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch03.pdf#page=46" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 3.7, <i>Decomposition</i></a></div>
+        <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/latest/ch03.pdf#page=46" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 3.7, <i>Decomposition</i></a></div>
         <dl>
             <dt><strong>decompositionType</strong></dt>
             <dd>
@@ -430,7 +430,7 @@
             </div>
             <strong style="flex: 1"><strong>Numeric</strong></strong>
         </summary>
-        <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch04.pdf#page=18" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 4.6, <i>Numeric Value</i></a></div>
+        <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/latest/ch04.pdf#page=18" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 4.6, <i>Numeric Value</i></a></div>
         <dl>
             <dt><strong>numericType</strong></dt>
             <dd>
@@ -465,7 +465,7 @@
             </div>
             <strong style="flex: 1"><strong>Joining</strong></strong>
         </summary>
-        <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/Unicode15.0.0/ch09.pdf#page=19" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 9.2, <i>Arabic</i></a></div>
+        <div class="prop-group-ref">Reference: <a href="https://www.unicode.org/versions/latest/ch09.pdf#page=19" rel="noopener noreferrer" target="_blank">Unicode Standard, Section 9.2, <i>Arabic</i></a></div>
         <dl>
             <dt><strong>joiningType</strong></dt>
             <dd>

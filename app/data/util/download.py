@@ -90,5 +90,5 @@ def request_url_with_retries(url: str) -> Result[Response]:
         response = request_url(url)
         return Result.Ok(response)
     except RetryLimitExceededError as ex:
-        error = f"Error! {__name__} occurred while requesting URL:\n" f"\tURL: {url}\n" f"\tError: {repr(ex)}"
+        error = f"Error! {__name__} occurred while requesting URL:\n\tURL: {url}\n\tError: {repr(ex)}"
         return Result.Fail(error)

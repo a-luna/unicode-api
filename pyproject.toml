@@ -4,10 +4,8 @@ version = "0.1.0"
 description = "API that provides access to detailed information for all characters, blocks and planes in the Unicode Standard (Built using FastAPI)."
 readme = "README.md"
 requires-python = ">=3.12"
-license = {file = "LICENSE"}
-authors = [
-    {name = "Aaron Luna", email = "contact@aaronluna.dev"}
-]
+license = { file = "LICENSE" }
+authors = [{ name = "Aaron Luna", email = "contact@aaronluna.dev" }]
 keywords = ["unicode", "unicode-api"]
 
 [build-system]
@@ -18,7 +16,7 @@ build-backend = "setuptools.build_meta"
 line-length = 120
 target-version = ['py312']
 include = '\.pyi?$'
-exclude =  '''
+exclude = '''
 /(
     \.eggs
     | \.git
@@ -40,28 +38,64 @@ exclude =  '''
 line-length = 120
 
 [tool.ruff.lint]
-select = ["B", "C4", "C90", "E", "ERA", "F", "FA", "I", "INT", "N", "PERF", "PGH", "PIE", "PLE", "PLW", "PTH", "RUF100", "SIM", "UP", "W", "YTT"]
+select = [
+    "B",
+    "C4",
+    "C90",
+    "E",
+    "ERA",
+    "F",
+    "FA",
+    "I",
+    "INT",
+    "N",
+    "PERF",
+    "PGH",
+    "PIE",
+    "PLE",
+    "PLW",
+    "PTH",
+    "RUF100",
+    "SIM",
+    "UP",
+    "W",
+    "YTT",
+]
 extend-select = ["I"]
 ignore = ["B019", "B905"]
 fixable = ["I"]
 unfixable = ["B", "C90", "PIE", "SIM"]
 
 [tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["E402"]
 "app/api/api_v1/dependencies.py" = ["E501"]
 "app/docs/dependencies/custom_parameters.py" = ["E501"]
 "app/docs/dependencies/filter_tables.py" = ["E501"]
 "app/docs/api_docs/readme.py" = ["E501"]
 "app/docs/api_docs/swagger_ui.py" = ["E501"]
-"app/data/scripts/update_test_data/update_test_list_all_unicode_blocks.py" = ["E501"]
-"app/tests/test_block_endpoints/test_get_unicode_block_details/data.py" = ["E501"]
+"app/data/scripts/update_test_data/update_test_list_all_unicode_blocks.py" = [
+    "E501",
+]
+"app/tests/test_block_endpoints/test_get_unicode_block_details/data.py" = [
+    "E501",
+]
 "app/tests/test_block_endpoints/test_list_all_unicode_blocks/data.py" = ["E501"]
-"app/tests/test_character_endpoints/test_filter_unicode_characters/data.py" = ["E501"]
-"app/tests/test_character_endpoints/test_list_all_unicode_characters/data.py" = ["E501"]
-"app/tests/test_character_endpoints/test_search_unicode_characters_by_name/data.py" = ["E501"]
-"app/tests/test_codepoint_endpoints/test_get_unicode_character_at_codepoint/data.py" = ["E501"]
-"app/schemas/models/block.py" = ["F821"]
-"app/schemas/models/character.py" = ["F821"]
-"app/schemas/models/plane.py" = ["F821"]
+"app/tests/test_character_endpoints/test_filter_unicode_characters/data.py" = [
+    "E501",
+]
+"app/tests/test_character_endpoints/test_list_all_unicode_characters/data.py" = [
+    "E501",
+]
+"app/tests/test_character_endpoints/test_search_unicode_characters_by_name/data.py" = [
+    "E501",
+]
+"app/tests/test_codepoint_endpoints/test_get_unicode_character_at_codepoint/data.py" = [
+    "E501",
+]
+"app/models/block.py" = ["F821"]
+"app/models/character.py" = ["F821"]
+"app/models/plane.py" = ["F821"]
+"app/models/property_values.py" = ["N801"]
 
 [tool.isort]
 profile = "black"
@@ -76,11 +110,7 @@ color_output = true
 
 [tool.pytest.ini_options]
 addopts = "-ra --showlocals --cov=app --cov-report term:skip-covered --cov-branch --cov-report html -vv --cache-clear --random-order-bucket=package"
-norecursedirs = [
-    ".git",
-    ".pytest_cache",
-    ".vscode",
-]
+norecursedirs = [".git", ".pytest_cache", ".vscode"]
 
 [tool.coverage.run]
 omit = [
@@ -91,6 +121,7 @@ omit = [
     "app/core/redis_client.py",
     "app/core/result.py",
     "app/core/util.py",
+    "app/custom_types.py",
     "app/data/scripts/*",
     "app/data/util/*",
     "app/docs/*",

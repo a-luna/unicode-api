@@ -2,44 +2,29 @@ FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT = {
     "url": "/v1/characters/filter",
     "filterSettings": {
         "name": "spiritus",
-        "category": "Nonspacing Mark",
-        "script": "Coptic",
+        "category": ["Nonspacing_Mark (Mn)"],
+        "script": ["Coptic (Copt)"],
+        "propertyGroups": ["Minimum"],
     },
+    "totalResults": 2,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 2,
     "results": [
         {"character": "⳰", "name": "COPTIC COMBINING SPIRITUS ASPER", "codepoint": "U+2CF0", "uriEncoded": "%E2%B3%B0"},
         {"character": "⳱", "name": "COPTIC COMBINING SPIRITUS LENIS", "codepoint": "U+2CF1", "uriEncoded": "%E2%B3%B1"},
     ],
 }
 
-INVALID_NO_FILTER_SETTINGS = {"detail": "No filter settings were specified in the request."}
-
-INVALID_PAGE_NUMBER = {"detail": "Request for page #2 is invalid since there is only 1 total page."}
-
-NO_CHARS_MATCH_SETTINGS = {
-    "url": "/v1/characters/filter",
-    "filterSettings": {
-        "name": "test",
-        "script": "Coptic",
-        "property_groups": "All",
-    },
-    "hasMore": False,
-    "currentPage": 0,
-    "totalResults": 0,
-    "results": [],
-}
-
 FILTER_BY_UNICODE_AGE = {
     "url": "/v1/characters/filter",
     "filterSettings": {
-        "category": "Modifier Symbol",
-        "version": "13.0, 14.0, 15.0",
+        "category": ["Modifier_Symbol (Sk)"],
+        "version": ["13.0", "14.0", "15.0"],
+        "propertyGroups": ["Minimum"],
     },
+    "totalResults": 4,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 4,
     "results": [
         {"character": "࢈", "name": "ARABIC RAISED ROUND DOT", "codepoint": "U+0888", "uriEncoded": "%E0%A2%88"},
         {"character": "꭪", "name": "MODIFIER LETTER LEFT TACK", "codepoint": "U+AB6A", "uriEncoded": "%EA%AD%AA"},
@@ -50,22 +35,19 @@ FILTER_BY_UNICODE_AGE = {
 
 FILTER_BY_BIDIRECTIONAL_CLASS = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "name": "dong",
-        "bidi_class": "European Terminator",
-    },
+    "filterSettings": {"name": "dong", "bidiClass": ["European_Terminator (ET)"], "propertyGroups": ["Minimum"]},
+    "totalResults": 1,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 1,
     "results": [{"character": "₫", "name": "DONG SIGN", "codepoint": "U+20AB", "uriEncoded": "%E2%82%AB"}],
 }
 
 FILTER_BY_DECOMPOSITION_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"name": "seven", "decomp_type": "Encircled Form"},
+    "filterSettings": {"name": "seven", "decompType": ["Circle (Enc)"], "propertyGroups": ["Minimum"]},
+    "totalResults": 5,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 5,
     "results": [
         {"character": "⑦", "name": "CIRCLED DIGIT SEVEN", "codepoint": "U+2466", "uriEncoded": "%E2%91%A6"},
         {"character": "㉗", "name": "CIRCLED NUMBER TWENTY SEVEN", "codepoint": "U+3257", "uriEncoded": "%E3%89%97"},
@@ -77,13 +59,11 @@ FILTER_BY_DECOMPOSITION_TYPE = {
 
 FILTER_BY_LINE_BREAK_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "line_break": "Infix Separator",
-    },
+    "filterSettings": {"lineBreak": ["Infix_Numeric (IS)"], "propertyGroups": ["Minimum"]},
+    "totalResults": 13,
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
-    "totalResults": 13,
     "results": [
         {"character": ",", "name": "COMMA", "codepoint": "U+002C", "uriEncoded": "%2C"},
         {"character": ".", "name": "FULL STOP", "codepoint": "U+002E", "uriEncoded": "%2E"},
@@ -100,24 +80,19 @@ FILTER_BY_LINE_BREAK_TYPE = {
 
 FILTER_BY_CCC = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "ccc": "Attached Above",
-    },
+    "filterSettings": {"ccc": ["Attached_Above (ATA)"], "propertyGroups": ["Minimum"]},
+    "totalResults": 1,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 1,
     "results": [{"character": "᷎", "name": "COMBINING OGONEK ABOVE", "codepoint": "U+1DCE", "uriEncoded": "%E1%B7%8E"}],
 }
 
 FILTER_BY_NUMERIC_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "script": "Kharoshthi",
-        "num_type": "Digit",
-    },
+    "filterSettings": {"script": ["Kharoshthi (Khar)"], "numType": ["Digit (Di)"], "propertyGroups": ["Minimum"]},
+    "totalResults": 4,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 4,
     "results": [
         {"character": "𐩀", "name": "KHAROSHTHI DIGIT ONE", "codepoint": "U+10A40", "uriEncoded": "%F0%90%A9%80"},
         {"character": "𐩁", "name": "KHAROSHTHI DIGIT TWO", "codepoint": "U+10A41", "uriEncoded": "%F0%90%A9%81"},
@@ -128,12 +103,10 @@ FILTER_BY_NUMERIC_TYPE = {
 
 FILTER_BY_JOINING_TYPE = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "join_type": "Left Joining",
-    },
+    "filterSettings": {"joinType": ["Left_Joining (L)"], "propertyGroups": ["Minimum"]},
+    "totalResults": 5,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 5,
     "results": [
         {"character": "ꡲ", "name": "PHAGS-PA SUPERFIXED LETTER RA", "codepoint": "U+A872", "uriEncoded": "%EA%A1%B2"},
         {"character": "𐫍", "name": "MANICHAEAN LETTER HETH", "codepoint": "U+10ACD", "uriEncoded": "%F0%90%AB%8D"},
@@ -150,12 +123,10 @@ FILTER_BY_JOINING_TYPE = {
 
 FILTER_BY_CHAR_FLAG = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "flag": "Is Hyphen",
-    },
+    "filterSettings": {"flag": ["Is Hyphen"], "propertyGroups": ["Minimum"]},
+    "totalResults": 11,
     "hasMore": False,
     "currentPage": 1,
-    "totalResults": 11,
     "results": [
         {"character": "-", "name": "HYPHEN-MINUS", "codepoint": "U+002D", "uriEncoded": "%2D"},
         {"character": "­", "name": "SOFT HYPHEN", "codepoint": "U+00AD", "uriEncoded": "%C2%AD"},
@@ -173,13 +144,11 @@ FILTER_BY_CHAR_FLAG = {
 
 FILTER_BY_BLOCK_NAME = {
     "url": "/v1/characters/filter",
-    "filterSettings": {
-        "block": "Ancient Symbols",
-    },
+    "filterSettings": {"block": ["Ancient Symbols"], "propertyGroups": ["Minimum"]},
+    "totalResults": 14,
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
-    "totalResults": 14,
     "results": [
         {"character": "𐆐", "name": "ROMAN SEXTANS SIGN", "codepoint": "U+10190", "uriEncoded": "%F0%90%86%90"},
         {"character": "𐆑", "name": "ROMAN UNCIA SIGN", "codepoint": "U+10191", "uriEncoded": "%F0%90%86%91"},
@@ -197,13 +166,22 @@ FILTER_BY_BLOCK_NAME = {
 FILTER_BY_COMBINED_CATEGORY = {
     "url": "/v1/characters/filter",
     "filterSettings": {
-        "block": "Basic Latin",
-        "category": "Punctuation",
+        "block": ["Basic Latin"],
+        "category": [
+            "Connector_Punctuation (Pc)",
+            "Dash_Punctuation (Pd)",
+            "Close_Punctuation (Pe)",
+            "Final_Punctuation (Pf)",
+            "Initial_Punctuation (Pi)",
+            "Other_Punctuation (Po)",
+            "Open_Punctuation (Ps)",
+        ],
+        "propertyGroups": ["Minimum"],
     },
+    "totalResults": 23,
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
-    "totalResults": 23,
     "results": [
         {"character": "!", "name": "EXCLAMATION MARK", "codepoint": "U+0021", "uriEncoded": "%21"},
         {"character": '"', "name": "QUOTATION MARK", "codepoint": "U+0022", "uriEncoded": "%22"},
@@ -221,13 +199,22 @@ FILTER_BY_COMBINED_CATEGORY = {
 FILTER_BY_SEPARATE_CATEGORIES = {
     "url": "/v1/characters/filter",
     "filterSettings": {
-        "block": "Basic Latin",
-        "category": "Connector Punctuation, Dash Punctuation, Open Punctuation, Close Punctuation, Initial Punctuation, Final Punctuation, Other Punctuation",
+        "block": ["Basic Latin"],
+        "category": [
+            "Connector_Punctuation (Pc)",
+            "Dash_Punctuation (Pd)",
+            "Close_Punctuation (Pe)",
+            "Final_Punctuation (Pf)",
+            "Initial_Punctuation (Pi)",
+            "Other_Punctuation (Po)",
+            "Open_Punctuation (Ps)",
+        ],
+        "propertyGroups": ["Minimum"],
     },
+    "totalResults": 23,
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
-    "totalResults": 23,
     "results": [
         {"character": "!", "name": "EXCLAMATION MARK", "codepoint": "U+0021", "uriEncoded": "%21"},
         {"character": '"', "name": "QUOTATION MARK", "codepoint": "U+0022", "uriEncoded": "%22"},
@@ -244,23 +231,23 @@ FILTER_BY_SEPARATE_CATEGORIES = {
 
 FILTER_BY_CJK_DEFINITION = {
     "url": "/v1/characters/filter",
-    "filterSettings": {"cjk_definition": "dragon"},
+    "filterSettings": {"cjkDefinition": "dragon", "propertyGroups": ["Minimum"]},
+    "totalResults": 21,
     "hasMore": True,
     "currentPage": 1,
     "nextPage": 2,
-    "totalResults": 21,
     "results": [
         {
             "character": "㡣",
             "name": "CJK UNIFIED IDEOGRAPH-3863",
-            "description": "(same as 龍) dragon, or the emperor, imperial, a Chinese family name",
+            "description": "(same as 龍) dragon, or the emperor; imperial, a Chinese family name",
             "codepoint": "U+3863",
             "uriEncoded": "%E3%A1%A3",
         },
         {
             "character": "䮾",
             "name": "CJK UNIFIED IDEOGRAPH-4BBE",
-            "description": "(same as 龐) huge, rich, abundance, to fill up, full of (same as 龍) a legendary, miraculous, marvelous animal, the dragon, associated with rain, floods, and geomancy, an emblem of imperialism",
+            "description": "(same as 龐) huge, rich; abundance, to fill up; full of (same as 龍) a legendary; miraculous; marvelous animal; the dragon, associated with rain, floods, and geomancy, an emblem of imperialism",
             "codepoint": "U+4BBE",
             "uriEncoded": "%E4%AE%BE",
         },
@@ -309,7 +296,7 @@ FILTER_BY_CJK_DEFINITION = {
         {
             "character": "竜",
             "name": "CJK UNIFIED IDEOGRAPH-7ADC",
-            "description": "dragon, symbolic of emperor",
+            "description": "dragon; symbolic of emperor",
             "codepoint": "U+7ADC",
             "uriEncoded": "%E7%AB%9C",
         },
@@ -323,20 +310,19 @@ FILTER_BY_CJK_DEFINITION = {
     ],
 }
 
+NO_CHARS_MATCH_SETTINGS = {
+    "url": "/v1/characters/filter",
+    "filterSettings": {"name": "test", "script": ["Coptic (Copt)"], "propertyGroups": ["All"]},
+    "currentPage": 0,
+    "totalResults": 0,
+    "hasMore": False,
+    "results": [],
+}
+
+INVALID_NO_FILTER_SETTINGS = {"detail": "No filter settings were specified in the request."}
+
+INVALID_PAGE_NUMBER = {"detail": "Request for page #2 is invalid since there is only 1 total page."}
+
 INVALID_FILTER_PARAM_VALUES = {
-    "detail": (
-        "Invalid values were provided for the following 12 parameters:\n\n"
-        "1 value provided for the 'block' parameter is invalid: ['xxx']\n\n"
-        "2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n"
-        "2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n"
-        "2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n"
-        "2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n"
-        "1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n"
-        "1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n"
-        "1 value provided for the 'ccc' parameter is invalid: ['300']\n\n"
-        "1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n"
-        "1 value provided for the 'join_type' parameter is invalid: ['j']\n\n"
-        "2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n"
-        "2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
-    )
+    "detail": "Invalid values were provided for the following 12 parameters:\n\n1 value provided for the 'block' parameter is invalid: ['xxx']\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'ccc' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }
