@@ -11,7 +11,7 @@ variable "UNICODE_VERSION" {
 }
 
 variable "UMAMI_WEBSITE_ID" {
-  default = "
+  default = ""
 }
 
 target "unicode-api" {
