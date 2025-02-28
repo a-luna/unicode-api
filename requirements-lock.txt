@@ -90,7 +90,7 @@ python-multipart==0.0.20
 pyupgrade==3.19.1
 PyYAML==6.0.2
 pyzmq==26.2.1
-RapidFuzz==3.12.1
+rapidfuzz==3.12.1
 redis==5.2.1
 requests==2.32.3
 rich==13.9.4
