@@ -6,7 +6,7 @@ from app.tests.test_codepoint_endpoints.test_get_unicode_character_at_codepoint.
     INVALID_HEX_DIGIT_2,
     INVALID_LEADING_ZEROS,
     INVALID_OUT_OF_RANGE,
-    INVALID_PROP_NAME,
+    INVALID_PROP_GROUP_NAME,
 )
 
 
@@ -67,4 +67,4 @@ def test_get_character_at_codepoint_invalid_out_of_range_3(client):
 def test_get_character_at_codepoint_invalid_prop_group(client):
     response = client.get("v1/codepoints/U+0072?show_props=max")
     assert response.status_code == 400
-    assert response.json() == INVALID_PROP_NAME
+    assert response.json() == INVALID_PROP_GROUP_NAME

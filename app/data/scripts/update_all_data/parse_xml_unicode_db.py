@@ -1,40 +1,60 @@
 import json
+from collections.abc import Sequence
 from pathlib import Path
+from textwrap import dedent, fill
+from typing import TYPE_CHECKING, Any
 
-from lxml import etree
+import lxml.etree as etree
 from lxml.etree import _Element, _ElementTree
+from pydantic import ValidationError
 
+import app.db.models as db
 from app.config.api_settings import UnicodeApiSettings
-from app.constants import NULL_BLOCK, NULL_PLANE
+from app.constants import PROP_GROUP_INVALID_FOR_VERSION_ROW_ID
+from app.core.cache import NULL_BLOCK, NULL_PLANE
 from app.core.encoding import get_codepoint_string
 from app.core.result import Result
-from app.data.scripts.script_types import AllParsedUnicodeData, BlockOrPlaneDetailsDict, CharDetailsDict
+from app.data.scripts.script_types import AllParsedUnicodeData, CharUnicodeModel, UnicodeModel
 from app.data.util.spinners import Spinner
+from app.models.util import normalize_string_lm3
 
-YES_NO_MAP = {"Y": "True", "N": "False"}
+if TYPE_CHECKING:  # pragma: no cover
+    from app.custom_types import UnicodePropertyGroupMap, UnicodePropertyGroupValues
+
+ERROR_MESSAGE_MAX_WIDTH = 80
+YES_NO_MAP = {"Y": True, "N": False}
 
 
 def parse_xml_unicode_database(settings: UnicodeApiSettings) -> Result[AllParsedUnicodeData]:
     result = parse_etree_from_xml_file(settings.XML_FILE)
     if result.failure:
         return Result.Fail(result.error)
-    unicode_xml = result.value
+    if not (unicode_xml := result.value):
+        return Result.Fail("Error parsing Unicode XML database file: No data found!")
 
-    (all_planes, all_blocks) = parse_unicode_plane_and_block_data_from_xml(unicode_xml, settings)
-    all_chars = parse_unicode_character_data_from_xml(unicode_xml, all_blocks, all_planes)
-    spinner = Spinner()
-    spinner.start("Counting number of defined characters in each block and plane...")
-    count_defined_characters_per_block(all_chars, all_blocks)
-    count_defined_characters_per_plane(all_blocks, all_planes)
-    spinner.successful("Successfully counted number of defined characters in each block and plane!")
-    return Result.Ok((all_planes, all_blocks, all_chars))
+    result = parse_unicode_plane_and_block_data_from_xml(unicode_xml, settings)
+    if result.failure:
+        return Result.Fail(result.error)
+    if not result.value:
+        return Result.Fail("Error parsing Unicode plane and block data from XML database file: No data found!")
+    planes, blocks = result.value
+
+    result = parse_unicode_character_data_from_xml(settings, unicode_xml, blocks, planes)
+    if result.failure:
+        return Result.Fail(result.error)
+    if not result.value:
+        return Result.Fail("Error parsing Unicode character data from XML database file: No data found!")
+    non_unihan_chars, tangut_chars, unihan_chars = result.value
+
+    all_parsed_data = (planes, blocks, non_unihan_chars, tangut_chars, unihan_chars)
+    return Result.Ok(finalize_all_parsed_unicode_data(settings, all_parsed_data))
 
 
 def parse_etree_from_xml_file(xml: Path) -> Result[_ElementTree]:
     spinner = Spinner()
     spinner.start("Parsing Unicode XML file to ETree..")
     try:
-        unicode_xml = etree.parse(str(xml), parser=None)  # nosec
+        unicode_xml: _ElementTree = etree.parse(str(xml), parser=None)  # nosec
         spinner.successful("Successfully parsed Unicode XML database file!")
         return Result.Ok(unicode_xml)
     except Exception as ex:
@@ -45,34 +65,43 @@ def parse_etree_from_xml_file(xml: Path) -> Result[_ElementTree]:
 
 def parse_unicode_plane_and_block_data_from_xml(
     unicode_xml: _ElementTree, settings: UnicodeApiSettings
-) -> tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict]]:
+) -> Result[tuple[list[db.UnicodePlane], list[db.UnicodeBlock]]]:
     spinner = Spinner()
     spinner.start("Parsing Unicode plane and block data from XML database file...")
-    all_planes: list[BlockOrPlaneDetailsDict] = json.loads(settings.PLANES_JSON.read_text())
-    all_blocks: list[BlockOrPlaneDetailsDict] = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
+    all_planes = [db.UnicodePlane(**plane) for plane in json.loads(settings.PLANES_JSON.read_text())]
+    result = parse_unicode_block_data_from_xml(unicode_xml, all_planes)
+    if result.failure:
+        return Result.Fail(result.error)
+    if not result.value:
+        return Result.Fail("Error parsing Unicode block data from XML database file: No data found!")
+    all_blocks = result.value
     (all_planes, all_blocks) = get_block_range_for_each_plane(all_planes, all_blocks)
     spinner.successful("Successfully parsed Unicode plane and block data from XML database file!")
-    return (all_planes, all_blocks)
+    return Result.Ok((all_planes, all_blocks))
 
 
 def parse_unicode_block_data_from_xml(
-    xml: _ElementTree, parsed_planes: list[BlockOrPlaneDetailsDict]
-) -> list[BlockOrPlaneDetailsDict]:
+    xml: _ElementTree, parsed_planes: list[db.UnicodePlane]
+) -> Result[list[db.UnicodeBlock]]:
     all_blocks = xml.findall(".//block", {None: "http://www.unicode.org/ns/2003/ucd/1.0"})
-    return [parse_block_details(id, block, parsed_planes) for id, block in enumerate(all_blocks, start=1)]
+    results = [parse_block_details(id, block, parsed_planes) for id, block in enumerate(all_blocks, start=1)]
+    valid_results, invalid_results = evaluate_parse_results(results)
+    if invalid_results:
+        return Result.Fail(f"Error parsing Unicode block data from XML database file: {'\n\n'.join(invalid_results)}")
+    return Result.Ok(valid_results)
 
 
-def parse_block_details(id: int, block_node: _Element, parsed_planes: list[BlockOrPlaneDetailsDict]):
+def parse_block_details(id: int, block_node: _Element, parsed_planes: list[db.UnicodePlane]) -> Result[db.UnicodeBlock]:
     start = block_node.get("first-cp", "0")
     finish = block_node.get("last-cp", "0")
     start_dec = int(start, 16)
     finish_dec = int(finish, 16)
     plane = get_unicode_plane_containing_block_id(start_dec, finish_dec, parsed_planes)
-    return {
+    parsed_block = {
         "id": id,
-        "name": block_node.get("name", ""),
-        "plane_number": plane["number"],
-        "plane_id": plane["id"],
+        "long_name": block_node.get("name", ""),
+        "short_name": "",
+        "plane_id": plane.id or PROP_GROUP_INVALID_FOR_VERSION_ROW_ID,
         "start": f"{start_dec:04X}",
         "start_dec": start_dec,
         "finish": f"{finish_dec:04X}",
@@ -80,102 +109,135 @@ def parse_block_details(id: int, block_node: _Element, parsed_planes: list[Block
         "total_allocated": finish_dec - start_dec + 1,
         "total_defined": 0,
     }
+    return validate_parsed_unicode_data(parsed_block, db.UnicodeBlock)
+
+
+def validate_parsed_unicode_data[T: UnicodeModel](parsed_data: dict[str, Any], db_model: type[T]) -> Result[T]:
+    try:
+        validated = db_model.model_validate(parsed_data)
+        return Result.Ok(validated)
+    except ValidationError as ex:
+        return Result.Fail(create_validation_error_for_tui(ex, parsed_data))
+
+
+def create_validation_error_for_tui(ex: ValidationError, parsed_data: dict[str, Any]) -> str:
+    error_message = f"""\
+    Parsed Unicode data is invalid:
+    {get_section_header_for_tui("ERROR")}
+    {repr(ex)}\n
+    {get_section_header_for_tui("PARSED DATA")}
+    {json.dumps(parsed_data, indent=4)}
+    """
+    return fill(dedent(error_message), width=ERROR_MESSAGE_MAX_WIDTH)
+
+
+def get_section_header_for_tui(section_name: str, filler_char: str = "#") -> str:
+    filler_char = filler_char[0]
+    total_space_to_fill = ERROR_MESSAGE_MAX_WIDTH - len(f" {section_name} ")
+    left_filler = right_filler = f"{filler_char}" * (total_space_to_fill // 2)
+    if total_space_to_fill % 2:
+        right_filler += filler_char
+    return f"{left_filler} {section_name} {right_filler}"
+
+
+def evaluate_parse_results[T: UnicodeModel](results: Sequence[Result[T]]) -> tuple[list[T], list[str]]:
+    valid_results = [r.value for r in results if r.success and r.value]
+    parse_errors = [r.error for r in results if r.failure]
+    return (valid_results, parse_errors)
 
 
 def get_unicode_plane_containing_block_id(
-    start_dec: int, finish_dec: int, parsed_planes: list[BlockOrPlaneDetailsDict]
-) -> BlockOrPlaneDetailsDict:
-    found = [
-        plane
-        for plane in parsed_planes
-        if int(plane["start_dec"]) <= start_dec and finish_dec <= int(plane["finish_dec"])
-    ]
+    start_dec: int, finish_dec: int, parsed_planes: list[db.UnicodePlane]
+) -> db.UnicodePlane:
+    found = [plane for plane in parsed_planes if plane.start_dec <= start_dec and finish_dec <= plane.finish_dec]
     return found[0] if found else NULL_PLANE
 
 
 def get_block_range_for_each_plane(
-    parsed_planes: list[BlockOrPlaneDetailsDict], parsed_blocks: list[BlockOrPlaneDetailsDict]
-) -> tuple[list[BlockOrPlaneDetailsDict], list[BlockOrPlaneDetailsDict]]:
+    parsed_planes: list[db.UnicodePlane], parsed_blocks: list[db.UnicodeBlock]
+) -> tuple[list[db.UnicodePlane], list[db.UnicodeBlock]]:
     for plane in parsed_planes:
-        blocks_in_plane = [block for block in parsed_blocks if block["plane_id"] == plane["id"]]
-        block_ids = sorted({block["id"] for block in blocks_in_plane if block and "id" in block})
+        blocks_in_plane = [block for block in parsed_blocks if block.plane_id == plane.id]
+        block_ids = sorted({block.id for block in blocks_in_plane if block and block.id is not None})
         if block_ids:
-            plane["start_block_id"] = block_ids[0]
-            plane["finish_block_id"] = block_ids[-1]
+            plane.start_block_id = block_ids[0]
+            plane.finish_block_id = block_ids[-1]
     return (parsed_planes, parsed_blocks)
 
 
 def parse_unicode_character_data_from_xml(
+    settings: UnicodeApiSettings,
     xml: _ElementTree,
-    blocks: list[BlockOrPlaneDetailsDict],
-    planes: list[BlockOrPlaneDetailsDict],
-) -> list[CharDetailsDict]:
+    blocks: list[db.UnicodeBlock],
+    planes: list[db.UnicodePlane],
+) -> Result[tuple[list[db.UnicodeCharacter], list[db.UnicodeCharacter], list[db.UnicodeCharacterUnihan]]]:
+    non_unihan_results: list[Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]] = []
+    tangut_results: list[Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]] = []
+    unihan_results: list[Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]] = []
+    prop_value_id_map = json.loads(settings.PROP_VALUES_JSON.read_text())
     char_nodes = xml.findall(".//char", {None: "http://www.unicode.org/ns/2003/ucd/1.0"})
     spinner = Spinner()
     spinner.start("Parsing Unicode character data from XML database file...", total=len(char_nodes))
-    all_chars = [parse_character_details(char, blocks, planes, spinner) for char in char_nodes if "cp" in char.keys()]  # noqa: SIM118
+    for char in char_nodes:
+        if "cp" not in char.keys():  # noqa: SIM118
+            continue
+        (unihan, tangut, result) = parse_character_details(prop_value_id_map, char, blocks, planes)
+        if unihan:
+            unihan_results.append(result)
+        elif tangut:
+            tangut_results.append(result)
+        else:
+            non_unihan_results.append(result)
+        spinner.increment()
     spinner.successful("Successfully parsed Unicode character data from XML database file!")
-    return all_chars
+    return validate_all_parsed_character_data(non_unihan_results, tangut_results, unihan_results)
 
 
 def parse_character_details(
+    prop_value_id_map: "UnicodePropertyGroupMap",
     char_node: _Element,
-    parsed_blocks: list[BlockOrPlaneDetailsDict],
-    parsed_planes: list[BlockOrPlaneDetailsDict],
-    spinner,
-) -> tuple[CharDetailsDict, float]:
+    parsed_blocks: list[db.UnicodeBlock],
+    parsed_planes: list[db.UnicodePlane],
+) -> tuple[bool, bool, Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]]:
     codepoint = char_node.get("cp", "0")
     codepoint_dec = int(codepoint, 16)
     block = get_unicode_block_containing_codepoint(codepoint_dec, parsed_blocks)
-    plane = [plane for plane in parsed_planes if plane["id"] == block["plane_id"]][0]
-    unihan = char_is_unihan(str(block["name"]))
-    parsed_char = {
-        "character": chr(codepoint_dec),
-        "name": get_character_name(char_node, codepoint, codepoint_dec, block),
-        "codepoint": codepoint,
+    plane = [plane for plane in parsed_planes if plane.id == block.plane_id][0]
+    unihan = any(
+        bname in block.long_name.lower() for bname in ["cjk unified ideographs", "cjk compatibility ideographs"]
+    )
+    tangut = "tangut" in block.long_name.lower()
+    char: Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]
+
+    char_props = {
         "codepoint_dec": codepoint_dec,
-        "block_id": block["id"],
-        "plane_id": plane["id"],
-        "plane_number": plane["number"],
-        "_unihan": unihan,
-        "_tangut": char_is_tangut(str(block["name"])),
-        "age": char_node.get("age", "0"),
-        "general_category": char_node.get("gc", "0"),
-        "combining_class": int(char_node.get("ccc", "0")),
-        "bidirectional_class": char_node.get("bc", "0"),
-        "bidirectional_is_mirrored": YES_NO_MAP[char_node.get("Bidi_M", "N")],
-        "bidirectional_mirroring_glyph": get_mapped_codepoint(char_node.get("bmg", ""), codepoint),
-        "bidirectional_control": YES_NO_MAP[char_node.get("Bidi_C", "N")],
-        "paired_bracket_type": char_node.get("bpt", ""),
-        "paired_bracket_property": get_mapped_codepoint(char_node.get("bpb", ""), codepoint),
-        "decomposition_type": char_node.get("dt", ""),
-        "NFC_QC": char_node.get("NFC_QC", ""),
-        "NFD_QC": char_node.get("NFD_QC", ""),
-        "NFKC_QC": char_node.get("NFKC_QC", ""),
-        "NFKD_QC": char_node.get("NFKD_QC", ""),
-        "numeric_type": char_node.get("nt", ""),
+        "codepoint": codepoint,
+        "name": get_character_name(char_node, codepoint, codepoint_dec, block),
+        "bidi_mirrored": YES_NO_MAP[char_node.get("Bidi_M", "N")],
+        "bidi_mirroring_glyph": get_mapped_codepoint(char_node.get("bmg", ""), codepoint),
+        "bidi_control": YES_NO_MAP[char_node.get("Bidi_C", "N")],
+        "bidi_paired_bracket_property": get_mapped_codepoint(char_node.get("bpb", ""), codepoint),
+        "NFC_QC": db.TriadicLogic.from_code(char_node.get("NFC_QC", "")),
+        "NFD_QC": db.TriadicLogic.from_code(char_node.get("NFD_QC", "")),
+        "NFKC_QC": db.TriadicLogic.from_code(char_node.get("NFKC_QC", "")),
+        "NFKD_QC": db.TriadicLogic.from_code(char_node.get("NFKD_QC", "")),
         "numeric_value": char_node.get("nv", ""),
-        "joining_type": char_node.get("jt", ""),
         "joining_group": char_node.get("jg", ""),
-        "joining_control": YES_NO_MAP[char_node.get("Join_C", "N")],
-        "line_break": char_node.get("lb", ""),
-        "east_asian_width": char_node.get("ea", ""),
+        "join_control": YES_NO_MAP[char_node.get("Join_C", "N")],
         "uppercase": YES_NO_MAP[char_node.get("Upper", "N")],
         "lowercase": YES_NO_MAP[char_node.get("Lower", "N")],
         "simple_uppercase_mapping": get_mapped_codepoint(char_node.get("suc", ""), codepoint),
         "simple_lowercase_mapping": get_mapped_codepoint(char_node.get("slc", ""), codepoint),
         "simple_titlecase_mapping": get_mapped_codepoint(char_node.get("stc", ""), codepoint),
         "simple_case_folding": get_mapped_codepoint(char_node.get("scf", ""), codepoint),
-        "script": char_node.get("sc", ""),
         "script_extensions": char_node.get("scx", ""),
-        "hangul_syllable_type": char_node.get("hst", ""),
         "indic_syllabic_category": char_node.get("InSC", ""),
         "indic_matra_category": char_node.get("InMC", "") or "NA",
         "indic_positional_category": char_node.get("InPC", ""),
-        "ideographic": get_bool_prop_value(char_node, "Ideo"),
-        "unified_ideograph": get_bool_prop_value(char_node, "UIdeo"),
+        "ideographic": YES_NO_MAP[char_node.get("Ideo", "N")],
+        "unified_ideograph": YES_NO_MAP[char_node.get("UIdeo", "N")],
         "equivalent_unified_ideograph": char_node.get("EqUIdeo", ""),
-        "radical": get_bool_prop_value(char_node, "Radical"),
+        "radical": YES_NO_MAP[char_node.get("Radical", "N")],
         "dash": YES_NO_MAP[char_node.get("Dash", "N")],
         "hyphen": YES_NO_MAP[char_node.get("Hyphen", "N")],
         "quotation_mark": YES_NO_MAP[char_node.get("QMark", "N")],
@@ -192,7 +254,6 @@ def parse_character_details(
         "logical_order_exception": YES_NO_MAP[char_node.get("LOE", "N")],
         "prepended_concatenation_mark": YES_NO_MAP[char_node.get("PCM", "N")],
         "white_space": YES_NO_MAP[char_node.get("WSpace", "N")],
-        "vertical_orientation": char_node.get("vo", ""),
         "regional_indicator": YES_NO_MAP[char_node.get("RI", "N")],
         "emoji": YES_NO_MAP[char_node.get("Emoji", "N")],
         "emoji_presentation": YES_NO_MAP[char_node.get("EPres", "N")],
@@ -200,9 +261,50 @@ def parse_character_details(
         "emoji_modifier_base": YES_NO_MAP[char_node.get("EBase", "N")],
         "emoji_component": YES_NO_MAP[char_node.get("EComp", "N")],
         "extended_pictographic": YES_NO_MAP[char_node.get("ExtPict", "N")],
+        "block_id": block.id or 0,
+        "plane_id": plane.id or -1,
+        "general_category_id": get_prop_value_id_from_short_name(
+            prop_value_id_map, "General_Category", char_node.get("gc", "0")
+        ),
+        "age_id": get_prop_value_id_from_short_name(prop_value_id_map, "Age", char_node.get("age", "0")),
+        "combining_class_id": get_prop_value_id_from_short_name(
+            prop_value_id_map,
+            "Canonical_Combining_Class",
+            prop_value_id_map["Canonical_Combining_Class"][char_node.get("ccc", "0")]["short_name"],
+            prop_value_id_map["Canonical_Combining_Class"]["0"]["id"],
+        ),
+        "bidi_class_id": get_prop_value_id_from_short_name(prop_value_id_map, "Bidi_Class", char_node.get("bc", "0")),
+        "bidi_paired_bracket_type_id": get_prop_value_id_from_short_name(
+            prop_value_id_map, "Bidi_Paired_Bracket_Type", char_node.get("bpt", "")
+        ),
+        "decomposition_type_id": get_prop_value_id_from_short_name(
+            prop_value_id_map,
+            "Decomposition_Type",
+            char_node.get("dt", ""),
+            prop_value_id_map["Decomposition_Type"]["12"]["id"],
+        ),
+        "numeric_type_id": get_prop_value_id_from_short_name(
+            prop_value_id_map, "Numeric_Type", char_node.get("nt", "")
+        ),
+        "joining_type_id": get_prop_value_id_from_short_name(
+            prop_value_id_map, "Joining_Type", char_node.get("jt", "")
+        ),
+        "line_break_id": get_prop_value_id_from_short_name(prop_value_id_map, "Line_Break", char_node.get("lb", "")),
+        "east_asian_width_id": get_prop_value_id_from_short_name(
+            prop_value_id_map, "East_Asian_Width", char_node.get("ea", "")
+        ),
+        "script_id": get_prop_value_id_from_short_name(prop_value_id_map, "Script", char_node.get("sc", "")),
+        "hangul_syllable_type_id": get_prop_value_id_from_short_name(
+            prop_value_id_map, "Hangul_Syllable_Type", char_node.get("hst", "")
+        ),
+        "vertical_orientation_id": get_prop_value_id_from_short_name(
+            prop_value_id_map, "Vertical_Orientation", char_node.get("vo", "")
+        ),
     }
 
-    if unihan:
+    if not unihan:
+        char = validate_parsed_unicode_data(char_props, db.UnicodeCharacter)
+    else:
         unihan_props = {
             "description": char_node.get("kDefinition", ""),
             "ideo_frequency": parse_numeric_value(char_node.get("kFrequency", ""), codepoint),
@@ -227,35 +329,32 @@ def parse_character_details(
             "japanese_on": char_node.get("kJapaneseOn", ""),
             "vietnamese": char_node.get("kVietnamese", ""),
         }
-        parsed_char |= unihan_props
+        char_props.update(unihan_props)
+        char = validate_parsed_unicode_data(char_props, db.UnicodeCharacterUnihan)
+    return (unihan, tangut, char)
 
-    spinner.increment()
-    return parsed_char
+
+def get_prop_value_id_from_short_name(
+    prop_value_id_map: "UnicodePropertyGroupMap", prop_group: str, short_name: str, default: int | None = None
+) -> int:
+    if (id_map := prop_value_id_map.get(prop_group)) and isinstance(id_map, dict):
+        id_map_typed: dict[str, UnicodePropertyGroupValues] = id_map
+        for prop_value in id_map_typed.values():
+            if prop_value["short_name"].lower() == short_name.lower():
+                return prop_value["id"]
+        return default or 1
+    return 999999
 
 
-def get_unicode_block_containing_codepoint(
-    codepoint: int, parsed_blocks: list[BlockOrPlaneDetailsDict]
-) -> BlockOrPlaneDetailsDict:
-    found = [
-        block
-        for block in parsed_blocks
-        if int(block["start_dec"]) <= codepoint and codepoint <= int(block["finish_dec"])
-    ]
+def get_unicode_block_containing_codepoint(codepoint: int, parsed_blocks: list[db.UnicodeBlock]) -> db.UnicodeBlock:
+    found = [block for block in parsed_blocks if block.start_dec <= codepoint and codepoint <= block.finish_dec]
     return found[0] if found else NULL_BLOCK
 
 
-def char_is_unihan(block_name: str) -> bool:
-    return bool("cjk unified ideographs" in block_name.lower() or "cjk compatibility ideographs" in block_name.lower())
-
-
-def char_is_tangut(block_name: str) -> bool:
-    return bool("tangut" in block_name.lower())
-
-
-def get_character_name(char_node: _Element, codepoint: str, codepoint_dec: int, block: BlockOrPlaneDetailsDict) -> str:
+def get_character_name(char_node: _Element, codepoint: str, codepoint_dec: int, block: db.UnicodeBlock) -> str:
     name = char_node.get("na", "")
     return (
-        f'Undefined Codepoint ({get_codepoint_string(codepoint_dec)}) (Reserved for {block["name"]})'
+        f"Undefined Codepoint ({get_codepoint_string(codepoint_dec)}) (Reserved for {block.long_name})"
         if not codepoint
         else get_control_char_name(codepoint_dec)
         if not name
@@ -333,7 +432,7 @@ def get_control_char_name(codepoint: int) -> str:
         158: " PRIVACY MESSAGE (PM)",
         159: " APPLICATION PROGRAM COMMAND (APC)",
     }
-    return f'<control-{codepoint:04X}>{control_char_names.get(codepoint, "")}'
+    return f"<control-{codepoint:04X}>{control_char_names.get(codepoint, '')}"
 
 
 def get_mapped_codepoint(prop_value: str, codepoint_hex: str) -> str:
@@ -347,38 +446,92 @@ def get_decomposition_mapping(decomposition_mapping: str, codepoint: int) -> str
 def parse_numeric_value(numeric_value: str, codepoint: str) -> int | float | None:
     if not numeric_value or numeric_value == "NaN":
         return None
-    if "/" in numeric_value:
-        [num, dom] = numeric_value.split("/", 1)
-        return int(num) / float(dom)
     try:
-        return int(numeric_value)
+        if "/" in numeric_value:
+            [num, denom] = numeric_value.split("/", maxsplit=1)
+            return int(num.strip()) / float(denom.strip())
+        return int(numeric_value.strip())
     except ValueError as ex:
-        print(f"Error parsing numeric_value for codepoint {codepoint}: {repr(ex)}")
+        print(f"Error parsing numeric_value for codepoint {codepoint} (numeric_value={numeric_value}): {repr(ex)}")
         return None
 
 
-def get_bool_prop_value(char_node: _Element, prop_name: str) -> int:
-    if prop_value := char_node.get(prop_name, "N"):
-        return YES_NO_MAP[prop_value]
-    return 0
-
-
-def count_defined_characters_per_block(all_chars: list[CharDetailsDict], all_blocks: list[BlockOrPlaneDetailsDict]):
-    char_map = {int(char["codepoint_dec"]): char for char in all_chars}
-    for block in all_blocks:
-        block["total_allocated"] = int(block["finish_dec"]) - int(block["start_dec"]) + 1
-        block["total_defined"] = count_defined_characters_in_range(
-            char_map, int(block["start_dec"]), int(block["finish_dec"])
+def validate_all_parsed_character_data(
+    non_unihan_results: list[Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]],
+    tangut_results: list[Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]],
+    unihan_results: list[Result[db.UnicodeCharacter | db.UnicodeCharacterUnihan]],
+) -> Result[tuple[list[db.UnicodeCharacter], list[db.UnicodeCharacter], list[db.UnicodeCharacterUnihan]]]:
+    all_parse_errors = []
+    non_unihan_chars, non_unihan_parse_errors = evaluate_parse_results(non_unihan_results)
+    if non_unihan_parse_errors:
+        all_parse_errors.extend(non_unihan_parse_errors)
+    tangut_chars, tangut_parse_errors = evaluate_parse_results(tangut_results)
+    if tangut_parse_errors:
+        all_parse_errors.extend(tangut_parse_errors)
+    unihan_chars, unihan_parse_errors = evaluate_parse_results(unihan_results)
+    if unihan_parse_errors:
+        all_parse_errors.extend(unihan_parse_errors)
+    if len(all_parse_errors) > 0:
+        return Result.Fail(
+            f"Error parsing Unicode character data from XML database file: {'\n\n'.join(all_parse_errors)}"
         )
+    return Result.Ok((non_unihan_chars, tangut_chars, unihan_chars))
 
 
-def count_defined_characters_in_range(char_map: dict[int, BlockOrPlaneDetailsDict], start: int, finish: int) -> int:
+def finalize_all_parsed_unicode_data(
+    settings: UnicodeApiSettings, all_parsed_data: AllParsedUnicodeData
+) -> AllParsedUnicodeData:
+    spinner = Spinner()
+    spinner.start("Counting number of defined characters in each block and plane...")
+    all_planes, all_blocks, non_unihan_chars, tangut_chars, unihan_chars = all_parsed_data
+    update_block_property_values(settings, all_blocks)
+    count_defined_characters_per_block(non_unihan_chars, tangut_chars, unihan_chars, all_blocks)
+    count_defined_characters_per_plane(all_blocks, all_planes)
+    spinner.successful("Successfully counted number of defined characters in each block and plane!")
+    return (all_planes, all_blocks, non_unihan_chars, tangut_chars, unihan_chars)
+
+
+def update_block_property_values(settings: UnicodeApiSettings, all_blocks: list[db.UnicodeBlock]):
+    prop_value_id_map = json.loads(settings.PROP_VALUES_JSON.read_text())
+    block_name_map = {normalize_string_lm3(block["long_name"]): block for block in prop_value_id_map["Block"].values()}
+    updated_block_value_map = {}
+    for block in all_blocks:
+        prop_value_map = block_name_map.get(normalize_string_lm3(block.long_name), {})
+        block.short_name = prop_value_map.get("short_name", block.long_name)
+        updated_block_value_map[block.id] = {
+            "id": block.id,
+            "short_name": block.short_name,
+            "long_name": block.long_name,
+        }
+    prop_value_id_map["Block"] = updated_block_value_map
+    settings.PROP_VALUES_JSON.write_text(json.dumps(prop_value_id_map, indent=4))
+
+
+def count_defined_characters_per_block(
+    non_unihan_chars: list[db.UnicodeCharacter],
+    tangut_chars: list[db.UnicodeCharacter],
+    unihan_chars: list[db.UnicodeCharacterUnihan],
+    all_blocks: list[db.UnicodeBlock],
+):
+    char_map = get_all_char_codepoint_map(non_unihan_chars, tangut_chars, unihan_chars)
+    for block in all_blocks:
+        block.total_allocated = block.finish_dec - block.start_dec + 1
+        block.total_defined = count_defined_characters_in_range(char_map, block.start_dec, block.finish_dec)
+
+
+def get_all_char_codepoint_map(
+    non_unihan_chars: list[db.UnicodeCharacter],
+    tangut_chars: list[db.UnicodeCharacter],
+    unihan_chars: list[db.UnicodeCharacterUnihan],
+) -> dict[int, CharUnicodeModel]:
+    return {char.codepoint_dec: char for char in non_unihan_chars + tangut_chars + unihan_chars}
+
+
+def count_defined_characters_in_range(char_map: dict[int, CharUnicodeModel], start: int, finish: int) -> int:
     return len([codepoint for codepoint in range(start, finish + 1) if codepoint in char_map])
 
 
-def count_defined_characters_per_plane(
-    all_blocks: list[BlockOrPlaneDetailsDict], all_planes: list[BlockOrPlaneDetailsDict]
-):
+def count_defined_characters_per_plane(all_blocks: list[db.UnicodeBlock], all_planes: list[db.UnicodePlane]):
     for plane in all_planes:
-        plane["total_allocated"] = int(plane["finish_dec"]) - int(plane["start_dec"]) + 1
-        plane["total_defined"] = sum(int(b["total_defined"]) for b in all_blocks if b["plane_id"] == plane["id"])
+        plane.total_allocated = plane.finish_dec - plane.start_dec + 1
+        plane.total_defined = sum(block.total_defined for block in all_blocks if block.plane_id == plane.id)

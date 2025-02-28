@@ -9,9 +9,8 @@ REQ_REGEX = re.compile(r"(?P<package>[\w-]+)==(?P<version>[\w.]+)")
 
 def sync_requirements_files(project_dir: Path) -> Result[None]:
     result = pin_requirements(project_dir)
-    if result.failure:
+    if result.failure or not (pinned_versions := result.value):
         return Result.Fail(result.error)
-    pinned_versions = result.value
 
     if (req_base := project_dir.joinpath("requirements.txt")).exists():
         update_req_file(req_base, pinned_versions)
@@ -22,7 +21,7 @@ def sync_requirements_files(project_dir: Path) -> Result[None]:
 
 def pin_requirements(project_dir: Path) -> Result[dict[str, str]]:
     result = create_lock_file(project_dir)
-    if result.failure:
+    if result.failure or not result.value:
         return Result.Fail(result.error)
     lock_file = result.value
     return Result.Ok(parse_lock_file(lock_file))
@@ -32,7 +31,7 @@ def create_lock_file(project_dir: Path) -> Result[Path]:
     lock_file = project_dir.joinpath("requirements-lock.txt")
     result = run_command(f"pip freeze > {lock_file}")
     if result.failure:
-        return result
+        return Result.Fail(result.error)
     return Result.Ok(lock_file)
 
 

@@ -1,8 +1,10 @@
+import json
 import logging.config
 import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
+import requests
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -14,12 +16,10 @@ from app.api.api_v1.api import router
 from app.config.api_settings import UnicodeApiSettings, get_settings
 from app.core.cache import cached_data
 from app.core.logging import LOGGING_CONFIG
-from app.core.rate_limit import rate_limit
+from app.core.rate_limit import RateLimitDecision, rate_limit
 from app.core.redis_client import redis
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
-
-APP_FOLDER = Path(__file__).parent
-STATIC_FOLDER = APP_FOLDER.joinpath("static")
+from app.enums.request_type import RequestType
 
 
 @asynccontextmanager
@@ -44,6 +44,7 @@ def init_redis():
 
 def init_unicode_data(settings: UnicodeApiSettings) -> None:
     start = time.process_time_ns()
+    _ = cached_data.property_value_id_map
     _ = cached_data.non_unihan_character_name_map
     _ = cached_data.blocks
     _ = cached_data.planes
@@ -84,6 +85,7 @@ app.add_middleware(
     allow_methods=["GET", "OPTIONS"],
     allow_headers=["X-UnicodeAPI-Test"],
 )
+STATIC_FOLDER = Path(__file__).parent.joinpath("static")
 app.mount("/static", StaticFiles(directory=str(STATIC_FOLDER)), name="static")
 app.include_router(router, prefix=get_settings().API_VERSION)
 simplify_operation_ids(app)
@@ -91,10 +93,51 @@ simplify_operation_ids(app)
 
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
-    result = rate_limit.is_exceeded(request)
-    if result.failure:
-        return JSONResponse(content=result.error, status_code=status.HTTP_429_TOO_MANY_REQUESTS)
+    decision, error = rate_limit.validate_request(request)
+    if decision.request_type == RequestType.RATE_LIMITED_DENIED:
+        decision.log()
+        return JSONResponse(content=error, status_code=status.HTTP_429_TOO_MANY_REQUESTS)
+    if decision.request_type == RequestType.ERROR:
+        return JSONResponse(content=error, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    if decision.request_type in [RequestType.RATE_LIMITED_ALLOWED]:
+        send_umami_event(request, decision)
+        decision.log()
     return await call_next(request)
+
+
+def send_umami_event(request: Request, decision: RateLimitDecision):
+    settings = get_settings()
+    if settings.is_dev or settings.is_test:
+        return
+    umami_url = "https://aluna-umami.netlify.app/api/send"
+    response = requests.post(
+        umami_url,
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": request.headers.get("User-Agent", requests.utils.default_user_agent()),
+        },
+        data=create_umami_event(settings, request, decision),
+    )
+    response.raise_for_status()
+
+
+def create_umami_event(settings: UnicodeApiSettings, request: Request, decision: RateLimitDecision) -> str:
+    payload = {
+        "hostname": settings.HOSTNAME,
+        "language": request.headers.get("Accept-Language", "en-US"),
+        "referrer": request.headers.get("Referer", ""),
+        "screen": f"{request.headers.get('Screen-Width', '')}x{request.headers.get('Screen-Height', '')}",
+        "title": f"{settings.PROJECT_NAME} API",
+        "url": request.url.path,
+        "website": settings.UMAMI_WEBSITE_ID,
+        "name": "api-request",
+        "data": {
+            "client_ip": decision.ip,
+            "query_params": request.url.query,
+            "request_headers": dict(request.headers.items()),
+        },
+    }
+    return json.dumps({"payload": payload, "type": "event"})
 
 
 @app.get(f"{get_settings().API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)

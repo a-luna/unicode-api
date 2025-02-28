@@ -3,6 +3,7 @@
 .flaskenv
 .vscode
 .python-version
+.zed
 tmp
 venv
 pfx

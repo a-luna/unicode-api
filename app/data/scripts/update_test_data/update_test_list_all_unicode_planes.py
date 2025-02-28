@@ -5,7 +5,7 @@ import app.db.models as db
 from app.api.api_v1.endpoints.planes import list_all_unicode_planes
 from app.config.api_settings import UnicodeApiSettings
 from app.core.result import Result
-from app.data.scripts.update_test_data.util import convert_prop_names_to_camel, pythonize_that_json
+from app.data.scripts.update_test_data.util import format_response_property_names, pythonize_that_json
 
 STATIC_CONTENT = """
 UNASSIGNED_PLANE = {
@@ -23,12 +23,12 @@ UNASSIGNED_PLANE = {
 def update_test_list_all_unicode_planes(settings: UnicodeApiSettings):
     planes = list_all_unicode_planes()
     planes["data"] = sanitize_planes_data(planes)
-    planes = convert_prop_names_to_camel(planes)
+    planes = format_response_property_names(planes)
     update_test_data_file(settings, planes)
     return Result.Ok()
 
 
-def sanitize_planes_data(planes: dict[str, Any]) -> dict[str, Any]:
+def sanitize_planes_data(planes: dict[str, Any]) -> list[dict[str, Any]]:
     valid_prop_names = [p for p, _ in db.UnicodePlaneResponse.model_fields.items()]
     return [
         {name: value for name, value in plane.model_dump().items() if name in valid_prop_names}

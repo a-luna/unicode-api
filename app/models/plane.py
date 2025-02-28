@@ -1,6 +1,12 @@
+from typing import TYPE_CHECKING
+
 from sqlmodel import Field, Relationship
 
-from app.schemas.models.camel_model import CamelModel
+from app.models.camel_model import CamelModel
+
+if TYPE_CHECKING:  # pragma: no cover
+    from app.models.block import UnicodeBlock
+    from app.models.character import UnicodeCharacter, UnicodeCharacterUnihan
 
 
 class UnicodePlaneResponse(CamelModel):
@@ -24,7 +30,7 @@ class UnicodePlane(UnicodePlaneResponse, table=True):
 
     blocks: list["UnicodeBlock"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
     characters: list["UnicodeCharacter"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
-    characters_unihan: list["UnicodeCharacterUnihan"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
+    unihan_characters: list["UnicodeCharacterUnihan"] = Relationship(back_populates="plane")  # type: ignore  # noqa: PGH003
 
     @classmethod
     def responsify(cls, plane) -> "UnicodePlaneResponse":

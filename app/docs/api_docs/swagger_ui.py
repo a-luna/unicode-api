@@ -209,6 +209,7 @@ def get_swagger_ui_html(
     swagger_ui_parameters: dict[str, Any] | None = None,
     custom_js_url: str | None = None,
 ) -> HTMLResponse:
+    settings = get_settings()
     current_swagger_ui_parameters = swagger_ui_default_parameters.copy()
     if swagger_ui_parameters:
         current_swagger_ui_parameters.update(swagger_ui_parameters)
@@ -221,9 +222,9 @@ def get_swagger_ui_html(
     <link rel="shortcut icon" href="{swagger_favicon_url}">
     """
 
-    if get_settings().is_prod:
-        html += """
-        <script async src="https://aluna-umami.netlify.app/script.js" data-website-id="13067599-d69c-4a00-a745-207308bd4d18"></script>
+    if settings.is_prod:
+        html += f"""
+        <script async src="https://aluna-umami.netlify.app/script.js" data-website-id="{settings.UMAMI_WEBSITE_ID}"></script>
         """
 
     html += f"""

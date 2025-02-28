@@ -10,13 +10,17 @@ variable "UNICODE_VERSION" {
   default = ""
 }
 
+variable "UMAMI_WEBSITE_ID" {
+  default = "
+}
+
 target "unicode-api" {
     dockerfile = "./Dockerfile"
     tags = ["ghcr.io/a-luna/unicode-api:${GITHUB_SHA}"]
     args = {
         ENV="PROD"
         UNICODE_VERSION="${UNICODE_VERSION}"
-        API_ROOT="https://unicode-api.aaronluna.dev"
+        HOSTNAME="unicode-api.aaronluna.dev"
         REDIS_HOST="dokku-redis-vig-cache"
         REDIS_PORT="6379"
         REDIS_DB="1"
@@ -24,5 +28,6 @@ target "unicode-api" {
         RATE_LIMIT_PER_PERIOD="50"
         RATE_LIMIT_PERIOD_SECONDS="60"
         RATE_LIMIT_BURST="10"
+        UMAMI_WEBSITE_ID="${UMAMI_WEBSITE_ID}"
     }
 }

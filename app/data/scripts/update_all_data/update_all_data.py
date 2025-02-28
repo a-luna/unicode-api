@@ -3,6 +3,7 @@ from app.data.scripts.update_all_data import (
     backup_db_and_json_files,
     download_xml_unicode_database,
     get_api_settings,
+    get_prop_values,
     parse_xml_unicode_database,
     populate_sqlite_database,
     save_parsed_data,
@@ -15,20 +16,24 @@ def update_all_data() -> Result[None]:
         return Result.Fail(result.error)
     settings = result.value
 
-    result = download_xml_unicode_database(settings)
-    if result.failure:
-        return result
-
-    result = parse_xml_unicode_database(settings)
+    result = get_prop_values(settings)
     if result.failure:
         return Result.Fail(result.error)
-    (all_planes, all_blocks, all_chars) = result.value
 
-    result = save_parsed_data(settings, all_planes, all_blocks, all_chars)
+    result = download_xml_unicode_database(settings)
+    if result.failure:
+        return Result.Fail(result.error)
+
+    result = parse_xml_unicode_database(settings)
+    if result.failure or not result.value:
+        return Result.Fail(result.error)
+    parsed_data = result.value
+
+    result = save_parsed_data(settings, parsed_data)
     if result.failure:
         return result
 
-    result = populate_sqlite_database(settings)
+    result = populate_sqlite_database(settings, parsed_data)
     if result.failure:
         return result
 
@@ -39,3 +44,7 @@ def update_all_data() -> Result[None]:
         if result.failure:
             return result
     return Result.Ok()
+
+
+if __name__ == "__main__":
+    update_all_data()
