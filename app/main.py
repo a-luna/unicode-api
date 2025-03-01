@@ -113,8 +113,12 @@ def send_umami_event(request: Request, decision: RateLimitDecision):
     headers, data = create_umami_event(settings, request, decision)
     logger = logging.getLogger("app.api")
     logger.info("\n".join(get_dict_report({"headers": headers, "data": data}, title="Umami Event Data")))
-    response = requests.post(umami_url, headers=headers, data=data)
-    response.raise_for_status()
+    response = requests.post(umami_url, headers=headers, json=data)
+    try:
+        response.raise_for_status()
+        logger.info(f"Umami event sent successfully: {response.json()}")
+    except requests.exceptions.HTTPError as e:
+        print(f"HTTP error occurred: {e}")
 
 
 def create_umami_event(
