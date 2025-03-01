@@ -86,13 +86,26 @@ def get_duration_between_timestamps(ts1: float, ts2: float) -> timedelta:
     return dtaware_fromtimestamp(ts2) - dtaware_fromtimestamp(ts1)
 
 
-def get_dict_report(data: Mapping[str, Any], title: str | None = None) -> list[str]:
+def get_dict_report(data: Mapping[str, Any], title: str | None = None, indent: int | None = None) -> list[str]:
     def dots(key: str, max_len: int) -> str:
         return "." * ((max_len - len(key)) + 2)
 
     report: list[str] = []
-    if title:
-        report.append(f"{'#' * 5} {title} {'#' * 5}")
+    indent = indent or 0
     max_key_len = max(len(str(key)) for key in data)
-    report.extend(f"{key}{dots(str(key), max_key_len)}: {value}" for key, value in data.items())
+    if title:
+        report.append(f"{' ' * indent}{'#' * 5} {title} {'#' * 5}")
+    for key, value in data.items():
+        dot = dots(str(key), max_key_len)
+        open_key = f"{' ' * indent}{key}{dot}:"
+        close_key = f"{' ' * (indent + len(key) + len(dot) + 2)}"
+        next_indent = len(open_key) + 4
+        if isinstance(value, list | dict):
+            list_or_dict = value if isinstance(value, dict) else {str(i): x for i, x in enumerate(value)}
+            open_char, close_char = ("{", "}") if isinstance(value, dict) else ("[", "]")
+            report.append(f"{open_key} {open_char}")
+            report.extend(get_dict_report(list_or_dict, indent=next_indent))
+            report.append(f"{close_key}{close_char}\n")
+        else:
+            report.append(f"{open_key} {value}")
     return report

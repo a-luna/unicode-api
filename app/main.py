@@ -1,4 +1,3 @@
-import json
 import logging.config
 import time
 from contextlib import asynccontextmanager
@@ -18,6 +17,7 @@ from app.core.cache import cached_data
 from app.core.logging import LOGGING_CONFIG
 from app.core.rate_limit import RateLimitDecision, rate_limit
 from app.core.redis_client import redis
+from app.core.util import get_dict_report
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 from app.enums.request_type import RequestType
 
@@ -110,18 +110,25 @@ def send_umami_event(request: Request, decision: RateLimitDecision):
     if settings.is_dev or settings.is_test:
         return
     umami_url = "https://aluna-umami.netlify.app/api/send"
-    response = requests.post(
-        umami_url,
-        headers={
-            "Content-Type": "application/json",
-            "User-Agent": request.headers.get("User-Agent", requests.utils.default_user_agent()),
-        },
-        data=create_umami_event(settings, request, decision),
-    )
+    headers, data = create_umami_event(settings, request, decision)
+    logger = logging.getLogger("app.api")
+    logger.info("\n".join(get_dict_report({"headers": headers, "data": data}, title="Umami Event Data")))
+    response = requests.post(umami_url, headers=headers, data=data)
     response.raise_for_status()
 
 
-def create_umami_event(settings: UnicodeApiSettings, request: Request, decision: RateLimitDecision) -> str:
+def create_umami_event(
+    settings: UnicodeApiSettings, request: Request, decision: RateLimitDecision
+) -> tuple[dict, dict]:
+    headers = {
+        "Content-Type": "application/json",
+        "User-Agent": request.headers.get("User-Agent", requests.utils.default_user_agent()),
+    }
+    data = create_umami_event_payload(settings, request, decision)
+    return headers, data
+
+
+def create_umami_event_payload(settings: UnicodeApiSettings, request: Request, decision: RateLimitDecision) -> dict:
     payload = {
         "hostname": settings.HOSTNAME,
         "language": request.headers.get("Accept-Language", "en-US"),
@@ -137,7 +144,7 @@ def create_umami_event(settings: UnicodeApiSettings, request: Request, decision:
             "request_headers": dict(request.headers.items()),
         },
     }
-    return json.dumps({"payload": payload, "type": "event"})
+    return {"payload": payload, "type": "event"}
 
 
 @app.get(f"{get_settings().API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
