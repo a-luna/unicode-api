@@ -28,7 +28,8 @@ jobs:
           push: true
           set: |
             unicode-api.args.REDIS_PW=${{ secrets.REDIS_PW }}
-            unicode-api.args.UNICODE_VERSION=${{ secrets.UNICODE_VERSION }}
+            unicode-api.args.UNICODE_VERSION=${{ vars.UNICODE_VERSION }}
+            unicode-api.args.UMAMI_WEBSITE_ID=${{ secrets.UMAMI_WEBSITE_ID }}
       - name: Deploy unicode-api docker image to dokku
         uses: dokku/github-action@master
         with:
