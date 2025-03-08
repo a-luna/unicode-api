@@ -34,6 +34,10 @@ exclude = '''
 )/
 '''
 
+[tool.pyright]
+venvPath = "/Users/aaronluna/Projects/unicode-api"
+venv = "venv"
+
 [tool.ruff]
 line-length = 120
 
