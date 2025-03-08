@@ -19,6 +19,8 @@ CP_NO_PREFIX_REGEX_STRICT = re.compile(r"^([A-Fa-f0-9]{2,6})$")
 CP_NEED_LEADING_ZEROS_REGEX = re.compile(r"^U\+([A-Fa-f0-9]{1,3})$")
 CP_OUT_OF_RANGE_REGEX = re.compile(r"^(?:U\+)([A-Fa-f0-9]+)|(?:0x)?([A-Fa-f0-9]{7,})$")
 
+LOCALE_REGEX = re.compile(r"(?P<lang>[a-zA-Z]{2,3})(?:-(?P<variant>[a-zA-Z]{2}))?")
+
 ALL_PROP_GROUPS = [
     "Age",
     "Bidi_Class",

@@ -1,11 +1,11 @@
 black==25.1.0
 coverage==7.6.12
-deepdiff==8.2.0
+deepdiff==8.3.0
 ipykernel==6.29.5
-isort==6.0.0
+isort==6.0.1
 mypy==1.15.0
 pip-upgrader==1.4.15
-pytest==8.3.4
+pytest==8.3.5
 pytest-black==0.6.0
 pytest-clarity==1.0.1
 pytest-cov==6.0.0
@@ -14,8 +14,8 @@ pytest-mock==3.14.0
 pytest-random-order==1.1.1
 pytest-sugar==1.0.0
 pyupgrade==3.19.1
-ruff==0.9.7
+ruff==0.9.10
 snoop==0.6.0
-tox==4.24.1
+tox==4.24.2
 trogon==0.6.0
-types-requests==2.32.0.20241016
+types-requests==2.32.0.20250306
