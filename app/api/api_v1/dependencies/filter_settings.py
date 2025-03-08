@@ -1,6 +1,7 @@
 import textwrap
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Annotated, TypedDict
+from typing import Annotated, Any, TypedDict
 
 from fastapi import Query
 
@@ -57,6 +58,7 @@ class FilterParameters:
     join_types: list[int] | None = field(init=False, default=None)
     flags: list[db.CharacterFilterFlag] | None = field(init=False, default=None)
     show_prop_list: list[db.CharPropertyGroup] | None = field(init=False, default=None)
+    parsed_settings: dict = field(init=False, default_factory=dict)
     errors: list[str] = field(init=False, default_factory=list)
 
     def __str__(self) -> str:
@@ -230,95 +232,41 @@ class FilterParameters:
 
     @property
     def parsed(self) -> db.UserFilterSettings:
-        filter_settings = {}
+        get_prop_value = cached_data.get_display_name_for_property_value
+
+        self.parsed_settings = {}
+        self._add_to_filter_settings("name", self.name)
+        self._add_to_filter_settings("cjk_definition", self.cjk_definition)
+        self._add_to_filter_settings("block", self.blocks, lambda x: cached_data.get_unicode_block_by_id(x).long_name)
+        self._add_to_filter_settings("category", self.categories, lambda x: get_prop_value("General_Category", x))
+        self._add_to_filter_settings("version", self.age_list, lambda x: get_prop_value("Age", x))
         self._add_to_filter_settings(
-            filter_settings,
-            "name",
-            self.name,
+            "script", self.scripts[1] if self.scripts else None, lambda x: get_prop_value("Script", x)
         )
+        self._add_to_filter_settings("bidi_class", self.bidi_class_list, lambda x: get_prop_value("Bidi_Class", x))
         self._add_to_filter_settings(
-            filter_settings,
-            "cjk_definition",
-            self.cjk_definition,
+            "decomp_type", self.decomp_types, lambda x: get_prop_value("Decomposition_Type", x)
         )
+        self._add_to_filter_settings("line_break", self.line_break_types, lambda x: get_prop_value("Line_Break", x))
+        self._add_to_filter_settings("ccc", self.ccc_list, lambda x: get_prop_value("Canonical_Combining_Class", x))
+        self._add_to_filter_settings("num_type", self.num_types, lambda x: get_prop_value("Numeric_Type", x))
+        self._add_to_filter_settings("join_type", self.join_types, lambda x: get_prop_value("Joining_Type", x))
+        self._add_to_filter_settings("flag", self.flags, lambda x: x.display_name.replace("_", " "))
         self._add_to_filter_settings(
-            filter_settings, "block", self.blocks, lambda x: cached_data.get_unicode_block_by_id(x).long_name
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "category",
-            self.categories,
-            lambda x: cached_data.get_display_name_for_property_value("General_Category", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "version",
-            self.age_list,
-            lambda x: cached_data.get_display_name_for_property_value("Age", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "script",
-            self.scripts[1] if self.scripts else None,
-            lambda x: cached_data.get_display_name_for_property_value("Script", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "bidi_class",
-            self.bidi_class_list,
-            lambda x: cached_data.get_display_name_for_property_value("Bidi_Class", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "decomp_type",
-            self.decomp_types,
-            lambda x: cached_data.get_display_name_for_property_value("Decomposition_Type", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "line_break",
-            self.line_break_types,
-            lambda x: cached_data.get_display_name_for_property_value("Line_Break", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "ccc",
-            self.ccc_list,
-            lambda x: cached_data.get_display_name_for_property_value("Canonical_Combining_Class", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "num_type",
-            self.num_types,
-            lambda x: cached_data.get_display_name_for_property_value("Numeric_Type", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "join_type",
-            self.join_types,
-            lambda x: cached_data.get_display_name_for_property_value("Joining_Type", x),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "flag",
-            self.flags,
-            lambda x: x.display_name.replace("_", " "),
-        )
-        self._add_to_filter_settings(
-            filter_settings,
-            "property_groups",
-            self.show_prop_list,
-            lambda x: str(x),
-            default=[str(db.CharPropertyGroup.MINIMUM)],
+            "property_groups", self.show_prop_list, lambda x: str(x), default=[str(db.CharPropertyGroup.MINIMUM)]
         )
 
-        return db.UserFilterSettings.model_validate(filter_settings)
+        return db.UserFilterSettings.model_validate(self.parsed_settings)
 
-    def _add_to_filter_settings(self, filter_settings, key, value, transform=lambda x: x, default=None):
+    def _add_to_filter_settings(
+        self, setting: str, value: Any, transform: Callable[[Any], Any] = lambda x: x, default: Any = None
+    ):
         if value:
-            filter_settings[key] = [transform(v) for v in value] if isinstance(value, list) else transform(value)
+            self.parsed_settings[setting] = (
+                [transform(v) for v in value] if isinstance(value, list) else transform(value)
+            )
         elif default is not None:
-            filter_settings[key] = default
+            self.parsed_settings[setting] = default
 
 
 class FilterSettings:
