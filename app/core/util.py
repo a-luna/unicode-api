@@ -20,10 +20,10 @@ def s(x: list | int | float | str, single: str = "", plural: str = "s") -> str:
 
 def slugify(text: str, separator: str = "-") -> str:
     text = text.lower().strip()
-    text = re.compile(r"\s+").sub(separator, text)
-    text = re.compile(rf"([^A-Za-z0-9{separator}])+").sub(separator, text)
-    text = re.compile(rf"{separator}{separator}+").sub(separator, text)
-    text = re.compile(rf"(^{separator}|{separator}$)").sub("", text)
+    text = re.sub(r"\s+", separator, text)
+    text = re.sub(rf"([^A-Za-z0-9{separator}])+", separator, text)
+    text = re.sub(rf"{separator}{separator}+", separator, text)
+    text = re.sub(rf"(^{separator}|{separator}$)", "", text)
     return text
 
 
@@ -96,16 +96,13 @@ def get_dict_report(data: Mapping[str, Any], title: str | None = None, indent: i
     if title:
         report.append(f"{' ' * indent}{'#' * 5} {title} {'#' * 5}")
     for key, value in data.items():
-        dot = dots(str(key), max_key_len)
-        open_key = f"{' ' * indent}{key}{dot}:"
-        close_key = f"{' ' * (indent + len(key) + len(dot) + 2)}"
-        next_indent = len(open_key) + 4
+        item_name = f"{' ' * indent}{key}{dots(str(key), max_key_len)}:"
         if isinstance(value, list | dict):
             list_or_dict = value if isinstance(value, dict) else {str(i): x for i, x in enumerate(value)}
             open_char, close_char = ("{", "}") if isinstance(value, dict) else ("[", "]")
-            report.append(f"{open_key} {open_char}")
-            report.extend(get_dict_report(list_or_dict, indent=next_indent))
-            report.append(f"{close_key}{close_char}\n")
+            report.append(f"{item_name} {open_char}")
+            report.extend(get_dict_report(list_or_dict, indent=(len(item_name) + 4)))
+            report.append(f"{' ' * len(item_name)} {close_char}")
         else:
-            report.append(f"{open_key} {value}")
+            report.append(f"{item_name} {value}")
     return report

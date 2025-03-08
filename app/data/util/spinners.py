@@ -57,7 +57,8 @@ class Spinner:
             self.last_reported = self.percent_complete
 
     def _get_current_message(self) -> str:
-        return f"{self.message} ({self.current}/{self.total}) {self.percent_complete:.0%} (elapsed: {format_timedelta_str(self.elapsed_time)})"
+        progress = f"{self.current}/{self.total} {self.percent_complete:.0%}"
+        return f"{self.message} ({progress}) (elapsed: {format_timedelta_str(self.elapsed_time)})"
 
     def stop_and_persist(self) -> None:
         self.spinner.stop_and_persist()
