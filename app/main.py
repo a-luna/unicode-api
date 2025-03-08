@@ -13,11 +13,11 @@ from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
 from app.config.api_settings import UnicodeApiSettings, get_settings
+from app.constants import LOCALE_REGEX
 from app.core.cache import cached_data
 from app.core.logging import LOGGING_CONFIG
 from app.core.rate_limit import RateLimitDecision, rate_limit
 from app.core.redis_client import redis
-from app.core.util import get_dict_report
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 from app.enums.request_type import RequestType
 
@@ -93,6 +93,8 @@ simplify_operation_ids(app)
 
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
+    logger = logging.getLogger("app.api")
+    logger.info(f"URL: {request.path_params}, {request.query_params.items()}")
     decision, error = rate_limit.validate_request(request)
     if decision.request_type == RequestType.RATE_LIMITED_DENIED:
         decision.log()
@@ -110,30 +112,23 @@ def send_umami_event(request: Request, decision: RateLimitDecision):
     if settings.is_dev or settings.is_test:
         return
     umami_url = "https://aluna-umami.netlify.app/api/send"
-    headers, data = create_umami_event(settings, request, decision)
-    logger = logging.getLogger("app.api")
-    logger.info("\n".join(get_dict_report({"headers": headers, "data": data}, title="Umami Event Data")))
-    response = requests.post(umami_url, headers=headers, json=data)
+    response = requests.post(
+        umami_url,
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": request.headers.get("User-Agent", requests.utils.default_user_agent()),
+        },
+        json={"payload": create_umami_event_payload(settings, request, decision), "type": "event"},
+    )
     try:
         response.raise_for_status()
-        logger.info(f"Umami event sent successfully: {response.json()}")
     except requests.exceptions.HTTPError as e:
-        print(f"HTTP error occurred: {e}")
-
-
-def create_umami_event(
-    settings: UnicodeApiSettings, request: Request, decision: RateLimitDecision
-) -> tuple[dict, dict]:
-    headers = {
-        "Content-Type": "application/json",
-        "User-Agent": request.headers.get("User-Agent", requests.utils.default_user_agent()),
-    }
-    data = create_umami_event_payload(settings, request, decision)
-    return headers, data
+        logger = logging.getLogger("app.api")
+        logger.error(f"HTTP error occurred: {e}")
 
 
 def create_umami_event_payload(settings: UnicodeApiSettings, request: Request, decision: RateLimitDecision) -> dict:
-    payload = {
+    return {
         "hostname": settings.HOSTNAME,
         "language": request.headers.get("Accept-Language", "en-US"),
         "referrer": request.headers.get("Referer", ""),
@@ -141,14 +136,25 @@ def create_umami_event_payload(settings: UnicodeApiSettings, request: Request, d
         "title": f"{settings.PROJECT_NAME} API",
         "url": request.url.path,
         "website": settings.UMAMI_WEBSITE_ID,
-        "name": "api-request",
-        "data": {
-            "client_ip": decision.ip,
-            "query_params": request.url.query,
-            "request_headers": dict(request.headers.items()),
-        },
+        "name": request.url.path,
+        "data": get_umami_event_data(request, decision),
     }
-    return {"payload": payload, "type": "event"}
+
+
+def get_umami_event_data(request: Request, decision: RateLimitDecision) -> dict:
+    language, variant = get_user_locale(request)
+    data = {"client_ip": decision.ip, "language": language, "variant": variant}
+    for n, (param, val) in enumerate(request.query_params.items()):
+        data[f"param-{n}-name"] = param
+        data[f"param-{n}-value"] = val
+    return data
+
+
+def get_user_locale(request: Request) -> tuple[str, str]:
+    header_accept_lang = request.headers.get("Accept-Language", "")
+    if match := LOCALE_REGEX.match(header_accept_lang):
+        return (match.group(1), match.group(2))
+    return ("", "")
 
 
 @app.get(f"{get_settings().API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
