@@ -1,4 +1,3 @@
-# flake8: noqa
 from app.config.api_settings import get_settings
 
 CHARACTER_ENDPOINTS = """

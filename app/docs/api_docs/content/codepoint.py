@@ -1,4 +1,3 @@
-# flake8: noqa
 CODEPOINTS_ENDPOINTS = """
             <dl>
                 <dt><strong>GET</strong> <code>/v1/codepoints/{hex}</code></dt>

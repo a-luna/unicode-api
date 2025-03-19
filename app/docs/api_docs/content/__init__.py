@@ -1,4 +1,3 @@
-# flake8: noqa
 from app.docs.api_docs.content.block import BLOCK_ENDPOINTS, UNICODE_BLOCK_OBJECT_INTRO, UNICODE_BLOCK_OBJECT_PROPERTIES
 from app.docs.api_docs.content.character import (
     CHARACTER_ENDPOINTS,

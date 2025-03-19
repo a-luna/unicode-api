@@ -1,4 +1,3 @@
-# flake8: noqa
 from app.docs.dependencies.filter_tables import (
     BIDI_CLASS_VALUES_TABLE,
     BLOCK_NAME_NO_LEGEND_TABLE,
