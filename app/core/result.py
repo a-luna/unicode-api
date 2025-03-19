@@ -1,5 +1,4 @@
-from collections.abc import Callable
-from typing import Self, overload
+from typing import overload
 
 
 class Result[T]:
@@ -31,18 +30,6 @@ class Result[T]:
     def failure(self) -> bool:
         """Flag that indicates if the operation failed."""
         return not self.success
-
-    def on_success(self, func: Callable, *args, **kwargs) -> Self:
-        """Pass result of successful operation (if any) to subsequent function."""
-        return self if self.failure else func(self.value, *args, **kwargs) if self.value else func(*args, **kwargs)
-
-    def on_failure(self, func: Callable, *args, **kwargs) -> Self:
-        """Pass error message from failed operation to subsequent function."""
-        return self if self.success else func(self.error, *args, **kwargs)
-
-    def on_both(self, func: Callable, *args, **kwargs) -> Self:
-        """Pass result (either succeeded/failed) to subsequent function."""
-        return func(self, *args, **kwargs)
 
     @staticmethod
     def Fail(error_message: str) -> "Result":  # noqa: N802
