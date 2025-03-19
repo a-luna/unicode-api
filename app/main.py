@@ -3,7 +3,7 @@ import time
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-import requests
+import uvicorn
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -13,11 +13,11 @@ from starlette.responses import FileResponse, RedirectResponse
 
 from app.api.api_v1.api import router
 from app.config.api_settings import UnicodeApiSettings, get_settings
-from app.constants import LOCALE_REGEX
 from app.core.cache import cached_data
 from app.core.logging import LOGGING_CONFIG
-from app.core.rate_limit import RateLimitDecision, rate_limit
+from app.core.rate_limit import rate_limit
 from app.core.redis_client import redis
+from app.core.umami import send_api_request_event_to_umami, send_rate_limit_exceeded_event_to_umami
 from app.docs.api_docs.swagger_ui import get_api_docs_for_swagger_ui, get_swagger_ui_html
 from app.enums.request_type import RequestType
 
@@ -93,68 +93,18 @@ simplify_operation_ids(app)
 
 @app.middleware("http")
 async def apply_rate_limiting(request: Request, call_next):
-    logger = logging.getLogger("app.api")
-    logger.info(f"URL: {request.path_params}, {request.query_params.items()}")
-    decision, error = rate_limit.validate_request(request)
-    if decision.request_type == RequestType.RATE_LIMITED_DENIED:
-        decision.log()
-        return JSONResponse(content=error, status_code=status.HTTP_429_TOO_MANY_REQUESTS)
-    if decision.request_type == RequestType.ERROR:
-        return JSONResponse(content=error, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    if decision.request_type in [RequestType.RATE_LIMITED_ALLOWED]:
-        send_umami_event(request, decision)
-        decision.log()
+    decision = rate_limit.validate_request(request)
+    match decision.request_type:
+        case RequestType.RATE_LIMITED_DENIED:
+            send_rate_limit_exceeded_event_to_umami(request, decision)
+            decision.log()
+            return JSONResponse(content=decision.error, status_code=status.HTTP_429_TOO_MANY_REQUESTS)
+        case RequestType.ERROR:
+            return JSONResponse(content=decision.error, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        case RequestType.RATE_LIMITED_ALLOWED:
+            send_api_request_event_to_umami(request, decision)
+            decision.log()
     return await call_next(request)
-
-
-def send_umami_event(request: Request, decision: RateLimitDecision):
-    settings = get_settings()
-    if settings.is_dev or settings.is_test:
-        return
-    umami_url = "https://aluna-umami.netlify.app/api/send"
-    response = requests.post(
-        umami_url,
-        headers={
-            "Content-Type": "application/json",
-            "User-Agent": request.headers.get("User-Agent", requests.utils.default_user_agent()),
-        },
-        json={"payload": create_umami_event_payload(settings, request, decision), "type": "event"},
-    )
-    try:
-        response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        logger = logging.getLogger("app.api")
-        logger.error(f"HTTP error occurred: {e}")
-
-
-def create_umami_event_payload(settings: UnicodeApiSettings, request: Request, decision: RateLimitDecision) -> dict:
-    return {
-        "hostname": settings.HOSTNAME,
-        "language": request.headers.get("Accept-Language", "en-US"),
-        "referrer": request.headers.get("Referer", ""),
-        "screen": f"{request.headers.get('Screen-Width', '')}x{request.headers.get('Screen-Height', '')}",
-        "title": f"{settings.PROJECT_NAME} API",
-        "url": request.url.path,
-        "website": settings.UMAMI_WEBSITE_ID,
-        "name": request.url.path,
-        "data": get_umami_event_data(request, decision),
-    }
-
-
-def get_umami_event_data(request: Request, decision: RateLimitDecision) -> dict:
-    language, variant = get_user_locale(request)
-    data = {"client_ip": decision.ip, "language": language, "variant": variant}
-    for n, (param, val) in enumerate(request.query_params.items()):
-        data[f"param-{n}-name"] = param
-        data[f"param-{n}-value"] = val
-    return data
-
-
-def get_user_locale(request: Request) -> tuple[str, str]:
-    header_accept_lang = request.headers.get("Accept-Language", "")
-    if match := LOCALE_REGEX.match(header_accept_lang):
-        return (match.group(1), match.group(2))
-    return ("", "")
 
 
 @app.get(f"{get_settings().API_VERSION}/docs", include_in_schema=False, response_class=FileResponse)
@@ -191,3 +141,7 @@ def get_api_root():
         url=app.url_path_for("swagger_ui_html"),
         status_code=status.HTTP_308_PERMANENT_REDIRECT,
     )
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)

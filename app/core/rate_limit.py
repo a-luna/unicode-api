@@ -30,9 +30,11 @@ class RateLimitDecision:
     arrived_at: float
     allowed_at: float
     new_tat: float
+    error: str = field(init=False)
     logger: logging.Logger = field(init=False)
 
     def __post_init__(self):
+        self.error = ""
         self.logger = logging.getLogger("app.api")
 
     def log(self) -> None:
@@ -86,12 +88,11 @@ class RateLimit:
         interval = self.emission_interval_ms / timedelta(milliseconds=1)
         return timedelta(milliseconds=(interval * self.burst))
 
-    def validate_request(self, request: Request) -> tuple[RateLimitDecision, str]:
+    def validate_request(self, request: Request) -> RateLimitDecision:
         client_ip = get_client_ip_address(request)
         request_type = self.apply_rate_limit_to_request(request, client_ip)
         if request_type:
-            decision = RateLimitDecision(client_ip, request_type, 0, 0, 0)
-            return (decision, "")
+            return RateLimitDecision(client_ip, request_type, 0, 0, 0)
         arrived_at = self.redis.time()
         self.redis.setnx(client_ip, "0")
         try:
@@ -100,16 +101,15 @@ class RateLimit:
                 allowed_at = self.get_allowed_at(tat)
                 if arrived_at < allowed_at:
                     decision = RateLimitDecision(client_ip, RequestType.RATE_LIMITED_DENIED, arrived_at, allowed_at, 0)
-                    return (decision, self.rate_limit_exceeded(client_ip, allowed_at))
+                    decision.error = self.rate_limit_exceeded(client_ip, allowed_at)
+                    return decision
                 new_tat = self.get_new_tat(tat, arrived_at)
-                decision = RateLimitDecision(
-                    client_ip, RequestType.RATE_LIMITED_ALLOWED, arrived_at, allowed_at, new_tat
-                )
                 self.redis.set(client_ip, new_tat)
-                return (decision, "")
+                return RateLimitDecision(client_ip, RequestType.RATE_LIMITED_ALLOWED, arrived_at, allowed_at, new_tat)
         except LockError:  # pragma: no cover
             decision = RateLimitDecision(client_ip, RequestType.ERROR, arrived_at, 0, 0)
-            return (decision, self.lock_error(client_ip))
+            decision.error = self.lock_error(client_ip)
+            return decision
 
     def apply_rate_limit_to_request(self, request: Request, client_ip: str) -> RequestType | None:
         if self.settings.is_test:
