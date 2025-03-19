@@ -1,4 +1,3 @@
-# flake8: noqa
 BLOCK_ENDPOINTS = """
         <dl>
             <dt><strong>GET</strong> <code>/v1/blocks/{name}</code></dt>

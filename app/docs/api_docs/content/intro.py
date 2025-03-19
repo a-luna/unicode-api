@@ -1,4 +1,3 @@
-# flake8: noqa
 from app.config.api_settings import get_settings
 from app.core.util import get_unicode_version_release_date
 
@@ -36,7 +35,7 @@ PROJECT_LINKS_README = """
 </ul>
 """
 
-PAGINATION_HTML = f"""
+PAGINATION_HTML = """
 <div>
     <p>The top-level API resources for <strong>Unicode Characters</strong> and <strong>Unicode Blocks</strong> have support for retrieving all character/block objects via "list" API methods. These API methods (<code>/v1/characters</code> and <code>/v1/blocks</code>) share a common structure, taking at least these three parameters: <code>limit</code>, <code>starting_after</code>, and <code>ending_before</code>.</p>
     <p>For your initial request, you should only provide a value for <code>limit</code> (if the default value of <code>limit=10</code> is ok, you do not need to provide values for any parameter in your initial request). The response of a list API method contains a <code>data</code> parameter that represents a single page of results, and a <code>hasMore</code> parameter that indicates whether the list contains more results after this set.</p>

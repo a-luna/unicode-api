@@ -1,4 +1,3 @@
-# flake8: noqa
 from app.data.scripts.update_all_data.backup_db_and_json_files import backup_db_and_json_files
 from app.data.scripts.update_all_data.get_api_settings import get_api_settings
 from app.data.scripts.update_all_data.get_prop_values import get_prop_values

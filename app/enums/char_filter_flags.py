@@ -13,7 +13,7 @@ class DynamicFlagMeta(EnumType):
     def __init__(cls, *args, **kwds):
         super().__init__(*args)
 
-    def __new__(metacls, cls, bases, clsdict, **kwds):  # noqa: N804
+    def __new__(metacls, cls, bases, clsdict, **kwds):
         members = []
         if "_flag_names" in clsdict:
             flag_names = clsdict.pop("_flag_names")

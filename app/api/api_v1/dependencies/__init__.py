@@ -1,4 +1,3 @@
-# flake8: noqa
 from app.api.api_v1.dependencies.block_name_resolver import (
     UnicodeBlockPathParamResolver,
     UnicodeBlockQueryParamResolver,

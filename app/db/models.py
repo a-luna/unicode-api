@@ -1,9 +1,7 @@
-# flake8: noqa
 from app.enums.char_filter_flags import CharacterFilterFlag
 from app.enums.character_type import CharacterType
 from app.enums.property_group import CharPropertyGroup
 from app.enums.triadic_logic import TriadicLogic
-
 from app.models.block import UnicodeBlock, UnicodeBlockResponse, UnicodeBlockResult
 from app.models.character import (
     UnicodeCharacter,
@@ -12,6 +10,8 @@ from app.models.character import (
     UnicodeCharacterResult,
     UnicodeCharacterUnihan,
 )
+from app.models.pagination import PaginatedList, PaginatedSearchResults, UserFilterSettings
+from app.models.plane import UnicodePlane, UnicodePlaneResponse
 from app.models.property_values import (
     Age,
     Bidi_Class,
@@ -35,7 +35,5 @@ from app.models.property_values import (
     Vertical_Orientation,
     Word_Break,
 )
-from app.models.pagination import PaginatedList, PaginatedSearchResults, UserFilterSettings
-from app.models.plane import UnicodePlane, UnicodePlaneResponse
 
 CHAR_TABLES = [UnicodeCharacter, UnicodeCharacterUnihan]
