@@ -7,10 +7,10 @@ lupa==2.4
 lxml==5.3.1
 pydantic==2.10.6
 python-dateutil==2.9.0
-Rapidfuzz==3.12.2
+RapidFuzz==3.12.2
 redis==5.2.1
 requests==2.32.3
-SQLAlchemy==2.0.38
+SQLAlchemy==2.0.39
 SQLAlchemy-Utils==0.41.2
 sqlmodel==0.0.24
 uvicorn==0.34.0
