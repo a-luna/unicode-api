@@ -48,8 +48,7 @@ class DatabaseFilterParameterMatcher[T: "DatabaseCharacterProperty"]:
     @cached_property
     def prop_value_map(self) -> dict[str, "UnicodePropertyGroupValues"]:
         prop_value_map = {}
-        prop_group_values = cached_data.get_all_values_for_property_group(self.prop_group)
-        for v in prop_group_values:
+        for v in cached_data.get_all_values_for_property_group(self.prop_group):
             if self.param_name == "ccc":
                 prop_value_map[str(v["id"])] = v
             prop_value_map[normalize_string_lm3(v["short_name"])] = v
@@ -61,8 +60,7 @@ class DatabaseFilterParameterMatcher[T: "DatabaseCharacterProperty"]:
         return self.evaluate_parse_results(self.param_name, results)
 
     def parse_value_from_string(self, value: str) -> Result[T]:
-        parsed = self.prop_value_map.get(normalize_string_lm3(value), None)
-        if parsed is None:
+        if (parsed := self.prop_value_map.get(normalize_string_lm3(value), None)) is None:
             return Result.Fail(f"{value!r} is not a valid value for the {self.param_name!r} property")
         try:
             prop_value = self.param_type.model_validate(parsed)

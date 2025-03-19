@@ -27,7 +27,8 @@ def download_xml_unicode_database(settings: UnicodeApiSettings) -> Result[Path]:
     if result.failure:
         spinner.failed(result.error)
         return result
-    xml_file = result.value
+    if not (xml_file := result.value):
+        return Result.Fail("Error occurred extracting XML file from zip.")
     xml_zip.unlink()
     spinner.successful(f"Successfully downloaded Unicode XML Database v{settings.UNICODE_VERSION}!")
     return Result.Ok(xml_file)
