@@ -5,20 +5,26 @@ from fastapi import Request
 
 from app.config.api_settings import UnicodeApiSettings, get_settings
 from app.constants import LOCALE_REGEX
+from app.core.cache import cached_data
 from app.core.rate_limit import RateLimitDecision
 
 
 def send_rate_limit_exceeded_event_to_umami(request: Request, decision: RateLimitDecision):
     event_data = get_default_umami_event_data(get_settings(), request)
-    event_data["name"] = "Rate Limit Exceeded"
+    event_data["name"] = "rate_limit_exceeded"
     event_data["data"] = get_default_user_data(request, decision)
     send_event_to_umami(request, decision, event_data)
 
 
 def send_api_request_event_to_umami(request: Request, decision: RateLimitDecision):
     event_data = get_default_umami_event_data(get_settings(), request)
-    event_data["name"] = request.url.path
-    event_data["data"] = get_default_user_data(request, decision) | dict(request.query_params.items())
+    api_route, path_param = cached_data.get_api_route_from_requested_path(request.url.path)
+    event_data["name"] = api_route["name"]
+    event_data["data"] = (
+        get_default_user_data(request, decision)
+        | {"api_endpoint": api_route["path"], "path_param": path_param}
+        | dict(request.query_params.items())
+    )
     send_event_to_umami(request, decision, event_data)
 
 

@@ -1,8 +1,9 @@
 import itertools
 import json
+import re
 from collections.abc import Callable
 from functools import cache, cached_property
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypedDict
 
 from pydantic import ValidationError
 from rapidfuzz import process
@@ -32,6 +33,13 @@ from app.models.util import normalize_string_lm3
 
 if TYPE_CHECKING:  # pragma: no cover
     from app.custom_types import UnicodePropertyGroupMap, UnicodePropertyGroupValues
+
+
+class ApiRouteDetails(TypedDict):
+    name: str
+    path: str
+    path_regex: re.Pattern[str]
+
 
 NULL_BLOCK = UnicodeBlock(
     id=0,
@@ -65,6 +73,7 @@ NULL_PLANE = UnicodePlane(
 class UnicodeDataCache:
     def __init__(self):
         self.settings = get_settings()
+        self.api_routes: list[ApiRouteDetails] = []
 
     @cached_property
     def property_value_id_map(self) -> "UnicodePropertyGroupMap":
@@ -536,6 +545,13 @@ class UnicodeDataCache:
             for block_name in DEFAULT_VO_U_BLOCK_NAMES
             if (block_id := self.loose_match_block_name(block_name)) is not None
         }
+
+    def get_api_route_from_requested_path(self, requested_path: str) -> tuple[ApiRouteDetails, str]:
+        for route in self.api_routes:
+            if not (match := route["path_regex"].search(requested_path)):
+                continue
+            return (route, match.group(match.lastindex)) if match.lastindex else (route, "")
+        return ({"name": "", "path": "", "path_regex": re.compile(r"")}, "")
 
 
 cached_data = UnicodeDataCache()
