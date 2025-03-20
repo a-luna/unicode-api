@@ -90,9 +90,39 @@ class RateLimit:
 
     def validate_request(self, request: Request) -> RateLimitDecision:
         client_ip = get_client_ip_address(request)
-        request_type = self.apply_rate_limit_to_request(request, client_ip)
-        if request_type:
-            return RateLimitDecision(client_ip, request_type, 0, 0, 0)
+        match request_type := self.check_for_simple_request_types(request, client_ip):
+            case RequestType.TEST_REQUEST | RequestType.INTERNAL_REQUEST | RequestType.STATIC_RESOURCE:
+                return RateLimitDecision(client_ip, request_type, 0, 0, 0)
+        return self.apply_rate_limiting(client_ip)
+
+    def check_for_simple_request_types(self, request: Request, client_ip: str) -> RequestType | None:
+        if self.settings.is_test and not enable_rate_limit_feature_for_test(request):
+            return RequestType.TEST_REQUEST
+        if self.client_ip_is_internal(request, client_ip):  # pragma: no cover
+            return RequestType.INTERNAL_REQUEST
+        if not self.rate_limit_applies_to_route(request):
+            return RequestType.STATIC_RESOURCE
+        return RequestType.NONE
+
+    def client_ip_is_internal(self, request: Request, client_ip: str) -> bool:  # pragma: no cover
+        if any(host in client_ip for host in ["localhost", "127.0.0.1", "testserver"]):
+            return True
+        if DOCKER_IP_REGEX.search(client_ip):
+            return True
+        if "sec-fetch-site" in request.headers and request.headers["sec-fetch-site"] == "same-site":
+            self.log_request_from_same_site(client_ip, request)
+            return True
+        return False
+
+    def log_request_from_same_site(self, client_ip: str, request: Request) -> None:  # pragma: no cover
+        self.logger.info(f"##### BYPASS RATE LIMITING (SAME SITE, IP: {client_ip}) #####")
+        for log in get_dict_report(request.headers):
+            self.logger.info(log)
+
+    def rate_limit_applies_to_route(self, request: Request) -> bool:  # pragma: no cover
+        return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
+
+    def apply_rate_limiting(self, client_ip: str) -> RateLimitDecision:
         arrived_at = self.redis.time()
         self.redis.setnx(client_ip, "0")
         try:
@@ -110,31 +140,6 @@ class RateLimit:
             decision = RateLimitDecision(client_ip, RequestType.ERROR, arrived_at, 0, 0)
             decision.error = self.lock_error(client_ip)
             return decision
-
-    def apply_rate_limit_to_request(self, request: Request, client_ip: str) -> RequestType | None:
-        if self.settings.is_test:
-            return None if enable_rate_limit_feature_for_test(request) else RequestType.TEST_REQUEST
-        if self.client_ip_is_internal(request, client_ip):  # pragma: no cover
-            return RequestType.INTERNAL_REQUEST
-        return None if self.rate_limit_applies_to_route(request) else RequestType.STATIC_RESOURCE  # pragma: no cover
-
-    def rate_limit_applies_to_route(self, request: Request) -> bool:  # pragma: no cover
-        return bool(RATE_LIMIT_ROUTE_REGEX.search(request.url.path))
-
-    def client_ip_is_internal(self, request: Request, client_ip: str) -> bool:  # pragma: no cover
-        if any(host in client_ip for host in ["localhost", "127.0.0.1", "testserver"]):
-            return True
-        if DOCKER_IP_REGEX.search(client_ip):
-            return True
-        if "sec-fetch-site" in request.headers and request.headers["sec-fetch-site"] == "same-site":
-            self.log_request_from_same_site(client_ip, request)
-            return True
-        return False
-
-    def log_request_from_same_site(self, client_ip: str, request: Request) -> None:  # pragma: no cover
-        self.logger.info(f"##### BYPASS RATE LIMITING (SAME SITE, IP: {client_ip}) #####")
-        for log in get_dict_report(request.headers):
-            self.logger.info(log)
 
     def get_allowed_at(self, tat: float) -> float:
         return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
