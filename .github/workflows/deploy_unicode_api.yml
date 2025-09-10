@@ -29,7 +29,12 @@ jobs:
           set: |
             unicode-api.args.REDIS_PW=${{ secrets.REDIS_PW }}
             unicode-api.args.UNICODE_VERSION=${{ vars.UNICODE_VERSION }}
+            unicode-api.args.ENV=${{ vars.ENV }}
             unicode-api.args.UMAMI_WEBSITE_ID=${{ secrets.UMAMI_WEBSITE_ID }}
+            unicode-api.args.UMAMI_API_URL=${{ secrets.UMAMI_API_URL }}
+            unicode-api.args.DOCKER_IP_OCTET_1=${{ secrets.DOCKER_IP_OCTET_1 }}
+            unicode-api.args.DOCKER_IP_OCTET_2=${{ secrets.DOCKER_IP_OCTET_2 }}
+            unicode-api.args.DOCKER_IP_OCTET_3=${{ secrets.DOCKER_IP_OCTET_3 }}
       - name: Deploy unicode-api docker image to dokku
         uses: dokku/github-action@master
         with:

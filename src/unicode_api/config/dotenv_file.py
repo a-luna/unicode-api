@@ -4,7 +4,8 @@ from pathlib import Path
 from unicode_api.core.result import Result
 
 
-def load_dotenv_file(dotenv_path: Path) -> Result[None]:
+def load_dotenv_file() -> Result[None]:
+    dotenv_path = _get_env_file_path()
     if not dotenv_path.is_file():  # pragma: no cover
         return Result[None].Fail(f".env file not found: {dotenv_path}")
     env_vars_from_file = [
@@ -14,6 +15,13 @@ def load_dotenv_file(dotenv_path: Path) -> Result[None]:
     ]
     os.environ.update(dict(env_vars_from_file))
     return Result[None].Ok()
+
+
+def _get_env_file_path() -> Path:
+    env = os.environ.get("ENV", "DEV")
+    if env.upper() == "PROD":
+        return Path(__file__).parent.parent.parent.joinpath(".env")
+    return Path(__file__).parent.parent.parent.parent.joinpath(".env")
 
 
 def _parse_env_line(line: str) -> tuple[str, str] | None:
