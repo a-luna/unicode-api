@@ -12,7 +12,10 @@ ARG RATE_LIMIT_PER_PERIOD
 ARG RATE_LIMIT_PERIOD_SECONDS
 ARG RATE_LIMIT_BURST
 ARG UMAMI_WEBSITE_ID
-ARG TEST_HEADER
+ARG UMAMI_API_URL
+ARG DOCKER_IP_OCTET_1
+ARG DOCKER_IP_OCTET_2
+ARG DOCKER_IP_OCTET_3
 
 ENV ENV=${ENV}
 ENV UNICODE_VERSION=${UNICODE_VERSION}
@@ -25,12 +28,16 @@ ENV RATE_LIMIT_PER_PERIOD=${RATE_LIMIT_PER_PERIOD}
 ENV RATE_LIMIT_PERIOD_SECONDS=${RATE_LIMIT_PERIOD_SECONDS}
 ENV RATE_LIMIT_BURST=${RATE_LIMIT_BURST}
 ENV UMAMI_WEBSITE_ID=${UMAMI_WEBSITE_ID}
+ENV UMAMI_API_URL=${UMAMI_API_URL}
+ENV DOCKER_IP_OCTET_1=${DOCKER_IP_OCTET_1}
+ENV DOCKER_IP_OCTET_2=${DOCKER_IP_OCTET_2}
+ENV DOCKER_IP_OCTET_3=${DOCKER_IP_OCTET_3}
 
 WORKDIR /code
 
 RUN touch /code/.env
-RUN echo "ENV=$ENV" >> /code/.env
 RUN echo "PYTHONPATH=." >> /code/.env
+RUN echo "ENV=$ENV" >> /code/.env
 RUN echo "UNICODE_VERSION=$UNICODE_VERSION" >> /code/.env
 RUN echo "HOSTNAME=$HOSTNAME" >> /code/.env
 RUN echo "REDIS_HOST=$REDIS_HOST" >> /code/.env
@@ -41,11 +48,15 @@ RUN echo "RATE_LIMIT_PER_PERIOD=$RATE_LIMIT_PER_PERIOD" >> /code/.env
 RUN echo "RATE_LIMIT_PERIOD_SECONDS=$RATE_LIMIT_PERIOD_SECONDS" >> /code/.env
 RUN echo "RATE_LIMIT_BURST=$RATE_LIMIT_BURST" >> /code/.env
 RUN echo "UMAMI_WEBSITE_ID=$UMAMI_WEBSITE_ID" >> /code/.env
+RUN echo "UMAMI_API_URL=$UMAMI_API_URL" >> /code/.env
+RUN echo "DOCKER_IP_OCTET_1=$DOCKER_IP_OCTET_1" >> /code/.env
+RUN echo "DOCKER_IP_OCTET_2=$DOCKER_IP_OCTET_2" >> /code/.env
+RUN echo "DOCKER_IP_OCTET_3=$DOCKER_IP_OCTET_3" >> /code/.env
 
 RUN pip install -U pip setuptools wheel
 COPY ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir -r /code/requirements.txt
 EXPOSE 80
-COPY ./app /code/app 
-RUN PYTHONPATH=/code/. python /code/./app/data/scripts/get_prod_data.py
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
+COPY ./src/unicode_api /code/unicode_api 
+RUN PYTHONPATH=/code/. python /code/./unicode_api/data/scripts/get_prod_data.py
+CMD ["uvicorn", "unicode_api.main:app", "--host", "0.0.0.0", "--port", "80"]

@@ -4,6 +4,7 @@
 .vscode
 .python-version
 .zed
+build
 tmp
 venv
 pfx
@@ -52,6 +53,7 @@ pip-delete-this-directory.txt
 test-results
 htmlcov/
 .tox/
+.nox/
 .coverage*
 .cache
 nosetests.xml
@@ -76,6 +78,6 @@ coverage.xml
 docs/_build/
 
 # Unicode data files
-app/data/unicode_versions
+src/unicode_api/data/unicode_versions
 
 .ruff_cache
