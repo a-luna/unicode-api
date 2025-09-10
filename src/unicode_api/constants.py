@@ -5,6 +5,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:  # pragma: no cover
     from unicode_api.custom_types import UnicodePropertyGroupMap, UnicodePropertyGroupValues
 
+
+ENV_PROD = "PROD"
+ENV_DEV = "DEV"
+ENV_TEST = "TEST"
+
 MAX_CODEPOINT = int("10FFFF", 16)
 ALL_UNICODE_CODEPOINTS = range(MAX_CODEPOINT + 1)
 ASCII_HEX = "0123456789ABCDEFabcdef"

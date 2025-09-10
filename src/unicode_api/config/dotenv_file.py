@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from unicode_api.constants import ENV_DEV, ENV_PROD
 from unicode_api.core.result import Result
 
 
@@ -18,9 +19,11 @@ def load_dotenv_file() -> Result[None]:
 
 
 def _get_env_file_path() -> Path:
-    env = os.environ.get("ENV", "DEV")
+    env = os.environ.get("ENV", ENV_DEV).upper()
     app_folder = Path(__file__).parent.parent
-    root_folder = app_folder.parent if env.upper() == "PROD" else app_folder.parent.parent
+    project_root = app_folder.parent
+    workspace_root = project_root.parent
+    root_folder = project_root if env == ENV_PROD else workspace_root
     return root_folder.joinpath(".env")
 
 
