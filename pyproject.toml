@@ -7,10 +7,19 @@ requires-python = ">=3.12"
 license = { file = "LICENSE" }
 authors = [{ name = "Aaron Luna", email = "contact@aaronluna.dev" }]
 keywords = ["unicode", "unicode-api"]
+dynamic = ["dependencies", "optional-dependencies"]
 
 [build-system]
 requires = ["setuptools", "setuptools-scm"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements.txt"] }
+optional-dependencies.dev = { file = ["requirements-dev.txt"] }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["unicode_api*"]
 
 [tool.black]
 line-length = 120
@@ -23,6 +32,7 @@ exclude = '''
     | \.hg
     | \.mypy_cache
     | \.pytest_cache
+    | \.nox
     | \.tox
     | \.vscode
     | __pycache__
@@ -35,8 +45,18 @@ exclude = '''
 '''
 
 [tool.pyright]
+typeCheckingMode = "strict"
 venvPath = "/Users/aaronluna/Projects/unicode-api"
 venv = "venv"
+stubPath = "./typings"
+include = ["src/unicode_api/**/*.py"]
+ignore = [
+    "build/**/*",
+    "tests/**/*",
+    "typings/**/*",
+    "noxfile.py",
+    "venv/**/*",
+]
 
 [tool.ruff]
 line-length = 120
@@ -69,20 +89,27 @@ extend-select = ["I"]
 ignore = ["B019", "B905"]
 fixable = ["I"]
 unfixable = ["B", "C90", "PIE", "SIM"]
+exclude = [
+    "build/**/*",
+]
 
 [tool.ruff.lint.per-file-ignores]
-"app/**/__init__.py" = ["F401"]
-"app/api/api_v1/dependencies.py" = ["E501"]
-"app/data/scripts/update_test_data/update_test_list_all_unicode_blocks.py" = ["E501"]
-"app/db/models.py" = ["F401"]
-"app/docs/**/*" = ["E501"]
-"app/models/{block,character,plane}.py" = ["F821"]
-"app/models/property_values.py" = ["N801"]
-"app/tasks.py" = ["F401"]
-"app/tests/**/data.py" = ["E501"]
+"src/unicode_api/**/__init__.py" = ["F401"]
+"src/unicode_api/api/api_v1/dependencies.py" = ["E501"]
+"src/unicode_api/data/scripts/update_test_data/update_test_list_all_unicode_blocks.py" = [
+    "E501",
+]
+"src/unicode_api/db/models.py" = ["F401"]
+"src/unicode_api/docs/**/*" = ["E501"]
+"src/unicode_api/models/{block,character,plane}.py" = ["F821"]
+"src/unicode_api/models/property_values.py" = ["N801"]
+"src/unicode_api/tasks.py" = ["F401"]
+"tests/**/data.py" = ["E501"]
+"typings/**/*" = ["F401"]
 
 [tool.isort]
 profile = "black"
+skip_glob = ["tests/*"]
 ensure_newline_before_comments = true
 skip_gitignore = true
 line_length = 120
@@ -93,24 +120,29 @@ force_alphabetical_sort_within_sections = true
 color_output = true
 
 [tool.pytest.ini_options]
-addopts = "-ra --showlocals --cov=app --cov-report term:skip-covered --cov-branch --cov-report html -vv --cache-clear --random-order-bucket=package"
+pythonpath = "./src/"
+addopts = "-ra --showlocals --cov=./src/unicode_api --cov-report term:skip-covered --cov-branch --cov-report html -vv --cache-clear --random-order-bucket=package"
 norecursedirs = [".git", ".pytest_cache", ".vscode"]
 
 [tool.coverage.run]
+source = ["src/unicode_api"]
+branch = true
 omit = [
-    "app/cli.py",
-    "app/config/dotenv_file.py",
-    "app/core/config/config.py",
-    "app/core/logging.py",
-    "app/core/redis_client.py",
-    "app/core/result.py",
-    "app/core/util.py",
-    "app/custom_types.py",
-    "app/data/scripts/*",
-    "app/data/util/*",
-    "app/docs/*",
-    "app/tests/*",
-    "app/tasks.py",
+    "src/unicode_api/cli.py",
+    "src/unicode_api/main.py",
+    "src/unicode_api/config/dotenv_file.py",
+    "src/unicode_api/core/config/config.py",
+    "src/unicode_api/core/logging.py",
+    "src/unicode_api/core/redis_client.py",
+    "src/unicode_api/core/result.py",
+    "src/unicode_api/core/util.py",
+    "src/unicode_api/custom_types.py",
+    "src/unicode_api/data/scripts/*",
+    "src/unicode_api/data/util/*",
+    "src/unicode_api/db/types.py",
+    "src/unicode_api/docs/*",
+    "src/unicode_api/tests/*",
+    "src/unicode_api/tasks.py",
 ]
 
 [tool.coverage.report]
