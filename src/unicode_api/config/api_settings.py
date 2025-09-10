@@ -21,7 +21,7 @@ if TYPE_CHECKING:  # pragma: no cover
 UNICODE_ORG_ROOT = "https://www.unicode.org/Public"
 UNICODE_TXT_FOLDER = "ucd"
 UNICODE_XML_FOLDER = "ucdxml"
-HTTP_BUCKET_URL = "https://unicode_api.us-southeast-1.linodeobjects.com"
+HTTP_BUCKET_URL = "https://unicode-api.us-southeast-1.linodeobjects.com"
 S3_BUCKET_URL = "s3://unicode-api"
 
 PROP_VALUES_FILE_NAME = "PropertyValueAliases.txt"
