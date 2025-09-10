@@ -19,11 +19,11 @@ def load_dotenv_file() -> Result[None]:
 
 
 def _get_env_file_path() -> Path:
-    env = os.environ.get("ENV", ENV_DEV).upper()
+    env = os.environ.get("ENV", ENV_DEV)
     app_folder = Path(__file__).parent.parent
     project_root = app_folder.parent
     workspace_root = project_root.parent
-    root_folder = project_root if env == ENV_PROD else workspace_root
+    root_folder = project_root if env.upper() == ENV_PROD.upper() else workspace_root
     return root_folder.joinpath(".env")
 
 
