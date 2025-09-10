@@ -246,7 +246,7 @@ class UnicodeApiSettings:
 
 
 def load_api_settings() -> UnicodeApiSettings:  # pragma: no cover
-    result = load_dotenv_file(DOTENV_FILE)
+    result = load_dotenv_file()
     if result.failure:
         raise ValueError(f"Failed to load .env file: {result.failure}")
     return UnicodeApiSettings(

@@ -79,5 +79,5 @@ docs/_build/
 
 # Unicode data files
 src/unicode_api/data/unicode_versions
-
+.nox
 .ruff_cache

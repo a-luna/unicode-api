@@ -6,6 +6,10 @@ variable "REDIS_PW" {
   default = ""
 }
 
+variable "ENV" {
+  default = "DEV"
+}
+
 variable "UNICODE_VERSION" {
   default = ""
 }
@@ -18,7 +22,7 @@ target "unicode-api" {
     dockerfile = "./Dockerfile"
     tags = ["ghcr.io/a-luna/unicode-api:${GITHUB_SHA}"]
     args = {
-        ENV="PROD"
+        ENV="${ENV}"
         UNICODE_VERSION="${UNICODE_VERSION}"
         HOSTNAME="unicode-api.aaronluna.dev"
         REDIS_HOST="dokku-redis-vig-cache"

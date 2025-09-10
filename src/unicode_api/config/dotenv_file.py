@@ -1,10 +1,12 @@
 import os
 from pathlib import Path
 
+from unicode_api.constants import ENV_DEV, ENV_PROD
 from unicode_api.core.result import Result
 
 
-def load_dotenv_file(dotenv_path: Path) -> Result[None]:
+def load_dotenv_file() -> Result[None]:
+    dotenv_path = _get_env_file_path()
     if not dotenv_path.is_file():  # pragma: no cover
         return Result[None].Fail(f".env file not found: {dotenv_path}")
     env_vars_from_file = [
@@ -14,6 +16,15 @@ def load_dotenv_file(dotenv_path: Path) -> Result[None]:
     ]
     os.environ.update(dict(env_vars_from_file))
     return Result[None].Ok()
+
+
+def _get_env_file_path() -> Path:
+    env = os.environ.get("ENV", ENV_DEV)
+    app_folder = Path(__file__).parent.parent
+    project_root = app_folder.parent
+    workspace_root = project_root.parent
+    root_folder = project_root if env.upper() == ENV_PROD.upper() else workspace_root
+    return root_folder.joinpath(".env")
 
 
 def _parse_env_line(line: str) -> tuple[str, str] | None:
