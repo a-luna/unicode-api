@@ -19,9 +19,9 @@ def load_dotenv_file() -> Result[None]:
 
 def _get_env_file_path() -> Path:
     env = os.environ.get("ENV", "DEV")
-    if env.upper() == "PROD":
-        return Path(__file__).parent.parent.parent.joinpath(".env")
-    return Path(__file__).parent.parent.parent.parent.joinpath(".env")
+    app_folder = Path(__file__).parent.parent
+    root_folder = app_folder.parent if env.upper() == "PROD" else app_folder.parent.parent
+    return root_folder.joinpath(".env")
 
 
 def _parse_env_line(line: str) -> tuple[str, str] | None:

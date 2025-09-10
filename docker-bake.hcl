@@ -7,7 +7,7 @@ variable "REDIS_PW" {
 }
 
 variable "ENV" {
-  default = ""
+  default = "DEV"
 }
 
 variable "UNICODE_VERSION" {
