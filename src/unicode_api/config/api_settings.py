@@ -8,6 +8,9 @@ from typing import TYPE_CHECKING
 
 from unicode_api.config.dotenv_file import load_dotenv_file
 from unicode_api.constants import (
+    ENV_DEV,
+    ENV_PROD,
+    ENV_TEST,
     PROP_GROUP_VALUE_MAP_DEFAULT,
     SUPPORTED_UNICODE_VERSION_RELEASE_DATES,
     UNICODE_PLANES_DEFAULT,
@@ -151,15 +154,15 @@ class UnicodeApiSettings:
 
     @property
     def is_dev(self):  # pragma: no cover
-        return "DEV" in self.ENV
+        return ENV_DEV in self.ENV
 
     @property
     def is_prod(self):  # pragma: no cover
-        return "PROD" in self.ENV
+        return ENV_PROD in self.ENV
 
     @property
     def is_test(self):  # pragma: no cover
-        return "TEST" in self.ENV
+        return ENV_TEST in self.ENV
 
     @property
     def rate_limit_settings_report(self) -> str:
@@ -250,7 +253,7 @@ def load_api_settings() -> UnicodeApiSettings:  # pragma: no cover
     if result.failure:
         raise ValueError(f"Failed to load .env file: {result.failure}")
     return UnicodeApiSettings(
-        ENV=os.getenv("ENV", default="DEV"),
+        ENV=os.getenv("ENV", default=ENV_DEV),
         HOSTNAME=os.getenv("HOSTNAME", default="localhost"),
         API_VERSION="/v1",
         UNICODE_VERSION=os.getenv("UNICODE_VERSION", default=get_latest_unicode_version()),
@@ -271,7 +274,7 @@ def load_api_settings() -> UnicodeApiSettings:  # pragma: no cover
 
 def create_test_settings() -> UnicodeApiSettings:
     return UnicodeApiSettings(
-        ENV="TEST",
+        ENV=ENV_TEST,
         HOSTNAME="localhost",
         API_VERSION="/v1",
         UNICODE_VERSION="15.0.0",
@@ -291,4 +294,4 @@ def create_test_settings() -> UnicodeApiSettings:
 
 
 def get_settings() -> UnicodeApiSettings:
-    return create_test_settings() if "TEST" in os.environ.get("ENV", "DEV") else load_api_settings()
+    return create_test_settings() if ENV_TEST in os.environ.get("ENV", ENV_DEV) else load_api_settings()
