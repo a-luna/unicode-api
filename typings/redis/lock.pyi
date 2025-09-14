@@ -3,7 +3,7 @@ import threading
 import time as mod_time
 import uuid
 from types import SimpleNamespace, TracebackType
-from typing import Optional, Self
+from typing import ClassVar, Optional, Self
 
 from redis import Redis
 
@@ -20,9 +20,9 @@ class Lock:
     multiple clients play nicely together.
     """
 
-    lua_release: Script | None = None
-    lua_extend: Script | None = None
-    lua_reacquire: Script | None = None
+    lua_release: ClassVar[Script | None] = None
+    lua_extend: ClassVar[Script | None] = None
+    lua_reacquire: ClassVar[Script | None] = None
 
     def __init__(
         self,
