@@ -1,6 +1,7 @@
-from .core import AsyncCoreCommands, CoreCommands
+from .core import ManagementCommands, Script, ScriptCommands
 
 __all__ = [
-    "AsyncCoreCommands",
-    "CoreCommands",
+    "ManagementCommands",
+    "ScriptCommands",
+    "Script",
 ]

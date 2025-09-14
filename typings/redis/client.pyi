@@ -1,7 +1,7 @@
 from typing import Any
 
 from .commands.core import ManagementCommands
-from .redis import Lock
+from .lock import Lock
 
 class Redis:
     """
