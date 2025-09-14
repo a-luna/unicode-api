@@ -1,3 +1,4 @@
+# fmt: off
 CHARACTER_PROPERTIES = {
     "\u0017": {
         "character": "␗",
@@ -2299,3 +2300,4 @@ VERBOSE_CHARACTER_PROPERTIES = {
 INVALID_PROP_GROUP_NAMES = {
     "detail": "3 values provided for the 'show_props' parameter are invalid: ['foo', 'bar', 'baz']"
 }
+# fmt: on

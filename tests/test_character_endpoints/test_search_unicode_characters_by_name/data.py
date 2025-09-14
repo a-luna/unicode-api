@@ -1,3 +1,4 @@
+# fmt: off
 SEARCH_TERM_HOME = {
     "url": "/v1/characters/search",
     "query": "home",
@@ -6,6 +7,7 @@ SEARCH_TERM_HOME = {
     "hasMore": False,
     "results": []
 }
+
 SEARCH_TERM_HOUSE_PAGE_1_OF_2 = {
     "url": "/v1/characters/search",
     "query": "house",
@@ -86,6 +88,7 @@ SEARCH_TERM_HOUSE_PAGE_1_OF_2 = {
         }
     ]
 }
+
 SEARCH_TERM_HOUSE_PAGE_2_OF_2 = {
     "url": "/v1/characters/search",
     "query": "house",
@@ -116,6 +119,8 @@ SEARCH_TERM_HOUSE_PAGE_2_OF_2 = {
         }
     ]
 }
+
 SEARCH_TERM_HOUSE_PAGE_3_OF_2 = {
     "detail": "Request for page #3 is invalid since there are 2 total pages."
 }
+# fmt: on

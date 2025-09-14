@@ -13,10 +13,12 @@ from unicode_api.db.session import DBSession
 
 def update_test_search_unicode_characters_by_name(db_ctx: DBSession, settings: UnicodeApiSettings) -> Result[None]:
     test_data = (
-        f"SEARCH_TERM_HOME = {get_search_term_home(db_ctx)}\n"
-        f"SEARCH_TERM_HOUSE_PAGE_1_OF_2 = {get_search_term_house_page_1_of_3(db_ctx)}\n"
-        f"SEARCH_TERM_HOUSE_PAGE_2_OF_2 = {get_search_term_house_page_2_of_3(db_ctx)}\n"
+        "# fmt: off\n"
+        f"SEARCH_TERM_HOME = {get_search_term_home(db_ctx)}\n\n"
+        f"SEARCH_TERM_HOUSE_PAGE_1_OF_2 = {get_search_term_house_page_1_of_3(db_ctx)}\n\n"
+        f"SEARCH_TERM_HOUSE_PAGE_2_OF_2 = {get_search_term_house_page_2_of_3(db_ctx)}\n\n"
         f"SEARCH_TERM_HOUSE_PAGE_3_OF_2 = {get_search_term_house_page_3_of_3(db_ctx)}\n"
+        "# fmt: on\n"
     )
     test_data_file = (
         settings.tests_folder.joinpath("test_character_endpoints")

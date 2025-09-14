@@ -381,32 +381,28 @@ PROPERTY_GROUPS: dict[CharPropertyGroup, list[CharacterPropertyDetails]] = {
             name_out="NFC_QC",
             char_property="NFC_QC",
             db_column=True,
-            response_value=lambda char: str(TriadicLogic(char["NFC_QC"])) if "NFC_QC" in char else str(TriadicLogic.Y),
+            response_value=lambda char: get_triadic_logic_prop_value(char, "NFC_QC"),
         ),
         CharacterPropertyDetails(
             name_in="NFD_QC",
             name_out="NFD_QC",
             char_property="NFD_QC",
             db_column=True,
-            response_value=lambda char: str(TriadicLogic(char["NFD_QC"])) if "NFD_QC" in char else str(TriadicLogic.Y),
+            response_value=lambda char: get_triadic_logic_prop_value(char, "NFD_QC"),
         ),
         CharacterPropertyDetails(
             name_in="NFKC_QC",
             name_out="NFKC_QC",
             char_property="NFKC_QC",
             db_column=True,
-            response_value=lambda char: str(TriadicLogic(char["NFKC_QC"]))
-            if "NFKC_QC" in char
-            else str(TriadicLogic.Y),
+            response_value=lambda char: get_triadic_logic_prop_value(char, "NFKC_QC"),
         ),
         CharacterPropertyDetails(
             name_in="NFKD_QC",
             name_out="NFKD_QC",
             char_property="NFKD_QC",
             db_column=True,
-            response_value=lambda char: str(TriadicLogic(char["NFKD_QC"]))
-            if "NFKD_QC" in char
-            else str(TriadicLogic.Y),
+            response_value=lambda char: get_triadic_logic_prop_value(char, "NFKD_QC"),
         ),
     ],
     CharPropertyGroup.NUMERIC: [
@@ -1014,3 +1010,8 @@ def get_script_extensions(value: str, codepoint: int) -> list[str]:
             return ["N/A"]
         script_ids.append(result.value)
     return [cached_data.get_display_name_for_property_value("Script", sid, codepoint) for sid in script_ids]
+
+
+def get_triadic_logic_prop_value(char_props: dict[str, Any], prop_name: str) -> str:
+    tri_logic_value = TriadicLogic(char_props[prop_name]) if prop_name in char_props else TriadicLogic.Y
+    return str(tri_logic_value)
