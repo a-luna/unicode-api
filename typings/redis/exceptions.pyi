@@ -1,5 +1,5 @@
 """
-Global SQLAlchemy-Utils exception classes.
+Global Redis exception classes.
 """
 
 class RedisError(Exception):

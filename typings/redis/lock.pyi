@@ -18,9 +18,9 @@ class Lock:
     multiple clients play nicely together.
     """
 
-    lua_release: Script = None
-    lua_extend: Script = None
-    lua_reacquire: Script = None
+    lua_release: Script | None = None
+    lua_extend: Script | None = None
+    lua_reacquire: Script | None = None
 
     def __init__(
         self,

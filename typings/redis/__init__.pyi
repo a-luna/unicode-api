@@ -1,4 +1,4 @@
-from .._parsers import Encoder
+from ._parsers import Encoder
 from .client import Redis, StrictRedis
 from .commands import ManagementCommands, Script, ScriptCommands
 from .exceptions import LockError, LockNotOwnedError, RedisError
