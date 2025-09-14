@@ -5,7 +5,7 @@ halo==0.0.31
 httpx==0.28.1
 lupa==2.5
 lxml==6.0.1
-pydantic==2.11.7
+pydantic==2.11.9
 python-dateutil==2.9.0
 RapidFuzz==3.14.1
 redis==6.4.0
