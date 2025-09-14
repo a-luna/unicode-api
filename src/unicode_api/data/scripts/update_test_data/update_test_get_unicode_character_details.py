@@ -91,7 +91,9 @@ def construct_test_data_file(data_concise: dict[str, Any], data_verbose: dict[st
     json_concise = json.dumps(data_concise, indent=4, ensure_ascii=False)
     json_verbose = json.dumps(data_verbose, indent=4, ensure_ascii=False)
     return (
+        "# fmt: off\n"
         f"CHARACTER_PROPERTIES = {convert_json_to_python_literals(json_concise)}\n\n"
         + f"VERBOSE_CHARACTER_PROPERTIES = {convert_json_to_python_literals(json_verbose)}\n\n"
         + STATIC_CONTENT
+        + "# fmt: on\n"
     )
