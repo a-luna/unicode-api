@@ -26,7 +26,7 @@ class Lock:
 
     def __init__(
         self,
-        redis: "Redis",
+        redis: Redis,
         name: str,
         timeout: Number | None = None,
         sleep: Number = 0.1,
