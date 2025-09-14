@@ -22,3 +22,4 @@ tox==4.30.2
 trogon==0.6.0
 types-lxml==2025.8.25
 types-requests==2.32.4.20250913
+types-sqlalchemy-utils

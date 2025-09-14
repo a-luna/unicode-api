@@ -5,6 +5,8 @@ import uuid
 from types import SimpleNamespace, TracebackType
 from typing import Optional, Self
 
+from redis import Redis
+
 from .commands import Script
 from .exceptions import LockError, LockNotOwnedError
 from .typing import Number
@@ -24,7 +26,7 @@ class Lock:
 
     def __init__(
         self,
-        redis,
+        redis: "Redis",
         name: str,
         timeout: Number | None = None,
         sleep: Number = 0.1,
