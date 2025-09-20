@@ -31,7 +31,7 @@ def update_test_filter_unicode_characters(db_ctx: DBSession, settings: UnicodeAp
         f"INVALID_NO_FILTER_SETTINGS = {get_test_no_filter_settings(db_ctx)}\n\n"
         f"INVALID_PAGE_NUMBER = {get_test_invalid_page_number(db_ctx)}\n\n"
         f"INVALID_FILTER_PARAM_VALUES = {get_test_test_invalid_filter_param_values(db_ctx)}\n\n"
-        "# fmt: off\n"
+        "# fmt: on\n"
     )
     test_data_file = (
         settings.tests_folder.joinpath("test_character_endpoints")

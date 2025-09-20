@@ -786,4 +786,4 @@ INVALID_FILTER_PARAM_VALUES = {
     "detail": "Invalid values were provided for the following 12 parameters:\n\n1 value provided for the 'block' parameter is invalid: ['xxx']\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'ccc' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }
 
-# fmt: off
+# fmt: on
