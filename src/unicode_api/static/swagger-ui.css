@@ -908,7 +908,6 @@ body>svg {
 .swagger-ui #operations-Unicode_Characters-filter_unicode_characters .parameters [data-param-name="block"] div.filter-table-wrapper,
 .swagger-ui #operations-Unicode_Blocks-get_unicode_block_details .parameters [data-param-name="name"] div.filter-table-wrapper {
     max-height: 300px;
-    max-width: 588px;
 }
 
 .swagger-ui .parameters table {
@@ -11781,6 +11780,9 @@ body>svg {
   width: 99%;
   margin-bottom: 2em;
 }
+.swagger-ui .parameters-col_description .renderedMarkdown {
+    max-width: 588px;
+} 
 .swagger-ui .parameters-col_description input[type="text"] {
   width: 100%;
   max-width: 282px;
