@@ -1,9 +1,9 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from sqlmodel import Field, Relationship, SQLModel
 
 if TYPE_CHECKING:  # pragma: no cover
-    from unicode_api.custom_types import IFilterParameter
+    from unicode_api.custom_types import IFilterParameter, UnicodePropertyGroupValues
     from unicode_api.models.character import UnicodeCharacter, UnicodeCharacterUnihan
 
 
@@ -23,6 +23,10 @@ class Age(SQLModel, table=True):
     def display_name(self) -> str:  # pragma: no cover
         return self.short_name
 
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
+
 
 class Bidi_Class(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -35,6 +39,10 @@ class Bidi_Class(SQLModel, table=True):
     @property
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
 
 
 class Bidi_Paired_Bracket_Type(SQLModel, table=True):
@@ -49,6 +57,10 @@ class Bidi_Paired_Bracket_Type(SQLModel, table=True):
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
 
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
+
 
 class Canonical_Combining_Class(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -61,6 +73,10 @@ class Canonical_Combining_Class(SQLModel, table=True):
     @property
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
 
 
 class Decomposition_Type(SQLModel, table=True):
@@ -75,6 +91,10 @@ class Decomposition_Type(SQLModel, table=True):
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
 
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
+
 
 class East_Asian_Width(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -87,6 +107,10 @@ class East_Asian_Width(SQLModel, table=True):
     @property
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
 
 
 class General_Category(SQLModel, table=True):
@@ -114,6 +138,10 @@ class General_Category(SQLModel, table=True):
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
 
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
+
 
 class Grapheme_Cluster_Break(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -132,6 +160,10 @@ class Hangul_Syllable_Type(SQLModel, table=True):
     @property
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
 
 
 class Indic_Conjunct_Break(SQLModel, table=True):
@@ -176,6 +208,10 @@ class Joining_Type(SQLModel, table=True):
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
 
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
+
 
 class Line_Break(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -188,6 +224,10 @@ class Line_Break(SQLModel, table=True):
     @property
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
 
 
 class Numeric_Type(SQLModel, table=True):
@@ -202,6 +242,10 @@ class Numeric_Type(SQLModel, table=True):
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
 
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
+
 
 class Script(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
@@ -214,6 +258,10 @@ class Script(SQLModel, table=True):
     @property
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
 
 
 class Sentence_Break(SQLModel, table=True):
@@ -233,6 +281,10 @@ class Vertical_Orientation(SQLModel, table=True):
     @property
     def display_name(self) -> str:  # pragma: no cover
         return default_display_name(self)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return super().model_validate(model_dict)
 
 
 class Word_Break(SQLModel, table=True):

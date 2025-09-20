@@ -1,15 +1,6 @@
-from typing import NotRequired, Protocol, Required, TypedDict
+from typing import NotRequired, Protocol, Required, Self, TypedDict
 
 type JSON = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
-
-
-class IFilterParameter(Protocol):
-    id: int | None
-    short_name: str
-    long_name: str
-
-    @property
-    def display_name(self) -> str: ...
 
 
 class UnicodePropertyGroupValues(TypedDict):
@@ -48,3 +39,15 @@ class UnicodePropertyGroupMap(TypedDict):
     Word_Break: dict[str, UnicodePropertyGroupValues]
     boolean_properties: list[str]
     missing_prop_groups: list[str]
+
+
+class IFilterParameter(Protocol):
+    id: int | None
+    short_name: str
+    long_name: str
+
+    @property
+    def display_name(self) -> str: ...
+
+    @classmethod
+    def from_dict(cls, model_dict: UnicodePropertyGroupValues) -> Self: ...
