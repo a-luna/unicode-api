@@ -7,7 +7,7 @@ import unicode_api.db.models as db
 from unicode_api.core.cache import cached_data
 from unicode_api.core.result import Result
 from unicode_api.core.util import get_dict_report, s
-from unicode_api.custom_types import UnicodePropertyGroupValues
+from unicode_api.custom_types import IFilterParameter, UnicodePropertyGroupValues
 from unicode_api.models.util import normalize_string_lm3
 
 
@@ -57,7 +57,7 @@ class CharacterPropGroupParameterMatcher:
             return Result[list[db.CharPropertyGroup]].Fail(error)
 
 
-class DatabaseFilterParameterMatcher[T: db.DatabaseCharacterProperty]:
+class DatabaseFilterParameterMatcher[T: IFilterParameter]:
     def __init__(self, prop_group: str, param_name: str, param_type: type[T]):
         self.prop_group = prop_group
         self.param_name = param_name
@@ -81,7 +81,7 @@ class DatabaseFilterParameterMatcher[T: db.DatabaseCharacterProperty]:
         if (parsed := self.prop_value_map.get(normalize_string_lm3(value), None)) is None:
             return Result[T].Fail(f"{value!r} is not a valid value for the {self.param_name!r} property")
         try:
-            prop_value = self.param_type.model_validate(parsed)
+            prop_value = self.param_type.from_dict(parsed)
             return Result[T].Ok(prop_value)
         except ValidationError as ex:  # pragma: no cover
             error = f"""\

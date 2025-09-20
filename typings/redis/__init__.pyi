@@ -1,7 +1,7 @@
 from ._parsers import Encoder
 from .client import Redis, StrictRedis
 from .commands import ManagementCommands, Script, ScriptCommands
-from .exceptions import LockError, LockNotOwnedError, RedisError
+from .exceptions import ConnectionError, LockError, LockNotOwnedError, RedisError
 from .lock import Lock
 from .typing import CommandsProtocol, DecodedT, EncodableT, EncodedT, KeyT, Number, ResponseT, ScriptTextT
 from .utils import from_url
@@ -13,6 +13,7 @@ __all__ = [
     "ManagementCommands",
     "ScriptCommands",
     "Script",
+    "ConnectionError",
     "LockError",
     "LockNotOwnedError",
     "RedisError",

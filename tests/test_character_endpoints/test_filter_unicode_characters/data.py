@@ -1,3 +1,4 @@
+# fmt: off
 FILTER_BY_NAME_BY_CATEGORY_BY_SCRIPT = {
     "url": "/v1/characters/filter",
     "filterSettings": {
@@ -509,13 +510,7 @@ FILTER_BY_COMBINED_CATEGORY = {
             "Basic Latin"
         ],
         "category": [
-            "Connector_Punctuation (Pc)",
-            "Dash_Punctuation (Pd)",
-            "Close_Punctuation (Pe)",
-            "Final_Punctuation (Pf)",
-            "Initial_Punctuation (Pi)",
-            "Other_Punctuation (Po)",
-            "Open_Punctuation (Ps)"
+            "Punctuation (P)"
         ],
         "showProps": [
             "Minimum"
@@ -598,11 +593,11 @@ FILTER_BY_SEPARATE_CATEGORIES = {
         "category": [
             "Connector_Punctuation (Pc)",
             "Dash_Punctuation (Pd)",
+            "Open_Punctuation (Ps)",
             "Close_Punctuation (Pe)",
-            "Final_Punctuation (Pf)",
             "Initial_Punctuation (Pi)",
-            "Other_Punctuation (Po)",
-            "Open_Punctuation (Ps)"
+            "Final_Punctuation (Pf)",
+            "Other_Punctuation (Po)"
         ],
         "showProps": [
             "Minimum"
@@ -791,3 +786,4 @@ INVALID_FILTER_PARAM_VALUES = {
     "detail": "Invalid values were provided for the following 12 parameters:\n\n1 value provided for the 'block' parameter is invalid: ['xxx']\n\n2 values provided for the 'category' parameter are invalid: ['aa', 'bb']\n\n2 values provided for the 'age' parameter are invalid: ['7.1', '12.97']\n\n2 values provided for the 'script' parameter are invalid: ['blar', 'blee']\n\n2 values provided for the 'bidi_class' parameter are invalid: ['vv', 'rr']\n\n1 value provided for the 'decomp_type' parameter is invalid: ['gosh']\n\n1 value provided for the 'line_break' parameter is invalid: ['ha']\n\n1 value provided for the 'ccc' parameter is invalid: ['300']\n\n1 value provided for the 'num_type' parameter is invalid: ['dd']\n\n1 value provided for the 'join_type' parameter is invalid: ['j']\n\n2 values provided for the 'flag' parameter are invalid: ['special', 'basic']\n\n2 values provided for the 'show_props' parameter are invalid: ['soup', 'salad']"
 }
 
+# fmt: on

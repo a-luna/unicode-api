@@ -7,6 +7,11 @@ class RedisError(Exception):
     Base class for all Redis-related errors.
     """
 
+class ConnectionError(RedisError):
+    """
+    Raised when a connection to the Redis server cannot be made or is lost.
+    """
+
 class LockError(RedisError, ValueError):
     "Errors acquiring or releasing a lock"
 
@@ -16,7 +21,9 @@ class LockError(RedisError, ValueError):
     def __init__(self, message: str | None = None, lock_name: str | None = None): ...
 
 class LockNotOwnedError(LockError):
-    "Error trying to extend or release a lock that is not owned (anymore)"
+    """
+    Error trying to extend or release a lock that is not owned (anymore)
+    """
 
 class ResponseError(RedisError):
     """

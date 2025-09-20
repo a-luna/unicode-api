@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from sqlmodel import Field, Relationship
 
@@ -6,6 +6,7 @@ from unicode_api.models.camel_model import CamelModel
 from unicode_api.models.util import normalize_string_lm3
 
 if TYPE_CHECKING:  # pragma: no cover
+    from unicode_api.custom_types import UnicodePropertyGroupValues
     from unicode_api.models.character import UnicodeCharacter, UnicodeCharacterUnihan
     from unicode_api.models.plane import UnicodePlane
 
@@ -73,3 +74,7 @@ class UnicodeBlock(CamelModel, table=True):
         block_dict["finish"] = f"U+{self.finish}"
         block_dict["score"] = f"{score:.1f}"
         return UnicodeBlockResult(**block_dict)
+
+    @classmethod
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
+        return cls.model_validate(model_dict)
