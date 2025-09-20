@@ -25,7 +25,7 @@ class Age(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Bidi_Class(SQLModel, table=True):
@@ -42,7 +42,7 @@ class Bidi_Class(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Bidi_Paired_Bracket_Type(SQLModel, table=True):
@@ -59,7 +59,7 @@ class Bidi_Paired_Bracket_Type(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Canonical_Combining_Class(SQLModel, table=True):
@@ -76,7 +76,7 @@ class Canonical_Combining_Class(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Decomposition_Type(SQLModel, table=True):
@@ -93,7 +93,7 @@ class Decomposition_Type(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class East_Asian_Width(SQLModel, table=True):
@@ -110,7 +110,7 @@ class East_Asian_Width(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class General_Category(SQLModel, table=True):
@@ -140,7 +140,7 @@ class General_Category(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Grapheme_Cluster_Break(SQLModel, table=True):
@@ -163,7 +163,7 @@ class Hangul_Syllable_Type(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Indic_Conjunct_Break(SQLModel, table=True):
@@ -210,7 +210,7 @@ class Joining_Type(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Line_Break(SQLModel, table=True):
@@ -227,7 +227,7 @@ class Line_Break(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Numeric_Type(SQLModel, table=True):
@@ -244,7 +244,7 @@ class Numeric_Type(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Script(SQLModel, table=True):
@@ -261,7 +261,7 @@ class Script(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Sentence_Break(SQLModel, table=True):
@@ -284,7 +284,7 @@ class Vertical_Orientation(SQLModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
 
 
 class Word_Break(SQLModel, table=True):

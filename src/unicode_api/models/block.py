@@ -77,4 +77,4 @@ class UnicodeBlock(CamelModel, table=True):
 
     @classmethod
     def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return super().model_validate(model_dict)
+        return cls.model_validate(model_dict)
