@@ -32,6 +32,7 @@ class FilterParameters:
     cjk_definition: str | None = field(init=False, default=None)
     blocks: list[int] | None = field(init=False, default=None)
     categories: list[int] | None = field(init=False, default=None)
+    categories_selected: list[int] | None = field(init=False, default=None)
     age_list: list[int] | None = field(init=False, default=None)
     scripts: tuple[list[str], list[int]] | None = field(init=False, default=None)
     script_names: list[str] | None = field(init=False, default=None)
@@ -93,6 +94,7 @@ class FilterParameters:
             param_matcher = DatabaseFilterParameterMatcher("General_Category", "category", db.General_Category)
             result = param_matcher.parse_filter_params(self.form_inputs.category)
             if result.success and result.value:
+                self.categories_selected = [c.id for c in result.value if c.id]
                 filter_cats = list(set(flatten_list2d([c.category_values for c in result.value])))
                 self.categories = sorted(
                     result.value
@@ -226,7 +228,9 @@ class FilterParameters:
         self._add_to_filter_settings("name", self.name)
         self._add_to_filter_settings("cjk_definition", self.cjk_definition)
         self._add_to_filter_settings("block", self.blocks, lambda x: cached_data.get_unicode_block_by_id(x).long_name)
-        self._add_to_filter_settings("category", self.categories, lambda x: get_prop_value("General_Category", x))
+        self._add_to_filter_settings(
+            "category", self.categories_selected, lambda x: get_prop_value("General_Category", x)
+        )
         self._add_to_filter_settings("age", self.age_list, lambda x: get_prop_value("Age", x))
         self._add_to_filter_settings(
             "script", self.script_ids if self.scripts else None, lambda x: get_prop_value("Script", x)
