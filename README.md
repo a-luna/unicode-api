@@ -69,7 +69,7 @@
 	</li>
 </ul>
 <h2 id="introduction">Introduction</h2>
-<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode16.0.0/" rel="noopener noreferrer" target="_blank">version 16.0.0 of the Unicode Standard</a> (released Sep 10, 2024). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
+<p>This API provides access to detailed information for all characters, blocks and planes in <a href="https://www.unicode.org/versions/Unicode17.0.0/" rel="noopener noreferrer" target="_blank">version 17.0.0 of the Unicode Standard</a> (released Sep 05, 2025). In an attempt to adhere to the tenants of <a href="http://en.wikipedia.org/wiki/Representational_State_Transfer" rel="noopener noreferrer" target="_blank">REST</a>, the API is organized around the following principles:</p>
 <ul class="api-principles">
     <li>URLs are predictable and resource-oriented.</li>
     <li>Uses standard HTTP verbs and response codes.</li>
@@ -987,7 +987,7 @@
 					<li style="list-style-type: '15.'"><span>Supplementary Private Use Area-A (SPUA-A)</span></li>
 					<li style="list-style-type: '16.'"><span>Supplementary Private Use Area-B (SPUA-B)</span></li>
 				</ol>
-                <p>The codepoints within Planes 4-13 (<code>U+40000</code>...<code>U+​DFFFF</code>) are unassigned, and these planes currently have no official name/abbreviation.</p>
+                <p>The codepoints within Planes 4-13 (<code>U+40000</code>...<code>U+DFFFF</code>) are unassigned, and these planes currently have no official name/abbreviation.</p>
             </dd>
             <dt><strong>abbreviation</strong></dt>
             <dd>An acronym that identifies the plane, the list in the previous definition contains the abbreviation for each plane along with the official name.</dd>
