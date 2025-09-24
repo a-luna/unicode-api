@@ -182,19 +182,19 @@ async def apply_rate_limiting(request: Request, call_next: Callable[[Request], A
         Awaitable: The result of calling the next middleware or endpoint if the
             request is allowed.
     """
-    decision = rate_limit.validate_request(request)
-    match decision.request_type:
-        case RequestType.RATE_LIMITED_ALLOWED:
-            send_api_request_event_to_umami(request, decision.ip)
-            decision.log()
-        case RequestType.RATE_LIMITED_DENIED:
-            send_rate_limit_exceeded_event_to_umami(request, decision.ip)
-            decision.log()
-            return JSONResponse(content=decision.error, status_code=status.HTTP_429_TOO_MANY_REQUESTS)
-        case RequestType.ERROR:
-            return JSONResponse(content=decision.error, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        case _:
-            pass
+    # decision = rate_limit.validate_request(request)
+    # match decision.request_type:
+    #     case RequestType.RATE_LIMITED_ALLOWED:
+    #         send_api_request_event_to_umami(request, decision.ip)
+    #         decision.log()
+    #     case RequestType.RATE_LIMITED_DENIED:
+    #         send_rate_limit_exceeded_event_to_umami(request, decision.ip)
+    #         decision.log()
+    #         return JSONResponse(content=decision.error, status_code=status.HTTP_429_TOO_MANY_REQUESTS)
+    #     case RequestType.ERROR:
+    #         return JSONResponse(content=decision.error, status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #     case _:
+    #         pass
     return await call_next(request)
 
 
