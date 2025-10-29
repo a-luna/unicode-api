@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, Any
 
+from sqlalchemy import select
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Mapped
-from sqlmodel import col, select
+from sqlmodel import col
 
 import unicode_api.db.models as db
 from unicode_api.core.cache import cached_data
