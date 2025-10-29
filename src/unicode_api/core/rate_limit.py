@@ -22,7 +22,6 @@ Constants:
 
 import logging
 import re
-import time
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from datetime import timedelta
@@ -121,7 +120,7 @@ class RateLimitDecision:
         self.logger.info(f"Allowed At.....: {_get_time_portion(self.allowed_at)}")
         if allowed:
             new_tat = _get_time_portion(self.new_tat)
-            dur_until_limit = get_duration_between_timestamps(time.time(), self.new_tat)
+            dur_until_limit = get_duration_between_timestamps(self.arrived_at, self.new_tat)
             time_until_limit = format_timedelta_str(dur_until_limit, precise=True)
             self.logger.info(f"New TAT........: {new_tat}, ({time_until_limit} from now)")
         else:
