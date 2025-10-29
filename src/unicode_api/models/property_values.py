@@ -58,8 +58,8 @@ class Bidi_Paired_Bracket_Type(SQLModel, table=True):
         return default_display_name(self)
 
     @classmethod
-    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return cls.model_validate(model_dict)
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:  # pragma: no cover
+        raise NotImplementedError("Bidi_Paired_Bracket_Type has not been implemented as a filterable property yet.")
 
 
 class Canonical_Combining_Class(SQLModel, table=True):
@@ -109,8 +109,8 @@ class East_Asian_Width(SQLModel, table=True):
         return default_display_name(self)
 
     @classmethod
-    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return cls.model_validate(model_dict)
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:  # pragma: no cover
+        raise NotImplementedError("East_Asian_Width has not been implemented as a filterable property yet.")
 
 
 class General_Category(SQLModel, table=True):
@@ -162,8 +162,8 @@ class Hangul_Syllable_Type(SQLModel, table=True):
         return default_display_name(self)
 
     @classmethod
-    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return cls.model_validate(model_dict)
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:  # pragma: no cover
+        raise NotImplementedError("Hangul_Syllable_Type has not been implemented as a filterable property yet.")
 
 
 class Indic_Conjunct_Break(SQLModel, table=True):
@@ -283,8 +283,8 @@ class Vertical_Orientation(SQLModel, table=True):
         return default_display_name(self)
 
     @classmethod
-    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:
-        return cls.model_validate(model_dict)
+    def from_dict(cls, model_dict: "UnicodePropertyGroupValues") -> Self:  # pragma: no cover
+        raise NotImplementedError("Vertical_Orientation has not been implemented as a filterable property yet.")
 
 
 class Word_Break(SQLModel, table=True):

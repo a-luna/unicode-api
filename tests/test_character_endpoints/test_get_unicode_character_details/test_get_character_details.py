@@ -3,6 +3,7 @@ from functools import reduce
 from typing import Any
 
 import pytest
+from fastapi import status
 
 import unicode_api.db.models as db
 from tests.test_character_endpoints.test_get_unicode_character_details.data import (
@@ -53,7 +54,7 @@ def test_get_character_details_default(char, client):
         else db.CharPropertyGroup.CJK_MINIMUM
     )
     response = client.get(url)
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
     assert response.json() == [get_character_properties(char, prop_group, False)]
 
 
@@ -65,7 +66,7 @@ def test_get_character_details_show_props(q_verbose, verbose, char, group_name, 
     if any(char.isascii() and not char.isprintable() for char in url):
         url = f"/v1/characters/-/{get_uri_encoded_value(char)}?show_props={group_name}{q_verbose}"
     response = client.get(url)
-    assert response.status_code == 200
+    assert response.status_code == status.HTTP_200_OK
 
     prop_group = db.CharPropertyGroup.match_loosely(group_name)
     assert prop_group is not None
@@ -74,5 +75,5 @@ def test_get_character_details_show_props(q_verbose, verbose, char, group_name, 
 
 def test_invalid_prop_group_name(client):
     response = client.get("/v1/characters/-/%F0%9B%B1%A0?show_props=foo&show_props=bar&show_props=baz")
-    assert response.status_code == 400
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert response.json() == INVALID_PROP_GROUP_NAMES

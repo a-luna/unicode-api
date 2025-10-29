@@ -120,7 +120,7 @@ class RateLimitDecision:
         self.logger.info(f"Allowed At.....: {_get_time_portion(self.allowed_at)}")
         if allowed:
             new_tat = _get_time_portion(self.new_tat)
-            dur_until_limit = get_duration_between_timestamps(self.allowed_at, self.arrived_at)
+            dur_until_limit = get_duration_between_timestamps(self.arrived_at, self.new_tat)
             time_until_limit = format_timedelta_str(dur_until_limit, precise=True)
             self.logger.info(f"New TAT........: {new_tat}, ({time_until_limit} from now)")
         else:
@@ -332,7 +332,9 @@ class RateLimit:
             return decision
 
     def _get_allowed_at(self, tat: float) -> float:
-        return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
+        if self.burst > 0:
+            return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
+        return tat
 
     def _get_new_tat(self, tat: float, arrived_at: float) -> float:
         return (dtaware_fromtimestamp(max(tat, arrived_at)) + self.emission_interval_ms).timestamp()

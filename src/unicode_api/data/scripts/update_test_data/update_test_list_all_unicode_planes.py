@@ -17,6 +17,18 @@ UNASSIGNED_PLANE = {
     "totalAllocated": 0,
     "totalDefined": 0,
 }
+
+INVALID_PLANE_ID = {
+    "detail": [
+        {
+            "type": "less_than_equal",
+            "loc": ["path", "number"],
+            "msg": "Input should be less than or equal to 16",
+            "input": "189",
+            "ctx": {"le": 16},
+        }
+    ]
+}
 """
 
 
