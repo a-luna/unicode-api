@@ -332,7 +332,9 @@ class RateLimit:
             return decision
 
     def _get_allowed_at(self, tat: float) -> float:
-        return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
+        if self.burst > 0:
+            return (dtaware_fromtimestamp(tat) - self.delay_tolerance_ms).timestamp()
+        return tat
 
     def _get_new_tat(self, tat: float, arrived_at: float) -> float:
         return (dtaware_fromtimestamp(max(tat, arrived_at)) + self.emission_interval_ms).timestamp()
